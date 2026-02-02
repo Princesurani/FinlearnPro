@@ -3,6 +3,7 @@ import '../features/auth/presentation/widgets/home_top_bar.dart';
 import '../features/gamification/presentation/widgets/progress_tracker_section.dart';
 import '../features/learning/presentation/widgets/recommended_section.dart';
 import '../features/market/presentation/widgets/market_indices_section.dart';
+import '../features/social/presentation/widgets/community_insights_section.dart';
 import '../shared/navigation/floating_bottom_nav_bar.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -32,14 +33,16 @@ class HomeScreen extends StatelessWidget {
                 MarketIndicesSection(),
                 SizedBox(height: 30),
                 RecommendedSection(),
+                SizedBox(height: 30),
+                CommunityInsightsSection(),
               ],
             ),
           ),
           // Floating Bottom Navigation Bar
           const Positioned(
-            bottom: 10,
-            left: 10,
-            right: 10,
+            bottom: 20,
+            left: 20,
+            right: 20,
             child: FloatingBottomNavBar(),
           ),
         ],
