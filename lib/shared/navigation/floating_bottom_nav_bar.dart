@@ -24,7 +24,6 @@ class FloatingBottomNavBar extends StatelessWidget {
           _buildNavItem(Icons.home_rounded, true),
           _buildNavItem(Icons.analytics_outlined, false),
           _buildNavItem(Icons.book_outlined, false),
-          _buildNavItem(Icons.person_outline, false),
         ],
       ),
     );
