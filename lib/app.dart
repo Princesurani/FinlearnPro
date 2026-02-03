@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'shared/navigation/main_navigation_shell.dart';
 
 class FinLearnApp extends StatelessWidget {
   const FinLearnApp({super.key});
@@ -13,7 +13,7 @@ class FinLearnApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6B4EF5)),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home: const MainNavigationShell(),
     );
   }
 }
