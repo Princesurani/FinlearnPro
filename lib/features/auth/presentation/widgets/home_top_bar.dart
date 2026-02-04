@@ -14,37 +14,42 @@ class HomeTopBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Left side: Menu button + Welcome text
-        Row(
-          children: [
-            // Menu button to open drawer
-            _MenuButton(
-              onTap: () => AppDrawer.show(context),
-            ),
-            const SizedBox(width: 14),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome back,',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
+        Expanded(
+          child: Row(
+            children: [
+              // Menu button to open drawer
+              _MenuButton(onTap: () => AppDrawer.show(context)),
+              const SizedBox(width: 14),
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome back,',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Prince Surani',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Prince Surani',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
+        const SizedBox(width: 8), // Minimal spacing between left and right
         Row(
           children: [
             const StreakBadge(),
@@ -120,6 +125,7 @@ class HomeTopBar extends StatelessWidget {
     );
   }
 }
+
 class _MenuButton extends StatefulWidget {
   final VoidCallback onTap;
 
@@ -148,12 +154,12 @@ class _MenuButtonState extends State<_MenuButton> {
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: _isPressed 
+          color: _isPressed
               ? const Color(0xFF6B4EF5).withValues(alpha: 0.1)
               : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: _isPressed 
+            color: _isPressed
                 ? const Color(0xFF6B4EF5).withValues(alpha: 0.3)
                 : Colors.grey.withValues(alpha: 0.15),
             width: 1.5,
@@ -188,9 +194,7 @@ class _MenuButtonState extends State<_MenuButton> {
       width: width,
       height: 2.5,
       decoration: BoxDecoration(
-        color: isPressed 
-            ? const Color(0xFF6B4EF5)
-            : const Color(0xFF1E1E2C),
+        color: isPressed ? const Color(0xFF6B4EF5) : const Color(0xFF1E1E2C),
         borderRadius: BorderRadius.circular(2),
       ),
     );
