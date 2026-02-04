@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "196337848877",
+    "project_id": "finlearnpro",
+    "storage_bucket": "finlearnpro.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:196337848877:android:6d5fb8305f3a57bee7dea4",
+        "android_client_info": {
+          "package_name": "com.example.finnn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCS7yKm6fUlY_jkkOmJudHdTtP_FbqsegU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
