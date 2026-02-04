@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -50,7 +49,6 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       initialPage: _currentIndex,
       keepPage: true,
     );
-
   }
 
   @override
@@ -96,87 +94,54 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       child: Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         extendBody: true,
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: _onPageChanged,
-          physics: const BouncingScrollPhysics(),
-          children: const [
-            _HomeScreenWrapper(),
-            _MarketsScreenWrapper(),
-            LearningScreen(),
+        body: Stack(
+          children: [
+            PageView(
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              physics: const BouncingScrollPhysics(),
+              children: const [
+                _HomeScreenWrapper(),
+                _MarketsScreenWrapper(),
+                LearningScreen(),
+              ],
+            ),
+            Positioned(
+              left: 20,
+              right: 20,
+              bottom: 20,
+              child: _buildGlassNavBar(),
+            ),
           ],
         ),
-        bottomNavigationBar: _buildGlassNavBar(),
       ),
     );
   }
 
   Widget _buildGlassNavBar() {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primaryPurple.withOpacity(0.2),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-                spreadRadius: 2,
-              ),
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1A1A2E).withOpacity(0.9),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.1),
-                    width: 1,
-                  ),
-                ),
-                child: CurvedNavigationBar(
-                  key: _navBarKey,
-                  index: _currentIndex,
-                  height: 60,
-                  items: _screens.map((screen) {
-                    final isSelected = _screens.indexOf(screen) == _currentIndex;
-                    return _buildNavIcon(screen, isSelected);
-                  }).toList(),
-                  color: Colors.transparent,
-                  buttonBackgroundColor: AppColors.primaryPurple,
-                  backgroundColor: Colors.transparent,
-                  animationCurve: Curves.easeOutCubic,
-                  animationDuration: const Duration(milliseconds: 300),
-                  onTap: _onNavTap,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavIcon(_NavScreen screen, bool isSelected) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOutCubic,
-      padding: EdgeInsets.all(isSelected ? 12 : 10),
-      child: Icon(
-        isSelected ? screen.activeIcon : screen.icon,
-        size: isSelected ? 28 : 24,
-        color: isSelected ? Colors.white : Colors.white.withOpacity(0.6),
+    return Padding(
+      // Professional apps often have the navbar sitting closer to the bottom edge
+      // but with enough clearance for the pill shape.
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: CurvedNavigationBar(
+        key: _navBarKey,
+        index: _currentIndex,
+        height: 60, // Standard height for better touch targets
+        items: _screens.map((screen) {
+          final isSelected = _screens.indexOf(screen) == _currentIndex;
+          return Icon(
+            isSelected ? screen.activeIcon : screen.icon,
+            // Adjust icon size: moderate size for active to show padding, standard for inactive
+            size: isSelected ? 28 : 24,
+            color: isSelected ? Colors.white : Colors.white.withOpacity(0.6),
+          );
+        }).toList(),
+        color: const Color(0xFF1E1E2C),
+        buttonBackgroundColor: AppColors.primaryPurple,
+        backgroundColor: Colors.transparent,
+        animationCurve: Curves.easeOutCubic,
+        animationDuration: const Duration(milliseconds: 400),
+        onTap: _onNavTap,
       ),
     );
   }
@@ -246,10 +211,7 @@ class _MarketsScreenWrapper extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Track live market data',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 30),
             const MarketIndicesSection(),
@@ -281,10 +243,7 @@ class _MarketsScreenWrapper extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     'Advanced charting, watchlists, and real-time alerts',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
               ),
