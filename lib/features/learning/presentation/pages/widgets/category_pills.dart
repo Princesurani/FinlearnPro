@@ -151,8 +151,6 @@ class _CategoryPillItemState extends State<_CategoryPillItem>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
-  bool _isPressed = false;
-
   @override
   void initState() {
     super.initState();
@@ -176,18 +174,15 @@ class _CategoryPillItemState extends State<_CategoryPillItem>
   }
 
   void _handleTapDown(TapDownDetails details) {
-    setState(() => _isPressed = true);
     _controller.forward();
   }
 
   void _handleTapUp(TapUpDetails details) {
-    setState(() => _isPressed = false);
     _controller.reverse();
     widget.onTap();
   }
 
   void _handleTapCancel() {
-    setState(() => _isPressed = false);
     _controller.reverse();
   }
 

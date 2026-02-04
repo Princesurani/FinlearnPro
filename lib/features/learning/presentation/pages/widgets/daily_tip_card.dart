@@ -28,13 +28,8 @@ class DailyTipCard extends StatefulWidget {
 }
 
 class _DailyTipCardState extends State<DailyTipCard>
-    with TickerProviderStateMixin {
-  late AnimationController _floatController;
-  late AnimationController _shimmerController;
+    with SingleTickerProviderStateMixin {
   late AnimationController _scaleController;
-
-  late Animation<double> _floatAnimation;
-  late Animation<double> _shimmerAnimation;
   late Animation<double> _scaleAnimation;
 
   bool _isSaved = false;
@@ -44,45 +39,24 @@ class _DailyTipCardState extends State<DailyTipCard>
   void initState() {
     super.initState();
 
-    _floatController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2500),
-    )..repeat(reverse: true);
-
-    _floatAnimation = Tween<double>(
-      begin: -4,
-      end: 4,
-    ).animate(
-      CurvedAnimation(parent: _floatController, curve: AppAnimations.breatheCurve),
-    );
-
-    _shimmerController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 3000),
-    )..repeat();
-
-    _shimmerAnimation = Tween<double>(
-      begin: -1.0,
-      end: 2.0,
-    ).animate(_shimmerController);
+    // PERFORMANCE FIX: Removed _floatController.repeat() and _shimmerController.repeat()
+    // These continuous animations were causing major performance issues
 
     _scaleController = AnimationController(
       vsync: this,
       duration: AppAnimations.fastDuration,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.98,
-    ).animate(
-      CurvedAnimation(parent: _scaleController, curve: AppAnimations.defaultCurve),
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
+      CurvedAnimation(
+        parent: _scaleController,
+        curve: AppAnimations.defaultCurve,
+      ),
     );
   }
 
   @override
   void dispose() {
-    _floatController.dispose();
-    _shimmerController.dispose();
     _scaleController.dispose();
     super.dispose();
   }
@@ -161,10 +135,7 @@ class _DailyTipCardState extends State<DailyTipCard>
         child: AnimatedBuilder(
           animation: _scaleController,
           builder: (context, child) {
-            return Transform.scale(
-              scale: _scaleAnimation.value,
-              child: child,
-            );
+            return Transform.scale(scale: _scaleAnimation.value, child: child);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -197,75 +168,34 @@ class _DailyTipCardState extends State<DailyTipCard>
                     child: const SizedBox.shrink(),
                   ),
 
+                  // Static decorative circle (animation removed for performance)
                   Positioned(
                     right: -30,
                     top: -30,
-                    child: AnimatedBuilder(
-                      animation: _floatController,
-                      builder: (context, _) {
-                        return Transform.translate(
-                          offset: Offset(0, _floatAnimation.value),
-                          child: Container(
-                            width: 120,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withOpacity(0.1),
-                            ),
-                          ),
-                        );
-                      },
+                    child: Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.1),
+                      ),
                     ),
                   ),
+                  // Static decorative circle (animation removed for performance)
                   Positioned(
                     left: -20,
                     bottom: -40,
-                    child: AnimatedBuilder(
-                      animation: _floatController,
-                      builder: (context, _) {
-                        return Transform.translate(
-                          offset: Offset(0, -_floatAnimation.value * 0.7),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withOpacity(0.08),
-                            ),
-                          ),
-                        );
-                      },
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.08),
+                      ),
                     ),
                   ),
 
-                  AnimatedBuilder(
-                    animation: _shimmerController,
-                    builder: (context, _) {
-                      return Positioned.fill(
-                        child: ShaderMask(
-                          shaderCallback: (bounds) {
-                            return LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white.withOpacity(0),
-                                Colors.white.withOpacity(0.15),
-                                Colors.white.withOpacity(0),
-                              ],
-                              stops: [
-                                _shimmerAnimation.value - 0.3,
-                                _shimmerAnimation.value,
-                                _shimmerAnimation.value + 0.3,
-                              ].map((v) => v.clamp(0.0, 1.0)).toList(),
-                            ).createShader(bounds);
-                          },
-                          blendMode: BlendMode.srcATop,
-                          child: Container(color: Colors.transparent),
-                        ),
-                      );
-                    },
-                  ),
-
+                  // Shimmer effect removed for performance
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(
@@ -317,10 +247,7 @@ class _DailyTipCardState extends State<DailyTipCard>
                               child: const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    '💡',
-                                    style: TextStyle(fontSize: 12),
-                                  ),
+                                  Text('💡', style: TextStyle(fontSize: 12)),
                                   SizedBox(width: 4),
                                   Text(
                                     'TIP OF THE DAY',
@@ -364,22 +291,15 @@ class _DailyTipCardState extends State<DailyTipCard>
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AnimatedBuilder(
-                              animation: _floatController,
-                              builder: (context, _) {
-                                return Transform.translate(
-                                  offset: Offset(0, _floatAnimation.value * 0.5),
-                                  child: Text(
-                                    '"',
-                                    style: TextStyle(
-                                      fontSize: 48,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white.withOpacity(0.3),
-                                      height: 0.8,
-                                    ),
-                                  ),
-                                );
-                              },
+                            // Static quote (animation removed for performance)
+                            Text(
+                              '"',
+                              style: TextStyle(
+                                fontSize: 48,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white.withOpacity(0.3),
+                                height: 0.8,
+                              ),
                             ),
                             const SizedBox(width: 8),
                             Expanded(

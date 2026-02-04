@@ -30,12 +30,6 @@ class _AuroraBackgroundState extends State<AuroraBackground>
 
   late AnimationController _tertiaryController;
 
-  double _primaryProgress = 0.0;
-
-  double _secondaryProgress = 0.0;
-
-  double _tertiaryProgress = 0.0;
-
   @override
   void initState() {
     super.initState();
@@ -45,22 +39,18 @@ class _AuroraBackgroundState extends State<AuroraBackground>
   void _initializeAnimations() {
     _primaryController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 8000),
+      duration: const Duration(milliseconds: 12000),
     );
 
     _secondaryController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 6000),
+      duration: const Duration(milliseconds: 10000),
     );
 
     _tertiaryController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 4000),
+      duration: const Duration(milliseconds: 8000),
     );
-
-    _primaryController.addListener(_onPrimaryAnimation);
-    _secondaryController.addListener(_onSecondaryAnimation);
-    _tertiaryController.addListener(_onTertiaryAnimation);
 
     if (widget.enableAnimation) {
       _primaryController.repeat();
@@ -69,29 +59,8 @@ class _AuroraBackgroundState extends State<AuroraBackground>
     }
   }
 
-  void _onPrimaryAnimation() {
-    setState(() {
-      _primaryProgress = _primaryController.value;
-    });
-  }
-
-  void _onSecondaryAnimation() {
-    setState(() {
-      _secondaryProgress = _secondaryController.value;
-    });
-  }
-
-  void _onTertiaryAnimation() {
-    setState(() {
-      _tertiaryProgress = _tertiaryController.value;
-    });
-  }
-
   @override
   void dispose() {
-    _primaryController.removeListener(_onPrimaryAnimation);
-    _secondaryController.removeListener(_onSecondaryAnimation);
-    _tertiaryController.removeListener(_onTertiaryAnimation);
     _primaryController.dispose();
     _secondaryController.dispose();
     _tertiaryController.dispose();
@@ -118,17 +87,26 @@ class _AuroraBackgroundState extends State<AuroraBackground>
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
-      child: CustomPaint(
-        painter: _AuroraPainter(
-          primaryProgress: _primaryProgress,
-          secondaryProgress: _secondaryProgress,
-          tertiaryProgress: _tertiaryProgress,
-          intensity: widget.intensity,
-          customColors: widget.customColors,
-        ),
-        size: Size.infinite,
-        isComplex: true,
-        willChange: widget.enableAnimation,
+      child: AnimatedBuilder(
+        animation: Listenable.merge([
+          _primaryController,
+          _secondaryController,
+          _tertiaryController,
+        ]),
+        builder: (context, child) {
+          return CustomPaint(
+            painter: _AuroraPainter(
+              primaryProgress: _primaryController.value,
+              secondaryProgress: _secondaryController.value,
+              tertiaryProgress: _tertiaryController.value,
+              intensity: widget.intensity,
+              customColors: widget.customColors,
+            ),
+            size: Size.infinite,
+            isComplex: true,
+            willChange: widget.enableAnimation,
+          );
+        },
       ),
     );
   }
@@ -281,7 +259,6 @@ class _AuroraPainter extends CustomPainter {
 
     canvas.drawPath(path, paint);
   }
-
 
   void _drawNoiseOverlay(Canvas canvas, Size size) {
     final random = math.Random(42);

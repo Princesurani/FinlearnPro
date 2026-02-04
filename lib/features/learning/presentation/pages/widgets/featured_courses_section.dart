@@ -412,31 +412,34 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                         children: [
                           Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  course.difficulty.name.toUpperCase(),
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    letterSpacing: 0.5,
+                              Flexible(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    course.difficulty.name.toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      letterSpacing: 0.3,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              if (!widget.isCompact && course.isFree)
+                              if (!widget.isCompact && course.isFree) ...[
+                                const SizedBox(width: 4),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
+                                    horizontal: 6,
+                                    vertical: 3,
                                   ),
                                   decoration: BoxDecoration(
                                     color: AppColors.success.withOpacity(0.9),
@@ -445,43 +448,14 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                                   child: const Text(
                                     'FREE',
                                     style: TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 9,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
-                                      letterSpacing: 0.5,
+                                      letterSpacing: 0.3,
                                     ),
                                   ),
                                 ),
-                              const Spacer(),
-                              if (!widget.isCompact)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.3),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.star_rounded,
-                                        color: AppColors.goldenYellow,
-                                        size: 14,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        course.rating.toStringAsFixed(1),
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                              ],
                             ],
                           ),
 
@@ -516,36 +490,47 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                           ],
                           const SizedBox(height: 8),
 
-                          Row(
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
                             children: [
-                              Icon(
-                                Icons.schedule_rounded,
-                                color: Colors.white.withOpacity(0.8),
-                                size: widget.isCompact ? 12 : 14,
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.schedule_rounded,
+                                    color: Colors.white.withOpacity(0.8),
+                                    size: widget.isCompact ? 10 : 12,
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    '${course.estimatedHours.toStringAsFixed(0)}h',
+                                    style: TextStyle(
+                                      fontSize: widget.isCompact ? 9 : 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${course.estimatedHours}h',
-                                style: TextStyle(
-                                  fontSize: widget.isCompact ? 10 : 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white.withOpacity(0.9),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Icon(
-                                Icons.play_lesson_rounded,
-                                color: Colors.white.withOpacity(0.8),
-                                size: widget.isCompact ? 12 : 14,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${course.totalLessons}',
-                                style: TextStyle(
-                                  fontSize: widget.isCompact ? 10 : 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white.withOpacity(0.9),
-                                ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.play_lesson_rounded,
+                                    color: Colors.white.withOpacity(0.8),
+                                    size: widget.isCompact ? 10 : 12,
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    '${course.totalLessons}',
+                                    style: TextStyle(
+                                      fontSize: widget.isCompact ? 9 : 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

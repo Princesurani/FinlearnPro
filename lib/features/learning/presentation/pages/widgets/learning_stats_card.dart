@@ -5,10 +5,7 @@ import '../../../../../core/theme/app_animations.dart';
 import '../../../data/learning_models.dart';
 
 class LearningStatsCard extends StatefulWidget {
-  const LearningStatsCard({
-    super.key,
-    required this.progress,
-  });
+  const LearningStatsCard({super.key, required this.progress});
 
   final UserLearningProgress progress;
 
@@ -17,12 +14,9 @@ class LearningStatsCard extends StatefulWidget {
 }
 
 class _LearningStatsCardState extends State<LearningStatsCard>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late AnimationController _progressController;
-  late AnimationController _pulseController;
-
   late Animation<double> _progressAnimation;
-  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
@@ -33,38 +27,25 @@ class _LearningStatsCardState extends State<LearningStatsCard>
       duration: const Duration(milliseconds: 1500),
     );
 
-    _progressAnimation = Tween<double>(
-      begin: 0.0,
-      end: widget.progress.levelProgress,
-    ).animate(
-      CurvedAnimation(
-        parent: _progressController,
-        curve: AppAnimations.defaultCurve,
-      ),
-    );
+    _progressAnimation =
+        Tween<double>(begin: 0.0, end: widget.progress.levelProgress).animate(
+          CurvedAnimation(
+            parent: _progressController,
+            curve: AppAnimations.defaultCurve,
+          ),
+        );
 
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    );
-
-    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _pulseController,
-        curve: AppAnimations.breatheCurve,
-      ),
-    );
+    // PERFORMANCE FIX: Removed _pulseController.repeat() - was causing constant rebuilds
+    // The pulse animation looked nice but caused significant performance issues
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _progressController.forward();
-      _pulseController.repeat(reverse: true);
     });
   }
 
   @override
   void dispose() {
     _progressController.dispose();
-    _pulseController.dispose();
     super.dispose();
   }
 
@@ -77,11 +58,7 @@ class _LearningStatsCardState extends State<LearningStatsCard>
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFF6B4EF5),
-            Color(0xFF8B5CF6),
-            Color(0xFF7C3AED),
-          ],
+          colors: [Color(0xFF6B4EF5), Color(0xFF8B5CF6), Color(0xFF7C3AED)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -178,66 +155,64 @@ class _LearningStatsCardState extends State<LearningStatsCard>
                 ),
               ),
 
+              // PERFORMANCE FIX: Removed pulse animation wrapper
               AnimatedBuilder(
-                animation: Listenable.merge([
-                  _progressController,
-                  _pulseController,
-                ]),
+                animation: _progressController,
                 builder: (context, child) {
-                  return Transform.scale(
-                    scale: _pulseAnimation.value,
-                    child: SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            width: 90,
-                            height: 90,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.white.withOpacity(0.2),
-                                  blurRadius: 20,
-                                  spreadRadius: 2,
-                                ),
-                              ],
-                            ),
-                          ),
-                          CustomPaint(
-                            size: const Size(90, 90),
-                            painter: _ProgressRingPainter(
-                              progress: _progressAnimation.value,
-                              backgroundColor: Colors.white.withOpacity(0.2),
-                              foregroundColor: Colors.white,
-                              strokeWidth: 8,
-                            ),
-                          ),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '${(_progressAnimation.value * 100).toInt()}%',
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Text(
-                                'Progress',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white.withOpacity(0.7),
-                                ),
+                  return SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Glow background
+                        Container(
+                          width: 90,
+                          height: 90,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.2),
+                                blurRadius: 20,
+                                spreadRadius: 2,
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        // Progress ring
+                        CustomPaint(
+                          size: const Size(90, 90),
+                          painter: _ProgressRingPainter(
+                            progress: _progressAnimation.value,
+                            backgroundColor: Colors.white.withOpacity(0.2),
+                            foregroundColor: Colors.white,
+                            strokeWidth: 8,
+                          ),
+                        ),
+                        // Percentage text
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${(_progressAnimation.value * 100).toInt()}%',
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              'Progress',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white.withOpacity(0.7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -304,11 +279,7 @@ class _LearningStatsCardState extends State<LearningStatsCard>
     return Expanded(
       child: Column(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: Colors.white.withOpacity(0.7),
-          ),
+          Icon(icon, size: 20, color: Colors.white.withOpacity(0.7)),
           const SizedBox(height: 6),
           Text(
             value,

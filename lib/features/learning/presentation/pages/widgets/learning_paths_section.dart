@@ -5,11 +5,7 @@ import '../../../../../core/theme/app_animations.dart';
 import '../../../data/learning_models.dart';
 
 class LearningPathsSection extends StatefulWidget {
-  const LearningPathsSection({
-    super.key,
-    required this.paths,
-    this.onPathTap,
-  });
+  const LearningPathsSection({super.key, required this.paths, this.onPathTap});
 
   final List<LearningPath> paths;
 
@@ -19,24 +15,8 @@ class LearningPathsSection extends StatefulWidget {
   State<LearningPathsSection> createState() => _LearningPathsSectionState();
 }
 
-class _LearningPathsSectionState extends State<LearningPathsSection>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _pulseController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    )..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _pulseController.dispose();
-    super.dispose();
-  }
+class _LearningPathsSectionState extends State<LearningPathsSection> {
+  // PERFORMANCE FIX: Removed _pulseController.repeat() - was causing constant rebuilds
 
   @override
   Widget build(BuildContext context) {
@@ -59,45 +39,27 @@ class _LearningPathsSectionState extends State<LearningPathsSection>
                     ),
                   ),
                   const SizedBox(width: 8),
-                  AnimatedBuilder(
-                    animation: _pulseController,
-                    builder: (context, child) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.oceanTeal,
-                              AppColors.electricBlue.withOpacity(
-                                0.8 + 0.2 * _pulseController.value,
-                              ),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.oceanTeal.withOpacity(
-                                0.3 * _pulseController.value,
-                              ),
-                              blurRadius: 8,
-                              spreadRadius: 2 * _pulseController.value,
-                            ),
-                          ],
-                        ),
-                        child: const Text(
-                          '🎯 ROADMAPS',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      );
-                    },
+                  // PERFORMANCE FIX: Static badge instead of animated
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [AppColors.oceanTeal, AppColors.electricBlue],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text(
+                      '🎯 ROADMAPS',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -134,7 +96,6 @@ class _LearningPathsSectionState extends State<LearningPathsSection>
                 child: _LearningPathCard(
                   path: widget.paths[index],
                   onTap: () => widget.onPathTap?.call(widget.paths[index]),
-                  pulseAnimation: _pulseController,
                 ),
               );
             },
@@ -146,14 +107,9 @@ class _LearningPathsSectionState extends State<LearningPathsSection>
 }
 
 class _LearningPathCard extends StatefulWidget {
-  const _LearningPathCard({
-    required this.path,
-    required this.pulseAnimation,
-    this.onTap,
-  });
+  const _LearningPathCard({required this.path, this.onTap});
 
   final LearningPath path;
-  final Animation<double> pulseAnimation;
   final VoidCallback? onTap;
 
   @override
@@ -175,11 +131,11 @@ class _LearningPathCardState extends State<_LearningPathCard>
       duration: AppAnimations.fastDuration,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.97,
-    ).animate(
-      CurvedAnimation(parent: _scaleController, curve: AppAnimations.defaultCurve),
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
+      CurvedAnimation(
+        parent: _scaleController,
+        curve: AppAnimations.defaultCurve,
+      ),
     );
   }
 
@@ -219,10 +175,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
       child: AnimatedBuilder(
         animation: _scaleController,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
-          );
+          return Transform.scale(scale: _scaleAnimation.value, child: child);
         },
         child: Container(
           width: 280,
@@ -245,7 +198,6 @@ class _LearningPathCardState extends State<_LearningPathCard>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-      
               Row(
                 children: [
                   Container(
@@ -330,7 +282,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
 
               const SizedBox(height: 16),
 
-              
+              // Roadmap Progress (static version - animation removed for performance)
               SizedBox(
                 height: 60,
                 child: CustomPaint(
@@ -338,7 +290,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                     totalNodes: totalCourses,
                     completedNodes: completedCourses,
                     color: path.displayColor,
-                    pulseValue: widget.pulseAnimation.value,
+                    pulseValue: 0.5, // Static value
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -346,59 +298,52 @@ class _LearningPathCardState extends State<_LearningPathCard>
                       final isCompleted = index < completedCourses;
                       final isCurrent = index == completedCourses;
 
-                      return AnimatedBuilder(
-                        animation: widget.pulseAnimation,
-                        builder: (context, _) {
-                          return Container(
-                            width: isCurrent ? 36 : 28,
-                            height: isCurrent ? 36 : 28,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: isCompleted
-                                  ? path.displayColor
-                                  : isCurrent
-                                      ? AppColors.surface
-                                      : AppColors.surface.withOpacity(0.8),
-                              border: Border.all(
-                                color: isCompleted
-                                    ? path.displayColor
-                                    : isCurrent
+                      return Container(
+                        width: isCurrent ? 36 : 28,
+                        height: isCurrent ? 36 : 28,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isCompleted
+                              ? path.displayColor
+                              : isCurrent
+                              ? AppColors.surface
+                              : AppColors.surface.withOpacity(0.8),
+                          border: Border.all(
+                            color: isCompleted
+                                ? path.displayColor
+                                : isCurrent
+                                ? path.displayColor
+                                : AppColors.borderLight,
+                            width: isCurrent ? 3 : 2,
+                          ),
+                          boxShadow: isCurrent
+                              ? [
+                                  BoxShadow(
+                                    color: path.displayColor.withOpacity(0.4),
+                                    blurRadius: 8,
+                                    spreadRadius: 1,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Center(
+                          child: isCompleted
+                              ? const Icon(
+                                  Icons.check_rounded,
+                                  color: Colors.white,
+                                  size: 16,
+                                )
+                              : Text(
+                                  '${index + 1}',
+                                  style: TextStyle(
+                                    fontSize: isCurrent ? 14 : 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: isCurrent
                                         ? path.displayColor
-                                        : AppColors.borderLight,
-                                width: isCurrent ? 3 : 2,
-                              ),
-                              boxShadow: isCurrent
-                                  ? [
-                                      BoxShadow(
-                                        color: path.displayColor.withOpacity(
-                                          0.3 + 0.2 * widget.pulseAnimation.value,
-                                        ),
-                                        blurRadius: 8,
-                                        spreadRadius: 2 * widget.pulseAnimation.value,
-                                      ),
-                                    ]
-                                  : null,
-                            ),
-                            child: Center(
-                              child: isCompleted
-                                  ? const Icon(
-                                      Icons.check_rounded,
-                                      color: Colors.white,
-                                      size: 16,
-                                    )
-                                  : Text(
-                                      '${index + 1}',
-                                      style: TextStyle(
-                                        fontSize: isCurrent ? 14 : 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: isCurrent
-                                            ? path.displayColor
-                                            : AppColors.textTertiary,
-                                      ),
-                                    ),
-                            ),
-                          );
-                        },
+                                        : AppColors.textTertiary,
+                                  ),
+                                ),
+                        ),
                       );
                     }),
                   ),
@@ -559,11 +504,7 @@ class _RoadmapPainter extends CustomPainter {
         paint.color = color.withOpacity(0.15);
       }
 
-      canvas.drawLine(
-        Offset(startX, yCenter),
-        Offset(endX, yCenter),
-        paint,
-      );
+      canvas.drawLine(Offset(startX, yCenter), Offset(endX, yCenter), paint);
     }
   }
 

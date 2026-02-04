@@ -17,15 +17,12 @@ class MainNavigationShell extends StatefulWidget {
   State<MainNavigationShell> createState() => _MainNavigationShellState();
 }
 
-class _MainNavigationShellState extends State<MainNavigationShell>
-    with TickerProviderStateMixin {
+class _MainNavigationShellState extends State<MainNavigationShell> {
   int _currentIndex = 0;
 
   late PageController _pageController;
 
   final GlobalKey<CurvedNavigationBarState> _navBarKey = GlobalKey();
-
-  late AnimationController _shimmerController;
 
   static const List<_NavScreen> _screens = [
     _NavScreen(
@@ -54,16 +51,11 @@ class _MainNavigationShellState extends State<MainNavigationShell>
       keepPage: true,
     );
 
-    _shimmerController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    )..repeat();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    _shimmerController.dispose();
     super.dispose();
   }
 
@@ -120,64 +112,55 @@ class _MainNavigationShellState extends State<MainNavigationShell>
   }
 
   Widget _buildGlassNavBar() {
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryPurple.withOpacity(0.15),
-            blurRadius: 30,
-            offset: const Offset(0, -10),
-            spreadRadius: 5,
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primaryPurple.withOpacity(0.2),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+                spreadRadius: 2,
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-          child: AnimatedBuilder(
-            animation: _shimmerController,
-            builder: (context, child) {
-              return Container(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+              child: Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withOpacity(0.15),
-                      Colors.white.withOpacity(0.05),
-                      Colors.white.withOpacity(0.1),
-                    ],
-                    stops: [
-                      0,
-                      0.5 + 0.3 * _shimmerController.value,
-                      1,
-                    ],
-                  ),
-                  border: Border(
-                    top: BorderSide(
-                      color: Colors.white.withOpacity(0.2),
-                      width: 0.5,
-                    ),
+                  color: const Color(0xFF1A1A2E).withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.1),
+                    width: 1,
                   ),
                 ),
-                child: child,
-              );
-            },
-            child: CurvedNavigationBar(
-              key: _navBarKey,
-              index: _currentIndex,
-              height: 65,
-              items: _screens.map((screen) {
-                final isSelected = _screens.indexOf(screen) == _currentIndex;
-                return _buildNavIcon(screen, isSelected);
-              }).toList(),
-              color: const Color(0xFF1A1A2E).withOpacity(0.85),
-              buttonBackgroundColor: AppColors.primaryPurple,
-              backgroundColor: Colors.transparent,
-              animationCurve: Curves.easeOutCubic,
-              animationDuration: const Duration(milliseconds: 400),
-              onTap: _onNavTap,
+                child: CurvedNavigationBar(
+                  key: _navBarKey,
+                  index: _currentIndex,
+                  height: 60,
+                  items: _screens.map((screen) {
+                    final isSelected = _screens.indexOf(screen) == _currentIndex;
+                    return _buildNavIcon(screen, isSelected);
+                  }).toList(),
+                  color: Colors.transparent,
+                  buttonBackgroundColor: AppColors.primaryPurple,
+                  backgroundColor: Colors.transparent,
+                  animationCurve: Curves.easeOutCubic,
+                  animationDuration: const Duration(milliseconds: 300),
+                  onTap: _onNavTap,
+                ),
+              ),
             ),
           ),
         ),

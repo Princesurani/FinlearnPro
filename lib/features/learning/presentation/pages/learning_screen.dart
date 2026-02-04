@@ -28,6 +28,7 @@ class _LearningScreenState extends State<LearningScreen>
 
   String _searchQuery = '';
 
+  // ignore: unused_field
   bool _isSearchActive = false;
 
   late ScrollController _scrollController;
@@ -51,7 +52,6 @@ class _LearningScreenState extends State<LearningScreen>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _entranceController.forward();
@@ -129,10 +129,12 @@ class _LearningScreenState extends State<LearningScreen>
         backgroundColor: AppColors.backgroundPrimary,
         body: Stack(
           children: [
+            // PERFORMANCE FIX: Disabled animation - was causing constant repaints
+            // Aurora background is beautiful but too expensive for scrolling screens
             const Positioned.fill(
               child: AuroraBackground(
-                intensity: 0.5,
-                enableAnimation: true,
+                intensity: 0.2,
+                enableAnimation: false, // CRITICAL: Disable for performance
               ),
             ),
 
