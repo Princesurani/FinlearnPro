@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../data/auth_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = AuthService().currentUser;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FE),
       body: SingleChildScrollView(
@@ -76,18 +79,18 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Prince Surani',
-                    style: TextStyle(
+                  Text(
+                    user?.displayName ?? 'Prince Surani',
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'prince.surani@example.com',
-                    style: TextStyle(fontSize: 14, color: Colors.white70),
+                  Text(
+                    user?.email ?? 'prince.surani@example.com',
+                    style: const TextStyle(fontSize: 14, color: Colors.white70),
                   ),
                 ],
               ),
@@ -150,6 +153,14 @@ class ProfileScreen extends StatelessWidget {
                     icon: Icons.logout,
                     color: Colors.red,
                     isDestructive: true,
+                    onTap: () async {
+                      await AuthService().signOut();
+                      if (context.mounted) {
+                        Navigator.of(
+                          context,
+                        ).popUntil((route) => route.isFirst);
+                      }
+                    },
                   ),
                 ],
               ),
@@ -219,44 +230,48 @@ class ProfileScreen extends StatelessWidget {
     required IconData icon,
     required Color color,
     bool isDestructive = false,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
             ),
-            child: Icon(icon, color: color, size: 22),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: isDestructive ? Colors.red : Colors.black87,
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 22),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isDestructive ? Colors.red : Colors.black87,
+                ),
               ),
             ),
-          ),
-          Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[300]),
-        ],
+            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[300]),
+          ],
+        ),
       ),
     );
   }

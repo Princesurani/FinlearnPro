@@ -8,6 +8,7 @@ import '../../../../shared/widgets/aurora_background.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/glass_container.dart';
+import '../../data/auth_service.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({
@@ -29,7 +30,6 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen>
     with TickerProviderStateMixin {
-
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late AnimationController _formAnimationController;
@@ -93,10 +93,7 @@ class _SignInScreenState extends State<SignInScreen>
     );
 
     _shakeAnimation = Tween<double>(begin: 0.0, end: 24.0).animate(
-      CurvedAnimation(
-        parent: _shakeController,
-        curve: Curves.elasticIn,
-      ),
+      CurvedAnimation(parent: _shakeController, curve: Curves.elasticIn),
     );
   }
 
@@ -140,31 +137,37 @@ class _SignInScreenState extends State<SignInScreen>
     // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 1200));
 
-    // Temporary authentication - admin/admin
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
+    // Firebase Authentication
+    try {
+      await AuthService().signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
 
-    if (email == 'admin' && password == 'admin') {
       // Success
-      HapticFeedback.mediumImpact();
-      setState(() {
-        _isLoading = false;
-        _showSuccess = true;
-      });
+      if (mounted) {
+        HapticFeedback.mediumImpact();
+        setState(() {
+          _isLoading = false;
+          _showSuccess = true;
+        });
 
-      _successController.forward();
+        _successController.forward();
 
-      // Navigate after success animation
-      await Future.delayed(const Duration(milliseconds: 800));
-      widget.onSignInSuccess();
-    } else {
+        // Navigate after success animation
+        await Future.delayed(const Duration(milliseconds: 800));
+        widget.onSignInSuccess();
+      }
+    } catch (e) {
       // Failure
-      HapticFeedback.heavyImpact();
-      _triggerShake();
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Invalid credentials. Use admin/admin for now.';
-      });
+      if (mounted) {
+        HapticFeedback.heavyImpact();
+        _triggerShake();
+        setState(() {
+          _isLoading = false;
+          _errorMessage = e.toString();
+        });
+      }
     }
   }
 
@@ -175,10 +178,7 @@ class _SignInScreenState extends State<SignInScreen>
       body: Stack(
         children: [
           // Background
-          const AuroraBackground(
-            intensity: 0.2,
-            enableAnimation: true,
-          ),
+          const AuroraBackground(intensity: 0.2, enableAnimation: true),
 
           // Main Content
           SafeArea(
@@ -188,16 +188,14 @@ class _SignInScreenState extends State<SignInScreen>
                 _shakeController,
               ]),
               builder: (context, child) {
-                final shakeOffset = _shakeAnimation.value *
+                final shakeOffset =
+                    _shakeAnimation.value *
                     ((_shakeController.value * 4).floor().isEven ? 1 : -1) *
                     (1 - _shakeController.value);
 
                 return Transform.translate(
                   offset: Offset(shakeOffset, _formSlide.value),
-                  child: Opacity(
-                    opacity: _formOpacity.value,
-                    child: child,
-                  ),
+                  child: Opacity(opacity: _formOpacity.value, child: child),
                 );
               },
               child: _buildContent(),
@@ -378,11 +376,7 @@ class _SignInScreenState extends State<SignInScreen>
                   ),
                 ),
                 child: _rememberMe
-                    ? const Icon(
-                        Icons.check,
-                        size: 14,
-                        color: Colors.white,
-                      )
+                    ? const Icon(Icons.check, size: 14, color: Colors.white)
                     : null,
               ),
               AppSpacing.gapSM,
@@ -430,18 +424,12 @@ class _SignInScreenState extends State<SignInScreen>
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.error_outline_rounded,
-            color: AppColors.error,
-            size: 20,
-          ),
+          Icon(Icons.error_outline_rounded, color: AppColors.error, size: 20),
           AppSpacing.gapSM,
           Expanded(
             child: Text(
               _errorMessage!,
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.error,
-              ),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.error),
             ),
           ),
         ],
@@ -537,7 +525,9 @@ class _SignInScreenState extends State<SignInScreen>
       animation: _successController,
       builder: (context, child) {
         return Container(
-          color: Colors.white.withAlpha((_successController.value * 0.9 * 255).round()),
+          color: Colors.white.withAlpha(
+            (_successController.value * 0.9 * 255).round(),
+          ),
           child: Center(
             child: Transform.scale(
               scale: _successController.value,
@@ -631,10 +621,7 @@ class _SocialButtonState extends State<_SocialButton>
       child: AnimatedBuilder(
         animation: _scale,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scale.value,
-            child: child,
-          );
+          return Transform.scale(scale: _scale.value, child: child);
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 100),
@@ -685,9 +672,7 @@ class _GoogleIcon extends StatelessWidget {
     return SizedBox(
       width: 24,
       height: 24,
-      child: CustomPaint(
-        painter: _GoogleIconPainter(),
-      ),
+      child: CustomPaint(painter: _GoogleIconPainter()),
     );
   }
 }

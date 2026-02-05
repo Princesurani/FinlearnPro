@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../../../../shared/widgets/app_drawer/app_drawer.dart';
 import '../../../../features/gamification/presentation/widgets/streak_badge.dart';
 import '../../../notifications/presentation/pages/notifications_screen.dart';
+import '../../data/auth_service.dart';
 import '../pages/profile_screen.dart';
 
 class HomeTopBar extends StatelessWidget {
@@ -10,6 +11,12 @@ class HomeTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = AuthService().currentUser;
+    final displayName = user?.displayName ?? 'User';
+    final initials = displayName.isNotEmpty
+        ? displayName[0].toUpperCase()
+        : 'U';
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -34,9 +41,9 @@ class HomeTopBar extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'Prince Surani',
-                      style: TextStyle(
+                    Text(
+                      displayName,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -69,17 +76,22 @@ class HomeTopBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.grey.withOpacity(0.2),
+                    width: 1.5,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 12,
                       offset: const Offset(0, 4),
+                      spreadRadius: 2,
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.notifications_outlined,
-                  color: Colors.black87,
+                  color: Colors.grey[700],
                 ),
               ),
             ),
@@ -97,20 +109,26 @@ class HomeTopBar extends StatelessWidget {
                 height: 48,
                 width: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E2C),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6B4EF5), Color(0xFF8F7AFE)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 10,
+                      color: const Color(0xFF6B4EF5).withOpacity(0.4),
+                      blurRadius: 12,
                       offset: const Offset(0, 4),
+                      spreadRadius: 2,
                     ),
                   ],
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    'PS',
-                    style: TextStyle(
+                    initials,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,

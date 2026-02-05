@@ -18,11 +18,13 @@ class StreakBadge extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.orange.withOpacity(0.3), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
+              blurRadius: 12,
               offset: const Offset(0, 4),
+              spreadRadius: 2,
             ),
           ],
         ),
@@ -30,7 +32,7 @@ class StreakBadge extends StatelessWidget {
           children: [
             Icon(
               Icons.local_fire_department_rounded,
-              color: Colors.orange,
+              color: Colors.deepOrange, // Slightly deeper orange for contrast
               size: 20,
             ),
             SizedBox(width: 4),

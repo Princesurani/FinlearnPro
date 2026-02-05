@@ -30,6 +30,18 @@ class _AuthFlowCoordinatorState extends State<AuthFlowCoordinator> {
         : AuthFlowPage.signIn;
   }
 
+  @override
+  void didUpdateWidget(AuthFlowCoordinator oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.showWelcome != oldWidget.showWelcome) {
+      setState(() {
+        _currentPage = widget.showWelcome
+            ? AuthFlowPage.welcome
+            : AuthFlowPage.signIn;
+      });
+    }
+  }
+
   void _navigateTo(AuthFlowPage page) {
     setState(() => _currentPage = page);
   }
@@ -81,17 +93,10 @@ class _AuthFlowCoordinatorState extends State<AuthFlowCoordinator> {
   }
 }
 
-enum AuthFlowPage {
-  welcome,
-  signIn,
-  signUp,
-}
+enum AuthFlowPage { welcome, signIn, signUp }
 
 class _FadeTransitionPage<T> extends Page<T> {
-  const _FadeTransitionPage({
-    required this.child,
-    super.key,
-  });
+  const _FadeTransitionPage({required this.child, super.key});
 
   final Widget child;
 
@@ -101,10 +106,7 @@ class _FadeTransitionPage<T> extends Page<T> {
       settings: this,
       pageBuilder: (context, animation, secondaryAnimation) => child,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
+        return FadeTransition(opacity: animation, child: child);
       },
       transitionDuration: AppAnimations.mediumDuration,
     );
@@ -112,10 +114,7 @@ class _FadeTransitionPage<T> extends Page<T> {
 }
 
 class _SlideTransitionPage<T> extends Page<T> {
-  const _SlideTransitionPage({
-    required this.child,
-    super.key,
-  });
+  const _SlideTransitionPage({required this.child, super.key});
 
   final Widget child;
 
@@ -125,13 +124,13 @@ class _SlideTransitionPage<T> extends Page<T> {
       settings: this,
       pageBuilder: (context, animation, secondaryAnimation) => child,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final slideAnimation = Tween<Offset>(
-          begin: const Offset(1.0, 0.0),
-          end: Offset.zero,
-        ).animate(CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeOutCubic,
-        ));
+        final slideAnimation =
+            Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+            );
 
         final fadeAnimation = CurvedAnimation(
           parent: animation,
@@ -140,10 +139,7 @@ class _SlideTransitionPage<T> extends Page<T> {
 
         return SlideTransition(
           position: slideAnimation,
-          child: FadeTransition(
-            opacity: fadeAnimation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: fadeAnimation, child: child),
         );
       },
       transitionDuration: AppAnimations.pageTransitionDuration,

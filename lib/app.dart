@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'core/theme/app_colors.dart';
 import 'features/splash/splash.dart';
 import 'features/auth/auth.dart';
+import 'features/auth/data/auth_service.dart';
 import 'shared/navigation/main_navigation_shell.dart';
 
 class FinLearnApp extends StatefulWidget {
@@ -19,6 +20,15 @@ class _FinLearnAppState extends State<FinLearnApp> {
   void initState() {
     super.initState();
     _configureSystemUI();
+
+    // Listen to auth state changes
+    AuthService().authStateChanges.listen((user) {
+      if (mounted) {
+        setState(() {
+          _appState = user != null ? AppState.main : AppState.auth;
+        });
+      }
+    });
   }
 
   void _configureSystemUI() {
@@ -38,10 +48,13 @@ class _FinLearnAppState extends State<FinLearnApp> {
   }
 
   void _handleSplashComplete() {
-    setState(() => _appState = AppState.auth);
+    // Current user check is enough, but stream listener will handle subsequent updates
+    final user = AuthService().currentUser;
+    setState(() => _appState = user != null ? AppState.main : AppState.auth);
   }
 
   void _handleAuthComplete() {
+    // Handled by stream listener, but keeping this for explicit callbacks if needed
     setState(() => _appState = AppState.main);
   }
 
@@ -69,12 +82,10 @@ class _FinLearnAppState extends State<FinLearnApp> {
         return AuthFlowCoordinator(
           key: const ValueKey('auth'),
           onAuthComplete: _handleAuthComplete,
-          showWelcome: true,
+          showWelcome: false, // Don't show welcome screen again
         );
       case AppState.main:
-        return const MainNavigationShell(
-          key: ValueKey('main'),
-        );
+        return const MainNavigationShell(key: ValueKey('main'));
     }
   }
 
@@ -136,13 +147,19 @@ class _FinLearnAppState extends State<FinLearnApp> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primaryPurple, width: 2),
+          borderSide: const BorderSide(
+            color: AppColors.primaryPurple,
+            width: 2,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.error),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
       cardTheme: const CardThemeData(
         elevation: 0,
@@ -162,8 +179,4 @@ class _FinLearnAppState extends State<FinLearnApp> {
   }
 }
 
-enum AppState {
-  splash,
-  auth,
-  main,
-}
+enum AppState { splash, auth, main }

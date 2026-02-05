@@ -1,16 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_animations.dart';
+import '../../../features/auth/data/auth_service.dart';
 
 class AppDrawerHeader extends StatefulWidget {
   final VoidCallback onClose;
 
-  const AppDrawerHeader({
-    super.key,
-    required this.onClose,
-  });
+  const AppDrawerHeader({super.key, required this.onClose});
 
   @override
   State<AppDrawerHeader> createState() => _AppDrawerHeaderState();
@@ -18,21 +15,28 @@ class AppDrawerHeader extends StatefulWidget {
 
 class _AppDrawerHeaderState extends State<AppDrawerHeader>
     with SingleTickerProviderStateMixin {
-
   late final AnimationController _entranceController;
 
-  // Mock user data - In production, this would come from state management
-  final _userData = const _UserData(
-    name: 'Prince Surani',
-    email: 'prince.surani@example.com',
-    avatarInitials: 'PS',
-    level: 12,
-    currentXp: 12450,
-    xpToNextLevel: 15000,
-    subscriptionTier: SubscriptionTier.pro,
-    streakDays: 7,
-    joinDate: '2025-06-15',
-  );
+  // Initial mock data - will be updated with real user info
+  _UserData _getUserData() {
+    final user = AuthService().currentUser;
+    final displayName = user?.displayName ?? 'User';
+    final initials = displayName.isNotEmpty
+        ? displayName[0].toUpperCase()
+        : 'U';
+
+    return _UserData(
+      name: displayName,
+      email: user?.email ?? 'user@example.com',
+      avatarInitials: initials,
+      level: 12,
+      currentXp: 12450,
+      xpToNextLevel: 15000,
+      subscriptionTier: SubscriptionTier.pro,
+      streakDays: 7,
+      joinDate: '2025-06-15',
+    );
+  }
 
   @override
   void initState() {
@@ -57,6 +61,8 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
 
   @override
   Widget build(BuildContext context) {
+    final userData = _getUserData();
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 8, 16, 16),
       decoration: BoxDecoration(
@@ -64,10 +70,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Colors.white.withOpacity(0.05),
-            Colors.transparent,
-          ],
+          colors: [Colors.white.withOpacity(0.05), Colors.transparent],
         ),
       ),
       child: Column(
@@ -80,12 +83,12 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
           const SizedBox(height: 16),
 
           // Profile section
-          _buildProfileSection(),
+          _buildProfileSection(userData),
 
           const SizedBox(height: 12),
 
           // XP Progress Bar
-          _buildXpProgress(),
+          _buildXpProgress(userData),
         ],
       ),
     );
@@ -163,41 +166,41 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
     );
   }
 
-  Widget _buildProfileSection() {
+  Widget _buildProfileSection(_UserData userData) {
     return AnimatedBuilder(
       animation: _entranceController,
       builder: (context, child) {
-        final slideValue = Tween<Offset>(
-          begin: const Offset(-0.1, 0),
-          end: Offset.zero,
-        ).animate(CurvedAnimation(
-          parent: _entranceController,
-          curve: AppAnimations.entranceCurve,
-        )).value;
+        final slideValue =
+            Tween<Offset>(begin: const Offset(-0.1, 0), end: Offset.zero)
+                .animate(
+                  CurvedAnimation(
+                    parent: _entranceController,
+                    curve: AppAnimations.entranceCurve,
+                  ),
+                )
+                .value;
 
-        final fadeValue = Tween<double>(
-          begin: 0,
-          end: 1,
-        ).animate(CurvedAnimation(
-          parent: _entranceController,
-          curve: const Interval(0, 0.7, curve: Curves.easeOut),
-        )).value;
+        final fadeValue = Tween<double>(begin: 0, end: 1)
+            .animate(
+              CurvedAnimation(
+                parent: _entranceController,
+                curve: const Interval(0, 0.7, curve: Curves.easeOut),
+              ),
+            )
+            .value;
 
         return Transform.translate(
           offset: Offset(slideValue.dx * 30, 0),
-          child: Opacity(
-            opacity: fadeValue,
-            child: child,
-          ),
+          child: Opacity(opacity: fadeValue, child: child),
         );
       },
       child: Row(
         children: [
           // Avatar with level badge
           _ProfileAvatar(
-            initials: _userData.avatarInitials,
-            level: _userData.level,
-            tier: _userData.subscriptionTier,
+            initials: userData.avatarInitials,
+            level: userData.level,
+            tier: userData.subscriptionTier,
           ),
 
           const SizedBox(width: 14),
@@ -211,7 +214,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                   children: [
                     Flexible(
                       child: Text(
-                        _userData.name,
+                        userData.name,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -223,12 +226,12 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                       ),
                     ),
                     const SizedBox(width: 8),
-                    _SubscriptionBadge(tier: _userData.subscriptionTier),
+                    _SubscriptionBadge(tier: userData.subscriptionTier),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _userData.email,
+                  userData.email,
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.white.withOpacity(0.6),
@@ -242,14 +245,14 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                   children: [
                     _QuickStatChip(
                       icon: Icons.local_fire_department_rounded,
-                      value: '${_userData.streakDays}',
+                      value: '${userData.streakDays}',
                       label: 'day streak',
                       color: AppColors.sunsetOrange,
                     ),
                     const SizedBox(width: 12),
                     _QuickStatChip(
                       icon: Icons.bolt_rounded,
-                      value: _formatXp(_userData.currentXp),
+                      value: _formatXp(userData.currentXp),
                       label: 'XP',
                       color: AppColors.goldenYellow,
                     ),
@@ -263,20 +266,21 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
     );
   }
 
-  Widget _buildXpProgress() {
-    final progress = _userData.currentXp / _userData.xpToNextLevel;
-    final xpRemaining = _userData.xpToNextLevel - _userData.currentXp;
+  Widget _buildXpProgress(_UserData userData) {
+    final progress = userData.currentXp / userData.xpToNextLevel;
+    final xpRemaining = userData.xpToNextLevel - userData.currentXp;
 
     return AnimatedBuilder(
       animation: _entranceController,
       builder: (context, child) {
-        final animatedProgress = Tween<double>(
-          begin: 0,
-          end: progress,
-        ).animate(CurvedAnimation(
-          parent: _entranceController,
-          curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
-        )).value;
+        final animatedProgress = Tween<double>(begin: 0, end: progress)
+            .animate(
+              CurvedAnimation(
+                parent: _entranceController,
+                curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
+              ),
+            )
+            .value;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,10 +300,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                 ),
                 Text(
                   '${_formatXp(xpRemaining.toInt())} XP left',
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: Colors.white54,
-                  ),
+                  style: const TextStyle(fontSize: 10, color: Colors.white54),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -366,8 +367,8 @@ class _ProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = tier == SubscriptionTier.pro 
-        ? AppColors.goldenYellow 
+    final borderColor = tier == SubscriptionTier.pro
+        ? AppColors.goldenYellow
         : AppColors.primaryPurple;
 
     return Stack(
@@ -382,15 +383,9 @@ class _ProfileAvatar extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.primaryPurple,
-                AppColors.primaryPurpleDark,
-              ],
+              colors: [AppColors.primaryPurple, AppColors.primaryPurpleDark],
             ),
-            border: Border.all(
-              color: borderColor.withOpacity(0.6),
-              width: 2,
-            ),
+            border: Border.all(color: borderColor.withOpacity(0.6), width: 2),
             boxShadow: [
               BoxShadow(
                 color: borderColor.withOpacity(0.3),
@@ -492,7 +487,7 @@ class _CloseButtonState extends State<_CloseButton> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: _isPressed 
+          color: _isPressed
               ? Colors.white.withOpacity(0.15)
               : Colors.white.withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
@@ -533,9 +528,11 @@ class _SubscriptionBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
         boxShadow: [
           BoxShadow(
-            color: (tier == SubscriptionTier.pro 
-                ? AppColors.goldenYellow 
-                : AppColors.primaryPurple).withOpacity(0.4),
+            color:
+                (tier == SubscriptionTier.pro
+                        ? AppColors.goldenYellow
+                        : AppColors.primaryPurple)
+                    .withOpacity(0.4),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -574,11 +571,7 @@ class _QuickStatChip extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: 14,
-          color: color,
-        ),
+        Icon(icon, size: 14, color: color),
         const SizedBox(width: 4),
         Text(
           value,
@@ -593,10 +586,7 @@ class _QuickStatChip extends StatelessWidget {
         const SizedBox(width: 3),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 11,
-            color: Colors.white54,
-          ),
+          style: const TextStyle(fontSize: 11, color: Colors.white54),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -629,8 +619,4 @@ class _UserData {
   });
 }
 
-enum SubscriptionTier {
-  free,
-  premium,
-  pro,
-}
+enum SubscriptionTier { free, premium, pro }

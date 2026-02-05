@@ -8,6 +8,7 @@ import '../../../../shared/widgets/aurora_background.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/glass_container.dart';
+import '../../data/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({
@@ -26,7 +27,6 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen>
     with TickerProviderStateMixin {
-
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -98,10 +98,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
 
     _shakeAnimation = Tween<double>(begin: 0.0, end: 24.0).animate(
-      CurvedAnimation(
-        parent: _shakeController,
-        curve: Curves.elasticIn,
-      ),
+      CurvedAnimation(parent: _shakeController, curve: Curves.elasticIn),
     );
   }
 
@@ -171,18 +168,39 @@ class _SignUpScreenState extends State<SignUpScreen>
     // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 1500));
 
-    // For now, always succeed (until DB integration)
-    HapticFeedback.mediumImpact();
-    setState(() {
-      _isLoading = false;
-      _showSuccess = true;
-    });
+    // Firebase Sign Up
+    try {
+      await AuthService().signUpWithEmailAndPassword(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
 
-    _successController.forward();
+      // Success
+      if (mounted) {
+        HapticFeedback.mediumImpact();
+        setState(() {
+          _isLoading = false;
+          _showSuccess = true;
+        });
 
-    // Navigate after success animation
-    await Future.delayed(const Duration(milliseconds: 800));
-    widget.onSignUpSuccess();
+        _successController.forward();
+
+        // Navigate after success animation
+        await Future.delayed(const Duration(milliseconds: 800));
+        widget.onSignUpSuccess();
+      }
+    } catch (e) {
+      // Failure
+      if (mounted) {
+        HapticFeedback.heavyImpact();
+        _triggerShake();
+        setState(() {
+          _isLoading = false;
+          _errorMessage = e.toString();
+        });
+      }
+    }
   }
 
   @override
@@ -192,10 +210,7 @@ class _SignUpScreenState extends State<SignUpScreen>
       body: Stack(
         children: [
           // Background
-          const AuroraBackground(
-            intensity: 0.2,
-            enableAnimation: true,
-          ),
+          const AuroraBackground(intensity: 0.2, enableAnimation: true),
 
           // Main Content
           SafeArea(
@@ -205,16 +220,14 @@ class _SignUpScreenState extends State<SignUpScreen>
                 _shakeController,
               ]),
               builder: (context, child) {
-                final shakeOffset = _shakeAnimation.value *
+                final shakeOffset =
+                    _shakeAnimation.value *
                     ((_shakeController.value * 4).floor().isEven ? 1 : -1) *
                     (1 - _shakeController.value);
 
                 return Transform.translate(
                   offset: Offset(shakeOffset, _formSlide.value),
-                  child: Opacity(
-                    opacity: _formOpacity.value,
-                    child: child,
-                  ),
+                  child: Opacity(opacity: _formOpacity.value, child: child),
                 );
               },
               child: _buildContent(),
@@ -432,9 +445,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                 margin: EdgeInsets.only(right: index < 3 ? 4 : 0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(2),
-                  color: isActive
-                      ? strengthColor
-                      : AppColors.border,
+                  color: isActive ? strengthColor : AppColors.border,
                 ),
               ),
             );
@@ -498,11 +509,7 @@ class _SignUpScreenState extends State<SignUpScreen>
               ),
             ),
             child: _acceptTerms
-                ? const Icon(
-                    Icons.check,
-                    size: 14,
-                    color: Colors.white,
-                  )
+                ? const Icon(Icons.check, size: 14, color: Colors.white)
                 : null,
           ),
           AppSpacing.gapSM,
@@ -551,18 +558,12 @@ class _SignUpScreenState extends State<SignUpScreen>
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.error_outline_rounded,
-            color: AppColors.error,
-            size: 20,
-          ),
+          Icon(Icons.error_outline_rounded, color: AppColors.error, size: 20),
           AppSpacing.gapSM,
           Expanded(
             child: Text(
               _errorMessage!,
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.error,
-              ),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.error),
             ),
           ),
         ],
@@ -606,7 +607,9 @@ class _SignUpScreenState extends State<SignUpScreen>
       animation: _successController,
       builder: (context, child) {
         return Container(
-          color: Colors.white.withAlpha((_successController.value * 0.9 * 255).round()),
+          color: Colors.white.withAlpha(
+            (_successController.value * 0.9 * 255).round(),
+          ),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -621,7 +624,9 @@ class _SignUpScreenState extends State<SignUpScreen>
                       gradient: AppColors.successGradient,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.success.withAlpha((0.3 * 255).round()),
+                          color: AppColors.success.withAlpha(
+                            (0.3 * 255).round(),
+                          ),
                           blurRadius: 24,
                           spreadRadius: 0,
                         ),

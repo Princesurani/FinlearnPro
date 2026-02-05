@@ -8,6 +8,7 @@ import '../../features/learning/presentation/widgets/recommended_section.dart';
 import '../../features/market/presentation/widgets/market_indices_section.dart';
 import '../../features/market/presentation/widgets/blogs_section.dart';
 import '../../features/learning/presentation/pages/learning_screen.dart';
+import '../widgets/aurora_background.dart';
 
 class MainNavigationShell extends StatefulWidget {
   const MainNavigationShell({super.key});
@@ -153,29 +154,34 @@ class _HomeScreenWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(
-          20,
-          MediaQuery.of(context).padding.top + 20,
-          20,
-          100,
-        ),
-        child: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            HomeTopBar(),
-            SizedBox(height: 30),
-            ProgressTrackerSection(),
-            SizedBox(height: 30),
-            MarketIndicesSection(),
-            SizedBox(height: 30),
-            RecommendedSection(),
-            SizedBox(height: 30),
-            BlogsSection(),
-          ],
-        ),
+      backgroundColor: const Color(0xFFF8F9FE), // Keep fallback
+      body: Stack(
+        children: [
+          const Positioned.fill(child: AuroraBackground()),
+          SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(
+              20,
+              MediaQuery.of(context).padding.top + 20,
+              20,
+              100,
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                HomeTopBar(),
+                SizedBox(height: 30),
+                ProgressTrackerSection(),
+                SizedBox(height: 30),
+                MarketIndicesSection(),
+                SizedBox(height: 30),
+                RecommendedSection(),
+                SizedBox(height: 30),
+                BlogsSection(),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
