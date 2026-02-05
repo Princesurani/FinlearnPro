@@ -6,7 +6,7 @@ import '../../features/auth/presentation/widgets/home_top_bar.dart';
 import '../../features/gamification/presentation/widgets/progress_tracker_section.dart';
 import '../../features/learning/presentation/widgets/recommended_section.dart';
 import '../../features/market/presentation/widgets/market_indices_section.dart';
-import '../../features/social/presentation/widgets/community_insights_section.dart';
+import '../../features/market/presentation/widgets/blogs_section.dart';
 import '../../features/learning/presentation/pages/learning_screen.dart';
 
 class MainNavigationShell extends StatefulWidget {
@@ -173,7 +173,7 @@ class _HomeScreenWrapper extends StatelessWidget {
             SizedBox(height: 30),
             RecommendedSection(),
             SizedBox(height: 30),
-            CommunityInsightsSection(),
+            BlogsSection(),
           ],
         ),
       ),
