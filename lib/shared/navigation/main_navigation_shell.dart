@@ -7,6 +7,7 @@ import '../../features/gamification/presentation/widgets/progress_tracker_sectio
 import '../../features/learning/presentation/widgets/recommended_section.dart';
 import '../../features/market/presentation/widgets/market_indices_section.dart';
 import '../../features/market/presentation/widgets/blogs_section.dart';
+import '../../features/market/presentation/pages/market_screen.dart';
 import '../../features/learning/presentation/pages/learning_screen.dart';
 import '../widgets/aurora_background.dart';
 
@@ -69,7 +70,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
     _pageController.animateToPage(
       index,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 280),
       curve: Curves.easeOutCubic,
     );
   }
@@ -100,10 +101,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
             PageView(
               controller: _pageController,
               onPageChanged: _onPageChanged,
-              physics: const BouncingScrollPhysics(),
+              physics: const ClampingScrollPhysics(),
               children: const [
                 _HomeScreenWrapper(),
-                _MarketsScreenWrapper(),
+                RepaintBoundary(child: MarketScreen()),
                 LearningScreen(),
               ],
             ),
@@ -121,18 +122,15 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   Widget _buildGlassNavBar() {
     return Padding(
-      // Professional apps often have the navbar sitting closer to the bottom edge
-      // but with enough clearance for the pill shape.
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: CurvedNavigationBar(
         key: _navBarKey,
         index: _currentIndex,
-        height: 60, // Standard height for better touch targets
+        height: 60,
         items: _screens.map((screen) {
           final isSelected = _screens.indexOf(screen) == _currentIndex;
           return Icon(
             isSelected ? screen.activeIcon : screen.icon,
-            // Adjust icon size: moderate size for active to show padding, standard for inactive
             size: isSelected ? 28 : 24,
             color: isSelected ? Colors.white : Colors.white.withOpacity(0.6),
           );
@@ -141,7 +139,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         buttonBackgroundColor: AppColors.primaryPurple,
         backgroundColor: Colors.transparent,
         animationCurve: Curves.easeOutCubic,
-        animationDuration: const Duration(milliseconds: 400),
+        animationDuration: const Duration(milliseconds: 280),
         onTap: _onNavTap,
       ),
     );
@@ -154,7 +152,7 @@ class _HomeScreenWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE), // Keep fallback
+      backgroundColor: const Color(0xFFF8F9FE),
       body: Stack(
         children: [
           const Positioned.fill(child: AuroraBackground()),

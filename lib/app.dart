@@ -21,7 +21,6 @@ class _FinLearnAppState extends State<FinLearnApp> {
     super.initState();
     _configureSystemUI();
 
-    // Listen to auth state changes
     AuthService().authStateChanges.listen((user) {
       if (mounted) {
         setState(() {
@@ -48,13 +47,11 @@ class _FinLearnAppState extends State<FinLearnApp> {
   }
 
   void _handleSplashComplete() {
-    // Current user check is enough, but stream listener will handle subsequent updates
     final user = AuthService().currentUser;
     setState(() => _appState = user != null ? AppState.main : AppState.auth);
   }
 
   void _handleAuthComplete() {
-    // Handled by stream listener, but keeping this for explicit callbacks if needed
     setState(() => _appState = AppState.main);
   }
 
@@ -82,7 +79,7 @@ class _FinLearnAppState extends State<FinLearnApp> {
         return AuthFlowCoordinator(
           key: const ValueKey('auth'),
           onAuthComplete: _handleAuthComplete,
-          showWelcome: false, // Don't show welcome screen again
+          showWelcome: true,
         );
       case AppState.main:
         return const MainNavigationShell(key: ValueKey('main'));
