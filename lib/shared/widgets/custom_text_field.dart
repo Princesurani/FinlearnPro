@@ -255,7 +255,8 @@ class _AppTextFieldState extends State<AppTextField>
           duration: AppAnimations.fastDuration,
           curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
-            color: widget.fillColor ??
+            color:
+                widget.fillColor ??
                 (_isFocused
                     ? AppColors.primaryPurple.withAlpha((0.03 * 255).round())
                     : AppColors.surfaceVariant),
@@ -267,7 +268,9 @@ class _AppTextFieldState extends State<AppTextField>
             boxShadow: _isFocused
                 ? [
                     BoxShadow(
-                      color: AppColors.primaryPurple.withAlpha((0.1 * 255).round()),
+                      color: AppColors.primaryPurple.withAlpha(
+                        (0.1 * 255).round(),
+                      ),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -284,13 +287,15 @@ class _AppTextFieldState extends State<AppTextField>
                     final isFloating = _isFocused || _hasText;
                     return Positioned(
                       left: widget.prefixIcon != null ? 52 : 16,
-                      top: isFloating ? 8 : 18,
+                      top: isFloating ? 6 : 22,
                       child: AnimatedDefaultTextStyle(
                         duration: AppAnimations.fastDuration,
                         style: TextStyle(
                           color: _labelColor,
                           fontSize: isFloating ? 12 : 16,
-                          fontWeight: isFloating ? FontWeight.w500 : FontWeight.w400,
+                          fontWeight: isFloating
+                              ? FontWeight.w500
+                              : FontWeight.w400,
                         ),
                         child: Text(widget.label!),
                       ),
@@ -321,13 +326,13 @@ class _AppTextFieldState extends State<AppTextField>
                 textCapitalization: widget.textCapitalization,
                 autofillHints: widget.autofillHints,
                 cursorColor: widget.cursorColor ?? AppColors.primaryPurple,
-                style: widget.style ??
-                    AppTypography.body.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
+                style:
+                    widget.style ??
+                    AppTypography.body.copyWith(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   hintText: _isFocused || _hasText ? widget.hint : null,
-                  hintStyle: widget.hintStyle ??
+                  hintStyle:
+                      widget.hintStyle ??
                       AppTypography.body.copyWith(
                         color: AppColors.textTertiary,
                       ),
@@ -336,15 +341,15 @@ class _AppTextFieldState extends State<AppTextField>
                   focusedBorder: InputBorder.none,
                   errorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
-                  contentPadding: widget.contentPadding ??
+                  contentPadding:
+                      widget.contentPadding ??
                       EdgeInsets.fromLTRB(
                         widget.prefixIcon != null ? 52 : 16,
-                        widget.label != null ? 26 : 16,
-                        widget.suffixIcon != null ||
-                                widget.enableObscureToggle
+                        widget.label != null ? 24 : 16,
+                        widget.suffixIcon != null || widget.enableObscureToggle
                             ? 52
                             : 16,
-                        12,
+                        widget.label != null ? 20 : 16,
                       ),
                   counterText: '',
                   isDense: true,
@@ -374,9 +379,7 @@ class _AppTextFieldState extends State<AppTextField>
                 right: 8,
                 top: 0,
                 bottom: 0,
-                child: Center(
-                  child: _buildSuffixWidget(),
-                ),
+                child: Center(child: _buildSuffixWidget()),
               ),
             ],
           ),
