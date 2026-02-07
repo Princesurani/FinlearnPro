@@ -11,6 +11,7 @@ import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/glass_container.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../data/auth_service.dart';
+
 class SignInScreen extends StatefulWidget {
   const SignInScreen({
     super.key,
@@ -29,7 +30,6 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen>
     with TickerProviderStateMixin {
-
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
@@ -66,25 +66,25 @@ class _SignInScreenState extends State<SignInScreen>
       parent: _entranceCtrl,
       curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
     );
-    _headerSlide = Tween<Offset>(
-      begin: const Offset(0, -0.12),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _entranceCtrl,
-      curve: const Interval(0.0, 0.4, curve: Curves.easeOutCubic),
-    ));
+    _headerSlide =
+        Tween<Offset>(begin: const Offset(0, -0.12), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _entranceCtrl,
+            curve: const Interval(0.0, 0.4, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _formFade = CurvedAnimation(
       parent: _entranceCtrl,
       curve: const Interval(0.2, 0.65, curve: Curves.easeOut),
     );
-    _formSlide = Tween<Offset>(
-      begin: const Offset(0, 0.08),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _entranceCtrl,
-      curve: const Interval(0.2, 0.65, curve: Curves.easeOutCubic),
-    ));
+    _formSlide = Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceCtrl,
+            curve: const Interval(0.2, 0.65, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _footerFade = CurvedAnimation(
       parent: _entranceCtrl,
@@ -183,10 +183,7 @@ class _SignInScreenState extends State<SignInScreen>
                   ),
 
                   const SizedBox(height: AppSpacing.xl),
-                  FadeTransition(
-                    opacity: _footerFade,
-                    child: _buildFooter(),
-                  ),
+                  FadeTransition(opacity: _footerFade, child: _buildFooter()),
                 ],
               ),
             ),
@@ -207,8 +204,11 @@ class _SignInScreenState extends State<SignInScreen>
             borderRadius: BorderRadius.circular(14),
             gradient: AppColors.primaryGradient,
           ),
-          child: const Icon(Icons.candlestick_chart_rounded,
-              color: Colors.white, size: 24),
+          child: const Icon(
+            Icons.candlestick_chart_rounded,
+            color: Colors.white,
+            size: 24,
+          ),
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(
@@ -222,9 +222,7 @@ class _SignInScreenState extends State<SignInScreen>
         const SizedBox(height: AppSpacing.xs),
         Text(
           'Sign in to continue your learning journey',
-          style: AppTypography.bodyLarge.copyWith(
-            color: Colors.white38,
-          ),
+          style: AppTypography.bodyLarge.copyWith(color: Colors.white38),
         ),
       ],
     );
@@ -280,13 +278,112 @@ class _SignInScreenState extends State<SignInScreen>
 
             const SizedBox(height: AppSpacing.lg),
 
+            const SizedBox(height: AppSpacing.lg),
             PrimaryButton(
               text: 'Sign In',
               onPressed: _isLoading ? null : _handleSignIn,
               isLoading: _isLoading,
             ),
+            const SizedBox(height: AppSpacing.lg),
+            Row(
+              children: [
+                Expanded(
+                  child: Divider(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    thickness: 1,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                  ),
+                  child: Text(
+                    'Or continue with',
+                    style: AppTypography.labelSmall.copyWith(
+                      color: Colors.white38,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Divider(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    thickness: 1,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Row(
+              children: [
+                Expanded(
+                  child: _SocialSignInButton(
+                    onPressed: _isLoading ? null : _handleGoogleSignIn,
+                    icon: Image.network(
+                      'https://developers.google.com/identity/images/g-logo.png',
+                      height: 24,
+                      width: 24,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.g_mobiledata,
+                        color: Colors.black,
+                        size: 28,
+                      ),
+                    ),
+                    label: 'Google',
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: _SocialSignInButton(
+                    onPressed: _isLoading ? null : _handleAppleSignIn,
+                    icon: const Icon(
+                      Icons.apple,
+                      size: 28,
+                      color: Colors.black,
+                    ),
+                    label: 'Apple',
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _errorMessage = null);
+    setState(() => _isLoading = true);
+    HapticFeedback.lightImpact();
+
+    try {
+      await _authService.signInWithGoogle();
+      if (!mounted) return;
+      HapticFeedback.mediumImpact();
+      widget.onSignInSuccess();
+    } catch (e) {
+      if (!mounted) return;
+      // If the user cancelled, we might not want to show an error or shake
+      if (e.toString().contains('canceled')) {
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.toString();
+      });
+      _triggerShake();
+    }
+  }
+
+  Future<void> _handleAppleSignIn() async {
+    HapticFeedback.lightImpact();
+    // Placeholder for Apple Sign In
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Apple Sign In coming soon'),
+        backgroundColor: AppColors.primaryPurple,
       ),
     );
   }
@@ -381,8 +478,11 @@ class _ErrorBanner extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.error_outline_rounded,
-                        color: AppColors.error, size: 18),
+                    Icon(
+                      Icons.error_outline_rounded,
+                      color: AppColors.error,
+                      size: 18,
+                    ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
@@ -434,6 +534,51 @@ class _AnimatedBuilder extends StatelessWidget {
     return ListenableBuilder(
       listenable: animation,
       builder: (ctx, child) => builder(ctx, child),
+    );
+  }
+}
+
+class _SocialSignInButton extends StatelessWidget {
+  const _SocialSignInButton({
+    required this.onPressed,
+    required this.icon,
+    required this.label,
+  });
+
+  final VoidCallback? onPressed;
+  final Widget icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              icon,
+              const SizedBox(width: AppSpacing.sm),
+              Text(
+                label,
+                style: AppTypography.button.copyWith(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

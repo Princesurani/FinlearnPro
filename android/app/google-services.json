@@ -12,7 +12,20 @@
           "package_name": "com.example.finnn"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "196337848877-t98v1ego2s4stdhro5050dd4occu8cb9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.finnn",
+            "certificate_hash": "27148e4006abaf3a7e5eccf364a53f45b67b9828"
+          }
+        },
+        {
+          "client_id": "196337848877-cvtiddbrfo8j6c0795d318n4feisrip9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCS7yKm6fUlY_jkkOmJudHdTtP_FbqsegU"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "196337848877-cvtiddbrfo8j6c0795d318n4feisrip9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "196337848877-727osj1orju0h0nj5hq0s0488afp096r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.finnn"
+              }
+            }
+          ]
         }
       }
     }
