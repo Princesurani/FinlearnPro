@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/theme/app_animations.dart';
-import 'welcome_screen.dart';
 import 'sign_in_screen.dart';
 import 'sign_up_screen.dart';
-
+import 'welcome_screen.dart';
 class AuthFlowCoordinator extends StatefulWidget {
   const AuthFlowCoordinator({
     super.key,
@@ -12,7 +12,6 @@ class AuthFlowCoordinator extends StatefulWidget {
   });
 
   final VoidCallback onAuthComplete;
-
   final bool showWelcome;
 
   @override
@@ -20,176 +19,98 @@ class AuthFlowCoordinator extends StatefulWidget {
 }
 
 class _AuthFlowCoordinatorState extends State<AuthFlowCoordinator> {
-  late AuthFlowPage _currentPage;
+  late _AuthPage _currentPage;
 
   @override
   void initState() {
     super.initState();
-    _currentPage = widget.showWelcome
-        ? AuthFlowPage.welcome
-        : AuthFlowPage.signIn;
+    _currentPage =
+        widget.showWelcome ? _AuthPage.welcome : _AuthPage.signIn;
   }
 
-  @override
-  void didUpdateWidget(AuthFlowCoordinator oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.showWelcome != oldWidget.showWelcome) {
-      setState(() {
-        _currentPage = widget.showWelcome
-            ? AuthFlowPage.welcome
-            : AuthFlowPage.signIn;
-      });
-    }
-  }
-
-  void _navigateTo(AuthFlowPage page) {
+  void _navigateTo(_AuthPage page) {
     setState(() => _currentPage = page);
   }
 
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      pages: [
-        // Welcome/Onboarding Page
-        if (_currentPage.index >= AuthFlowPage.welcome.index)
-          _FadeTransitionPage(
-            key: const ValueKey('welcome'),
-            child: WelcomeScreen(
-              onComplete: () => _navigateTo(AuthFlowPage.signIn),
-            ),
-          ),
-
-        // Sign In Page
-        if (_currentPage.index >= AuthFlowPage.signIn.index)
-          _SlideTransitionPage(
-            key: const ValueKey('signIn'),
-            child: SignInScreen(
-              onSignInSuccess: widget.onAuthComplete,
-              onNavigateToSignUp: () => _navigateTo(AuthFlowPage.signUp),
-              onForgotPassword: () {
-                // TODO: Navigate to forgot password
-              },
-            ),
-          ),
-
-        // Sign Up Page
-        if (_currentPage == AuthFlowPage.signUp)
-          _SlideTransitionPage(
-            key: const ValueKey('signUp'),
-            child: SignUpScreen(
-              onSignUpSuccess: widget.onAuthComplete,
-              onNavigateToSignIn: () => _navigateTo(AuthFlowPage.signIn),
-            ),
-          ),
-      ],
-      onDidRemovePage: (page) {
-        if (page.key == const ValueKey('signUp')) {
-          _navigateTo(AuthFlowPage.signIn);
-        } else if (page.key == const ValueKey('signIn')) {
-          _navigateTo(AuthFlowPage.welcome);
+      pages: _buildPages(),
+      onDidRemovePage: (_) {
+        if (_currentPage == _AuthPage.signUp) {
+          setState(() => _currentPage = _AuthPage.signIn);
+        } else if (_currentPage == _AuthPage.signIn && widget.showWelcome) {
+          setState(() => _currentPage = _AuthPage.welcome);
         }
       },
     );
   }
-}
 
-enum AuthFlowPage { welcome, signIn, signUp }
-
-class _FadeTransitionPage<T> extends Page<T> {
-  const _FadeTransitionPage({required this.child, super.key});
-
-  final Widget child;
-
-  @override
-  Route<T> createRoute(BuildContext context) {
-    return PageRouteBuilder<T>(
-      settings: this,
-      pageBuilder: (context, animation, secondaryAnimation) => child,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(opacity: animation, child: child);
-      },
-      transitionDuration: AppAnimations.mediumDuration,
-    );
+  List<Page<dynamic>> _buildPages() {
+    return [
+      if (widget.showWelcome)
+        _FadeSlideTransitionPage(
+          key: const ValueKey('welcome'),
+          child: WelcomeScreen(
+            onComplete: () => _navigateTo(_AuthPage.signIn),
+            showSkipButton: true,
+          ),
+        ),
+      if (_currentPage == _AuthPage.signIn ||
+          _currentPage == _AuthPage.signUp)
+        _FadeSlideTransitionPage(
+          key: const ValueKey('signIn'),
+          child: SignInScreen(
+            onSignInSuccess: widget.onAuthComplete,
+            onNavigateToSignUp: () => _navigateTo(_AuthPage.signUp),
+            onForgotPassword: () {
+            },
+          ),
+        ),
+      if (_currentPage == _AuthPage.signUp)
+        _FadeSlideTransitionPage(
+          key: const ValueKey('signUp'),
+          child: SignUpScreen(
+            onSignUpSuccess: widget.onAuthComplete,
+            onNavigateToSignIn: () => _navigateTo(_AuthPage.signIn),
+          ),
+        ),
+    ];
   }
 }
+enum _AuthPage { welcome, signIn, signUp }
 
-class _SlideTransitionPage<T> extends Page<T> {
-  const _SlideTransitionPage({required this.child, super.key});
+class _FadeSlideTransitionPage extends Page<void> {
+  const _FadeSlideTransitionPage({
+    required super.key,
+    required this.child,
+  });
 
   final Widget child;
 
   @override
-  Route<T> createRoute(BuildContext context) {
-    return PageRouteBuilder<T>(
+  Route<void> createRoute(BuildContext context) {
+    return PageRouteBuilder<void>(
       settings: this,
-      pageBuilder: (context, animation, secondaryAnimation) => child,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final slideAnimation =
-            Tween<Offset>(
-              begin: const Offset(1.0, 0.0),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-            );
-
-        final fadeAnimation = CurvedAnimation(
-          parent: animation,
-          curve: const Interval(0.0, 0.5),
-        );
-
-        return SlideTransition(
-          position: slideAnimation,
-          child: FadeTransition(opacity: fadeAnimation, child: child),
-        );
-      },
       transitionDuration: AppAnimations.pageTransitionDuration,
+      reverseTransitionDuration: AppAnimations.pageTransitionDuration,
+      pageBuilder: (_, animation, secondaryAnimation) => child,
+      transitionsBuilder: (_, animation, secondaryAnimation, child) {
+        final fadeTween = Tween<double>(begin: 0.0, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeOut));
+        final slideTween = Tween<Offset>(
+          begin: const Offset(0.0, 0.04),
+          end: Offset.zero,
+        ).chain(CurveTween(curve: AppAnimations.entranceCurve));
+
+        return FadeTransition(
+          opacity: animation.drive(fadeTween),
+          child: SlideTransition(
+            position: animation.drive(slideTween),
+            child: child,
+          ),
+        );
+      },
     );
-  }
-}
-
-class AuthState extends ChangeNotifier {
-  bool _isAuthenticated = false;
-  String? _userId;
-  String? _userName;
-  String? _userEmail;
-
-  bool get isAuthenticated => _isAuthenticated;
-  String? get userId => _userId;
-  String? get userName => _userName;
-  String? get userEmail => _userEmail;
-
-  Future<bool> signIn(String email, String password) async {
-    // Temporary auth - admin/admin
-    if (email == 'admin' && password == 'admin') {
-      _isAuthenticated = true;
-      _userId = 'admin_001';
-      _userName = 'Admin User';
-      _userEmail = 'admin@finlearnpro.com';
-      notifyListeners();
-      return true;
-    }
-    return false;
-  }
-
-  Future<bool> signUp({
-    required String name,
-    required String email,
-    required String password,
-  }) async {
-    // For now, always succeed
-    _isAuthenticated = true;
-    _userId = 'user_${DateTime.now().millisecondsSinceEpoch}';
-    _userName = name;
-    _userEmail = email;
-    notifyListeners();
-    return true;
-  }
-
-  Future<void> signOut() async {
-    _isAuthenticated = false;
-    _userId = null;
-    _userName = null;
-    _userEmail = null;
-    notifyListeners();
   }
 }

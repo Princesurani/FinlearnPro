@@ -1,15 +1,16 @@
-import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../../../../core/theme/app_animations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../shared/widgets/aurora_background.dart';
-import '../../../../shared/widgets/gradient_button.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/glass_container.dart';
+import '../../../../shared/widgets/gradient_button.dart';
 import '../../data/auth_service.dart';
-
 class SignInScreen extends StatefulWidget {
   const SignInScreen({
     super.key,
@@ -19,9 +20,7 @@ class SignInScreen extends StatefulWidget {
   });
 
   final VoidCallback onSignInSuccess;
-
   final VoidCallback onNavigateToSignUp;
-
   final VoidCallback? onForgotPassword;
 
   @override
@@ -30,229 +29,169 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen>
     with TickerProviderStateMixin {
-  late TextEditingController _emailController;
-  late TextEditingController _passwordController;
-  late AnimationController _formAnimationController;
-  late AnimationController _shakeController;
-  late AnimationController _successController;
 
   final _formKey = GlobalKey<FormState>();
-  final _emailFocusNode = FocusNode();
-  final _passwordFocusNode = FocusNode();
+  final _emailCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+  final _authService = AuthService();
+
+  late final AnimationController _entranceCtrl;
+  late final AnimationController _shakeCtrl;
+
+  late final Animation<double> _headerFade;
+  late final Animation<Offset> _headerSlide;
+  late final Animation<double> _formFade;
+  late final Animation<Offset> _formSlide;
+  late final Animation<double> _footerFade;
 
   bool _isLoading = false;
-  bool _rememberMe = false;
   String? _errorMessage;
-  bool _showSuccess = false;
-
-  late Animation<double> _formSlide;
-  late Animation<double> _formOpacity;
-  late Animation<double> _shakeAnimation;
 
   @override
   void initState() {
     super.initState();
-    _initControllers();
-    _initAnimations();
-    _startEntryAnimation();
-  }
 
-  void _initControllers() {
-    _emailController = TextEditingController();
-    _passwordController = TextEditingController();
-
-    _formAnimationController = AnimationController(
+    _entranceCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: AppAnimations.longDuration,
     );
 
-    _shakeController = AnimationController(
+    _shakeCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: AppAnimations.fastDuration,
+    );
+    _headerFade = CurvedAnimation(
+      parent: _entranceCtrl,
+      curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
+    );
+    _headerSlide = Tween<Offset>(
+      begin: const Offset(0, -0.12),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _entranceCtrl,
+      curve: const Interval(0.0, 0.4, curve: Curves.easeOutCubic),
+    ));
+
+    _formFade = CurvedAnimation(
+      parent: _entranceCtrl,
+      curve: const Interval(0.2, 0.65, curve: Curves.easeOut),
+    );
+    _formSlide = Tween<Offset>(
+      begin: const Offset(0, 0.08),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _entranceCtrl,
+      curve: const Interval(0.2, 0.65, curve: Curves.easeOutCubic),
+    ));
+
+    _footerFade = CurvedAnimation(
+      parent: _entranceCtrl,
+      curve: const Interval(0.5, 1.0, curve: Curves.easeOut),
     );
 
-    _successController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-  }
-
-  void _initAnimations() {
-    _formSlide = Tween<double>(begin: 50.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _formAnimationController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    _formOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _formAnimationController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-      ),
-    );
-
-    _shakeAnimation = Tween<double>(begin: 0.0, end: 24.0).animate(
-      CurvedAnimation(parent: _shakeController, curve: Curves.elasticIn),
-    );
-  }
-
-  void _startEntryAnimation() {
-    _formAnimationController.forward();
-  }
-
-  void _triggerShake() {
-    _shakeController.forward(from: 0).then((_) {
-      _shakeController.reverse();
-    });
+    _entranceCtrl.forward();
   }
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _formAnimationController.dispose();
-    _shakeController.dispose();
-    _successController.dispose();
-    _emailFocusNode.dispose();
-    _passwordFocusNode.dispose();
+    _entranceCtrl.dispose();
+    _shakeCtrl.dispose();
+    _emailCtrl.dispose();
+    _passwordCtrl.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
     super.dispose();
   }
 
   Future<void> _handleSignIn() async {
-    // Clear previous error
     setState(() => _errorMessage = null);
 
-    // Validate form
-    if (!_formKey.currentState!.validate()) {
-      HapticFeedback.heavyImpact();
+    if (!(_formKey.currentState?.validate() ?? false)) {
       _triggerShake();
       return;
     }
 
-    // Start loading
     setState(() => _isLoading = true);
     HapticFeedback.lightImpact();
 
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 1200));
-
-    // Firebase Authentication
     try {
-      await AuthService().signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
+      await _authService.signInWithEmailAndPassword(
+        email: _emailCtrl.text.trim(),
+        password: _passwordCtrl.text,
       );
-
-      // Success
-      if (mounted) {
-        HapticFeedback.mediumImpact();
-        setState(() {
-          _isLoading = false;
-          _showSuccess = true;
-        });
-
-        _successController.forward();
-
-        // Navigate after success animation
-        await Future.delayed(const Duration(milliseconds: 800));
-        widget.onSignInSuccess();
-      }
+      if (!mounted) return;
+      HapticFeedback.mediumImpact();
+      widget.onSignInSuccess();
     } catch (e) {
-      // Failure
-      if (mounted) {
-        HapticFeedback.heavyImpact();
-        _triggerShake();
-        setState(() {
-          _isLoading = false;
-          _errorMessage = e.toString();
-        });
-      }
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.toString();
+      });
+      _triggerShake();
     }
+  }
+
+  void _triggerShake() {
+    HapticFeedback.heavyImpact();
+    _shakeCtrl.forward(from: 0);
   }
 
   @override
   Widget build(BuildContext context) {
+    final safePad = MediaQuery.of(context).padding;
+
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: const Color(0xFF0A0A1A),
       body: Stack(
         children: [
-          // Background
-          const AuroraBackground(intensity: 0.2, enableAnimation: true),
+          const Positioned.fill(child: _GridBackground()),
+          SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              safePad.top + AppSpacing.xxl,
+              AppSpacing.lg,
+              safePad.bottom + AppSpacing.xl,
+            ),
+            physics: const BouncingScrollPhysics(),
+            child: _AnimatedBuilder(
+              animation: _entranceCtrl,
+              builder: (context, _) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FadeTransition(
+                    opacity: _headerFade,
+                    child: SlideTransition(
+                      position: _headerSlide,
+                      child: _buildHeader(),
+                    ),
+                  ),
 
-          // Main Content
-          SafeArea(
-            child: AnimatedBuilder(
-              animation: Listenable.merge([
-                _formAnimationController,
-                _shakeController,
-              ]),
-              builder: (context, child) {
-                final shakeOffset =
-                    _shakeAnimation.value *
-                    ((_shakeController.value * 4).floor().isEven ? 1 : -1) *
-                    (1 - _shakeController.value);
+                  const SizedBox(height: AppSpacing.xxl),
+                  _ErrorBanner(message: _errorMessage),
+                  _ShakeWrapper(
+                    animation: _shakeCtrl,
+                    child: FadeTransition(
+                      opacity: _formFade,
+                      child: SlideTransition(
+                        position: _formSlide,
+                        child: _buildFormCard(),
+                      ),
+                    ),
+                  ),
 
-                return Transform.translate(
-                  offset: Offset(shakeOffset, _formSlide.value),
-                  child: Opacity(opacity: _formOpacity.value, child: child),
-                );
-              },
-              child: _buildContent(),
+                  const SizedBox(height: AppSpacing.xl),
+                  FadeTransition(
+                    opacity: _footerFade,
+                    child: _buildFooter(),
+                  ),
+                ],
+              ),
             ),
           ),
-
-          // Success Overlay
-          if (_showSuccess) _buildSuccessOverlay(),
         ],
-      ),
-    );
-  }
-
-  Widget _buildContent() {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppSpacing.gapXL,
-
-          // Back Button (if needed)
-          _buildBackButton(),
-
-          AppSpacing.gapXXL,
-
-          // Header
-          _buildHeader(),
-
-          AppSpacing.gapXXL,
-
-          // Sign In Form
-          _buildSignInForm(),
-
-          AppSpacing.gapXL,
-
-          // Social Sign-In Options
-          _buildSocialSignIn(),
-
-          AppSpacing.gapXXL,
-
-          // Sign Up Link
-          _buildSignUpLink(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBackButton() {
-    return IconButton(
-      onPressed: () => Navigator.of(context).pop(),
-      icon: const Icon(Icons.arrow_back_rounded),
-      style: IconButton.styleFrom(
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
-        padding: const EdgeInsets.all(AppSpacing.sm),
       ),
     );
   }
@@ -261,86 +200,90 @@ class _SignInScreenState extends State<SignInScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            gradient: AppColors.primaryGradient,
+          ),
+          child: const Icon(Icons.candlestick_chart_rounded,
+              color: Colors.white, size: 24),
+        ),
+        const SizedBox(height: AppSpacing.lg),
         Text(
-          'Welcome Back',
-          style: AppTypography.display3.copyWith(
-            color: AppColors.textPrimary,
+          'Welcome\nback',
+          style: AppTypography.display2.copyWith(
+            color: Colors.white,
             fontWeight: FontWeight.w700,
+            height: 1.15,
           ),
         ),
-        AppSpacing.gapSM,
+        const SizedBox(height: AppSpacing.xs),
         Text(
           'Sign in to continue your learning journey',
           style: AppTypography.bodyLarge.copyWith(
-            color: AppColors.textSecondary,
+            color: Colors.white38,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSignInForm() {
-    return Form(
-      key: _formKey,
-      child: GlassCard(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+  Widget _buildFormCard() {
+    return GlassContainer(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+      child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Email Field
-            AppTextField(
-              controller: _emailController,
-              focusNode: _emailFocusNode,
-              label: 'Username or Email',
-              hint: 'Enter your username',
-              prefixIcon: Icons.person_outline_rounded,
+            EmailTextField(
+              controller: _emailCtrl,
+              focusNode: _emailFocus,
               textInputAction: TextInputAction.next,
-              onSubmitted: (_) => _passwordFocusNode.requestFocus(),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your username';
-                }
-                return null;
-              },
+              onSubmitted: (_) => _passwordFocus.requestFocus(),
             ),
+            const SizedBox(height: AppSpacing.md),
 
-            AppSpacing.gapLG,
-
-            // Password Field
             PasswordTextField(
-              controller: _passwordController,
-              focusNode: _passwordFocusNode,
-              label: 'Password',
-              hint: 'Enter your password',
-              textInputAction: TextInputAction.done,
+              controller: _passwordCtrl,
+              focusNode: _passwordFocus,
+              textInputAction: TextInputAction.go,
               onSubmitted: (_) => _handleSignIn(),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter your password';
+                  return 'Password is required';
+                }
+                if (value.length < 6) {
+                  return 'Password must be at least 6 characters';
                 }
                 return null;
               },
             ),
-
-            AppSpacing.gapMD,
-
-            // Remember Me & Forgot Password Row
-            _buildOptionsRow(),
-
-            // Error Message
-            if (_errorMessage != null) ...[
-              AppSpacing.gapMD,
-              _buildErrorMessage(),
+            if (widget.onForgotPassword != null) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: widget.onForgotPassword,
+                  child: Text(
+                    'Forgot password?',
+                    style: AppTypography.labelSmall.copyWith(
+                      color: AppColors.cyan,
+                    ),
+                  ),
+                ),
+              ),
             ],
 
-            AppSpacing.gapLG,
+            const SizedBox(height: AppSpacing.lg),
 
-            // Sign In Button
             PrimaryButton(
-              onPressed: _handleSignIn,
               text: 'Sign In',
+              onPressed: _isLoading ? null : _handleSignIn,
               isLoading: _isLoading,
-              size: GradientButtonSize.large,
             ),
           ],
         ),
@@ -348,62 +291,20 @@ class _SignInScreenState extends State<SignInScreen>
     );
   }
 
-  Widget _buildOptionsRow() {
+  Widget _buildFooter() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Remember Me Checkbox
-        GestureDetector(
-          onTap: () {
-            HapticFeedback.selectionClick();
-            setState(() => _rememberMe = !_rememberMe);
-          },
-          child: Row(
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  color: _rememberMe
-                      ? AppColors.primaryPurple
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: _rememberMe
-                        ? AppColors.primaryPurple
-                        : AppColors.border,
-                    width: 2,
-                  ),
-                ),
-                child: _rememberMe
-                    ? const Icon(Icons.check, size: 14, color: Colors.white)
-                    : null,
-              ),
-              AppSpacing.gapSM,
-              Text(
-                'Remember me',
-                style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
+        Text(
+          "Don't have an account? ",
+          style: AppTypography.bodyMedium.copyWith(color: Colors.white38),
         ),
-
-        const Spacer(),
-
-        // Forgot Password
-        TextButton(
-          onPressed: widget.onForgotPassword,
-          style: TextButton.styleFrom(
-            padding: EdgeInsets.zero,
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
+        GestureDetector(
+          onTap: widget.onNavigateToSignUp,
           child: Text(
-            'Forgot Password?',
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.primaryPurple,
+            'Sign Up',
+            style: AppTypography.bodyMedium.copyWith(
+              color: AppColors.cyan,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -411,342 +312,128 @@ class _SignInScreenState extends State<SignInScreen>
       ],
     );
   }
+}
 
-  Widget _buildErrorMessage() {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.error.withAlpha((0.1 * 255).round()),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-        border: Border.all(
-          color: AppColors.error.withAlpha((0.3 * 255).round()),
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.error_outline_rounded, color: AppColors.error, size: 20),
-          AppSpacing.gapSM,
-          Expanded(
-            child: Text(
-              _errorMessage!,
-              style: AppTypography.bodySmall.copyWith(color: AppColors.error),
-            ),
-          ),
-        ],
-      ),
+class _GridBackground extends StatelessWidget {
+  const _GridBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      child: CustomPaint(painter: _GridPainter(), size: Size.infinite),
     );
   }
+}
 
-  Widget _buildSocialSignIn() {
-    return Column(
-      children: [
-        // Divider with "OR"
-        Row(
-          children: [
-            const Expanded(child: Divider(color: AppColors.border)),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: Text(
-                'OR',
-                style: AppTypography.label.copyWith(
-                  color: AppColors.textTertiary,
-                ),
-              ),
-            ),
-            const Expanded(child: Divider(color: AppColors.border)),
-          ],
-        ),
+class _GridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.025)
+      ..strokeWidth = 0.5;
 
-        AppSpacing.gapLG,
-
-        // Social Buttons
-        Row(
-          children: [
-            Expanded(
-              child: _SocialButton(
-                icon: _GoogleIcon(),
-                label: 'Google',
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  // TODO: Implement Google Sign-In
-                },
-              ),
-            ),
-            AppSpacing.gapMD,
-            Expanded(
-              child: _SocialButton(
-                icon: const Icon(Icons.apple, size: 24),
-                label: 'Apple',
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  // TODO: Implement Apple Sign-In
-                },
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
+    const spacing = 32.0;
+    for (var x = 0.0; x < size.width; x += spacing) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (var y = 0.0; y < size.height; y += spacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+    final dotPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.05)
+      ..style = PaintingStyle.fill;
+    for (var x = 0.0; x < size.width; x += spacing) {
+      for (var y = 0.0; y < size.height; y += spacing) {
+        canvas.drawCircle(Offset(x, y), 1.0, dotPaint);
+      }
+    }
   }
 
-  Widget _buildSignUpLink() {
-    return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Don't have an account? ",
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
-            ),
-          ),
-          TextButton(
-            onPressed: widget.onNavigateToSignUp,
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(
-              'Sign Up',
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.primaryPurple,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
 
-  Widget _buildSuccessOverlay() {
-    return AnimatedBuilder(
-      animation: _successController,
-      builder: (context, child) {
-        return Container(
-          color: Colors.white.withAlpha(
-            (_successController.value * 0.9 * 255).round(),
-          ),
-          child: Center(
-            child: Transform.scale(
-              scale: _successController.value,
+class _ErrorBanner extends StatelessWidget {
+  const _ErrorBanner({required this.message});
+  final String? message;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSize(
+      duration: AppAnimations.fastDuration,
+      curve: AppAnimations.defaultCurve,
+      alignment: Alignment.topCenter,
+      child: message != null
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
               child: Container(
-                width: 80,
-                height: 80,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
+                ),
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: AppColors.successGradient,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.success.withAlpha((0.3 * 255).round()),
-                      blurRadius: 24,
-                      spreadRadius: 0,
+                  color: AppColors.error.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+                  border: Border.all(
+                    color: AppColors.error.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.error_outline_rounded,
+                        color: AppColors.error, size: 18),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        message!,
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.error,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                child: const Icon(
-                  Icons.check_rounded,
-                  color: Colors.white,
-                  size: 40,
-                ),
               ),
-            ),
-          ),
-        );
+            )
+          : const SizedBox.shrink(),
+    );
+  }
+}
+
+class _ShakeWrapper extends StatelessWidget {
+  const _ShakeWrapper({required this.animation, required this.child});
+  final AnimationController animation;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return _AnimatedBuilder(
+      animation: animation,
+      builder: (context, _) {
+        final t = animation.value;
+        final dx = math.sin(t * math.pi * 6) * 8 * (1 - t);
+        return Transform.translate(offset: Offset(dx, 0), child: child);
       },
     );
   }
 }
 
-class _SocialButton extends StatefulWidget {
-  const _SocialButton({
-    required this.icon,
-    required this.label,
-    required this.onPressed,
+class _AnimatedBuilder extends StatelessWidget {
+  const _AnimatedBuilder({
+    super.key,
+    required this.animation,
+    required this.builder,
   });
 
-  final Widget icon;
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  State<_SocialButton> createState() => _SocialButtonState();
-}
-
-class _SocialButtonState extends State<_SocialButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scale;
-  bool _isPressed = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 100),
-    );
-    _scale = Tween<double>(begin: 1.0, end: 0.96).animate(_controller);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _handleTapDown(_) {
-    _controller.forward();
-    setState(() => _isPressed = true);
-  }
-
-  void _handleTapUp(_) {
-    _controller.reverse();
-    setState(() => _isPressed = false);
-  }
-
-  void _handleTapCancel() {
-    _controller.reverse();
-    setState(() => _isPressed = false);
-  }
+  final Animation<double> animation;
+  final Widget Function(BuildContext context, Widget? child) builder;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: _handleTapDown,
-      onTapUp: _handleTapUp,
-      onTapCancel: _handleTapCancel,
-      onTap: widget.onPressed,
-      child: AnimatedBuilder(
-        animation: _scale,
-        builder: (context, child) {
-          return Transform.scale(scale: _scale.value, child: child);
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 100),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
-          ),
-          decoration: BoxDecoration(
-            color: _isPressed
-                ? AppColors.backgroundTertiary
-                : AppColors.surface,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
-            border: Border.all(
-              color: _isPressed ? AppColors.primaryPurple : AppColors.border,
-            ),
-            boxShadow: _isPressed
-                ? null
-                : [
-                    BoxShadow(
-                      color: Colors.black.withAlpha((0.04 * 255).round()),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              widget.icon,
-              AppSpacing.gapSM,
-              Text(
-                widget.label,
-                style: AppTypography.button.copyWith(
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return ListenableBuilder(
+      listenable: animation,
+      builder: (ctx, child) => builder(ctx, child),
     );
   }
-}
-
-class _GoogleIcon extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 24,
-      height: 24,
-      child: CustomPaint(painter: _GoogleIconPainter()),
-    );
-  }
-}
-
-class _GoogleIconPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final double s = size.width / 24;
-
-    // Blue
-    final bluePaint = Paint()..color = const Color(0xFF4285F4);
-    canvas.drawPath(
-      Path()
-        ..moveTo(23.7 * s, 12.3 * s)
-        ..cubicTo(23.7 * s, 11.5 * s, 23.6 * s, 10.7 * s, 23.5 * s, 10 * s)
-        ..lineTo(12 * s, 10 * s)
-        ..lineTo(12 * s, 14.5 * s)
-        ..lineTo(18.5 * s, 14.5 * s)
-        ..cubicTo(18.2 * s, 16.1 * s, 17.3 * s, 17.4 * s, 15.9 * s, 18.3 * s)
-        ..lineTo(15.9 * s, 21.2 * s)
-        ..lineTo(19.7 * s, 21.2 * s)
-        ..cubicTo(22.2 * s, 18.9 * s, 23.7 * s, 15.8 * s, 23.7 * s, 12.3 * s)
-        ..close(),
-      bluePaint,
-    );
-
-    // Green
-    final greenPaint = Paint()..color = const Color(0xFF34A853);
-    canvas.drawPath(
-      Path()
-        ..moveTo(12 * s, 24 * s)
-        ..cubicTo(15.2 * s, 24 * s, 17.8 * s, 23 * s, 19.7 * s, 21.2 * s)
-        ..lineTo(15.9 * s, 18.3 * s)
-        ..cubicTo(14.8 * s, 19.1 * s, 13.5 * s, 19.5 * s, 12 * s, 19.5 * s)
-        ..cubicTo(8.9 * s, 19.5 * s, 6.3 * s, 17.2 * s, 5.4 * s, 14.2 * s)
-        ..lineTo(1.5 * s, 14.2 * s)
-        ..lineTo(1.5 * s, 17.2 * s)
-        ..cubicTo(3.4 * s, 21 * s, 7.4 * s, 24 * s, 12 * s, 24 * s)
-        ..close(),
-      greenPaint,
-    );
-
-    // Yellow
-    final yellowPaint = Paint()..color = const Color(0xFFFBBC05);
-    canvas.drawPath(
-      Path()
-        ..moveTo(5.4 * s, 14.2 * s)
-        ..cubicTo(5.1 * s, 13.4 * s, 5 * s, 12.7 * s, 5 * s, 12 * s)
-        ..cubicTo(5 * s, 11.3 * s, 5.1 * s, 10.6 * s, 5.4 * s, 9.8 * s)
-        ..lineTo(5.4 * s, 6.8 * s)
-        ..lineTo(1.5 * s, 6.8 * s)
-        ..cubicTo(0.5 * s, 8.7 * s, 0 * s, 10.3 * s, 0 * s, 12 * s)
-        ..cubicTo(0 * s, 13.7 * s, 0.5 * s, 15.3 * s, 1.5 * s, 17.2 * s)
-        ..lineTo(5.4 * s, 14.2 * s)
-        ..close(),
-      yellowPaint,
-    );
-
-    // Red
-    final redPaint = Paint()..color = const Color(0xFFEA4335);
-    canvas.drawPath(
-      Path()
-        ..moveTo(12 * s, 4.8 * s)
-        ..cubicTo(13.7 * s, 4.8 * s, 15.2 * s, 5.4 * s, 16.4 * s, 6.5 * s)
-        ..lineTo(19.8 * s, 3.1 * s)
-        ..cubicTo(17.8 * s, 1.2 * s, 15.2 * s, 0 * s, 12 * s, 0 * s)
-        ..cubicTo(7.4 * s, 0 * s, 3.4 * s, 3 * s, 1.5 * s, 6.8 * s)
-        ..lineTo(5.4 * s, 9.8 * s)
-        ..cubicTo(6.3 * s, 6.8 * s, 8.9 * s, 4.8 * s, 12 * s, 4.8 * s)
-        ..close(),
-      redPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

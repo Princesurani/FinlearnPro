@@ -1,15 +1,16 @@
-import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../../../../core/theme/app_animations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../shared/widgets/aurora_background.dart';
-import '../../../../shared/widgets/gradient_button.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/glass_container.dart';
+import '../../../../shared/widgets/gradient_button.dart';
 import '../../data/auth_service.dart';
-
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({
     super.key,
@@ -18,7 +19,6 @@ class SignUpScreen extends StatefulWidget {
   });
 
   final VoidCallback onSignUpSuccess;
-
   final VoidCallback onNavigateToSignIn;
 
   @override
@@ -27,515 +27,213 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen>
     with TickerProviderStateMixin {
-  late TextEditingController _nameController;
-  late TextEditingController _emailController;
-  late TextEditingController _passwordController;
-  late TextEditingController _confirmPasswordController;
-  late AnimationController _formAnimationController;
-  late AnimationController _shakeController;
-  late AnimationController _successController;
 
   final _formKey = GlobalKey<FormState>();
-  final _nameFocusNode = FocusNode();
-  final _emailFocusNode = FocusNode();
-  final _passwordFocusNode = FocusNode();
-  final _confirmPasswordFocusNode = FocusNode();
+  final _nameCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+  final _confirmCtrl = TextEditingController();
+
+  final _nameFocus = FocusNode();
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+  final _confirmFocus = FocusNode();
+
+  final _authService = AuthService();
+
+  late final AnimationController _entranceCtrl;
+  late final AnimationController _shakeCtrl;
+  late final Animation<double> _headerFade;
+  late final Animation<Offset> _headerSlide;
+  late final Animation<double> _formFade;
+  late final Animation<Offset> _formSlide;
+  late final Animation<double> _footerFade;
 
   bool _isLoading = false;
-  bool _acceptTerms = false;
+  bool _agreedToTerms = false;
   String? _errorMessage;
-  bool _showSuccess = false;
-  double _passwordStrength = 0.0;
-
-  late Animation<double> _formSlide;
-  late Animation<double> _formOpacity;
-  late Animation<double> _shakeAnimation;
+  double _passwordStrength = 0;
 
   @override
   void initState() {
     super.initState();
-    _initControllers();
-    _initAnimations();
-    _startEntryAnimation();
-  }
 
-  void _initControllers() {
-    _nameController = TextEditingController();
-    _emailController = TextEditingController();
-    _passwordController = TextEditingController()
-      ..addListener(_updatePasswordStrength);
-    _confirmPasswordController = TextEditingController();
-
-    _formAnimationController = AnimationController(
+    _entranceCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: AppAnimations.longDuration,
     );
 
-    _shakeController = AnimationController(
+    _shakeCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: AppAnimations.fastDuration,
     );
 
-    _successController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
+    _headerFade = CurvedAnimation(
+      parent: _entranceCtrl,
+      curve: const Interval(0.0, 0.35, curve: Curves.easeOut),
     );
-  }
+    _headerSlide = Tween<Offset>(
+      begin: const Offset(0, -0.12),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _entranceCtrl,
+      curve: const Interval(0.0, 0.35, curve: Curves.easeOutCubic),
+    ));
 
-  void _initAnimations() {
-    _formSlide = Tween<double>(begin: 50.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _formAnimationController,
-        curve: Curves.easeOutCubic,
-      ),
+    _formFade = CurvedAnimation(
+      parent: _entranceCtrl,
+      curve: const Interval(0.15, 0.6, curve: Curves.easeOut),
+    );
+    _formSlide = Tween<Offset>(
+      begin: const Offset(0, 0.08),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _entranceCtrl,
+      curve: const Interval(0.15, 0.6, curve: Curves.easeOutCubic),
+    ));
+
+    _footerFade = CurvedAnimation(
+      parent: _entranceCtrl,
+      curve: const Interval(0.45, 1.0, curve: Curves.easeOut),
     );
 
-    _formOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _formAnimationController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-      ),
-    );
-
-    _shakeAnimation = Tween<double>(begin: 0.0, end: 24.0).animate(
-      CurvedAnimation(parent: _shakeController, curve: Curves.elasticIn),
-    );
-  }
-
-  void _startEntryAnimation() {
-    _formAnimationController.forward();
-  }
-
-  void _triggerShake() {
-    _shakeController.forward(from: 0).then((_) {
-      _shakeController.reverse();
-    });
-  }
-
-  void _updatePasswordStrength() {
-    final password = _passwordController.text;
-    double strength = 0.0;
-
-    if (password.length >= 8) strength += 0.25;
-    if (password.contains(RegExp(r'[A-Z]'))) strength += 0.25;
-    if (password.contains(RegExp(r'[0-9]'))) strength += 0.25;
-    if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) strength += 0.25;
-
-    setState(() => _passwordStrength = strength);
+    _passwordCtrl.addListener(_evaluatePasswordStrength);
+    _entranceCtrl.forward();
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    _formAnimationController.dispose();
-    _shakeController.dispose();
-    _successController.dispose();
-    _nameFocusNode.dispose();
-    _emailFocusNode.dispose();
-    _passwordFocusNode.dispose();
-    _confirmPasswordFocusNode.dispose();
+    _entranceCtrl.dispose();
+    _shakeCtrl.dispose();
+    _nameCtrl.dispose();
+    _emailCtrl.dispose();
+    _passwordCtrl.dispose();
+    _confirmCtrl.dispose();
+    _nameFocus.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
+    _confirmFocus.dispose();
     super.dispose();
   }
 
+  void _evaluatePasswordStrength() {
+    final pw = _passwordCtrl.text;
+    if (pw.isEmpty) {
+      setState(() => _passwordStrength = 0);
+      return;
+    }
+
+    var score = 0.0;
+    if (pw.length >= 6) score += 0.2;
+    if (pw.length >= 10) score += 0.15;
+    if (RegExp(r'[A-Z]').hasMatch(pw)) score += 0.2;
+    if (RegExp(r'[0-9]').hasMatch(pw)) score += 0.2;
+    if (RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(pw)) score += 0.25;
+
+    setState(() => _passwordStrength = score.clamp(0.0, 1.0));
+  }
+
+  String _strengthLabel() {
+    if (_passwordStrength < 0.3) return 'Weak';
+    if (_passwordStrength < 0.6) return 'Fair';
+    if (_passwordStrength < 0.85) return 'Good';
+    return 'Strong';
+  }
+
+  Color _strengthColor() {
+    if (_passwordStrength < 0.3) return AppColors.error;
+    if (_passwordStrength < 0.6) return AppColors.warning;
+    if (_passwordStrength < 0.85) return AppColors.cyan;
+    return AppColors.success;
+  }
+
   Future<void> _handleSignUp() async {
-    // Clear previous error
     setState(() => _errorMessage = null);
 
-    // Check terms acceptance
-    if (!_acceptTerms) {
-      HapticFeedback.heavyImpact();
-      setState(() {
-        _errorMessage = 'Please accept the Terms of Service and Privacy Policy';
-      });
+    if (!_agreedToTerms) {
+      setState(() => _errorMessage = 'Please agree to the Terms & Privacy Policy');
       _triggerShake();
       return;
     }
 
-    // Validate form
-    if (!_formKey.currentState!.validate()) {
-      HapticFeedback.heavyImpact();
+    if (!(_formKey.currentState?.validate() ?? false)) {
       _triggerShake();
       return;
     }
 
-    // Start loading
     setState(() => _isLoading = true);
     HapticFeedback.lightImpact();
 
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 1500));
-
-    // Firebase Sign Up
     try {
-      await AuthService().signUpWithEmailAndPassword(
-        name: _nameController.text.trim(),
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
+      await _authService.signUpWithEmailAndPassword(
+        name: _nameCtrl.text.trim(),
+        email: _emailCtrl.text.trim(),
+        password: _passwordCtrl.text,
       );
-
-      // Success
-      if (mounted) {
-        HapticFeedback.mediumImpact();
-        setState(() {
-          _isLoading = false;
-          _showSuccess = true;
-        });
-
-        _successController.forward();
-
-        // Navigate after success animation
-        await Future.delayed(const Duration(milliseconds: 800));
-        widget.onSignUpSuccess();
-      }
+      if (!mounted) return;
+      HapticFeedback.mediumImpact();
+      widget.onSignUpSuccess();
     } catch (e) {
-      // Failure
-      if (mounted) {
-        HapticFeedback.heavyImpact();
-        _triggerShake();
-        setState(() {
-          _isLoading = false;
-          _errorMessage = e.toString();
-        });
-      }
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.toString();
+      });
+      _triggerShake();
     }
+  }
+
+  void _triggerShake() {
+    HapticFeedback.heavyImpact();
+    _shakeCtrl.forward(from: 0);
   }
 
   @override
   Widget build(BuildContext context) {
+    final safePad = MediaQuery.of(context).padding;
+
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: const Color(0xFF0A0A1A),
       body: Stack(
         children: [
-          // Background
-          const AuroraBackground(intensity: 0.2, enableAnimation: true),
+          const Positioned.fill(child: _GridBackground()),
 
-          // Main Content
-          SafeArea(
-            child: AnimatedBuilder(
-              animation: Listenable.merge([
-                _formAnimationController,
-                _shakeController,
-              ]),
-              builder: (context, child) {
-                final shakeOffset =
-                    _shakeAnimation.value *
-                    ((_shakeController.value * 4).floor().isEven ? 1 : -1) *
-                    (1 - _shakeController.value);
-
-                return Transform.translate(
-                  offset: Offset(shakeOffset, _formSlide.value),
-                  child: Opacity(opacity: _formOpacity.value, child: child),
-                );
-              },
-              child: _buildContent(),
+          SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              safePad.top + AppSpacing.xl,
+              AppSpacing.lg,
+              safePad.bottom + AppSpacing.xl,
             ),
-          ),
-
-          // Success Overlay
-          if (_showSuccess) _buildSuccessOverlay(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContent() {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppSpacing.gapSM,
-
-          // Back Button
-          _buildBackButton(),
-
-          AppSpacing.gapLG,
-
-          // Header
-          _buildHeader(),
-
-          AppSpacing.gapXL,
-
-          // Sign Up Form
-          _buildSignUpForm(),
-
-          AppSpacing.gapLG,
-
-          // Sign In Link
-          _buildSignInLink(),
-
-          AppSpacing.gapXL,
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBackButton() {
-    return IconButton(
-      onPressed: () => Navigator.of(context).pop(),
-      icon: const Icon(Icons.arrow_back_rounded),
-      style: IconButton.styleFrom(
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
-        padding: const EdgeInsets.all(AppSpacing.sm),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Create Account',
-          style: AppTypography.display3.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        AppSpacing.gapSM,
-        Text(
-          'Start your journey to financial mastery',
-          style: AppTypography.bodyLarge.copyWith(
-            color: AppColors.textSecondary,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSignUpForm() {
-    return Form(
-      key: _formKey,
-      child: GlassCard(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Full Name Field
-            NameTextField(
-              controller: _nameController,
-              focusNode: _nameFocusNode,
-              label: 'Full Name',
-              hint: 'Enter your full name',
-              textInputAction: TextInputAction.next,
-              onSubmitted: (_) => _emailFocusNode.requestFocus(),
-            ),
-
-            AppSpacing.gapLG,
-
-            // Email Field
-            EmailTextField(
-              controller: _emailController,
-              focusNode: _emailFocusNode,
-              label: 'Email Address',
-              hint: 'Enter your email',
-              textInputAction: TextInputAction.next,
-              onSubmitted: (_) => _passwordFocusNode.requestFocus(),
-            ),
-
-            AppSpacing.gapLG,
-
-            // Password Field with Strength Indicator
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PasswordTextField(
-                  controller: _passwordController,
-                  focusNode: _passwordFocusNode,
-                  label: 'Password',
-                  hint: 'Create a strong password',
-                  textInputAction: TextInputAction.next,
-                  onSubmitted: (_) => _confirmPasswordFocusNode.requestFocus(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (value.length < 8) {
-                      return 'Password must be at least 8 characters';
-                    }
-                    return null;
-                  },
-                ),
-                AppSpacing.gapSM,
-                _buildPasswordStrengthIndicator(),
-              ],
-            ),
-
-            AppSpacing.gapLG,
-
-            // Confirm Password Field
-            PasswordTextField(
-              controller: _confirmPasswordController,
-              focusNode: _confirmPasswordFocusNode,
-              label: 'Confirm Password',
-              hint: 'Re-enter your password',
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) => _handleSignUp(),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please confirm your password';
-                }
-                if (value != _passwordController.text) {
-                  return 'Passwords do not match';
-                }
-                return null;
-              },
-            ),
-
-            AppSpacing.gapLG,
-
-            // Terms Checkbox
-            _buildTermsCheckbox(),
-
-            // Error Message
-            if (_errorMessage != null) ...[
-              AppSpacing.gapMD,
-              _buildErrorMessage(),
-            ],
-
-            AppSpacing.gapLG,
-
-            // Sign Up Button
-            PrimaryButton(
-              onPressed: _handleSignUp,
-              text: 'Create Account',
-              isLoading: _isLoading,
-              size: GradientButtonSize.large,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPasswordStrengthIndicator() {
-    final Color strengthColor;
-    final String strengthText;
-
-    if (_passwordStrength <= 0.25) {
-      strengthColor = AppColors.error;
-      strengthText = 'Weak';
-    } else if (_passwordStrength <= 0.5) {
-      strengthColor = AppColors.warning;
-      strengthText = 'Fair';
-    } else if (_passwordStrength <= 0.75) {
-      strengthColor = AppColors.info;
-      strengthText = 'Good';
-    } else {
-      strengthColor = AppColors.success;
-      strengthText = 'Strong';
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Strength Bar
-        Row(
-          children: List.generate(4, (index) {
-            final isActive = (_passwordStrength * 4) > index;
-            return Expanded(
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                height: 4,
-                margin: EdgeInsets.only(right: index < 3 ? 4 : 0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(2),
-                  color: isActive ? strengthColor : AppColors.border,
-                ),
-              ),
-            );
-          }),
-        ),
-
-        AppSpacing.gapXS,
-
-        // Strength Text
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
-          child: _passwordController.text.isNotEmpty
-              ? Row(
-                  children: [
-                    Icon(
-                      _passwordStrength >= 1.0
-                          ? Icons.check_circle_outline_rounded
-                          : Icons.info_outline_rounded,
-                      size: 14,
-                      color: strengthColor,
-                    ),
-                    AppSpacing.gapXXS,
-                    Text(
-                      'Password strength: $strengthText',
-                      style: AppTypography.bodyXS.copyWith(
-                        color: strengthColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                )
-              : const SizedBox.shrink(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTermsCheckbox() {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        setState(() => _acceptTerms = !_acceptTerms);
-      },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 22,
-            height: 22,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              color: _acceptTerms
-                  ? AppColors.primaryPurple
-                  : Colors.transparent,
-              border: Border.all(
-                color: _acceptTerms
-                    ? AppColors.primaryPurple
-                    : AppColors.border,
-                width: 2,
-              ),
-            ),
-            child: _acceptTerms
-                ? const Icon(Icons.check, size: 14, color: Colors.white)
-                : null,
-          ),
-          AppSpacing.gapSM,
-          Expanded(
-            child: Text.rich(
-              TextSpan(
-                style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
-                  height: 1.4,
-                ),
+            physics: const BouncingScrollPhysics(),
+            child: _AnimatedBuilder(
+              animation: _entranceCtrl,
+              builder: (context, _) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const TextSpan(text: 'I agree to the '),
-                  TextSpan(
-                    text: 'Terms of Service',
-                    style: TextStyle(
-                      color: AppColors.primaryPurple,
-                      fontWeight: FontWeight.w600,
+                  FadeTransition(
+                    opacity: _headerFade,
+                    child: SlideTransition(
+                      position: _headerSlide,
+                      child: _buildHeader(),
                     ),
                   ),
-                  const TextSpan(text: ' and '),
-                  TextSpan(
-                    text: 'Privacy Policy',
-                    style: TextStyle(
-                      color: AppColors.primaryPurple,
-                      fontWeight: FontWeight.w600,
+                  const SizedBox(height: AppSpacing.lg),
+                  _ErrorBanner(message: _errorMessage),
+                  _ShakeWrapper(
+                    animation: _shakeCtrl,
+                    child: FadeTransition(
+                      opacity: _formFade,
+                      child: SlideTransition(
+                        position: _formSlide,
+                        child: _buildFormCard(),
+                      ),
                     ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  FadeTransition(
+                    opacity: _footerFade,
+                    child: _buildFooter(),
                   ),
                 ],
               ),
@@ -546,54 +244,250 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
-  Widget _buildErrorMessage() {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.error.withAlpha((0.1 * 255).round()),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-        border: Border.all(
-          color: AppColors.error.withAlpha((0.3 * 255).round()),
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.error_outline_rounded, color: AppColors.error, size: 20),
-          AppSpacing.gapSM,
-          Expanded(
-            child: Text(
-              _errorMessage!,
-              style: AppTypography.bodySmall.copyWith(color: AppColors.error),
-            ),
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            gradient: AppColors.primaryGradient,
           ),
-        ],
+          child: const Icon(Icons.candlestick_chart_rounded,
+              color: Colors.white, size: 24),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Text(
+          'Create your\naccount',
+          style: AppTypography.display2.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            height: 1.15,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          'Start your financial mastery journey today',
+          style: AppTypography.bodyLarge.copyWith(color: Colors.white38),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFormCard() {
+    return GlassContainer(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            NameTextField(
+              controller: _nameCtrl,
+              focusNode: _nameFocus,
+              textInputAction: TextInputAction.next,
+              onSubmitted: (_) => _emailFocus.requestFocus(),
+            ),
+            const SizedBox(height: AppSpacing.md),
+
+            EmailTextField(
+              controller: _emailCtrl,
+              focusNode: _emailFocus,
+              textInputAction: TextInputAction.next,
+              onSubmitted: (_) => _passwordFocus.requestFocus(),
+            ),
+            const SizedBox(height: AppSpacing.md),
+
+            PasswordTextField(
+              controller: _passwordCtrl,
+              focusNode: _passwordFocus,
+              label: 'Password',
+              hint: 'Create a strong password',
+              textInputAction: TextInputAction.next,
+              showStrengthIndicator: true,
+              onSubmitted: (_) => _confirmFocus.requestFocus(),
+              validator: (value) {
+                if (value == null || value.isEmpty) return 'Password is required';
+                if (value.length < 6) return 'Must be at least 6 characters';
+                return null;
+              },
+            ),
+            if (_passwordCtrl.text.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sm),
+              _PasswordStrengthMeter(
+                strength: _passwordStrength,
+                label: _strengthLabel(),
+                color: _strengthColor(),
+              ),
+            ],
+            const SizedBox(height: AppSpacing.md),
+
+            PasswordTextField(
+              controller: _confirmCtrl,
+              focusNode: _confirmFocus,
+              label: 'Confirm Password',
+              hint: 'Re-enter your password',
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => _handleSignUp(),
+              validator: (value) {
+                if (value == null || value.isEmpty) return 'Please confirm your password';
+                if (value != _passwordCtrl.text) return 'Passwords do not match';
+                return null;
+              },
+            ),
+            const SizedBox(height: AppSpacing.md),
+            _TermsCheckbox(
+              value: _agreedToTerms,
+              onChanged: (v) => setState(() => _agreedToTerms = v ?? false),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+
+            PrimaryButton(
+              text: 'Create Account',
+              onPressed: _isLoading ? null : _handleSignUp,
+              isLoading: _isLoading,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSignInLink() {
-    return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Already have an account? ',
+  Widget _buildFooter() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Already have an account? ',
+          style: AppTypography.bodyMedium.copyWith(color: Colors.white38),
+        ),
+        GestureDetector(
+          onTap: widget.onNavigateToSignIn,
+          child: Text(
+            'Sign In',
             style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+              color: AppColors.cyan,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          TextButton(
-            onPressed: widget.onNavigateToSignIn,
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+      ],
+    );
+  }
+}
+
+class _PasswordStrengthMeter extends StatelessWidget {
+  const _PasswordStrengthMeter({
+    required this.strength,
+    required this.label,
+    required this.color,
+  });
+
+  final double strength;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: List.generate(4, (i) {
+            final segmentThreshold = (i + 1) * 0.25;
+            final active = strength >= segmentThreshold - 0.12;
+            return Expanded(
+              child: AnimatedContainer(
+                duration: AppAnimations.fastDuration,
+                curve: AppAnimations.defaultCurve,
+                height: 3,
+                margin: EdgeInsets.only(right: i < 3 ? 4 : 0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(2),
+                  color: active
+                      ? color.withValues(alpha: 0.8)
+                      : Colors.white.withValues(alpha: 0.08),
+                ),
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: AppSpacing.xxs),
+        Text(
+          label,
+          style: AppTypography.labelSmall.copyWith(
+            color: color.withValues(alpha: 0.8),
+            fontSize: 11,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TermsCheckbox extends StatelessWidget {
+  const _TermsCheckbox({required this.value, required this.onChanged});
+  final bool value;
+  final ValueChanged<bool?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AnimatedContainer(
+            duration: AppAnimations.microDuration,
+            width: 20,
+            height: 20,
+            margin: const EdgeInsets.only(top: 2),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(
+                color: value
+                    ? AppColors.cyan
+                    : Colors.white.withValues(alpha: 0.25),
+                width: 1.5,
+              ),
+              color: value
+                  ? AppColors.cyan.withValues(alpha: 0.15)
+                  : Colors.transparent,
             ),
-            child: Text(
-              'Sign In',
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.primaryPurple,
-                fontWeight: FontWeight.w700,
+            child: value
+                ? const Icon(Icons.check_rounded, size: 14,
+                    color: AppColors.cyan)
+                : null,
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                style: AppTypography.labelSmall.copyWith(
+                  color: Colors.white38,
+                  height: 1.4,
+                ),
+                children: const [
+                  TextSpan(text: 'I agree to the '),
+                  TextSpan(
+                    text: 'Terms of Service',
+                    style: TextStyle(
+                      color: AppColors.cyan,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  TextSpan(text: ' and '),
+                  TextSpan(
+                    text: 'Privacy Policy',
+                    style: TextStyle(
+                      color: AppColors.cyan,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -601,59 +495,129 @@ class _SignUpScreenState extends State<SignUpScreen>
       ),
     );
   }
+}
 
-  Widget _buildSuccessOverlay() {
-    return AnimatedBuilder(
-      animation: _successController,
-      builder: (context, child) {
-        return Container(
-          color: Colors.white.withAlpha(
-            (_successController.value * 0.9 * 255).round(),
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Transform.scale(
-                  scale: _successController.value,
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: AppColors.successGradient,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.success.withAlpha(
-                            (0.3 * 255).round(),
-                          ),
-                          blurRadius: 24,
-                          spreadRadius: 0,
+class _GridBackground extends StatelessWidget {
+  const _GridBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      child: CustomPaint(painter: _GridPainter(), size: Size.infinite),
+    );
+  }
+}
+
+class _GridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.025)
+      ..strokeWidth = 0.5;
+
+    const spacing = 32.0;
+    for (var x = 0.0; x < size.width; x += spacing) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (var y = 0.0; y < size.height; y += spacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+
+    final dotPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.05)
+      ..style = PaintingStyle.fill;
+    for (var x = 0.0; x < size.width; x += spacing) {
+      for (var y = 0.0; y < size.height; y += spacing) {
+        canvas.drawCircle(Offset(x, y), 1.0, dotPaint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _ErrorBanner extends StatelessWidget {
+  const _ErrorBanner({required this.message});
+  final String? message;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSize(
+      duration: AppAnimations.fastDuration,
+      curve: AppAnimations.defaultCurve,
+      alignment: Alignment.topCenter,
+      child: message != null
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+                  border: Border.all(
+                    color: AppColors.error.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.error_outline_rounded,
+                        color: AppColors.error, size: 18),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        message!,
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.error,
                         ),
-                      ],
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.check_rounded,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                  ),
+                  ],
                 ),
-                AppSpacing.gapLG,
-                Opacity(
-                  opacity: _successController.value,
-                  child: Text(
-                    'Account Created!',
-                    style: AppTypography.h3.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+              ),
+            )
+          : const SizedBox.shrink(),
+    );
+  }
+}
+
+class _ShakeWrapper extends StatelessWidget {
+  const _ShakeWrapper({required this.animation, required this.child});
+  final AnimationController animation;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return _AnimatedBuilder(
+      animation: animation,
+      builder: (context, _) {
+        final t = animation.value;
+        final dx = math.sin(t * math.pi * 6) * 8 * (1 - t);
+        return Transform.translate(offset: Offset(dx, 0), child: child);
       },
+    );
+  }
+}
+
+class _AnimatedBuilder extends StatelessWidget {
+  const _AnimatedBuilder({
+    super.key,
+    required this.animation,
+    required this.builder,
+  });
+
+  final Animation<double> animation;
+  final Widget Function(BuildContext context, Widget? child) builder;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: animation,
+      builder: (ctx, child) => builder(ctx, child),
     );
   }
 }

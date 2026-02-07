@@ -1,19 +1,23 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_animations.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../shared/widgets/aurora_background.dart';
+
+typedef SplashCompleteCallback = void Function();
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({
     super.key,
     required this.onComplete,
-    this.minimumDuration = const Duration(milliseconds: 3500),
+    this.minimumDuration = const Duration(milliseconds: 4200),
   });
 
-  final VoidCallback onComplete;
+  final SplashCompleteCallback onComplete;
 
   final Duration minimumDuration;
 
@@ -22,549 +26,265 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _master;
 
-  late AnimationController _backgroundController;
-  late AnimationController _logoController;
-  late AnimationController _textController;
-  late AnimationController _taglineController;
-  late AnimationController _progressController;
-  late AnimationController _exitController;
-  late AnimationController _particleController;
-  late AnimationController _pulseController;
+  static const _actI = Interval(0.00, 0.10, curve: Curves.easeOut);
+  static const _actII = Interval(0.08, 0.40, curve: Curves.easeInOut);
+  static const _actIIILine = Interval(0.35, 0.62, curve: Curves.easeInOutCubic);
+  static const _actIVLogo = Interval(0.58, 0.72, curve: Curves.easeOutBack);
+  static const _actIVText = Interval(0.66, 0.78, curve: Curves.easeOutCubic);
+  static const _actIVPro = Interval(0.72, 0.82, curve: Curves.elasticOut);
+  static const _actIVTagline = Interval(0.78, 0.88, curve: Curves.easeOut);
+  static const _actIVPulse = Interval(0.82, 0.95, curve: Curves.easeOut);
+  static const _exit = Interval(0.92, 1.00, curve: Curves.easeInCubic);
 
-  late Animation<double> _backgroundOpacity;
-  late Animation<double> _logoScale;
-  late Animation<double> _logoOpacity;
-  late Animation<double> _textOpacity;
-  late Animation<Offset> _textSlide;
-  late Animation<double> _taglineOpacity;
-  late Animation<double> _progressOpacity;
-  late Animation<double> _progressValue;
-  late Animation<double> _exitScale;
-  late Animation<double> _exitOpacity;
+  late final List<_DataColumn> _dataColumns;
+  late final List<Offset> _chartPoints;
 
-  bool _isExiting = false;
+  late final DateTime _mountedAt;
 
   @override
   void initState() {
     super.initState();
-    _initializeControllers();
-    _initializeAnimations();
-    _startAnimationSequence();
+    _mountedAt = DateTime.now();
 
-    // Set status bar style
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.light,
+    ));
+
+    _generateDataColumns();
+
+    _master = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 5000),
+    )..addStatusListener(_onMasterStatus);
+
+    _master.forward();
   }
 
-  void _initializeControllers() {
-    _backgroundController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-
-    _logoController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-
-    _textController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-
-    _taglineController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-
-    _progressController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    );
-
-    _exitController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
-
-    _particleController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    );
-
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..repeat(reverse: true);
-  }
-
-  void _initializeAnimations() {
-    // Background fade-in
-    _backgroundOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _backgroundController,
-        curve: Curves.easeOut,
-      ),
-    );
-
-    // Logo scale with spring
-    _logoScale = Tween<double>(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _logoController,
-        curve: Curves.elasticOut,
-      ),
-    );
-
-    _logoOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _logoController,
-        curve: const Interval(0.0, 0.3, curve: Curves.easeOut),
-      ),
-    );
-
-    // Text slide and fade
-    _textOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _textController,
-        curve: Curves.easeOut,
-      ),
-    );
-
-    _textSlide = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _textController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
-    // Tagline fade
-    _taglineOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _taglineController,
-        curve: Curves.easeOut,
-      ),
-    );
-
-    // Progress indicator
-    _progressOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _progressController,
-        curve: const Interval(0.0, 0.2, curve: Curves.easeOut),
-      ),
-    );
-
-    _progressValue = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _progressController,
-        curve: const Interval(0.1, 1.0, curve: Curves.easeInOut),
-      ),
-    );
-
-    // Exit transition
-    _exitScale = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(
-        parent: _exitController,
-        curve: Curves.easeInCubic,
-      ),
-    );
-
-    _exitOpacity = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _exitController,
-        curve: Curves.easeIn,
-      ),
-    );
-  }
-
-  Future<void> _startAnimationSequence() async {
-    // Phase A: Background (0-800ms)
-    await Future.delayed(const Duration(milliseconds: 100));
-    _backgroundController.forward();
-    _particleController.forward();
-
-    // Phase B: Logo (300-1300ms)
-    await Future.delayed(const Duration(milliseconds: 200));
-    _logoController.forward();
-
-    // Phase C: Brand Text (800-1600ms)
-    await Future.delayed(const Duration(milliseconds: 500));
-    _textController.forward();
-
-    // Phase D: Tagline (1200-1800ms)
-    await Future.delayed(const Duration(milliseconds: 400));
-    _taglineController.forward();
-
-    // Phase E: Progress (1400-2900ms)
-    await Future.delayed(const Duration(milliseconds: 200));
-    _progressController.forward();
-
-    // Wait for minimum duration
-    await Future.delayed(const Duration(milliseconds: 1000));
-
-    // Phase F: Exit transition
-    _startExitTransition();
-  }
-
-  void _startExitTransition() {
-    if (_isExiting) return;
-    setState(() => _isExiting = true);
-
-    HapticFeedback.mediumImpact();
-
-    _exitController.forward().then((_) {
-      widget.onComplete();
+  void _generateDataColumns() {
+    final rng = math.Random(42);
+    const symbols = [
+      'AAPL', 'TSLA', 'GOOG', 'MSFT', 'AMZN', 'META', 'NVDA', 'NFLX',
+      'BTC', 'ETH', 'SPY', 'QQQ', 'RELIANCE', 'TCS', 'INFY', 'HDFC',
+      'VOD.L', 'BARC.L', 'AZN.L', 'SHEL.L', 'JPM', 'GS', 'V', 'MA',
+      'DIS', 'PYPL', 'AMD', 'BABA',
+    ];
+    _dataColumns = List.generate(28, (i) {
+      final speed = 0.4 + rng.nextDouble() * 0.8;
+      final offset = rng.nextDouble();
+      final entries = List.generate(
+        12 + rng.nextInt(8),
+        (_) {
+          final sym = symbols[rng.nextInt(symbols.length)];
+          final price = (10 + rng.nextDouble() * 990).toStringAsFixed(2);
+          final pct = ((rng.nextDouble() - 0.5) * 20).toStringAsFixed(2);
+          final positive = !pct.startsWith('-');
+          return _DataEntry(
+            text: '${rng.nextBool() ? sym : '\$$price'}',
+            subtext: '${positive ? '+' : ''}$pct%',
+            isPositive: positive,
+          );
+        },
+      );
+      return _DataColumn(
+        xFraction: (i + 0.5) / 28,
+        speed: speed,
+        startOffset: offset,
+        entries: entries,
+      );
     });
+  }
+
+  void _onMasterStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed) return;
+
+    final elapsed = DateTime.now().difference(_mountedAt);
+    final remaining = widget.minimumDuration - elapsed;
+    if (remaining > Duration.zero) {
+      Future.delayed(remaining, _fireComplete);
+    } else {
+      _fireComplete();
+    }
+  }
+
+  void _fireComplete() {
+    if (!mounted) return;
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    widget.onComplete();
   }
 
   @override
   void dispose() {
-    _backgroundController.dispose();
-    _logoController.dispose();
-    _textController.dispose();
-    _taglineController.dispose();
-    _progressController.dispose();
-    _exitController.dispose();
-    _particleController.dispose();
-    _pulseController.dispose();
+    _master.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
-      body: AnimatedBuilder(
-        animation: Listenable.merge([_exitController]),
-        builder: (context, child) {
-          return Opacity(
-            opacity: _exitOpacity.value,
-            child: Transform.scale(
-              scale: _exitScale.value,
-              child: child,
-            ),
-          );
-        },
-        child: Stack(
-          children: [
-            // Aurora Background
-            AnimatedBuilder(
-              animation: _backgroundOpacity,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _backgroundOpacity.value,
-                  child: const AuroraBackground(
-                    intensity: 0.4,
-                    enableAnimation: true,
-                  ),
-                );
-              },
-            ),
+      backgroundColor: const Color(0xFF050510),
+      body: _AnimatedBuilder(
+        animation: _master,
+        builder: (context, _) {
+          final t = _master.value;
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              _buildBackground(t),
 
-            // Particle Effect Layer
-            AnimatedBuilder(
-              animation: _particleController,
-              builder: (context, _) {
-                return CustomPaint(
-                  painter: _ParticlePainter(
-                    progress: _particleController.value,
-                    logoProgress: _logoController.value,
+              RepaintBoundary(
+                child: CustomPaint(
+                  painter: _DataRainPainter(
+                    progress: _actII.transform(t),
+                    columns: _dataColumns,
+                    convergence: _actIIILine.transform(t),
                   ),
                   size: Size.infinite,
-                );
-              },
-            ),
-
-            // Main Content
-            SafeArea(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Spacer(flex: 3),
-
-                    // Logo Container with Glow
-                    _buildAnimatedLogo(),
-
-                    AppSpacing.gapXL,
-
-                    // Brand Name
-                    _buildBrandText(),
-
-                    AppSpacing.gapMD,
-
-                    // Tagline
-                    _buildTagline(),
-
-                    const Spacer(flex: 2),
-
-                    // Progress Indicator
-                    _buildProgressIndicator(),
-
-                    AppSpacing.gapXXL,
-
-                    // Version & Credits
-                    _buildVersionInfo(),
-
-                    AppSpacing.gapXL,
-                  ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget _buildAnimatedLogo() {
-    return AnimatedBuilder(
-      animation: Listenable.merge([_logoController, _pulseController]),
-      builder: (context, child) {
-        final pulseValue = 1.0 + (_pulseController.value * 0.02);
-        return Transform.scale(
-          scale: _logoScale.value * pulseValue,
-          child: Opacity(
-            opacity: _logoOpacity.value,
-            child: child,
-          ),
-        );
-      },
-      child: Container(
-        width: 120,
-        height: 120,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF7C5CFF),
-              Color(0xFF6B4EF5),
-              Color(0xFF5038D4),
+              RepaintBoundary(
+                child: CustomPaint(
+                  painter: _ChartLinePainter(
+                    drawProgress: _actIIILine.transform(t),
+                    fadeOut: _actIVLogo.transform(t),
+                    accentColor: AppColors.primaryPurple,
+                    glowColor: AppColors.cyan,
+                  ),
+                  size: Size.infinite,
+                ),
+              ),
+
+              _buildIdentity(t),
+
+              RepaintBoundary(
+                child: CustomPaint(
+                  painter: _RadialPulsePainter(
+                    progress: _actIVPulse.transform(t),
+                    color: AppColors.primaryPurple,
+                  ),
+                  size: Size.infinite,
+                ),
+              ),
+
+              if (_exit.transform(t) > 0)
+                Opacity(
+                  opacity: _exit.transform(t),
+                  child: const ColoredBox(
+                    color: Color(0xFF050510),
+                    child: SizedBox.expand(),
+                  ),
+                ),
             ],
-          ),
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primaryPurple.withAlpha((0.4 * 255).round()),
-              blurRadius: 40,
-              spreadRadius: 0,
-              offset: const Offset(0, 8),
-            ),
-            BoxShadow(
-              color: AppColors.primaryPurple.withAlpha((0.2 * 255).round()),
-              blurRadius: 80,
-              spreadRadius: 0,
-              offset: const Offset(0, 16),
-            ),
-          ],
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Inner glow
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(26),
-                gradient: RadialGradient(
-                  colors: [
-                    Colors.white.withAlpha((0.2 * 255).round()),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-            // Logo Icon
-            const _AnimatedLogoIcon(),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildBrandText() {
-    return AnimatedBuilder(
-      animation: _textController,
-      builder: (context, child) {
-        return SlideTransition(
-          position: _textSlide,
-          child: Opacity(
-            opacity: _textOpacity.value,
-            child: child,
-          ),
-        );
-      },
+  Widget _buildBackground(double t) {
+    final auroraOpacity = (t > 0.15 && t < 0.85)
+        ? math.sin((t - 0.15) / 0.70 * math.pi) * 0.12
+        : 0.0;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          center: Alignment.center,
+          radius: 1.4,
+          colors: [
+            AppColors.primaryPurple.withValues(alpha: auroraOpacity),
+            const Color(0xFF050510),
+          ],
+        ),
+      ),
+      child: const SizedBox.expand(),
+    );
+  }
+
+  Widget _buildIdentity(double t) {
+    final logoProgress = _actIVLogo.transform(t);
+    final textProgress = _actIVText.transform(t);
+    final proProgress = _actIVPro.transform(t);
+    final tagProgress = _actIVTagline.transform(t);
+
+    if (logoProgress == 0) return const SizedBox.shrink();
+
+    return Center(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [
-                Color(0xFF1E293B),
-                Color(0xFF334155),
-              ],
-            ).createShader(bounds),
-            child: Text(
-              'FINLEARN',
-              style: AppTypography.display2.copyWith(
-                letterSpacing: 8,
-                fontWeight: FontWeight.w800,
+          Transform.scale(
+            scale: logoProgress,
+            child: Opacity(
+              opacity: logoProgress.clamp(0.0, 1.0),
+              child: const _BrandIcon(size: 72),
+            ),
+          ),
+
+          SizedBox(height: AppSpacing.md * logoProgress),
+
+          ClipRect(
+            child: Align(
+              alignment: Alignment.topCenter,
+              heightFactor: textProgress.clamp(0.0, 1.0),
+              child: Opacity(
+                opacity: textProgress.clamp(0.0, 1.0),
+                child: Text(
+                  'FINLEARN',
+                  style: AppTypography.display1.copyWith(
+                    color: Colors.white,
+                    letterSpacing: 6,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
             ),
           ),
-          Transform.translate(
-            offset: const Offset(0, -4),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(4),
+
+          const SizedBox(height: 4),
+
+          Transform.scale(
+            scale: proProgress.clamp(0.0, 1.2),
+            child: Opacity(
+              opacity: proProgress.clamp(0.0, 1.0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: AppSpacing.borderRadiusFull,
+                ),
+                child: Text(
+                  'PRO',
+                  style: AppTypography.labelSmall.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 3,
+                  ),
+                ),
               ),
+            ),
+          ),
+
+          SizedBox(height: AppSpacing.lg * tagProgress),
+
+          Opacity(
+            opacity: tagProgress.clamp(0.0, 1.0),
+            child: Transform.translate(
+              offset: Offset(0, 8 * (1 - tagProgress)),
               child: Text(
-                'PRO',
-                style: AppTypography.h4.copyWith(
-                  color: Colors.white,
-                  letterSpacing: 4,
-                  fontWeight: FontWeight.w700,
+                'Master the Markets. Zero Risk.',
+                style: AppTypography.bodyMedium.copyWith(
+                  color: Colors.white54,
+                  letterSpacing: 1.2,
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTagline() {
-    return AnimatedBuilder(
-      animation: _taglineController,
-      builder: (context, child) {
-        return Opacity(
-          opacity: _taglineOpacity.value,
-          child: child,
-        );
-      },
-      child: Text(
-        'Master the Markets',
-        style: AppTypography.bodyLarge.copyWith(
-          color: AppColors.textSecondary,
-          letterSpacing: 1.5,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProgressIndicator() {
-    return AnimatedBuilder(
-      animation: _progressController,
-      builder: (context, child) {
-        return Opacity(
-          opacity: _progressOpacity.value,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 60),
-            child: Column(
-              children: [
-                // Progress Bar
-                Container(
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.border,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                  child: Stack(
-                    children: [
-                      // Progress Fill
-                      FractionallySizedBox(
-                        widthFactor: _progressValue.value,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: AppColors.primaryGradient,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                      ),
-                      // Shimmer Overlay
-                      if (_progressValue.value > 0 && _progressValue.value < 1)
-                        Positioned.fill(
-                          child: _ShimmerOverlay(
-                            progress: _progressValue.value,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                AppSpacing.gapSM,
-                // Loading Text
-                Text(
-                  _getLoadingText(),
-                  style: AppTypography.bodyXS.copyWith(
-                    color: AppColors.textTertiary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  String _getLoadingText() {
-    final progress = _progressValue.value;
-    if (progress < 0.3) return 'Initializing...';
-    if (progress < 0.6) return 'Loading resources...';
-    if (progress < 0.9) return 'Almost ready...';
-    return 'Welcome!';
-  }
-
-  Widget _buildVersionInfo() {
-    return AnimatedBuilder(
-      animation: _taglineController,
-      builder: (context, child) {
-        return Opacity(
-          opacity: _taglineOpacity.value * 0.7,
-          child: child,
-        );
-      },
-      child: Column(
-        children: [
-          Text(
-            'v1.0.0',
-            style: AppTypography.bodyXS.copyWith(
-              color: AppColors.textTertiary,
-            ),
-          ),
-          AppSpacing.gapXXS,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Made with ',
-                style: AppTypography.bodyXS.copyWith(
-                  color: AppColors.textTertiary,
-                ),
-              ),
-              const Icon(
-                Icons.favorite,
-                size: 12,
-                color: AppColors.coralPink,
-              ),
-              Text(
-                ' for learners',
-                style: AppTypography.bodyXS.copyWith(
-                  color: AppColors.textTertiary,
-                ),
-              ),
-            ],
           ),
         ],
       ),
@@ -572,170 +292,312 @@ class _SplashScreenState extends State<SplashScreen>
   }
 }
 
-class _AnimatedLogoIcon extends StatelessWidget {
-  const _AnimatedLogoIcon();
+class _BrandIcon extends StatelessWidget {
+  const _BrandIcon({required this.size});
+  final double size;
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: const Size(60, 60),
-      painter: _LogoIconPainter(),
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(size * 0.24),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryPurple.withValues(alpha: 0.4),
+            blurRadius: 32,
+            spreadRadius: 4,
+          ),
+        ],
+      ),
+      child: CustomPaint(painter: _CandlestickIconPainter()),
     );
   }
 }
 
-class _LogoIconPainter extends CustomPainter {
+class _CandlestickIconPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final barW = w * 0.08;
+    final gap = w * 0.12;
+    final startX = (w - (4 * barW + 3 * gap)) / 2;
     final paint = Paint()
       ..color = Colors.white
-      ..style = PaintingStyle.fill;
-
-    final strokePaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
 
-    // Draw ascending chart line
-    final path = Path();
-    path.moveTo(size.width * 0.15, size.height * 0.75);
-    path.lineTo(size.width * 0.35, size.height * 0.55);
-    path.lineTo(size.width * 0.5, size.height * 0.65);
-    path.lineTo(size.width * 0.85, size.height * 0.25);
+    const bars = [
+      (0.55, 0.30, true),
+      (0.40, 0.60, false),
+      (0.25, 0.45, true),
+      (0.20, 0.68, true),
+    ];
 
-    canvas.drawPath(path, strokePaint);
+    for (var i = 0; i < bars.length; i++) {
+      final (top, height, isBull) = bars[i];
+      final x = startX + i * (barW + gap) + barW / 2;
+      final y1 = h * top;
+      final y2 = h * (top + height);
 
-    // Draw arrow head
-    final arrowPath = Path();
-    arrowPath.moveTo(size.width * 0.85, size.height * 0.25);
-    arrowPath.lineTo(size.width * 0.7, size.height * 0.28);
-    arrowPath.moveTo(size.width * 0.85, size.height * 0.25);
-    arrowPath.lineTo(size.width * 0.82, size.height * 0.4);
+      paint
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..color = Colors.white70;
+      canvas.drawLine(Offset(x, y1 - h * 0.06), Offset(x, y2 + h * 0.06), paint);
 
-    canvas.drawPath(arrowPath, strokePaint);
-
-    // Draw dots at data points
-    canvas.drawCircle(
-      Offset(size.width * 0.35, size.height * 0.55),
-      4,
-      paint,
-    );
-    canvas.drawCircle(
-      Offset(size.width * 0.5, size.height * 0.65),
-      4,
-      paint,
-    );
+      paint
+        ..style = isBull ? PaintingStyle.fill : PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..color = Colors.white;
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(x - barW / 2, y1, barW, y2 - y1),
+          const Radius.circular(2),
+        ),
+        paint,
+      );
+    }
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class _ParticlePainter extends CustomPainter {
-  _ParticlePainter({
+class _DataRainPainter extends CustomPainter {
+  _DataRainPainter({
     required this.progress,
-    required this.logoProgress,
+    required this.columns,
+    required this.convergence,
   });
 
   final double progress;
-  final double logoProgress;
-
-  final int particleCount = 30;
+  final List<_DataColumn> columns;
+  final double convergence;
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (logoProgress < 0.1) return;
+    if (progress <= 0) return;
 
-    final random = math.Random(42);
-    final center = Offset(size.width / 2, size.height * 0.35);
+    final fadeIn = (progress * 4).clamp(0.0, 1.0);
+    final fadeOut = progress > 0.8 ? ((progress - 0.8) / 0.2) : 0.0;
+    final opacity = (fadeIn - fadeOut).clamp(0.0, 1.0);
+    if (opacity <= 0) return;
 
-    for (int i = 0; i < particleCount; i++) {
-      final angle = (i / particleCount) * 2 * math.pi;
-      final baseRadius = 80.0 + random.nextDouble() * 60;
+    for (final col in columns) {
+      final baseX = col.xFraction * size.width;
+      final cx = size.width / 2;
+      final x = ui.lerpDouble(baseX, cx, convergence * 0.6)!;
 
-      // Particles converge toward center as logo appears
-      final radius = baseRadius * (1 - logoProgress * 0.8);
+      final scrollOffset =
+          (progress * col.speed + col.startOffset) * size.height * 3;
 
-      final x = center.dx + math.cos(angle + progress * 2) * radius;
-      final y = center.dy + math.sin(angle + progress * 2) * radius;
+      for (var i = 0; i < col.entries.length; i++) {
+        final entry = col.entries[i];
+        final y = (i * 48.0 - scrollOffset) % (col.entries.length * 48.0);
+        if (y < -30 || y > size.height + 30) continue;
 
-      final opacity = (1 - logoProgress) * 0.6;
-      final particleSize = 2.0 + random.nextDouble() * 3;
+        final distFromCenter = (x - cx).abs() / (size.width / 2);
+        final alpha = opacity * (0.15 + 0.25 * (1 - distFromCenter));
 
-      final paint = Paint()
-        ..color = AppColors.primaryPurple.withAlpha((opacity * 255).round())
-        ..style = PaintingStyle.fill;
+        final tp = TextPainter(
+          text: TextSpan(
+            text: entry.text,
+            style: TextStyle(
+              fontFamily: 'JetBrains Mono',
+              fontSize: 11,
+              color: (entry.isPositive
+                      ? AppColors.success
+                      : AppColors.error)
+                  .withValues(alpha: alpha),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+        )..layout();
 
-      canvas.drawCircle(Offset(x, y), particleSize, paint);
+        tp.paint(canvas, Offset(x - tp.width / 2, y));
+        tp.dispose();
+      }
     }
   }
 
   @override
-  bool shouldRepaint(covariant _ParticlePainter oldDelegate) =>
-      progress != oldDelegate.progress ||
-      logoProgress != oldDelegate.logoProgress;
+  bool shouldRepaint(_DataRainPainter old) =>
+      old.progress != progress || old.convergence != convergence;
 }
 
-class _ShimmerOverlay extends StatefulWidget {
-  const _ShimmerOverlay({required this.progress});
+class _ChartLinePainter extends CustomPainter {
+  _ChartLinePainter({
+    required this.drawProgress,
+    required this.fadeOut,
+    required this.accentColor,
+    required this.glowColor,
+  });
 
+  final double drawProgress;
+  final double fadeOut;
+  final Color accentColor;
+  final Color glowColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (drawProgress <= 0) return;
+
+    final opacity = (1.0 - fadeOut).clamp(0.0, 1.0);
+    if (opacity <= 0) return;
+
+    final path = Path();
+    const segments = 60;
+    final rng = math.Random(7);
+
+    for (var i = 0; i <= segments; i++) {
+      final t = i / segments;
+      final x = t * size.width;
+      final trend = size.height * 0.7 - t * size.height * 0.4;
+      final noise = (rng.nextDouble() - 0.5) * size.height * 0.08;
+      final y = trend + noise;
+
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        final prevX = (i - 1) / segments * size.width;
+        final cpX = (prevX + x) / 2;
+        path.quadraticBezierTo(cpX, y + noise * 0.3, x, y);
+      }
+    }
+
+    final metrics = path.computeMetrics().first;
+    final visibleLength = metrics.length * drawProgress;
+    final visible = metrics.extractPath(0, visibleLength);
+
+    canvas.drawPath(
+      visible,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6
+        ..color = glowColor.withValues(alpha: 0.15 * opacity)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
+    );
+
+    canvas.drawPath(
+      visible,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5
+        ..strokeCap = StrokeCap.round
+        ..color = accentColor.withValues(alpha: 0.8 * opacity),
+    );
+
+    if (drawProgress > 0.01 && drawProgress < 0.99) {
+      final tangent = metrics.getTangentForOffset(visibleLength);
+      if (tangent != null) {
+        canvas.drawCircle(
+          tangent.position,
+          5,
+          Paint()..color = Colors.white.withValues(alpha: opacity),
+        );
+        canvas.drawCircle(
+          tangent.position,
+          12,
+          Paint()
+            ..color = glowColor.withValues(alpha: 0.25 * opacity)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ChartLinePainter old) =>
+      old.drawProgress != drawProgress || old.fadeOut != fadeOut;
+}
+
+class _RadialPulsePainter extends CustomPainter {
+  _RadialPulsePainter({required this.progress, required this.color});
   final double progress;
+  final Color color;
 
   @override
-  State<_ShimmerOverlay> createState() => _ShimmerOverlayState();
+  void paint(Canvas canvas, Size size) {
+    if (progress <= 0 || progress >= 1) return;
+
+    final center = size.center(Offset.zero);
+    final maxR = size.longestSide * 0.8;
+    final r = maxR * progress;
+    final alpha = 0.18 * (1 - progress);
+
+    canvas.drawCircle(
+      center,
+      r,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..color = color.withValues(alpha: alpha),
+    );
+
+    if (progress > 0.15) {
+      final r2 = maxR * (progress - 0.15);
+      canvas.drawCircle(
+        center,
+        r2,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.2
+          ..color = color.withValues(alpha: alpha * 0.5),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_RadialPulsePainter old) => old.progress != progress;
 }
 
-class _ShimmerOverlayState extends State<_ShimmerOverlay>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _shimmerController;
+class _DataColumn {
+  const _DataColumn({
+    required this.xFraction,
+    required this.speed,
+    required this.startOffset,
+    required this.entries,
+  });
 
-  @override
-  void initState() {
-    super.initState();
-    _shimmerController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    )..repeat();
-  }
+  final double xFraction;
 
-  @override
-  void dispose() {
-    _shimmerController.dispose();
-    super.dispose();
-  }
+  final double speed;
+
+  final double startOffset;
+
+  final List<_DataEntry> entries;
+}
+
+class _DataEntry {
+  const _DataEntry({
+    required this.text,
+    required this.subtext,
+    required this.isPositive,
+  });
+  final String text;
+  final String subtext;
+  final bool isPositive;
+}
+
+class _AnimatedBuilder extends StatelessWidget {
+  const _AnimatedBuilder({
+    super.key,
+    required this.animation,
+    required this.builder,
+  });
+
+  final Animation<double> animation;
+  final Widget Function(BuildContext context, Widget? child) builder;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _shimmerController,
-      builder: (context, child) {
-        return ShaderMask(
-          shaderCallback: (bounds) {
-            return LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                Colors.transparent,
-                Colors.white.withAlpha((0.3 * 255).round()),
-                Colors.transparent,
-              ],
-              stops: [
-                (_shimmerController.value - 0.3).clamp(0.0, 1.0),
-                _shimmerController.value,
-                (_shimmerController.value + 0.3).clamp(0.0, 1.0),
-              ],
-            ).createShader(bounds);
-          },
-          blendMode: BlendMode.srcATop,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        );
-      },
+    return ListenableBuilder(
+      listenable: animation,
+      builder: (ctx, child) => builder(ctx, child),
     );
   }
 }
