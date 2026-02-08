@@ -520,11 +520,7 @@ class _ShakeWrapper extends StatelessWidget {
 }
 
 class _AnimatedBuilder extends StatelessWidget {
-  const _AnimatedBuilder({
-    super.key,
-    required this.animation,
-    required this.builder,
-  });
+  const _AnimatedBuilder({required this.animation, required this.builder});
 
   final Animation<double> animation;
   final Widget Function(BuildContext context, Widget? child) builder;

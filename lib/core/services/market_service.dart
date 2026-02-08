@@ -5,10 +5,9 @@ import '../domain/market_data.dart';
 
 class MarketService {
   MarketService({int? globalSeed})
-      : _globalSeed = globalSeed ?? DateTime.now().millisecondsSinceEpoch;
+    : _globalSeed = globalSeed ?? DateTime.now().millisecondsSinceEpoch;
 
   final int _globalSeed;
-
 
   List<Candle> generateCandles(
     Instrument instrument,
@@ -77,7 +76,7 @@ class MarketService {
       count: 365,
       endTime: lastCandle.timestamp,
     );
-    
+
     final high52w = yearCandles.map((c) => c.high).reduce(math.max);
     final low52w = yearCandles.map((c) => c.low).reduce(math.min);
 
@@ -86,9 +85,8 @@ class MarketService {
         : null;
 
     final monthCandles = yearCandles.sublist(yearCandles.length - 30);
-    final avgVolume = monthCandles
-            .map((c) => c.volume)
-            .reduce((a, b) => a + b) /
+    final avgVolume =
+        monthCandles.map((c) => c.volume).reduce((a, b) => a + b) /
         monthCandles.length;
 
     return MarketSnapshot(
@@ -112,7 +110,7 @@ class MarketService {
 
   PriceTick getCurrentTick(Instrument instrument) {
     final snapshot = getCurrentSnapshot(instrument);
-    
+
     final spreadBps = instrument.volatility * 20; // Higher vol = wider spread
     final spread = snapshot.price * (spreadBps / 10000);
 
@@ -156,7 +154,6 @@ class MarketService {
           ((newPrice - existing.previousClose) / existing.previousClose) * 100,
     );
   }
-
 
   Candle _generateCandle({
     required DateTime timestamp,
@@ -214,7 +211,8 @@ class MarketService {
     const alpha = 0.1; // Sensitivity to recent shocks
     const beta = 0.85; // Persistence of old volatility
 
-    final newVariance = omega +
+    final newVariance =
+        omega +
         alpha * previousReturn * previousReturn +
         beta * previousVol * previousVol;
 
@@ -243,8 +241,8 @@ class MarketService {
   }) {
     final baseVolume = _getBaseVolume(instrument);
 
-    final timeframeMultiplier = timeframe.duration.inSeconds /
-        (24 * 3600); // Fraction of a day
+    final timeframeMultiplier =
+        timeframe.duration.inSeconds / (24 * 3600); // Fraction of a day
 
     final intradayMultiplier = _getIntradayMultiplier(timestamp);
 
@@ -307,19 +305,19 @@ class MarketService {
         if (basePrice > 1000) return 500000; // High-price (e.g., MARUTI)
         if (basePrice > 100) return 2000000; // Mid-price
         return 5000000; // Low-price (higher share count)
-      
+
       case InstrumentType.marketIndex:
         return 0; // Indices don't have volume
-      
+
       case InstrumentType.etf:
         return 1000000; // ETFs have moderate volume
-      
+
       case InstrumentType.crypto:
         if (basePrice > 10000) return 50000; // BTC
         if (basePrice > 1000) return 500000; // ETH
         if (basePrice > 100) return 2000000; // Mid-caps
         return 50000000; // Altcoins (high count, low value)
-      
+
       default:
         return 1000000;
     }
@@ -327,24 +325,23 @@ class MarketService {
 
   double _getIntradayMultiplier(DateTime timestamp) {
     final hour = timestamp.hour;
-    
+
     if (hour >= 9 && hour < 10) return 1.5; // Opening rush
     if (hour >= 10 && hour < 12) return 1.0; // Morning
     if (hour >= 12 && hour < 14) return 0.7; // Lunch lull
     if (hour >= 14 && hour < 15) return 1.1; // Afternoon
     if (hour >= 15 && hour < 16) return 1.6; // Closing rush
-    
+
     return 0.5; // Off-hours (pre/post market)
   }
 
   double _estimateSharesOutstanding(Instrument instrument) {
     final basePrice = instrument.basePrice;
-    
+
     if (basePrice > 1000) return 100000000; // 100M shares
     if (basePrice > 100) return 500000000; // 500M shares
     return 2000000000; // 2B shares (low-price stocks)
   }
-
 
   double _boxMuller(_Xoshiro256StarStar prng) {
     final u1 = prng.nextDouble();
@@ -353,17 +350,18 @@ class MarketService {
   }
 }
 
-
 class _Xoshiro256StarStar {
   _Xoshiro256StarStar({required int seed}) {
     var state = seed;
+    // SplitMix64 initialization
     for (var i = 0; i < 4; i++) {
-      state += 0x9e3779b97f4a7c15;
+      // Use nearest JS-safe integer values for web compatibility
+      state += 0x9e3779b97f4a8000;
       var z = state;
-      z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9;
-      z = (z ^ (z >> 27)) * 0x94d049bb133111eb;
+      z = (z ^ (z >> 30)) * 0xbf58476d1ce4e800;
+      z = (z ^ (z >> 27)) * 0x94d049bb13311000;
       z = z ^ (z >> 31);
-      _state[i] = z;
+      _state[i] = z.toInt();
     }
   }
 
