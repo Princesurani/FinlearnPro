@@ -1,6 +1,3 @@
-
-import 'dart:math' as math;
-
 import '../domain/market_regime.dart';
 
 abstract class MarketFormatter {

@@ -65,7 +65,7 @@ class _LearningStatsCardState extends State<LearningStatsCard>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryPurple.withOpacity(0.4),
+            color: AppColors.primaryPurple.withValues(alpha: 0.4),
             blurRadius: 24,
             offset: const Offset(0, 12),
             spreadRadius: 0,
@@ -87,10 +87,10 @@ class _LearningStatsCardState extends State<LearningStatsCard>
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
@@ -148,7 +148,7 @@ class _LearningStatsCardState extends State<LearningStatsCard>
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -173,7 +173,7 @@ class _LearningStatsCardState extends State<LearningStatsCard>
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 blurRadius: 20,
                                 spreadRadius: 2,
                               ),
@@ -185,7 +185,7 @@ class _LearningStatsCardState extends State<LearningStatsCard>
                           size: const Size(90, 90),
                           painter: _ProgressRingPainter(
                             progress: _progressAnimation.value,
-                            backgroundColor: Colors.white.withOpacity(0.2),
+                            backgroundColor: Colors.white.withValues(alpha: 0.2),
                             foregroundColor: Colors.white,
                             strokeWidth: 8,
                           ),
@@ -207,7 +207,7 @@ class _LearningStatsCardState extends State<LearningStatsCard>
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.white.withOpacity(0.7),
+                                color: Colors.white.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -227,9 +227,9 @@ class _LearningStatsCardState extends State<LearningStatsCard>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.white.withOpacity(0),
-                  Colors.white.withOpacity(0.3),
-                  Colors.white.withOpacity(0),
+                  Colors.white.withValues(alpha: 0),
+                  Colors.white.withValues(alpha: 0.3),
+                  Colors.white.withValues(alpha: 0),
                 ],
               ),
             ),
@@ -279,7 +279,7 @@ class _LearningStatsCardState extends State<LearningStatsCard>
     return Expanded(
       child: Column(
         children: [
-          Icon(icon, size: 20, color: Colors.white.withOpacity(0.7)),
+          Icon(icon, size: 20, color: Colors.white.withValues(alpha: 0.7)),
           const SizedBox(height: 6),
           Text(
             value,
@@ -295,7 +295,7 @@ class _LearningStatsCardState extends State<LearningStatsCard>
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w500,
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -307,7 +307,7 @@ class _LearningStatsCardState extends State<LearningStatsCard>
     return Container(
       width: 1,
       height: 40,
-      color: Colors.white.withOpacity(0.15),
+      color: Colors.white.withValues(alpha: 0.15),
     );
   }
 }

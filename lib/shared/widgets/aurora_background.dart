@@ -144,8 +144,8 @@ class _AuroraPainter extends CustomPainter {
       size,
       progress: primaryProgress,
       colors: [
-        _auroraColors[0].withOpacity(0.15 * intensity),
-        _auroraColors[1].withOpacity(0.1 * intensity),
+        _auroraColors[0].withValues(alpha: 0.15 * intensity),
+        _auroraColors[1].withValues(alpha: 0.1 * intensity),
       ],
       waveAmplitude: 0.15,
       waveFrequency: 1.5,
@@ -158,8 +158,8 @@ class _AuroraPainter extends CustomPainter {
       size,
       progress: secondaryProgress,
       colors: [
-        _auroraColors[2].withOpacity(0.12 * intensity),
-        _auroraColors[4].withOpacity(0.08 * intensity),
+        _auroraColors[2].withValues(alpha: 0.12 * intensity),
+        _auroraColors[4].withValues(alpha: 0.08 * intensity),
       ],
       waveAmplitude: 0.12,
       waveFrequency: 2.0,
@@ -172,8 +172,8 @@ class _AuroraPainter extends CustomPainter {
       size,
       progress: tertiaryProgress,
       colors: [
-        _auroraColors[3].withOpacity(0.1 * intensity),
-        _auroraColors[0].withOpacity(0.06 * intensity),
+        _auroraColors[3].withValues(alpha: 0.1 * intensity),
+        _auroraColors[0].withValues(alpha: 0.06 * intensity),
       ],
       waveAmplitude: 0.08,
       waveFrequency: 2.5,
@@ -263,7 +263,7 @@ class _AuroraPainter extends CustomPainter {
   void _drawNoiseOverlay(Canvas canvas, Size size) {
     final random = math.Random(42);
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.02 * intensity)
+      ..color = Colors.white.withValues(alpha: 0.02 * intensity)
       ..style = PaintingStyle.fill;
 
     for (int i = 0; i < 50; i++) {
@@ -283,7 +283,7 @@ class _AuroraPainter extends CustomPainter {
         size.width * 0.8,
         [
           Colors.transparent,
-          Colors.white.withOpacity(0.05 * intensity),
+          Colors.white.withValues(alpha: 0.05 * intensity),
         ],
         [0.5, 1.0],
       );
@@ -317,8 +317,8 @@ class StaticAuroraGradient extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             AppColors.backgroundPrimary,
-            AppColors.auroraPurple.withOpacity(0.05 * intensity),
-            AppColors.auroraBlue.withOpacity(0.03 * intensity),
+            AppColors.auroraPurple.withValues(alpha: 0.05 * intensity),
+            AppColors.auroraBlue.withValues(alpha: 0.03 * intensity),
             AppColors.backgroundPrimary,
           ],
           stops: const [0.0, 0.3, 0.6, 1.0],
@@ -392,15 +392,15 @@ class _AuroraOrbState extends State<AuroraOrb>
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  color.withOpacity(0.4),
-                  color.withOpacity(0.1),
-                  color.withOpacity(0.0),
+                  color.withValues(alpha: 0.4),
+                  color.withValues(alpha: 0.1),
+                  color.withValues(alpha: 0.0),
                 ],
                 stops: const [0.0, 0.5, 1.0],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.3),
+                  color: color.withValues(alpha: 0.3),
                   blurRadius: widget.size * 0.5,
                   spreadRadius: widget.size * 0.1,
                 ),

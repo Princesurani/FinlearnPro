@@ -70,7 +70,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.white.withOpacity(0.05), Colors.transparent],
+          colors: [Colors.white.withValues(alpha: 0.05), Colors.transparent],
         ),
       ),
       child: Column(
@@ -109,7 +109,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primaryPurple.withOpacity(0.4),
+                    color: AppColors.primaryPurple.withValues(alpha: 0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -234,7 +234,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                   userData.email,
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -310,7 +310,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
             Container(
               height: 6,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(3),
               ),
               child: Stack(
@@ -329,7 +329,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                         borderRadius: BorderRadius.circular(3),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primaryPurple.withOpacity(0.5),
+                            color: AppColors.primaryPurple.withValues(alpha: 0.5),
                             blurRadius: 8,
                             offset: const Offset(0, 0),
                           ),
@@ -385,10 +385,10 @@ class _ProfileAvatar extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [AppColors.primaryPurple, AppColors.primaryPurpleDark],
             ),
-            border: Border.all(color: borderColor.withOpacity(0.6), width: 2),
+            border: Border.all(color: borderColor.withValues(alpha: 0.6), width: 2),
             boxShadow: [
               BoxShadow(
-                color: borderColor.withOpacity(0.3),
+                color: borderColor.withValues(alpha: 0.3),
                 blurRadius: 16,
                 spreadRadius: 2,
               ),
@@ -420,12 +420,12 @@ class _ProfileAvatar extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: AppColors.goldenYellow.withOpacity(0.5),
+                color: AppColors.goldenYellow.withValues(alpha: 0.5),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -488,17 +488,17 @@ class _CloseButtonState extends State<_CloseButton> {
         height: 40,
         decoration: BoxDecoration(
           color: _isPressed
-              ? Colors.white.withOpacity(0.15)
-              : Colors.white.withOpacity(0.08),
+              ? Colors.white.withValues(alpha: 0.15)
+              : Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.white.withOpacity(_isPressed ? 0.2 : 0.1),
+            color: Colors.white.withValues(alpha: _isPressed ? 0.2 : 0.1),
             width: 1,
           ),
         ),
         child: Icon(
           Icons.close_rounded,
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha: 0.8),
           size: 20,
         ),
       ),
@@ -532,7 +532,7 @@ class _SubscriptionBadge extends StatelessWidget {
                 (tier == SubscriptionTier.pro
                         ? AppColors.goldenYellow
                         : AppColors.primaryPurple)
-                    .withOpacity(0.4),
+                    .withValues(alpha: 0.4),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

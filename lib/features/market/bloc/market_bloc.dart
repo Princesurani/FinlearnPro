@@ -100,10 +100,10 @@ class MarketState {
           ? newInstruments
               .where((i) => i.type == InstrumentType.marketIndex)
               .toList(growable: false)
-          : this.indices,
+          : indices,
       tradableInstruments: instrumentsChanged
           ? newInstruments.where((i) => i.isTradable).toList(growable: false)
-          : this.tradableInstruments,
+          : tradableInstruments,
     );
   }
 

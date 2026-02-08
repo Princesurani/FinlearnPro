@@ -122,8 +122,8 @@ class _LearningSearchBarState extends State<LearningSearchBar>
               boxShadow: [
                 BoxShadow(
                   color: _isFocused
-                      ? AppColors.primaryPurple.withOpacity(0.15)
-                      : Colors.black.withOpacity(0.05),
+                      ? AppColors.primaryPurple.withValues(alpha: 0.15)
+                      : Colors.black.withValues(alpha: 0.05),
                   blurRadius: _isFocused ? 20 : 12,
                   offset: const Offset(0, 4),
                 ),
@@ -179,7 +179,7 @@ class _LearningSearchBarState extends State<LearningSearchBar>
                       padding: const EdgeInsets.all(6),
                       margin: const EdgeInsets.only(right: 4),
                       decoration: BoxDecoration(
-                        color: AppColors.textTertiary.withOpacity(0.1),
+                        color: AppColors.textTertiary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -216,7 +216,7 @@ class _LearningSearchBarState extends State<LearningSearchBar>
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primaryPurple.withOpacity(0.3),
+                            color: AppColors.primaryPurple.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),

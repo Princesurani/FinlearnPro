@@ -17,7 +17,7 @@ class ProgressTrackerSection extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6B4EF5).withOpacity(0.3),
+            color: const Color(0xFF6B4EF5).withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -43,7 +43,7 @@ class ProgressTrackerSection extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Text(
@@ -77,7 +77,7 @@ class ProgressTrackerSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: 0.65,
-              backgroundColor: Colors.white.withOpacity(0.2),
+              backgroundColor: Colors.white.withValues(alpha: 0.2),
               valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
               minHeight: 6,
             ),
@@ -94,7 +94,7 @@ class ProgressTrackerSection extends StatelessWidget {
       height: 24,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: completed ? Colors.white : Colors.white.withOpacity(0.1),
+        color: completed ? Colors.white : Colors.white.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: Text(

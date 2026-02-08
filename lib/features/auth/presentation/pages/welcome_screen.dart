@@ -9,6 +9,7 @@ import '../../../../core/theme/app_animations.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/widgets/gradient_button.dart';
+
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({
     super.key,
@@ -31,28 +32,32 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   static const _pages = <_PageData>[
     _PageData(
       headline: 'Learn from\nthe Markets',
-      body: 'Expert-crafted courses on stocks, crypto, forex '
+      body:
+          'Expert-crafted courses on stocks, crypto, forex '
           'and real-world investing — no jargon, no fluff.',
       accentColor: AppColors.primaryPurple,
       illustrationType: _IllustType.chart,
     ),
     _PageData(
       headline: 'Practice\nRisk-Free',
-      body: 'Trade with \$100K virtual cash across 4 global markets '
+      body:
+          'Trade with \$100K virtual cash across 4 global markets '
           'powered by our deterministic simulation engine.',
       accentColor: AppColors.oceanTeal,
       illustrationType: _IllustType.wallet,
     ),
     _PageData(
       headline: 'Track Your\nProgress',
-      body: 'XP, streaks, achievements and portfolio analytics — '
+      body:
+          'XP, streaks, achievements and portfolio analytics — '
           'every lesson and trade builds your financial mastery.',
       accentColor: AppColors.cyan,
       illustrationType: _IllustType.analytics,
     ),
     _PageData(
       headline: 'Compete &\nGrow',
-      body: 'Leaderboards, daily challenges, and a community of '
+      body:
+          'Leaderboards, daily challenges, and a community of '
           'learners pushing each other forward.',
       accentColor: AppColors.warning,
       illustrationType: _IllustType.trophy,
@@ -71,10 +76,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       duration: AppAnimations.auroraCycleDuration,
     )..repeat();
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
   }
 
   @override
@@ -108,20 +115,16 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       backgroundColor: const Color(0xFF0A0A1A),
       body: Stack(
         children: [
-          _AnimatedGradient(
-            page: _currentPage,
-            pages: _pages,
-          ),
+          _AnimatedGradient(page: _currentPage, pages: _pages),
           PageView.builder(
             controller: _pageCtrl,
             itemCount: _pages.length,
             physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, index) =>
-                _PageContent(
-                  data: _pages[index],
-                  floatAnimation: _floatCtrl,
-                  parallaxOffset: _currentPage - index,
-                ),
+            itemBuilder: (context, index) => _PageContent(
+              data: _pages[index],
+              floatAnimation: _floatCtrl,
+              parallaxOffset: _currentPage - index,
+            ),
           ),
           if (widget.showSkipButton && !_isLastPage)
             Positioned(
@@ -131,9 +134,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 onPressed: widget.onComplete,
                 child: Text(
                   'Skip',
-                  style: AppTypography.label.copyWith(
-                    color: Colors.white38,
-                  ),
+                  style: AppTypography.label.copyWith(color: Colors.white38),
                 ),
               ),
             ),
@@ -150,7 +151,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
                   child: AnimatedSwitcher(
                     duration: AppAnimations.fastDuration,
                     child: _isLastPage
@@ -193,10 +196,7 @@ class _AnimatedGradient extends StatelessWidget {
         gradient: RadialGradient(
           center: const Alignment(0.0, -0.5),
           radius: 1.6,
-          colors: [
-            color.withValues(alpha: 0.18),
-            const Color(0xFF0A0A1A),
-          ],
+          colors: [color.withValues(alpha: 0.18), const Color(0xFF0A0A1A)],
         ),
       ),
       child: const SizedBox.expand(),
@@ -233,7 +233,8 @@ class _PageContent extends StatelessWidget {
               child: _AnimatedBuilder(
                 animation: floatAnimation,
                 builder: (context, _) {
-                  final floatY = math.sin(floatAnimation.value * 2 * math.pi) * 6;
+                  final floatY =
+                      math.sin(floatAnimation.value * 2 * math.pi) * 6;
                   return Transform.translate(
                     offset: Offset(0, floatY),
                     child: _Illustration(
@@ -293,7 +294,9 @@ class _Illustration extends StatelessWidget {
         painter: switch (type) {
           _IllustType.chart => _ChartIllustrationPainter(accent: accent),
           _IllustType.wallet => _WalletIllustrationPainter(accent: accent),
-          _IllustType.analytics => _AnalyticsIllustrationPainter(accent: accent),
+          _IllustType.analytics => _AnalyticsIllustrationPainter(
+            accent: accent,
+          ),
           _IllustType.trophy => _TrophyIllustrationPainter(accent: accent),
         },
         size: const Size(280, 280),
@@ -301,6 +304,7 @@ class _Illustration extends StatelessWidget {
     );
   }
 }
+
 class _ChartIllustrationPainter extends CustomPainter {
   _ChartIllustrationPainter({required this.accent});
   final Color accent;
@@ -335,7 +339,8 @@ class _ChartIllustrationPainter extends CustomPainter {
       (0.18, 0.32, true),
     ];
     final barW = size.width * 0.05;
-    final startX = cx - (bars.length * barW + (bars.length - 1) * barW * 0.8) / 2;
+    final startX =
+        cx - (bars.length * barW + (bars.length - 1) * barW * 0.8) / 2;
 
     for (var i = 0; i < bars.length; i++) {
       final (topFrac, heightFrac, isBull) = bars[i];
@@ -346,8 +351,9 @@ class _ChartIllustrationPainter extends CustomPainter {
         Offset(x, top - h * 0.15),
         Offset(x, top + h + h * 0.15),
         Paint()
-          ..color = (isBull ? AppColors.success : AppColors.error)
-              .withValues(alpha: 0.5)
+          ..color = (isBull ? AppColors.success : AppColors.error).withValues(
+            alpha: 0.5,
+          )
           ..strokeWidth = 1.2,
       );
       canvas.drawRRect(
@@ -364,7 +370,11 @@ class _ChartIllustrationPainter extends CustomPainter {
     for (var i = 0; i < bars.length; i++) {
       final (topFrac, heightFrac, _) = bars[i];
       final x = startX + i * barW * 1.8 + barW / 2;
-      final y = cy - size.height * 0.28 + size.height * topFrac + size.height * heightFrac * 0.5;
+      final y =
+          cy -
+          size.height * 0.28 +
+          size.height * topFrac +
+          size.height * heightFrac * 0.5;
       if (i == 0) {
         trendPath.moveTo(x, y);
       } else {
@@ -384,6 +394,7 @@ class _ChartIllustrationPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
 class _WalletIllustrationPainter extends CustomPainter {
   _WalletIllustrationPainter({required this.accent});
   final Color accent;
@@ -393,14 +404,22 @@ class _WalletIllustrationPainter extends CustomPainter {
     final cx = size.width / 2;
     final cy = size.height / 2;
     canvas.drawCircle(
-      Offset(cx, cy), size.width * 0.42,
+      Offset(cx, cy),
+      size.width * 0.42,
       Paint()..color = accent.withValues(alpha: 0.08),
     );
     final walletRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: Offset(cx, cy), width: size.width * 0.52, height: size.height * 0.36),
+      Rect.fromCenter(
+        center: Offset(cx, cy),
+        width: size.width * 0.52,
+        height: size.height * 0.36,
+      ),
       const Radius.circular(12),
     );
-    canvas.drawRRect(walletRect, Paint()..color = accent.withValues(alpha: 0.25));
+    canvas.drawRRect(
+      walletRect,
+      Paint()..color = accent.withValues(alpha: 0.25),
+    );
     canvas.drawRRect(
       walletRect,
       Paint()
@@ -410,7 +429,11 @@ class _WalletIllustrationPainter extends CustomPainter {
     );
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(cx + size.width * 0.22, cy), width: size.width * 0.1, height: size.height * 0.12),
+        Rect.fromCenter(
+          center: Offset(cx + size.width * 0.22, cy),
+          width: size.width * 0.1,
+          height: size.height * 0.12,
+        ),
         const Radius.circular(4),
       ),
       Paint()..color = accent.withValues(alpha: 0.6),
@@ -422,12 +445,24 @@ class _WalletIllustrationPainter extends CustomPainter {
     ];
     for (var i = 0; i < coinPositions.length; i++) {
       final r = 14.0 - i * 2;
-      canvas.drawCircle(coinPositions[i], r + 3, Paint()..color = Colors.white.withValues(alpha: 0.05));
-      canvas.drawCircle(coinPositions[i], r, Paint()..color = accent.withValues(alpha: 0.5 + i * 0.15));
+      canvas.drawCircle(
+        coinPositions[i],
+        r + 3,
+        Paint()..color = Colors.white.withValues(alpha: 0.05),
+      );
+      canvas.drawCircle(
+        coinPositions[i],
+        r,
+        Paint()..color = accent.withValues(alpha: 0.5 + i * 0.15),
+      );
       final tp = TextPainter(
         text: TextSpan(
           text: '\$',
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: r, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.8),
+            fontSize: r,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
@@ -439,6 +474,7 @@ class _WalletIllustrationPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
 class _AnalyticsIllustrationPainter extends CustomPainter {
   _AnalyticsIllustrationPainter({required this.accent});
   final Color accent;
@@ -449,7 +485,8 @@ class _AnalyticsIllustrationPainter extends CustomPainter {
     final cy = size.height / 2;
 
     canvas.drawCircle(
-      Offset(cx, cy), size.width * 0.42,
+      Offset(cx, cy),
+      size.width * 0.42,
       Paint()..color = accent.withValues(alpha: 0.08),
     );
     final barHeights = [0.75, 0.55, 0.90, 0.45, 0.65];
@@ -472,7 +509,12 @@ class _AnalyticsIllustrationPainter extends CustomPainter {
     const donutR = 28.0;
     final segments = [0.35, 0.25, 0.25, 0.15];
     var startAngle = -math.pi / 2;
-    final segColors = [accent, AppColors.success, AppColors.warning, Colors.white24];
+    final segColors = [
+      accent,
+      AppColors.success,
+      AppColors.warning,
+      Colors.white24,
+    ];
 
     for (var i = 0; i < segments.length; i++) {
       final sweep = segments[i] * 2 * math.pi;
@@ -508,6 +550,7 @@ class _AnalyticsIllustrationPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
 class _TrophyIllustrationPainter extends CustomPainter {
   _TrophyIllustrationPainter({required this.accent});
   final Color accent;
@@ -518,7 +561,8 @@ class _TrophyIllustrationPainter extends CustomPainter {
     final cy = size.height / 2;
 
     canvas.drawCircle(
-      Offset(cx, cy), size.width * 0.42,
+      Offset(cx, cy),
+      size.width * 0.42,
       Paint()..color = accent.withValues(alpha: 0.08),
     );
     final cupPath = Path()
@@ -538,7 +582,11 @@ class _TrophyIllustrationPainter extends CustomPainter {
     );
     for (final dx in [-28.0, 28.0]) {
       canvas.drawArc(
-        Rect.fromCenter(center: Offset(cx + dx, cy - 10), width: 20, height: 28),
+        Rect.fromCenter(
+          center: Offset(cx + dx, cy - 10),
+          width: 20,
+          height: 28,
+        ),
         dx < 0 ? math.pi / 2 : -math.pi / 2,
         math.pi,
         false,
@@ -563,7 +611,11 @@ class _TrophyIllustrationPainter extends CustomPainter {
       Offset(cx - 45, cy + 25),
     ];
     for (final p in sparkles) {
-      canvas.drawCircle(p, 2.5, Paint()..color = accent.withValues(alpha: 0.35));
+      canvas.drawCircle(
+        p,
+        2.5,
+        Paint()..color = accent.withValues(alpha: 0.35),
+      );
     }
   }
 
@@ -571,7 +623,8 @@ class _TrophyIllustrationPainter extends CustomPainter {
     final path = Path();
     for (var i = 0; i < 5; i++) {
       final angle = -math.pi / 2 + i * 4 * math.pi / 5;
-      final p = center + Offset(math.cos(angle) * radius, math.sin(angle) * radius);
+      final p =
+          center + Offset(math.cos(angle) * radius, math.sin(angle) * radius);
       if (i == 0) {
         path.moveTo(p.dx, p.dy);
       } else {
@@ -632,11 +685,7 @@ class _PageData {
 }
 
 class _AnimatedBuilder extends StatelessWidget {
-  const _AnimatedBuilder({
-    super.key,
-    required this.animation,
-    required this.builder,
-  });
+  const _AnimatedBuilder({required this.animation, required this.builder});
 
   final Animation<double> animation;
   final Widget Function(BuildContext context, Widget? child) builder;

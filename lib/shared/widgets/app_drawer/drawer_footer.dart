@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
@@ -10,7 +9,6 @@ class DrawerFooter extends StatelessWidget {
   // Mock: In production, this comes from user state
   static const bool _isPremiumUser = true;
   static const String _appVersion = '1.0.0';
-  static const String _buildNumber = '42';
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +17,7 @@ class DrawerFooter extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Colors.white.withOpacity(0.06),
+            color: Colors.white.withValues(alpha: 0.06),
             width: 1,
           ),
         ),
@@ -28,10 +26,7 @@ class DrawerFooter extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Upgrade banner for free users
-          if (!_isPremiumUser) ...[
-            _UpgradeBanner(),
-            const SizedBox(height: 8),
-          ],
+          if (!_isPremiumUser) ...[_UpgradeBanner(), const SizedBox(height: 8)],
 
           // Version and legal links
           _buildVersionSection(),
@@ -51,23 +46,14 @@ class DrawerFooter extends StatelessWidget {
       children: [
         Text(
           'v$_appVersion',
-          style: const TextStyle(
-            fontSize: 10,
-            color: Colors.white30,
-          ),
+          style: const TextStyle(fontSize: 10, color: Colors.white30),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
         _buildDot(),
-        _FooterLink(
-          label: 'Privacy',
-          onTap: () {},
-        ),
+        _FooterLink(label: 'Privacy', onTap: () {}),
         _buildDot(),
-        _FooterLink(
-          label: 'Terms',
-          onTap: () {},
-        ),
+        _FooterLink(label: 'Terms', onTap: () {}),
       ],
     );
   }
@@ -79,7 +65,7 @@ class DrawerFooter extends StatelessWidget {
         width: 3,
         height: 3,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           shape: BoxShape.circle,
         ),
       ),
@@ -153,13 +139,19 @@ class _UpgradeBannerState extends State<_UpgradeBanner> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.goldenYellow.withOpacity(_isPressed ? 0.25 : 0.15),
-              AppColors.sunsetOrange.withOpacity(_isPressed ? 0.20 : 0.10),
+              AppColors.goldenYellow.withValues(
+                alpha: _isPressed ? 0.25 : 0.15,
+              ),
+              AppColors.sunsetOrange.withValues(
+                alpha: _isPressed ? 0.20 : 0.10,
+              ),
             ],
           ),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: AppColors.goldenYellow.withOpacity(_isPressed ? 0.4 : 0.25),
+            color: AppColors.goldenYellow.withValues(
+              alpha: _isPressed ? 0.4 : 0.25,
+            ),
             width: 1,
           ),
         ),
@@ -176,7 +168,7 @@ class _UpgradeBannerState extends State<_UpgradeBanner> {
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.goldenYellow.withOpacity(0.4),
+                    color: AppColors.goldenYellow.withValues(alpha: 0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -210,10 +202,7 @@ class _UpgradeBannerState extends State<_UpgradeBanner> {
                   const SizedBox(height: 2),
                   const Text(
                     'Unlock AI advisor & more',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.white60,
-                    ),
+                    style: TextStyle(fontSize: 10, color: Colors.white60),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -227,7 +216,7 @@ class _UpgradeBannerState extends State<_UpgradeBanner> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -247,10 +236,7 @@ class _FooterLink extends StatefulWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _FooterLink({
-    required this.label,
-    required this.onTap,
-  });
+  const _FooterLink({required this.label, required this.onTap});
 
   @override
   State<_FooterLink> createState() => _FooterLinkState();
@@ -273,16 +259,10 @@ class _FooterLinkState extends State<_FooterLink> {
         duration: AppAnimations.fastDuration,
         style: TextStyle(
           fontSize: 10,
-          color: _isPressed 
-              ? Colors.white70
-              : Colors.white38,
+          color: _isPressed ? Colors.white70 : Colors.white38,
           fontWeight: FontWeight.w500,
         ),
-        child: Text(
-          widget.label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+        child: Text(widget.label, maxLines: 1, overflow: TextOverflow.ellipsis),
       ),
     );
   }
@@ -292,10 +272,7 @@ class _SocialButton extends StatefulWidget {
   final IconData icon;
   final VoidCallback onTap;
 
-  const _SocialButton({
-    required this.icon,
-    required this.onTap,
-  });
+  const _SocialButton({required this.icon, required this.onTap});
 
   @override
   State<_SocialButton> createState() => _SocialButtonState();
@@ -317,15 +294,15 @@ class _SocialButtonState extends State<_SocialButton> {
         duration: AppAnimations.fastDuration,
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: _isPressed 
-              ? Colors.white.withOpacity(0.12)
-              : Colors.white.withOpacity(0.06),
+          color: _isPressed
+              ? Colors.white.withValues(alpha: 0.12)
+              : Colors.white.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           widget.icon,
           size: 18,
-          color: Colors.white.withOpacity(_isPressed ? 0.8 : 0.5),
+          color: Colors.white.withValues(alpha: _isPressed ? 0.8 : 0.5),
         ),
       ),
     );

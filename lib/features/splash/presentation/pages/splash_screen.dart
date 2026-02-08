@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_animations.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 
@@ -29,7 +28,6 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _master;
 
-  static const _actI = Interval(0.00, 0.10, curve: Curves.easeOut);
   static const _actII = Interval(0.08, 0.40, curve: Curves.easeInOut);
   static const _actIIILine = Interval(0.35, 0.62, curve: Curves.easeInOutCubic);
   static const _actIVLogo = Interval(0.58, 0.72, curve: Curves.easeOutBack);
@@ -40,7 +38,6 @@ class _SplashScreenState extends State<SplashScreen>
   static const _exit = Interval(0.92, 1.00, curve: Curves.easeInCubic);
 
   late final List<_DataColumn> _dataColumns;
-  late final List<Offset> _chartPoints;
 
   late final DateTime _mountedAt;
 
@@ -50,11 +47,13 @@ class _SplashScreenState extends State<SplashScreen>
     _mountedAt = DateTime.now();
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarBrightness: Brightness.dark,
-      statusBarIconBrightness: Brightness.light,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
 
     _generateDataColumns();
 
@@ -69,28 +68,49 @@ class _SplashScreenState extends State<SplashScreen>
   void _generateDataColumns() {
     final rng = math.Random(42);
     const symbols = [
-      'AAPL', 'TSLA', 'GOOG', 'MSFT', 'AMZN', 'META', 'NVDA', 'NFLX',
-      'BTC', 'ETH', 'SPY', 'QQQ', 'RELIANCE', 'TCS', 'INFY', 'HDFC',
-      'VOD.L', 'BARC.L', 'AZN.L', 'SHEL.L', 'JPM', 'GS', 'V', 'MA',
-      'DIS', 'PYPL', 'AMD', 'BABA',
+      'AAPL',
+      'TSLA',
+      'GOOG',
+      'MSFT',
+      'AMZN',
+      'META',
+      'NVDA',
+      'NFLX',
+      'BTC',
+      'ETH',
+      'SPY',
+      'QQQ',
+      'RELIANCE',
+      'TCS',
+      'INFY',
+      'HDFC',
+      'VOD.L',
+      'BARC.L',
+      'AZN.L',
+      'SHEL.L',
+      'JPM',
+      'GS',
+      'V',
+      'MA',
+      'DIS',
+      'PYPL',
+      'AMD',
+      'BABA',
     ];
     _dataColumns = List.generate(28, (i) {
       final speed = 0.4 + rng.nextDouble() * 0.8;
       final offset = rng.nextDouble();
-      final entries = List.generate(
-        12 + rng.nextInt(8),
-        (_) {
-          final sym = symbols[rng.nextInt(symbols.length)];
-          final price = (10 + rng.nextDouble() * 990).toStringAsFixed(2);
-          final pct = ((rng.nextDouble() - 0.5) * 20).toStringAsFixed(2);
-          final positive = !pct.startsWith('-');
-          return _DataEntry(
-            text: '${rng.nextBool() ? sym : '\$$price'}',
-            subtext: '${positive ? '+' : ''}$pct%',
-            isPositive: positive,
-          );
-        },
-      );
+      final entries = List.generate(12 + rng.nextInt(8), (_) {
+        final sym = symbols[rng.nextInt(symbols.length)];
+        final price = (10 + rng.nextDouble() * 990).toStringAsFixed(2);
+        final pct = ((rng.nextDouble() - 0.5) * 20).toStringAsFixed(2);
+        final positive = !pct.startsWith('-');
+        return _DataEntry(
+          text: rng.nextBool() ? sym : '\$$price',
+          subtext: '${positive ? '+' : ''}$pct%',
+          isPositive: positive,
+        );
+      });
       return _DataColumn(
         xFraction: (i + 0.5) / 28,
         speed: speed,
@@ -254,7 +274,10 @@ class _SplashScreenState extends State<SplashScreen>
             child: Opacity(
               opacity: proProgress.clamp(0.0, 1.0),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   gradient: AppColors.primaryGradient,
                   borderRadius: AppSpacing.borderRadiusFull,
@@ -346,7 +369,11 @@ class _CandlestickIconPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5
         ..color = Colors.white70;
-      canvas.drawLine(Offset(x, y1 - h * 0.06), Offset(x, y2 + h * 0.06), paint);
+      canvas.drawLine(
+        Offset(x, y1 - h * 0.06),
+        Offset(x, y2 + h * 0.06),
+        paint,
+      );
 
       paint
         ..style = isBull ? PaintingStyle.fill : PaintingStyle.stroke
@@ -408,9 +435,7 @@ class _DataRainPainter extends CustomPainter {
             style: TextStyle(
               fontFamily: 'JetBrains Mono',
               fontSize: 11,
-              color: (entry.isPositive
-                      ? AppColors.success
-                      : AppColors.error)
+              color: (entry.isPositive ? AppColors.success : AppColors.error)
                   .withValues(alpha: alpha),
               fontWeight: FontWeight.w500,
             ),
@@ -584,11 +609,7 @@ class _DataEntry {
 }
 
 class _AnimatedBuilder extends StatelessWidget {
-  const _AnimatedBuilder({
-    super.key,
-    required this.animation,
-    required this.builder,
-  });
+  const _AnimatedBuilder({required this.animation, required this.builder});
 
   final Animation<double> animation;
   final Widget Function(BuildContext context, Widget? child) builder;

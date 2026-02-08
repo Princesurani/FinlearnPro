@@ -11,6 +11,7 @@ import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/glass_container.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../data/auth_service.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({
     super.key,
@@ -27,7 +28,6 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen>
     with TickerProviderStateMixin {
-
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
@@ -72,25 +72,25 @@ class _SignUpScreenState extends State<SignUpScreen>
       parent: _entranceCtrl,
       curve: const Interval(0.0, 0.35, curve: Curves.easeOut),
     );
-    _headerSlide = Tween<Offset>(
-      begin: const Offset(0, -0.12),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _entranceCtrl,
-      curve: const Interval(0.0, 0.35, curve: Curves.easeOutCubic),
-    ));
+    _headerSlide =
+        Tween<Offset>(begin: const Offset(0, -0.12), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _entranceCtrl,
+            curve: const Interval(0.0, 0.35, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _formFade = CurvedAnimation(
       parent: _entranceCtrl,
       curve: const Interval(0.15, 0.6, curve: Curves.easeOut),
     );
-    _formSlide = Tween<Offset>(
-      begin: const Offset(0, 0.08),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _entranceCtrl,
-      curve: const Interval(0.15, 0.6, curve: Curves.easeOutCubic),
-    ));
+    _formSlide = Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceCtrl,
+            curve: const Interval(0.15, 0.6, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _footerFade = CurvedAnimation(
       parent: _entranceCtrl,
@@ -151,7 +151,9 @@ class _SignUpScreenState extends State<SignUpScreen>
     setState(() => _errorMessage = null);
 
     if (!_agreedToTerms) {
-      setState(() => _errorMessage = 'Please agree to the Terms & Privacy Policy');
+      setState(
+        () => _errorMessage = 'Please agree to the Terms & Privacy Policy',
+      );
       _triggerShake();
       return;
     }
@@ -231,10 +233,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
-                  FadeTransition(
-                    opacity: _footerFade,
-                    child: _buildFooter(),
-                  ),
+                  FadeTransition(opacity: _footerFade, child: _buildFooter()),
                 ],
               ),
             ),
@@ -255,8 +254,11 @@ class _SignUpScreenState extends State<SignUpScreen>
             borderRadius: BorderRadius.circular(14),
             gradient: AppColors.primaryGradient,
           ),
-          child: const Icon(Icons.candlestick_chart_rounded,
-              color: Colors.white, size: 24),
+          child: const Icon(
+            Icons.candlestick_chart_rounded,
+            color: Colors.white,
+            size: 24,
+          ),
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(
@@ -310,7 +312,9 @@ class _SignUpScreenState extends State<SignUpScreen>
               showStrengthIndicator: true,
               onSubmitted: (_) => _confirmFocus.requestFocus(),
               validator: (value) {
-                if (value == null || value.isEmpty) return 'Password is required';
+                if (value == null || value.isEmpty) {
+                  return 'Password is required';
+                }
                 if (value.length < 6) return 'Must be at least 6 characters';
                 return null;
               },
@@ -333,8 +337,14 @@ class _SignUpScreenState extends State<SignUpScreen>
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _handleSignUp(),
               validator: (value) {
-                if (value == null || value.isEmpty) return 'Please confirm your password';
-                if (value != _passwordCtrl.text) return 'Passwords do not match';
+                if (value == null || value.isEmpty)
+                {
+                  return 'Please confirm your password';
+                }
+                if (value != _passwordCtrl.text)
+                {
+                  return 'Passwords do not match';
+                }
                 return null;
               },
             ),
@@ -458,8 +468,11 @@ class _TermsCheckbox extends StatelessWidget {
                   : Colors.transparent,
             ),
             child: value
-                ? const Icon(Icons.check_rounded, size: 14,
-                    color: AppColors.cyan)
+                ? const Icon(
+                    Icons.check_rounded,
+                    size: 14,
+                    color: AppColors.cyan,
+                  )
                 : null,
           ),
           const SizedBox(width: AppSpacing.sm),
@@ -565,8 +578,11 @@ class _ErrorBanner extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.error_outline_rounded,
-                        color: AppColors.error, size: 18),
+                    Icon(
+                      Icons.error_outline_rounded,
+                      color: AppColors.error,
+                      size: 18,
+                    ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
@@ -604,11 +620,7 @@ class _ShakeWrapper extends StatelessWidget {
 }
 
 class _AnimatedBuilder extends StatelessWidget {
-  const _AnimatedBuilder({
-    super.key,
-    required this.animation,
-    required this.builder,
-  });
+  const _AnimatedBuilder({required this.animation, required this.builder});
 
   final Animation<double> animation;
   final Widget Function(BuildContext context, Widget? child) builder;

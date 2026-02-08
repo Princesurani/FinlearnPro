@@ -147,17 +147,17 @@ abstract final class AppColors {
     'bonds': mintGreen,
   };
 
-  static Color withBackgroundOpacity(Color color) => color.withOpacity(0.08);
+  static Color withBackgroundOpacity(Color color) => color.withValues(alpha: 0.08);
 
-  static Color withHoverOpacity(Color color) => color.withOpacity(0.12);
+  static Color withHoverOpacity(Color color) => color.withValues(alpha: 0.12);
 
-  static Color withPressedOpacity(Color color) => color.withOpacity(0.16);
+  static Color withPressedOpacity(Color color) => color.withValues(alpha: 0.16);
 
   static LinearGradient shimmerGradient(Color baseColor) => LinearGradient(
     colors: [
-      baseColor.withOpacity(0.1),
-      baseColor.withOpacity(0.2),
-      baseColor.withOpacity(0.1),
+      baseColor.withValues(alpha: 0.1),
+      baseColor.withValues(alpha: 0.2),
+      baseColor.withValues(alpha: 0.1),
     ],
     stops: const [0.0, 0.5, 1.0],
     begin: const Alignment(-1.0, 0.0),

@@ -38,7 +38,7 @@ class IndexTicker extends StatelessWidget {
           horizontal: AppSpacing.screenPaddingHorizontal,
         ),
         itemCount: indices.length + 1,
-        separatorBuilder: (_, __) => Padding(
+        separatorBuilder: (_, _) => Padding(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
           child: VerticalDivider(
             width: 1,

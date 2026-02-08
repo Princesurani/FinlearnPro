@@ -86,7 +86,7 @@ class CommunityPostCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -104,7 +104,7 @@ class CommunityPostCard extends StatelessWidget {
                 backgroundImage: const NetworkImage(
                   'https://i.pravatar.cc/150?u=a042581f4e29026704d',
                 ),
-                onBackgroundImageError: (_, __) {},
+                onBackgroundImageError: (_, _) {},
                 child: const Icon(Icons.person, color: Colors.grey),
               ),
               const SizedBox(width: 12),
@@ -163,7 +163,7 @@ class CommunityPostCard extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: tagColor.withOpacity(0.1),
+                  color: tagColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(

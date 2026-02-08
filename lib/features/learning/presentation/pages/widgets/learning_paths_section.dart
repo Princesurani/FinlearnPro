@@ -184,12 +184,12 @@ class _LearningPathCardState extends State<_LearningPathCard>
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: path.displayColor.withOpacity(0.15),
+              color: path.displayColor.withValues(alpha: 0.15),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: path.displayColor.withOpacity(_isPressed ? 0.2 : 0.1),
+                color: path.displayColor.withValues(alpha: _isPressed ? 0.2 : 0.1),
                 blurRadius: _isPressed ? 20 : 16,
                 offset: const Offset(0, 6),
               ),
@@ -206,13 +206,13 @@ class _LearningPathCardState extends State<_LearningPathCard>
                       gradient: LinearGradient(
                         colors: [
                           path.displayColor,
-                          path.displayColor.withOpacity(0.7),
+                          path.displayColor.withValues(alpha: 0.7),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: path.displayColor.withOpacity(0.3),
+                          color: path.displayColor.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -307,7 +307,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                               ? path.displayColor
                               : isCurrent
                               ? AppColors.surface
-                              : AppColors.surface.withOpacity(0.8),
+                              : AppColors.surface.withValues(alpha: 0.8),
                           border: Border.all(
                             color: isCompleted
                                 ? path.displayColor
@@ -319,7 +319,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                           boxShadow: isCurrent
                               ? [
                                   BoxShadow(
-                                    color: path.displayColor.withOpacity(0.4),
+                                    color: path.displayColor.withValues(alpha: 0.4),
                                     blurRadius: 8,
                                     spreadRadius: 1,
                                   ),
@@ -372,7 +372,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                             Container(
                               height: 6,
                               decoration: BoxDecoration(
-                                color: path.displayColor.withOpacity(0.15),
+                                color: path.displayColor.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(3),
                               ),
                             ),
@@ -384,13 +384,13 @@ class _LearningPathCardState extends State<_LearningPathCard>
                                   gradient: LinearGradient(
                                     colors: [
                                       path.displayColor,
-                                      path.displayColor.withOpacity(0.7),
+                                      path.displayColor.withValues(alpha: 0.7),
                                     ],
                                   ),
                                   borderRadius: BorderRadius.circular(3),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: path.displayColor.withOpacity(0.4),
+                                      color: path.displayColor.withValues(alpha: 0.4),
                                       blurRadius: 4,
                                     ),
                                   ],
@@ -412,13 +412,13 @@ class _LearningPathCardState extends State<_LearningPathCard>
                       gradient: LinearGradient(
                         colors: [
                           path.displayColor,
-                          path.displayColor.withOpacity(0.8),
+                          path.displayColor.withValues(alpha: 0.8),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: [
                         BoxShadow(
-                          color: path.displayColor.withOpacity(0.3),
+                          color: path.displayColor.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -499,9 +499,9 @@ class _RoadmapPainter extends CustomPainter {
       if (i < completedNodes) {
         paint.color = color;
       } else if (i == completedNodes) {
-        paint.color = color.withOpacity(0.4);
+        paint.color = color.withValues(alpha: 0.4);
       } else {
-        paint.color = color.withOpacity(0.15);
+        paint.color = color.withValues(alpha: 0.15);
       }
 
       canvas.drawLine(Offset(startX, yCenter), Offset(endX, yCenter), paint);

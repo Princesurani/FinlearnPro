@@ -331,7 +331,7 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: course.displayColor.withOpacity(_isPressed ? 0.35 : 0.25),
+                    color: course.displayColor.withValues(alpha: _isPressed ? 0.35 : 0.25),
                     blurRadius: _isPressed ? 24 : 16,
                     offset: const Offset(0, 8),
                   ),
@@ -349,7 +349,7 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                           end: Alignment.bottomRight,
                           colors: [
                             course.displayColor,
-                            course.displayColor.withOpacity(0.7),
+                            course.displayColor.withValues(alpha: 0.7),
                             _getSecondaryColor(course.displayColor),
                           ],
                         ),
@@ -359,7 +359,7 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                     Positioned.fill(
                       child: CustomPaint(
                         painter: _PatternPainter(
-                          color: Colors.white.withOpacity(0.05),
+                          color: Colors.white.withValues(alpha: 0.05),
                         ),
                       ),
                     ),
@@ -373,9 +373,9 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                Colors.white.withOpacity(0),
-                                Colors.white.withOpacity(0.3),
-                                Colors.white.withOpacity(0),
+                                Colors.white.withValues(alpha: 0),
+                                Colors.white.withValues(alpha: 0.3),
+                                Colors.white.withValues(alpha: 0),
                               ],
                               stops: [
                                 _shimmerAnimation.value - 0.3,
@@ -385,7 +385,7 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                             ).createShader(bounds);
                           },
                           blendMode: BlendMode.srcATop,
-                          child: Container(color: Colors.white.withOpacity(0.1)),
+                          child: Container(color: Colors.white.withValues(alpha: 0.1)),
                         );
                       },
                     ),
@@ -397,8 +397,8 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Colors.black.withOpacity(0.1),
-                            Colors.black.withOpacity(0.5),
+                            Colors.black.withValues(alpha: 0.1),
+                            Colors.black.withValues(alpha: 0.5),
                           ],
                           stops: const [0.0, 0.5, 1.0],
                         ),
@@ -419,7 +419,7 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                                     vertical: 3,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
@@ -442,7 +442,7 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                                     vertical: 3,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: AppColors.success.withOpacity(0.9),
+                                    color: AppColors.success.withValues(alpha: 0.9),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: const Text(
@@ -482,7 +482,7 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                               course.subtitle,
                               style: TextStyle(
                                 fontSize: widget.isLarge ? 13 : 11,
-                                color: Colors.white.withOpacity(0.8),
+                                color: Colors.white.withValues(alpha: 0.8),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -499,7 +499,7 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                                 children: [
                                   Icon(
                                     Icons.schedule_rounded,
-                                    color: Colors.white.withOpacity(0.8),
+                                    color: Colors.white.withValues(alpha: 0.8),
                                     size: widget.isCompact ? 10 : 12,
                                   ),
                                   const SizedBox(width: 2),
@@ -508,7 +508,7 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                                     style: TextStyle(
                                       fontSize: widget.isCompact ? 9 : 10,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.white.withOpacity(0.9),
+                                      color: Colors.white.withValues(alpha: 0.9),
                                     ),
                                   ),
                                 ],
@@ -518,7 +518,7 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                                 children: [
                                   Icon(
                                     Icons.play_lesson_rounded,
-                                    color: Colors.white.withOpacity(0.8),
+                                    color: Colors.white.withValues(alpha: 0.8),
                                     size: widget.isCompact ? 10 : 12,
                                   ),
                                   const SizedBox(width: 2),
@@ -527,7 +527,7 @@ class _FeaturedCourseCardState extends State<_FeaturedCourseCard>
                                     style: TextStyle(
                                       fontSize: widget.isCompact ? 9 : 10,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.white.withOpacity(0.9),
+                                      color: Colors.white.withValues(alpha: 0.9),
                                     ),
                                   ),
                                 ],

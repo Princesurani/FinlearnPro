@@ -95,7 +95,7 @@ class BlogCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1E1E2C).withOpacity(0.08),
+            color: const Color(0xFF1E1E2C).withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -108,7 +108,7 @@ class BlogCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: categoryColor.withOpacity(0.1),
+                backgroundColor: categoryColor.withValues(alpha: 0.1),
                 child: Text(
                   authorName[0],
                   style: TextStyle(
@@ -142,7 +142,7 @@ class BlogCard extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: categoryColor.withOpacity(0.1),
+                  color: categoryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(

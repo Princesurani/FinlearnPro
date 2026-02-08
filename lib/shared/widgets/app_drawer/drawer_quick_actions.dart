@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
@@ -13,7 +12,6 @@ class DrawerQuickActions extends StatefulWidget {
 
 class _DrawerQuickActionsState extends State<DrawerQuickActions>
     with SingleTickerProviderStateMixin {
-
   late final AnimationController _controller;
 
   // Mock data for badges
@@ -114,7 +112,7 @@ class _DrawerQuickActionsState extends State<DrawerQuickActions>
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             itemCount: _actions.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            separatorBuilder: (_, _) => const SizedBox(width: 10),
             itemBuilder: (context, index) {
               return AnimatedBuilder(
                 animation: _controller,
@@ -136,10 +134,7 @@ class _DrawerQuickActionsState extends State<DrawerQuickActions>
 
                   return Transform.translate(
                     offset: Offset(0, 20 * (1 - progress)),
-                    child: Opacity(
-                      opacity: opacity,
-                      child: child,
-                    ),
+                    child: Opacity(opacity: opacity, child: child),
                   );
                 },
                 child: _QuickActionChip(action: _actions[index]),
@@ -197,14 +192,14 @@ class _QuickActionChipState extends State<_QuickActionChip> {
         height: 72,
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
         decoration: BoxDecoration(
-          color: _isPressed 
-              ? action.color.withOpacity(0.2)
-              : Colors.white.withOpacity(0.06),
+          color: _isPressed
+              ? action.color.withValues(alpha: 0.2)
+              : Colors.white.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: _isPressed 
-                ? action.color.withOpacity(0.4)
-                : Colors.white.withOpacity(0.08),
+            color: _isPressed
+                ? action.color.withValues(alpha: 0.4)
+                : Colors.white.withValues(alpha: 0.08),
             width: 1,
           ),
         ),
@@ -220,14 +215,10 @@ class _QuickActionChipState extends State<_QuickActionChip> {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: action.color.withOpacity(0.15),
+                    color: action.color.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    action.icon,
-                    size: 18,
-                    color: action.color,
-                  ),
+                  child: Icon(action.icon, size: 18, color: action.color),
                 ),
                 const SizedBox(height: 4),
                 // Label
@@ -236,7 +227,7 @@ class _QuickActionChipState extends State<_QuickActionChip> {
                   style: TextStyle(
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -250,13 +241,16 @@ class _QuickActionChipState extends State<_QuickActionChip> {
                 top: -4,
                 right: 4,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: action.color,
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
-                        color: action.color.withOpacity(0.5),
+                        color: action.color.withValues(alpha: 0.5),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),

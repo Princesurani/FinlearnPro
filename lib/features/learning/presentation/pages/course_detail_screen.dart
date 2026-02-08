@@ -1,4 +1,3 @@
-
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -12,11 +11,7 @@ import '../../../../shared/widgets/gradient_button.dart';
 import '../../../../shared/widgets/glass_container.dart';
 
 class CourseDetailScreen extends StatefulWidget {
-  const CourseDetailScreen({
-    super.key,
-    required this.courseId,
-    this.course,
-  });
+  const CourseDetailScreen({super.key, required this.courseId, this.course});
 
   final String courseId;
   final CourseData? course;
@@ -58,8 +53,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
   }
 
   void _initializeAnimations() {
-    _scrollController = ScrollController()
-      ..addListener(_onScroll);
+    _scrollController = ScrollController()..addListener(_onScroll);
 
     _heroController = AnimationController(
       vsync: this,
@@ -91,17 +85,11 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
     );
 
     _contentSlide = Tween<double>(begin: 50, end: 0).animate(
-      CurvedAnimation(
-        parent: _contentController,
-        curve: Curves.easeOutCubic,
-      ),
+      CurvedAnimation(parent: _contentController, curve: Curves.easeOutCubic),
     );
 
     _fabScale = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _fabController,
-        curve: Curves.elasticOut,
-      ),
+      CurvedAnimation(parent: _fabController, curve: Curves.elasticOut),
     );
   }
 
@@ -295,18 +283,12 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
           decoration: BoxDecoration(
             color: Colors.white.withAlpha(51),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white.withAlpha(77),
-            ),
+            border: Border.all(color: Colors.white.withAlpha(77)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                _course.levelIcon,
-                size: 16,
-                color: Colors.white,
-              ),
+              Icon(_course.levelIcon, size: 16, color: Colors.white),
               AppSpacing.gapXS,
               Text(
                 _course.level,
@@ -444,11 +426,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
             'Lessons',
           ),
           _buildStatDivider(),
-          _buildStatItem(
-            Icons.schedule_rounded,
-            _course.duration,
-            'Total',
-          ),
+          _buildStatItem(Icons.schedule_rounded, _course.duration, 'Total'),
           _buildStatDivider(),
           _buildStatItem(
             Icons.quiz_outlined,
@@ -473,9 +451,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
         AppSpacing.gapXXS,
         Text(
           value,
-          style: AppTypography.h4.copyWith(
-            color: AppColors.textPrimary,
-          ),
+          style: AppTypography.h4.copyWith(color: AppColors.textPrimary),
         ),
         Text(
           label,
@@ -488,11 +464,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
   }
 
   Widget _buildStatDivider() {
-    return Container(
-      width: 1,
-      height: 40,
-      color: AppColors.border,
-    );
+    return Container(width: 1, height: 40, color: AppColors.border);
   }
 
   Widget _buildLearningOutcomes() {
@@ -518,9 +490,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
               AppSpacing.gapSM,
               Text(
                 'What You\'ll Learn',
-                style: AppTypography.h3.copyWith(
-                  color: AppColors.textPrimary,
-                ),
+                style: AppTypography.h3.copyWith(color: AppColors.textPrimary),
               ),
             ],
           ),
@@ -596,9 +566,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
           AppSpacing.gapSM,
           Text(
             '${_course.modules.length} modules • ${_course.totalLessons} lessons • ${_course.duration}',
-            style: AppTypography.body.copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: AppTypography.body.copyWith(color: AppColors.textSecondary),
           ),
           AppSpacing.gapMD,
           ...List.generate(
@@ -648,9 +616,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
               AppSpacing.gapSM,
               Text(
                 'Your Instructor',
-                style: AppTypography.h3.copyWith(
-                  color: AppColors.textPrimary,
-                ),
+                style: AppTypography.h3.copyWith(color: AppColors.textPrimary),
               ),
             ],
           ),
@@ -668,16 +634,17 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
                   height: 80,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.primaryPurple, AppColors.primaryPurpleLight],
+                      colors: [
+                        AppColors.primaryPurple,
+                        AppColors.primaryPurpleLight,
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
                   ),
                   child: Center(
                     child: Text(
                       instructor.initials,
-                      style: AppTypography.h2.copyWith(
-                        color: Colors.white,
-                      ),
+                      style: AppTypography.h2.copyWith(color: Colors.white),
                     ),
                   ),
                 ),
@@ -848,14 +815,14 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
               Row(
                 children: List.generate(5, (index) {
                   final filled = index < _course.rating.floor();
-                  final partial = index == _course.rating.floor() &&
-                      _course.rating % 1 > 0;
+                  final partial =
+                      index == _course.rating.floor() && _course.rating % 1 > 0;
                   return Icon(
                     filled
                         ? Icons.star_rounded
                         : (partial
-                            ? Icons.star_half_rounded
-                            : Icons.star_outline_rounded),
+                              ? Icons.star_half_rounded
+                              : Icons.star_outline_rounded),
                     color: AppColors.warning,
                     size: 16,
                   );
@@ -954,9 +921,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
               AppSpacing.gapSM,
               Text(
                 'Related Courses',
-                style: AppTypography.h3.copyWith(
-                  color: AppColors.textPrimary,
-                ),
+                style: AppTypography.h3.copyWith(color: AppColors.textPrimary),
               ),
             ],
           ),
@@ -1011,9 +976,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
             ),
             decoration: BoxDecoration(
               color: AppColors.backgroundPrimary.withAlpha(230),
-              border: Border(
-                bottom: BorderSide(color: AppColors.border),
-              ),
+              border: Border(bottom: BorderSide(color: AppColors.border)),
             ),
             child: Row(
               children: [
@@ -1112,9 +1075,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            _course.price == 0
-                                ? 'Free'
-                                : '\$${_course.price}',
+                            _course.price == 0 ? 'Free' : '\$${_course.price}',
                             style: AppTypography.h2.copyWith(
                               color: AppColors.textPrimary,
                             ),
@@ -1280,7 +1241,9 @@ class _ModuleCard extends StatelessWidget {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
         border: Border.all(
-          color: isExpanded ? AppColors.primaryPurple.withAlpha(77) : AppColors.border,
+          color: isExpanded
+              ? AppColors.primaryPurple.withAlpha(77)
+              : AppColors.border,
         ),
       ),
       child: Column(
@@ -1390,7 +1353,9 @@ class _LessonItem extends StatelessWidget {
       decoration: BoxDecoration(
         border: isLast
             ? null
-            : Border(bottom: BorderSide(color: AppColors.border.withAlpha(128))),
+            : Border(
+                bottom: BorderSide(color: AppColors.border.withAlpha(128)),
+              ),
       ),
       child: Row(
         children: [
@@ -1697,10 +1662,7 @@ class _RelatedCourseCard extends StatelessWidget {
 }
 
 class _EnrollButton extends StatefulWidget {
-  const _EnrollButton({
-    required this.isEnrolled,
-    required this.onPressed,
-  });
+  const _EnrollButton({required this.isEnrolled, required this.onPressed});
 
   final bool isEnrolled;
   final VoidCallback onPressed;
@@ -1721,9 +1683,10 @@ class _EnrollButtonState extends State<_EnrollButton>
       vsync: this,
       duration: const Duration(milliseconds: 150),
     );
-    _scale = Tween<double>(begin: 1, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scale = Tween<double>(
+      begin: 1,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -1744,10 +1707,7 @@ class _EnrollButtonState extends State<_EnrollButton>
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scale.value,
-            child: child,
-          );
+          return Transform.scale(scale: _scale.value, child: child);
         },
         child: AnimatedContainer(
           duration: AppAnimations.mediumDuration,
@@ -1764,8 +1724,11 @@ class _EnrollButtonState extends State<_EnrollButton>
             borderRadius: BorderRadius.circular(AppSpacing.radiusLG),
             boxShadow: [
               BoxShadow(
-                color: (widget.isEnrolled ? AppColors.success : AppColors.primaryPurple)
-                    .withAlpha(77),
+                color:
+                    (widget.isEnrolled
+                            ? AppColors.success
+                            : AppColors.primaryPurple)
+                        .withAlpha(77),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
@@ -1783,9 +1746,7 @@ class _EnrollButtonState extends State<_EnrollButton>
               AppSpacing.gapSM,
               Text(
                 widget.isEnrolled ? 'Continue Learning' : 'Enroll Now',
-                style: AppTypography.button.copyWith(
-                  color: Colors.white,
-                ),
+                style: AppTypography.button.copyWith(color: Colors.white),
               ),
             ],
           ),
@@ -1800,10 +1761,7 @@ class _EnrollButtonState extends State<_EnrollButton>
 // ═══════════════════════════════════════════════════════════════════════════
 
 class _HeroPatternPainter extends CustomPainter {
-  _HeroPatternPainter({
-    required this.progress,
-    required this.color,
-  });
+  _HeroPatternPainter({required this.progress, required this.color});
 
   final double progress;
   final Color color;
@@ -1822,14 +1780,10 @@ class _HeroPatternPainter extends CustomPainter {
           .clamp(0.0, 1.0);
 
       if (lineProgress > 0) {
-        paint.color = color.withAlpha((color.alpha * lineProgress).round());
+        paint.color = color.withValues(alpha: color.a * lineProgress);
 
         // Diagonal lines
-        canvas.drawLine(
-          Offset(i, 0),
-          Offset(0, i),
-          paint,
-        );
+        canvas.drawLine(Offset(i, 0), Offset(0, i), paint);
       }
     }
 
@@ -1842,7 +1796,9 @@ class _HeroPatternPainter extends CustomPainter {
     for (var i = 0; i < 3; i++) {
       final radius = 50.0 + i * 30;
       final circleProgress = (progress - i * 0.2).clamp(0.0, 1.0);
-      circlePaint.color = color.withAlpha((color.alpha * circleProgress * 0.5).round());
+      circlePaint.color = color.withValues(
+        alpha: color.a * circleProgress * 0.5,
+      );
       canvas.drawCircle(
         Offset(size.width * 0.8, size.height * 0.3),
         radius * circleProgress,
@@ -1916,7 +1872,8 @@ class CourseData {
     return CourseData(
       id: 'course_001',
       title: 'Stock Market Fundamentals',
-      subtitle: 'Master the essentials of stock market investing. Learn how markets work, analyze stocks, and build your first portfolio with confidence.',
+      subtitle:
+          'Master the essentials of stock market investing. Learn how markets work, analyze stocks, and build your first portfolio with confidence.',
       category: 'Investing Basics',
       categoryColor: AppColors.primaryPurple,
       level: 'Beginner',
@@ -1946,55 +1903,205 @@ class CourseData {
           title: 'Introduction to Stock Markets',
           duration: '45 min',
           lessons: [
-            LessonData(title: 'What is the Stock Market?', type: 'Video', duration: '8 min', isPreview: true, isCompleted: false),
-            LessonData(title: 'History of Stock Exchanges', type: 'Reading', duration: '5 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'How Exchanges Work', type: 'Video', duration: '12 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Market Participants', type: 'Interactive', duration: '10 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Module 1 Quiz', type: 'Quiz', duration: '10 min', isPreview: false, isCompleted: false),
+            LessonData(
+              title: 'What is the Stock Market?',
+              type: 'Video',
+              duration: '8 min',
+              isPreview: true,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'History of Stock Exchanges',
+              type: 'Reading',
+              duration: '5 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'How Exchanges Work',
+              type: 'Video',
+              duration: '12 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Market Participants',
+              type: 'Interactive',
+              duration: '10 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Module 1 Quiz',
+              type: 'Quiz',
+              duration: '10 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
           ],
         ),
         ModuleData(
           title: 'Understanding Stock Prices',
           duration: '55 min',
           lessons: [
-            LessonData(title: 'Supply and Demand Basics', type: 'Video', duration: '10 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Bid-Ask Spread Explained', type: 'Video', duration: '8 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Order Types Deep Dive', type: 'Interactive', duration: '15 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Practice: Place Different Orders', type: 'Exercise', duration: '12 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Module 2 Quiz', type: 'Quiz', duration: '10 min', isPreview: false, isCompleted: false),
+            LessonData(
+              title: 'Supply and Demand Basics',
+              type: 'Video',
+              duration: '10 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Bid-Ask Spread Explained',
+              type: 'Video',
+              duration: '8 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Order Types Deep Dive',
+              type: 'Interactive',
+              duration: '15 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Practice: Place Different Orders',
+              type: 'Exercise',
+              duration: '12 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Module 2 Quiz',
+              type: 'Quiz',
+              duration: '10 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
           ],
         ),
         ModuleData(
           title: 'Types of Securities',
           duration: '1h 10min',
           lessons: [
-            LessonData(title: 'Common vs Preferred Stock', type: 'Video', duration: '12 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'ETFs Explained', type: 'Video', duration: '15 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Mutual Funds Deep Dive', type: 'Reading', duration: '10 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Bonds and Fixed Income', type: 'Video', duration: '12 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Security Comparison Tool', type: 'Interactive', duration: '15 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Module 3 Quiz', type: 'Quiz', duration: '10 min', isPreview: false, isCompleted: false),
+            LessonData(
+              title: 'Common vs Preferred Stock',
+              type: 'Video',
+              duration: '12 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'ETFs Explained',
+              type: 'Video',
+              duration: '15 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Mutual Funds Deep Dive',
+              type: 'Reading',
+              duration: '10 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Bonds and Fixed Income',
+              type: 'Video',
+              duration: '12 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Security Comparison Tool',
+              type: 'Interactive',
+              duration: '15 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Module 3 Quiz',
+              type: 'Quiz',
+              duration: '10 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
           ],
         ),
         ModuleData(
           title: 'Reading Stock Information',
           duration: '50 min',
           lessons: [
-            LessonData(title: 'Understanding Stock Tickers', type: 'Video', duration: '8 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Reading Stock Quotes', type: 'Interactive', duration: '12 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Key Metrics Explained', type: 'Video', duration: '15 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Company Research Challenge', type: 'Exercise', duration: '15 min', isPreview: false, isCompleted: false),
+            LessonData(
+              title: 'Understanding Stock Tickers',
+              type: 'Video',
+              duration: '8 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Reading Stock Quotes',
+              type: 'Interactive',
+              duration: '12 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Key Metrics Explained',
+              type: 'Video',
+              duration: '15 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Company Research Challenge',
+              type: 'Exercise',
+              duration: '15 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
           ],
         ),
         ModuleData(
           title: 'Building Your First Portfolio',
           duration: '1h 5min',
           lessons: [
-            LessonData(title: 'Introduction to Diversification', type: 'Video', duration: '12 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Asset Allocation Strategies', type: 'Video', duration: '15 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Sector Distribution', type: 'Reading', duration: '8 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Portfolio Builder Tool', type: 'Interactive', duration: '20 min', isPreview: false, isCompleted: false),
-            LessonData(title: 'Final Assessment', type: 'Quiz', duration: '15 min', isPreview: false, isCompleted: false),
+            LessonData(
+              title: 'Introduction to Diversification',
+              type: 'Video',
+              duration: '12 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Asset Allocation Strategies',
+              type: 'Video',
+              duration: '15 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Sector Distribution',
+              type: 'Reading',
+              duration: '8 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Portfolio Builder Tool',
+              type: 'Interactive',
+              duration: '20 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
+            LessonData(
+              title: 'Final Assessment',
+              type: 'Quiz',
+              duration: '15 min',
+              isPreview: false,
+              isCompleted: false,
+            ),
           ],
         ),
       ],
@@ -2002,7 +2109,8 @@ class CourseData {
         name: 'Dr. Sarah Chen',
         initials: 'SC',
         title: 'CFA, Former Goldman Sachs VP',
-        bio: 'Dr. Sarah Chen is a CFA charterholder with over 15 years of experience in investment management. After spending a decade at Goldman Sachs, she transitioned to education, combining her practical expertise with a passion for teaching. Her courses have helped over 50,000 students start their investment journeys.',
+        bio:
+            'Dr. Sarah Chen is a CFA charterholder with over 15 years of experience in investment management. After spending a decade at Goldman Sachs, she transitioned to education, combining her practical expertise with a passion for teaching. Her courses have helped over 50,000 students start their investment journeys.',
         rating: 4.9,
         studentCount: 52340,
         courseCount: 8,
@@ -2014,7 +2122,8 @@ class CourseData {
           userInitials: 'MT',
           rating: 5,
           date: '2 weeks ago',
-          comment: 'This course completely changed my understanding of the stock market. Sarah explains complex concepts in such an accessible way. The interactive exercises really helped solidify my learning.',
+          comment:
+              'This course completely changed my understanding of the stock market. Sarah explains complex concepts in such an accessible way. The interactive exercises really helped solidify my learning.',
           isHelpful: true,
           helpfulCount: 127,
         ),
@@ -2023,7 +2132,8 @@ class CourseData {
           userInitials: 'JL',
           rating: 5,
           date: '1 month ago',
-          comment: 'Perfect for beginners! I had zero knowledge about investing before this course. Now I feel confident enough to start building my portfolio. Highly recommend!',
+          comment:
+              'Perfect for beginners! I had zero knowledge about investing before this course. Now I feel confident enough to start building my portfolio. Highly recommend!',
           isHelpful: true,
           helpfulCount: 89,
         ),
@@ -2032,7 +2142,8 @@ class CourseData {
           userInitials: 'DK',
           rating: 4,
           date: '1 month ago',
-          comment: 'Great content and well-structured lessons. Would have loved more advanced topics, but it\'s perfect for its target audience. The portfolio builder tool is fantastic!',
+          comment:
+              'Great content and well-structured lessons. Would have loved more advanced topics, but it\'s perfect for its target audience. The portfolio builder tool is fantastic!',
           isHelpful: false,
           helpfulCount: 45,
         ),

@@ -115,12 +115,12 @@ class _NotificationItem extends StatelessWidget {
         color: isUnread ? Colors.white : const Color(0xFFF8F9FE),
         borderRadius: BorderRadius.circular(16),
         border: isUnread
-            ? Border.all(color: Colors.blue.withOpacity(0.1))
+            ? Border.all(color: Colors.blue.withValues(alpha: 0.1))
             : null,
         boxShadow: [
           if (isUnread)
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -132,7 +132,7 @@ class _NotificationItem extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
+              color: iconColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: iconColor, size: 20),

@@ -120,7 +120,7 @@ class LearningCategory {
 
   final bool isPremium;
 
-  Color get backgroundColor => color.withOpacity(0.1);
+  Color get backgroundColor => color.withValues(alpha: 0.1);
 
   String get formattedDuration => '${estimatedHours.toInt()}h';
 }

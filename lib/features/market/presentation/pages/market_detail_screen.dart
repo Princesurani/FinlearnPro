@@ -168,7 +168,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                             ),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? color.withOpacity(0.1)
+                                  ? color.withValues(alpha: 0.1)
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(18),
                               border: isSelected
@@ -245,7 +245,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -5),
                 ),
@@ -351,7 +351,7 @@ class _ChartPainter extends CustomPainter {
     final fillPaint = Paint()
       ..style = PaintingStyle.fill
       ..shader = LinearGradient(
-        colors: [color.withOpacity(0.2), color.withOpacity(0.0)],
+        colors: [color.withValues(alpha: 0.2), color.withValues(alpha: 0.0)],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));

@@ -185,12 +185,12 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: course.displayColor.withOpacity(0.15),
+              color: course.displayColor.withValues(alpha: 0.15),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: course.displayColor.withOpacity(_isPressed ? 0.2 : 0.1),
+                color: course.displayColor.withValues(alpha: _isPressed ? 0.2 : 0.1),
                 blurRadius: _isPressed ? 20 : 16,
                 offset: const Offset(0, 6),
               ),
@@ -204,7 +204,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: course.displayColor.withOpacity(0.12),
+                      color: course.displayColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -248,7 +248,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: course.displayColor.withOpacity(0.12),
+                      color: course.displayColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -293,7 +293,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                   Container(
                     height: 6,
                     decoration: BoxDecoration(
-                      color: course.displayColor.withOpacity(0.15),
+                      color: course.displayColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -305,13 +305,13 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                         gradient: LinearGradient(
                           colors: [
                             course.displayColor,
-                            course.displayColor.withOpacity(0.7),
+                            course.displayColor.withValues(alpha: 0.7),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(3),
                         boxShadow: [
                           BoxShadow(
-                            color: course.displayColor.withOpacity(0.4),
+                            color: course.displayColor.withValues(alpha: 0.4),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -331,13 +331,13 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                   gradient: LinearGradient(
                     colors: [
                       course.displayColor,
-                      course.displayColor.withOpacity(0.8),
+                      course.displayColor.withValues(alpha: 0.8),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: course.displayColor.withOpacity(0.3),
+                      color: course.displayColor.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),

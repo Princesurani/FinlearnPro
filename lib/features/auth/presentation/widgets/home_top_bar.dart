@@ -77,12 +77,12 @@ class HomeTopBar extends StatelessWidget {
                   color: Colors.white,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.grey.withValues(alpha: 0.2),
                     width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                       spreadRadius: 2,
@@ -118,7 +118,7 @@ class HomeTopBar extends StatelessWidget {
                   border: Border.all(color: Colors.white, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF6B4EF5).withOpacity(0.4),
+                      color: const Color(0xFF6B4EF5).withValues(alpha: 0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                       spreadRadius: 2,

@@ -142,7 +142,7 @@ class _DailyTipCardState extends State<DailyTipCard>
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: categoryColor.withOpacity(_isPressed ? 0.35 : 0.25),
+                  color: categoryColor.withValues(alpha: _isPressed ? 0.35 : 0.25),
                   blurRadius: _isPressed ? 24 : 20,
                   offset: const Offset(0, 10),
                 ),
@@ -160,7 +160,7 @@ class _DailyTipCardState extends State<DailyTipCard>
                         end: Alignment.bottomRight,
                         colors: [
                           categoryColor,
-                          categoryColor.withOpacity(0.85),
+                          categoryColor.withValues(alpha: 0.85),
                           _getSecondaryColor(categoryColor),
                         ],
                       ),
@@ -177,7 +177,7 @@ class _DailyTipCardState extends State<DailyTipCard>
                       height: 120,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                       ),
                     ),
                   ),
@@ -190,7 +190,7 @@ class _DailyTipCardState extends State<DailyTipCard>
                       height: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.08),
+                        color: Colors.white.withValues(alpha: 0.08),
                       ),
                     ),
                   ),
@@ -209,7 +209,7 @@ class _DailyTipCardState extends State<DailyTipCard>
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
@@ -241,7 +241,7 @@ class _DailyTipCardState extends State<DailyTipCard>
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.15),
+                                color: Colors.black.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: const Row(
@@ -270,8 +270,8 @@ class _DailyTipCardState extends State<DailyTipCard>
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: _isSaved
-                                      ? Colors.white.withOpacity(0.3)
-                                      : Colors.white.withOpacity(0.15),
+                                      ? Colors.white.withValues(alpha: 0.3)
+                                      : Colors.white.withValues(alpha: 0.15),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -297,7 +297,7 @@ class _DailyTipCardState extends State<DailyTipCard>
                               style: TextStyle(
                                 fontSize: 48,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white.withOpacity(0.3),
+                                color: Colors.white.withValues(alpha: 0.3),
                                 height: 0.8,
                               ),
                             ),
@@ -330,7 +330,7 @@ class _DailyTipCardState extends State<DailyTipCard>
                                   vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.15),
+                                  color: Colors.white.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: const Row(
@@ -367,7 +367,7 @@ class _DailyTipCardState extends State<DailyTipCard>
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),

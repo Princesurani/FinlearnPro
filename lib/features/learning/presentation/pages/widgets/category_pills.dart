@@ -67,7 +67,7 @@ class _CategoryPillsState extends State<CategoryPills> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryPurple.withOpacity(0.1),
+                      color: AppColors.primaryPurple.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Row(
@@ -214,14 +214,14 @@ class _CategoryPillItemState extends State<_CategoryPillItem>
             border: Border.all(
               color: isSelected
                   ? category.color
-                  : category.color.withOpacity(0.2),
+                  : category.color.withValues(alpha: 0.2),
               width: isSelected ? 2 : 1.5,
             ),
             boxShadow: [
               BoxShadow(
                 color: isSelected
-                    ? category.color.withOpacity(0.35)
-                    : Colors.black.withOpacity(0.06),
+                    ? category.color.withValues(alpha: 0.35)
+                    : Colors.black.withValues(alpha: 0.06),
                 blurRadius: isSelected ? 16 : 10,
                 offset: const Offset(0, 4),
                 spreadRadius: isSelected ? 2 : 0,
@@ -237,8 +237,8 @@ class _CategoryPillItemState extends State<_CategoryPillItem>
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Colors.white.withOpacity(0.25)
-                      : category.color.withOpacity(0.12),
+                      ? Colors.white.withValues(alpha: 0.25)
+                      : category.color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(

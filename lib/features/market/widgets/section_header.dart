@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -44,13 +43,15 @@ class SectionHeader extends StatelessWidget {
                 ),
               ),
 
-              if (trailing != null) trailing!,
+              ?trailing,
               if (trailing == null && actionText != null)
                 GestureDetector(
                   onTap: onAction,
                   behavior: HitTestBehavior.opaque,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.xxs,
+                    ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

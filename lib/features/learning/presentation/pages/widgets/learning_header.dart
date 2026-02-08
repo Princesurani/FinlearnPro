@@ -85,13 +85,13 @@ class LearningHeader extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.sunsetOrange.withOpacity(0.15),
+            color: AppColors.sunsetOrange.withValues(alpha: 0.15),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: AppColors.sunsetOrange.withOpacity(0.2),
+          color: AppColors.sunsetOrange.withValues(alpha: 0.2),
           width: 1,
         ),
       ),

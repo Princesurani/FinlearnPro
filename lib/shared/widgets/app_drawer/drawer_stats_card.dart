@@ -81,13 +81,13 @@ class _DrawerStatsCardState extends State<DrawerStatsCard>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.white.withOpacity(0.08),
-              Colors.white.withOpacity(0.04),
+              Colors.white.withValues(alpha: 0.08),
+              Colors.white.withValues(alpha: 0.04),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -106,7 +106,7 @@ class _DrawerStatsCardState extends State<DrawerStatsCard>
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryPurple.withOpacity(0.2),
+                          color: AppColors.primaryPurple.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
@@ -192,18 +192,18 @@ class _DrawerStatsCardState extends State<DrawerStatsCard>
             end: Alignment.bottomRight,
             colors: [
               _stats.isPortfolioUp 
-                  ? AppColors.profitGreen.withOpacity(0.15)
-                  : AppColors.lossRed.withOpacity(0.15),
+                  ? AppColors.profitGreen.withValues(alpha: 0.15)
+                  : AppColors.lossRed.withValues(alpha: 0.15),
               _stats.isPortfolioUp 
-                  ? AppColors.profitGreen.withOpacity(0.05)
-                  : AppColors.lossRed.withOpacity(0.05),
+                  ? AppColors.profitGreen.withValues(alpha: 0.05)
+                  : AppColors.lossRed.withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: (_stats.isPortfolioUp 
                 ? AppColors.profitGreen 
-                : AppColors.lossRed).withOpacity(0.2),
+                : AppColors.lossRed).withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -219,7 +219,7 @@ class _DrawerStatsCardState extends State<DrawerStatsCard>
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.6),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -244,7 +244,7 @@ class _DrawerStatsCardState extends State<DrawerStatsCard>
               decoration: BoxDecoration(
                 color: (_stats.isPortfolioUp 
                     ? AppColors.profitGreen 
-                    : AppColors.lossRed).withOpacity(0.2),
+                    : AppColors.lossRed).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Row(
@@ -339,7 +339,7 @@ class _LiveIndicatorState extends State<_LiveIndicator>
                 color: AppColors.profitGreen,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.profitGreen.withOpacity(0.5 * pulseValue),
+                    color: AppColors.profitGreen.withValues(alpha: 0.5 * pulseValue),
                     blurRadius: 6,
                     spreadRadius: 2 * pulseValue,
                   ),
@@ -389,7 +389,7 @@ class _StatTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.04),
+        color: Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -406,7 +406,7 @@ class _StatTile extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -435,7 +435,7 @@ class _StatTile extends StatelessWidget {
                 subtitle,
                 style: TextStyle(
                   fontSize: 9,
-                  color: Colors.white.withOpacity(0.4),
+                  color: Colors.white.withValues(alpha: 0.4),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -447,7 +447,7 @@ class _StatTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: Colors.white.withOpacity(0.1),
+              backgroundColor: Colors.white.withValues(alpha: 0.1),
               valueColor: AlwaysStoppedAnimation<Color>(progressColor),
               minHeight: 3,
             ),

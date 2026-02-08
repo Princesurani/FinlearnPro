@@ -242,10 +242,10 @@ class _DrawerMenuSectionState extends State<DrawerMenuSection>
           // Menu items
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.04),
+              color: Colors.white.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: Colors.white.withOpacity(0.06),
+                color: Colors.white.withValues(alpha: 0.06),
                 width: 1,
               ),
             ),
@@ -265,7 +265,7 @@ class _DrawerMenuSectionState extends State<DrawerMenuSection>
                       thickness: 1,
                       indent: 48,
                       endIndent: 12,
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                     ),
                 ],
               ],
@@ -336,7 +336,7 @@ class _DrawerMenuItemState extends State<_DrawerMenuItem> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: _isPressed 
-              ? item.color.withOpacity(0.1)
+              ? item.color.withValues(alpha: 0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.vertical(
             top: widget.isFirst ? const Radius.circular(14) : Radius.zero,
@@ -350,7 +350,7 @@ class _DrawerMenuItemState extends State<_DrawerMenuItem> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: item.color.withOpacity(0.12),
+                color: item.color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -394,7 +394,7 @@ class _DrawerMenuItemState extends State<_DrawerMenuItem> {
                     item.description,
                     style: TextStyle(
                       fontSize: 10,
-                      color: Colors.white.withOpacity(0.45),
+                      color: Colors.white.withValues(alpha: 0.45),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -407,7 +407,7 @@ class _DrawerMenuItemState extends State<_DrawerMenuItem> {
             Icon(
               Icons.chevron_right_rounded,
               size: 18,
-              color: Colors.white.withOpacity(0.25),
+              color: Colors.white.withValues(alpha: 0.25),
             ),
           ],
         ),
@@ -433,11 +433,11 @@ class _BadgeWidget extends StatelessWidget {
         textColor = Colors.white;
         text = 'NEW';
       case _MenuBadge.beta:
-        bgColor = AppColors.electricBlue.withOpacity(0.2);
+        bgColor = AppColors.electricBlue.withValues(alpha: 0.2);
         textColor = AppColors.electricBlue;
         text = 'BETA';
       case _MenuBadge.hot:
-        bgColor = AppColors.sunsetOrange.withOpacity(0.2);
+        bgColor = AppColors.sunsetOrange.withValues(alpha: 0.2);
         textColor = AppColors.sunsetOrange;
         text = 'HOT';
       case _MenuBadge.pro:
