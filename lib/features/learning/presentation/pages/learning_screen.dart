@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_animations.dart';
-import '../../../../shared/widgets/aurora_background.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../data/learning_models.dart';
 import '../../data/learning_mock_data.dart';
 import 'widgets/learning_header.dart';
@@ -23,7 +22,6 @@ class LearningScreen extends StatefulWidget {
 
 class _LearningScreenState extends State<LearningScreen>
     with TickerProviderStateMixin {
-
   String? _selectedCategoryId;
 
   String _searchQuery = '';
@@ -126,22 +124,8 @@ class _LearningScreenState extends State<LearningScreen>
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
-        body: Stack(
-          children: [
-            // PERFORMANCE FIX: Disabled animation - was causing constant repaints
-            // Aurora background is beautiful but too expensive for scrolling screens
-            const Positioned.fill(
-              child: AuroraBackground(
-                intensity: 0.2,
-                enableAnimation: false, // CRITICAL: Disable for performance
-              ),
-            ),
-
-            _buildMainContent(),
-
-          ],
-        ),
+        backgroundColor: Colors.transparent,
+        body: _buildMainContent(),
       ),
     );
   }
@@ -154,14 +138,14 @@ class _LearningScreenState extends State<LearningScreen>
       ),
       slivers: [
         SliverToBoxAdapter(
-          child: SizedBox(height: MediaQuery.of(context).padding.top + 16),
+          child: SizedBox(height: MediaQuery.of(context).padding.top + 12),
         ),
 
         SliverToBoxAdapter(
           child: _buildAnimatedSection(
             index: 0,
             child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: AppSpacing.screenPaddingH,
               child: LearningHeader(),
             ),
           ),
@@ -255,7 +239,8 @@ class _LearningScreenState extends State<LearningScreen>
             index: 7,
             child: DailyTipCard(
               tip: LearningMockData.dailyTips.first['tip'] ?? '',
-              category: LearningMockData.dailyTips.first['category'] ?? 'Investing',
+              category:
+                  LearningMockData.dailyTips.first['category'] ?? 'Investing',
             ),
           ),
         ),
@@ -265,15 +250,13 @@ class _LearningScreenState extends State<LearningScreen>
     );
   }
 
-  Widget _buildAnimatedSection({
-    required int index,
-    required Widget child,
-  }) {
+  Widget _buildAnimatedSection({required int index, required Widget child}) {
     final interval = AppAnimations.staggeredInterval(index, 8);
 
-    final fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _staggerController, curve: interval),
-    );
+    final fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _staggerController, curve: interval));
 
     final slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.1),
@@ -282,10 +265,7 @@ class _LearningScreenState extends State<LearningScreen>
 
     return FadeTransition(
       opacity: fadeAnimation,
-      child: SlideTransition(
-        position: slideAnimation,
-        child: child,
-      ),
+      child: SlideTransition(position: slideAnimation, child: child),
     );
   }
 }

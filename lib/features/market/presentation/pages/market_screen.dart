@@ -7,6 +7,7 @@ import '../../bloc/market_bloc.dart';
 import '../../widgets/country_selector.dart';
 import '../../widgets/index_ticker.dart';
 import 'explore_tab.dart';
+import '../../../../shared/navigation/top_navigation_shell.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
@@ -47,79 +48,67 @@ class _MarketScreenState extends State<MarketScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildTopBar(),
-            _buildIndexStrip(),
-            _buildTabPills(),
-            Expanded(child: _buildContent()),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTopBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.screenPaddingHorizontal,
-        vertical: AppSpacing.sm,
-      ),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(
-          bottom: BorderSide(color: AppColors.borderLight, width: 1),
-        ),
-      ),
-      child: Row(
+      backgroundColor: Colors.transparent,
+      body: Column(
         children: [
-          StreamBuilder<MarketState>(
-            stream: _bloc.stream,
-            initialData: _bloc.state,
-            builder: (_, snap) {
-              final state = snap.data!;
-              return CountrySelector(
-                activeMarket: state.activeMarket,
-                onMarketChanged: (m) => _bloc.add(SwitchMarket(m)),
-              );
-            },
-          ),
-
-          const Spacer(),
-
-//To Surani - all the search and notification logic is currently stubbed, so just show static icons for now. We can implement the actual functionality in a future iteration
-          _buildIconButton(
-            icon: Icons.search_rounded,
-            onTap: () {},
-          ),
-          AppSpacing.gapHXS,
-
-          _buildIconButton(
-            icon: Icons.notifications_none_rounded,
-            onTap: () {},
-          ),
+          SizedBox(height: MediaQuery.paddingOf(context).top + 12),
+          Padding(padding: AppSpacing.screenPaddingH, child: _buildTopBar()),
+          const SizedBox(height: 16),
+          _buildIndexStrip(),
+          _buildTabPills(),
+          Expanded(child: _buildContent()),
         ],
       ),
     );
   }
 
-  Widget _buildIconButton({
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          color: AppColors.backgroundTertiary,
-          borderRadius: AppSpacing.borderRadiusSM,
-        ),
-        child: Icon(icon, size: 20, color: AppColors.textSecondary),
-      ),
+  Widget _buildTopBar() {
+    return StreamBuilder<MarketState>(
+      stream: _bloc.stream,
+      initialData: _bloc.state,
+      builder: (_, snap) {
+        final state = snap.data!;
+
+        return TopNavigationShell(
+          title: Row(
+            children: [
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Market insights,',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.1,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    const Text(
+                      'Markets',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              CountrySelector(
+                activeMarket: state.activeMarket,
+                onMarketChanged: (m) => _bloc.add(SwitchMarket(m)),
+              ),
+            ],
+          ),
+          actions: [TopBarButton(icon: Icons.search_rounded, onTap: () {})],
+        );
+      },
     );
   }
 
@@ -274,12 +263,18 @@ class _ExploreStreamWrapper extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.cloud_off_rounded,
-                      size: 56, color: AppColors.textTertiary),
+                  const Icon(
+                    Icons.cloud_off_rounded,
+                    size: 56,
+                    color: AppColors.textTertiary,
+                  ),
                   AppSpacing.gapLG,
-                  Text('Something went wrong',
-                      style: AppTypography.h5
-                          .copyWith(color: AppColors.textPrimary)),
+                  Text(
+                    'Something went wrong',
+                    style: AppTypography.h5.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                   AppSpacing.gapSM,
                   Text(
                     state.errorMessage ??

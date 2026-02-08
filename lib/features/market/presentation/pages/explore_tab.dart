@@ -59,10 +59,7 @@ class _ExploreTabState extends State<ExploreTab>
     final formatter = MarketFormatterFactory.forMarket(_market);
 
     return ListView(
-      padding: const EdgeInsets.only(
-        top: AppSpacing.lg,
-        bottom: AppSpacing.huge,
-      ),
+      padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: 100),
       children: [
         _section(
           child: Column(
@@ -212,8 +209,7 @@ class _ExploreTabState extends State<ExploreTab>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SectionHeader(
-                title:
-                    'Popular ETFs for ${_market.systematicInvestmentTerm}',
+                title: 'Popular ETFs for ${_market.systematicInvestmentTerm}',
                 actionText: 'See more',
               ),
               _buildETFRow(formatter),
@@ -243,7 +239,6 @@ class _ExploreTabState extends State<ExploreTab>
     );
   }
 
-
   Widget _section({required Widget child}) {
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -253,8 +248,7 @@ class _ExploreTabState extends State<ExploreTab>
     );
   }
 
-  Widget _sectionGap() => const SizedBox(height: AppSpacing.sectionGap);
-
+  Widget _sectionGap() => const SizedBox(height: 40);
 
   Widget _buildMoverFilters() {
     return Row(
@@ -338,14 +332,15 @@ class _ExploreTabState extends State<ExploreTab>
           label,
           style: AppTypography.label.copyWith(
             color: isActive ? activeColor : AppColors.textSecondary,
-            fontWeight: isActive ? AppTypography.semiBold : AppTypography.medium,
+            fontWeight: isActive
+                ? AppTypography.semiBold
+                : AppTypography.medium,
             fontSize: 13,
           ),
         ),
       ),
     );
   }
-
 
   Widget _buildVolumeShockersList(MarketFormatter formatter) {
     final shockers = _volumeShockers();
@@ -361,10 +356,7 @@ class _ExploreTabState extends State<ExploreTab>
     );
   }
 
-  Widget _buildShockerRow(
-    _VolumeShockerData data,
-    MarketFormatter formatter,
-  ) {
+  Widget _buildShockerRow(_VolumeShockerData data, MarketFormatter formatter) {
     final snap = _snaps[data.instrument.symbol];
 
     return Padding(
@@ -429,7 +421,6 @@ class _ExploreTabState extends State<ExploreTab>
       ),
     );
   }
-
 
   Widget _buildTradingSignals() {
     const signals = [
@@ -529,7 +520,6 @@ class _ExploreTabState extends State<ExploreTab>
     );
   }
 
-
   Widget _buildETFRow(MarketFormatter formatter) {
     final etfs = _tradable
         .where((i) => i.type == InstrumentType.etf)
@@ -624,7 +614,6 @@ class _ExploreTabState extends State<ExploreTab>
     );
   }
 
-
   Widget _buildMiniLogo(Instrument inst) {
     final color = _sectorColor(inst.sector);
     final initials = inst.symbol
@@ -686,16 +675,16 @@ class _ExploreTabState extends State<ExploreTab>
     }
   }
 
-
   List<Instrument> _topByVolume(int n) {
     if (_cachedTopByVolume != null) return _cachedTopByVolume!;
-    final sorted = List<Instrument>.from(
-      _tradable.where((i) => i.type == InstrumentType.stock),
-    )..sort((a, b) {
-        final va = _snaps[a.symbol]?.volume ?? 0;
-        final vb = _snaps[b.symbol]?.volume ?? 0;
-        return vb.compareTo(va);
-      });
+    final sorted =
+        List<Instrument>.from(
+          _tradable.where((i) => i.type == InstrumentType.stock),
+        )..sort((a, b) {
+          final va = _snaps[a.symbol]?.volume ?? 0;
+          final vb = _snaps[b.symbol]?.volume ?? 0;
+          return vb.compareTo(va);
+        });
     _cachedTopByVolume = sorted.take(n).toList();
     return _cachedTopByVolume!;
   }
@@ -723,9 +712,7 @@ class _ExploreTabState extends State<ExploreTab>
       ..sort((a, b) {
         final ca = _snaps[a.symbol]?.changePercent ?? 0;
         final cb = _snaps[b.symbol]?.changePercent ?? 0;
-        return _moverFilter == 'gainers'
-            ? cb.compareTo(ca)
-            : ca.compareTo(cb);
+        return _moverFilter == 'gainers' ? cb.compareTo(ca) : ca.compareTo(cb);
       });
 
     return list.take(4).toList();
@@ -733,30 +720,32 @@ class _ExploreTabState extends State<ExploreTab>
 
   List<Instrument> _mtfStocks() {
     if (_cachedMtfStocks != null) return _cachedMtfStocks!;
-    final stocks = _tradable
-        .where((i) => i.type == InstrumentType.stock)
-        .toList()
-      ..sort((a, b) {
-        final va = _snaps[a.symbol]?.volume ?? 0;
-        final vb = _snaps[b.symbol]?.volume ?? 0;
-        return vb.compareTo(va);
-      });
+    final stocks =
+        _tradable.where((i) => i.type == InstrumentType.stock).toList()
+          ..sort((a, b) {
+            final va = _snaps[a.symbol]?.volume ?? 0;
+            final vb = _snaps[b.symbol]?.volume ?? 0;
+            return vb.compareTo(va);
+          });
     _cachedMtfStocks = stocks.take(4).toList();
     return _cachedMtfStocks!;
   }
 
   List<Instrument> _topIntraday() {
     if (_cachedTopIntraday != null) return _cachedTopIntraday!;
-    final stocks = _tradable
-        .where((i) => i.type == InstrumentType.stock)
-        .toList()
-      ..sort((a, b) {
-        final sa = _snaps[a.symbol];
-        final sb = _snaps[b.symbol];
-        final ra = sa != null && sa.open > 0 ? (sa.high - sa.low) / sa.open : 0.0;
-        final rb = sb != null && sb.open > 0 ? (sb.high - sb.low) / sb.open : 0.0;
-        return rb.compareTo(ra);
-      });
+    final stocks =
+        _tradable.where((i) => i.type == InstrumentType.stock).toList()
+          ..sort((a, b) {
+            final sa = _snaps[a.symbol];
+            final sb = _snaps[b.symbol];
+            final ra = sa != null && sa.open > 0
+                ? (sa.high - sa.low) / sa.open
+                : 0.0;
+            final rb = sb != null && sb.open > 0
+                ? (sb.high - sb.low) / sb.open
+                : 0.0;
+            return rb.compareTo(ra);
+          });
     _cachedTopIntraday = stocks.take(4).toList();
     return _cachedTopIntraday!;
   }
@@ -777,8 +766,7 @@ class _ExploreTabState extends State<ExploreTab>
         volumeSpike: spike,
         volume: snap?.volume ?? 0,
       );
-    }).toList()
-      ..sort((a, b) => b.volumeSpike.compareTo(a.volumeSpike));
+    }).toList()..sort((a, b) => b.volumeSpike.compareTo(a.volumeSpike));
 
     _cachedVolumeShockers = shockers.take(5).toList();
     return _cachedVolumeShockers!;
@@ -786,19 +774,17 @@ class _ExploreTabState extends State<ExploreTab>
 
   List<Instrument> _stocksInNews() {
     if (_cachedStocksInNews != null) return _cachedStocksInNews!;
-    final stocks = _tradable
-        .where((i) => i.type == InstrumentType.stock)
-        .toList()
-      ..sort((a, b) {
-        final ca = (_snaps[a.symbol]?.changePercent ?? 0).abs();
-        final cb = (_snaps[b.symbol]?.changePercent ?? 0).abs();
-        return cb.compareTo(ca);
-      });
+    final stocks =
+        _tradable.where((i) => i.type == InstrumentType.stock).toList()
+          ..sort((a, b) {
+            final ca = (_snaps[a.symbol]?.changePercent ?? 0).abs();
+            final cb = (_snaps[b.symbol]?.changePercent ?? 0).abs();
+            return cb.compareTo(ca);
+          });
     _cachedStocksInNews = stocks.take(4).toList();
     return _cachedStocksInNews!;
   }
 }
-
 
 class _VolumeShockerData {
   const _VolumeShockerData({

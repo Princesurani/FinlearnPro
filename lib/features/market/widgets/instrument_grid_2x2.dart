@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../../../core/domain/instrument.dart';
@@ -35,6 +34,7 @@ class InstrumentGrid2x2 extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: AppSpacing.sm,
@@ -94,10 +94,7 @@ class _StockCell extends StatelessWidget {
         children: [
           Row(
             children: [
-              _StockLogo(
-                symbol: instrument.symbol,
-                sector: instrument.sector,
-              ),
+              _StockLogo(symbol: instrument.symbol, sector: instrument.sector),
               AppSpacing.gapHXS,
               Expanded(
                 child: Column(
@@ -156,10 +153,7 @@ class _StockCell extends StatelessWidget {
 }
 
 class _StockLogo extends StatelessWidget {
-  const _StockLogo({
-    required this.symbol,
-    required this.sector,
-  });
+  const _StockLogo({required this.symbol, required this.sector});
 
   final String symbol;
   final Sector sector;
@@ -230,10 +224,7 @@ class _StockLogo extends StatelessWidget {
 }
 
 class _ChangeRow extends StatelessWidget {
-  const _ChangeRow({
-    required this.change,
-    required this.changePercent,
-  });
+  const _ChangeRow({required this.change, required this.changePercent});
 
   final double change;
   final double changePercent;
@@ -243,7 +234,9 @@ class _ChangeRow extends StatelessWidget {
     final isUp = change >= 0;
     final color = isUp ? AppColors.profitGreen : AppColors.lossRed;
     final sign = isUp ? '+' : '';
-    final arrow = isUp ? Icons.arrow_drop_up_rounded : Icons.arrow_drop_down_rounded;
+    final arrow = isUp
+        ? Icons.arrow_drop_up_rounded
+        : Icons.arrow_drop_down_rounded;
 
     return Row(
       children: [

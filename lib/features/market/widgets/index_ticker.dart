@@ -147,7 +147,8 @@ class IndexTicker extends StatelessWidget {
 
   Widget _buildAllIndicesLink() {
     return GestureDetector(
-      onTap: () {}, // TODO: all the nevigation of All Indices screen will go here.
+      onTap:
+          () {}, // TODO: all the nevigation of All Indices screen will go here.
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         child: Center(

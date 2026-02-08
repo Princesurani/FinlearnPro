@@ -27,7 +27,7 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -43,7 +43,7 @@ class SectionHeader extends StatelessWidget {
                 ),
               ),
 
-              ?trailing,
+              if (trailing != null) trailing!,
               if (trailing == null && actionText != null)
                 GestureDetector(
                   onTap: onAction,

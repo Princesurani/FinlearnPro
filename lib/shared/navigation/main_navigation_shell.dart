@@ -1,6 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+
 import '../../core/theme/app_colors.dart';
 import '../../features/auth/presentation/widgets/home_top_bar.dart';
 import '../../features/gamification/presentation/widgets/progress_tracker_section.dart';
@@ -9,6 +11,7 @@ import '../../features/market/presentation/widgets/market_indices_section.dart';
 import '../../features/market/presentation/widgets/blogs_section.dart';
 import '../../features/market/presentation/pages/market_screen.dart';
 import '../../features/learning/presentation/pages/learning_screen.dart';
+import '../../features/portfolio/presentation/pages/portfolio_screen.dart';
 import '../widgets/aurora_background.dart';
 
 class MainNavigationShell extends StatefulWidget {
@@ -23,8 +26,6 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   late PageController _pageController;
 
-  final GlobalKey<CurvedNavigationBarState> _navBarKey = GlobalKey();
-
   static const List<_NavScreen> _screens = [
     _NavScreen(
       icon: Icons.home_rounded,
@@ -32,14 +33,19 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       label: 'Home',
     ),
     _NavScreen(
+      icon: Icons.auto_stories_outlined,
+      activeIcon: Icons.auto_stories_rounded,
+      label: 'Learn',
+    ),
+    _NavScreen(
       icon: Icons.candlestick_chart_outlined,
       activeIcon: Icons.candlestick_chart_rounded,
       label: 'Markets',
     ),
     _NavScreen(
-      icon: Icons.auto_stories_outlined,
-      activeIcon: Icons.auto_stories_rounded,
-      label: 'Learn',
+      icon: Icons.pie_chart_outline_rounded,
+      activeIcon: Icons.pie_chart_rounded,
+      label: 'Portfolio',
     ),
   ];
 
@@ -83,14 +89,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     setState(() {
       _currentIndex = index;
     });
-
-    _navBarKey.currentState?.setPage(index);
   }
 
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
+      value: SystemUiOverlayStyle.light.copyWith(
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
@@ -98,51 +102,151 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         extendBody: true,
         body: Stack(
           children: [
+            const Positioned.fill(child: AuroraBackground()),
             PageView(
               controller: _pageController,
               onPageChanged: _onPageChanged,
               physics: const ClampingScrollPhysics(),
-              children: const [
-                _HomeScreenWrapper(),
-                RepaintBoundary(child: MarketScreen()),
-                LearningScreen(),
+              children: [
+                const _HomeScreenWrapper(),
+                const LearningScreen(),
+                const RepaintBoundary(child: MarketScreen()),
+                const PortfolioScreen(),
               ],
             ),
             Positioned(
-              left: 20,
-              right: 20,
-              bottom: 20,
-              child: _buildGlassNavBar(),
+              left: 24,
+              right: 24,
+              bottom: 34,
+              height: 64,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(40),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(40),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(
+                          255,
+                          19,
+                          19,
+                          28,
+                        ).withValues(alpha: 0.90),
+                        borderRadius: BorderRadius.circular(40),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.08),
+                          width: 1,
+                        ),
+                      ),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final itemWidth =
+                              constraints.maxWidth / _screens.length;
+
+                          return Stack(
+                            children: [
+                              AnimatedPositioned(
+                                duration: const Duration(milliseconds: 250),
+                                curve: Curves.easeOutCubic,
+                                left: itemWidth * _currentIndex,
+                                top: 4,
+                                bottom: 4,
+                                width: itemWidth,
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: AppColors.primaryGradient,
+                                    borderRadius: BorderRadius.circular(36),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.primaryPurple
+                                            .withValues(alpha: 0.4),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                children: _screens.asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final screen = entry.value;
+                                  final isSelected = index == _currentIndex;
+
+                                  return Expanded(
+                                    child: GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: () => _onNavTap(index),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        child: AnimatedScale(
+                                          scale: isSelected ? 1.05 : 1.0,
+                                          duration: const Duration(
+                                            milliseconds: 200,
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                isSelected
+                                                    ? screen.activeIcon
+                                                    : screen.icon,
+                                                size: 24,
+                                                color: isSelected
+                                                    ? Colors.white
+                                                    : Colors.white.withValues(
+                                                        alpha: 0.5,
+                                                      ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                screen.label,
+                                                style: TextStyle(
+                                                  color: isSelected
+                                                      ? Colors.white
+                                                      : Colors.white.withValues(
+                                                          alpha: 0.5,
+                                                        ),
+                                                  fontSize: 11,
+                                                  fontWeight: isSelected
+                                                      ? FontWeight.w600
+                                                      : FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildGlassNavBar() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: CurvedNavigationBar(
-        key: _navBarKey,
-        index: _currentIndex,
-        height: 60,
-        items: _screens.map((screen) {
-          final isSelected = _screens.indexOf(screen) == _currentIndex;
-          return Icon(
-            isSelected ? screen.activeIcon : screen.icon,
-            size: isSelected ? 28 : 24,
-            color: isSelected
-                ? Colors.white
-                : Colors.white.withValues(alpha: 0.6),
-          );
-        }).toList(),
-        color: const Color(0xFF1E1E2C),
-        buttonBackgroundColor: AppColors.primaryPurple,
-        backgroundColor: Colors.transparent,
-        animationCurve: Curves.easeOutCubic,
-        animationDuration: const Duration(milliseconds: 280),
-        onTap: _onNavTap,
       ),
     );
   }
@@ -153,34 +257,26 @@ class _HomeScreenWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
-      body: Stack(
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        MediaQuery.of(context).padding.top + 12,
+        20,
+        100,
+      ),
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Positioned.fill(child: AuroraBackground()),
-          SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(
-              20,
-              MediaQuery.of(context).padding.top + 20,
-              20,
-              100,
-            ),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                HomeTopBar(),
-                SizedBox(height: 30),
-                ProgressTrackerSection(),
-                SizedBox(height: 30),
-                MarketIndicesSection(),
-                SizedBox(height: 30),
-                RecommendedSection(),
-                SizedBox(height: 30),
-                BlogsSection(),
-              ],
-            ),
-          ),
+          HomeTopBar(),
+          SizedBox(height: 30),
+          ProgressTrackerSection(),
+          SizedBox(height: 30),
+          MarketIndicesSection(),
+          SizedBox(height: 30),
+          RecommendedSection(),
+          SizedBox(height: 30),
+          BlogsSection(),
         ],
       ),
     );
