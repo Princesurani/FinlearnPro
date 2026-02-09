@@ -25,22 +25,22 @@ class PortfolioScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Track wealth,',
+                    'Your wealth,', // Shortened from 'Track wealth,'
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 11, // Standardized across all pages
                       color: AppColors.textSecondary,
                       fontWeight: FontWeight.w500,
-                      letterSpacing: 0.1,
+                      letterSpacing: 0,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 1),
                   const Text(
-                    'My Portfolio',
+                    'Portfolio', // Shortened from 'My Portfolio'
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16, // Standardized across all pages
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
-                      letterSpacing: -0.5,
+                      letterSpacing: -0.3,
                     ),
                   ),
                 ],

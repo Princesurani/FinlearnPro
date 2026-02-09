@@ -12,6 +12,8 @@ class HomeTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = AuthService().currentUser;
     final displayName = user?.displayName ?? 'User';
+    // Extract first name only
+    final firstName = displayName.split(' ').first;
 
     return TopNavigationShell(
       title: Column(
@@ -21,20 +23,20 @@ class HomeTopBar extends StatelessWidget {
           Text(
             'Welcome back,',
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 11, // Standardized across all pages
               color: AppColors.textSecondary,
               fontWeight: FontWeight.w500,
-              letterSpacing: 0.1,
+              letterSpacing: 0,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           Text(
-            displayName,
+            firstName, // Use first name only
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: 16, // Standardized across all pages
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
-              letterSpacing: -0.5,
+              letterSpacing: -0.3,
             ),
             overflow: TextOverflow.ellipsis,
           ),

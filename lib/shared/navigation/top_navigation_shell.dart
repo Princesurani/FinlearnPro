@@ -60,8 +60,8 @@ class TopNavigationShell extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    height: 48,
-                    width: 48,
+                    height: 44, // Reduced from 48 for better mobile fit
+                    width: 44, // Reduced from 48 for better mobile fit
                     padding: const EdgeInsets.all(1),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -85,7 +85,8 @@ class TopNavigationShell extends StatelessWidget {
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontSize:
+                                15, // Reduced from 16 for smaller container
                           ),
                         ),
                       ),
@@ -134,11 +135,11 @@ class _TopBarButtonState extends State<TopBarButton> {
         scale: _isPressed ? 0.92 : 1.0,
         duration: const Duration(milliseconds: 100),
         child: Container(
-          height: 44,
-          width: 44,
+          height: 40, // Reduced from 44 for better mobile fit
+          width: 40, // Reduced from 44 for better mobile fit
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
             border: Border.all(color: AppColors.borderLight, width: 1),
             boxShadow: [
               BoxShadow(
@@ -151,11 +152,15 @@ class _TopBarButtonState extends State<TopBarButton> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Icon(widget.icon, color: AppColors.textPrimary, size: 22),
+              Icon(
+                widget.icon,
+                color: AppColors.textPrimary,
+                size: 20,
+              ), // Reduced from 22
               if (widget.hasBadge)
                 Positioned(
-                  top: 12,
-                  right: 12,
+                  top: 10, // Adjusted for smaller container
+                  right: 10, // Adjusted for smaller container
                   child: Container(
                     width: 7,
                     height: 7,

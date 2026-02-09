@@ -14,22 +14,22 @@ class LearningHeader extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Keep growing,',
+            'Learn more,', // Shortened from 'Keep growing,'
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 11, // Standardized across all pages
               color: AppColors.textSecondary,
               fontWeight: FontWeight.w500,
-              letterSpacing: 0.1,
+              letterSpacing: 0,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           Text(
-            'Learning Hub',
+            'Learning', // Shortened from 'Learning Hub'
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: 16, // Standardized across all pages
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
-              letterSpacing: -0.5,
+              letterSpacing: -0.3,
             ),
             overflow: TextOverflow.ellipsis,
           ),

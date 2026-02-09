@@ -4,7 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../bloc/market_bloc.dart';
-import '../../widgets/country_selector.dart';
+import '../../widgets/market_selector.dart';
 import '../../widgets/index_ticker.dart';
 import 'explore_tab.dart';
 import '../../../../shared/navigation/top_navigation_shell.dart';
@@ -80,27 +80,27 @@ class _MarketScreenState extends State<MarketScreen>
                     Text(
                       'Market insights,',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 11, // Further reduced for mobile fit
                         color: AppColors.textSecondary,
                         fontWeight: FontWeight.w500,
-                        letterSpacing: 0.1,
+                        letterSpacing: 0,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 1),
                     const Text(
                       'Markets',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 16, // Further reduced for mobile fit
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
-                        letterSpacing: -0.5,
+                        letterSpacing: -0.3,
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 12),
-              CountrySelector(
+              MarketSelector(
                 activeMarket: state.activeMarket,
                 onMarketChanged: (m) => _bloc.add(SwitchMarket(m)),
               ),

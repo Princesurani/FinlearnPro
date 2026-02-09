@@ -5,8 +5,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 
-class CountrySelector extends StatelessWidget {
-  const CountrySelector({
+class MarketSelector extends StatelessWidget {
+  const MarketSelector({
     super.key,
     required this.activeMarket,
     required this.onMarketChanged,
@@ -21,31 +21,45 @@ class CountrySelector extends StatelessWidget {
       onTap: () => _showMarketSheet(context),
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: AppSpacing.xs,
+          horizontal: 10, // Reduced from 12 (AppSpacing.sm)
+          vertical: 6, // Reduced from 8 (AppSpacing.xs)
         ),
         decoration: BoxDecoration(
-          color: AppColors.backgroundTertiary,
+          color: Colors.white, // Changed from gray for better visibility
           borderRadius: AppSpacing.borderRadiusSM,
-          border: Border.all(color: AppColors.border, width: 0.5),
+          border: Border.all(
+            color: AppColors.border.withValues(alpha: 0.8), // Darker border
+            width: 1.5, // Increased from 0.5 for better visibility
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(activeMarket.flag, style: const TextStyle(fontSize: 18)),
-            AppSpacing.gapHXS,
+            Text(
+              activeMarket.flag,
+              style: const TextStyle(fontSize: 16),
+            ), // Reduced from 18
+            const SizedBox(width: 4), // Reduced gap
             Text(
               activeMarket.shortName,
               style: AppTypography.label.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: AppTypography.semiBold,
+                color: AppColors.textPrimary, // Darker for better contrast
+                fontWeight: AppTypography.bold, // Bolder for visibility
+                fontSize: 12, // Explicit smaller size
               ),
             ),
             const SizedBox(width: 2),
             const Icon(
               Icons.keyboard_arrow_down_rounded,
-              size: 20,
-              color: AppColors.textSecondary,
+              size: 18, // Reduced from 20
+              color: AppColors.textPrimary, // Darker for visibility
             ),
           ],
         ),
@@ -145,10 +159,7 @@ class _MarketSelectorSheet extends StatelessWidget {
           decoration: BoxDecoration(
             border: isActive
                 ? const Border(
-                    left: BorderSide(
-                      color: AppColors.primaryPurple,
-                      width: 3,
-                    ),
+                    left: BorderSide(color: AppColors.primaryPurple, width: 3),
                   )
                 : null,
           ),

@@ -14,11 +14,17 @@ class StreakBadge extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 6,
+        ), // Reduced from 12×8
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.orange.withValues(alpha: 0.3), width: 1.5),
+          borderRadius: BorderRadius.circular(20), // Slightly smaller radius
+          border: Border.all(
+            color: Colors.orange.withValues(alpha: 0.3),
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -33,14 +39,14 @@ class StreakBadge extends StatelessWidget {
             Icon(
               Icons.local_fire_department_rounded,
               color: Colors.deepOrange, // Slightly deeper orange for contrast
-              size: 20,
+              size: 18, // Reduced from 20
             ),
-            SizedBox(width: 4),
+            SizedBox(width: 3), // Reduced from 4
             Text(
               '12',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 14,
+                fontSize: 13, // Reduced from 14
                 color: Colors.black87,
               ),
             ),
