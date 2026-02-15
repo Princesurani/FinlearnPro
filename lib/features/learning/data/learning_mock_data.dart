@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import 'learning_models.dart';
+import 'courses/foundations_of_trading/foundations_of_trading.dart';
 
 abstract final class LearningMockData {
   static const List<LearningCategory> categories = [
@@ -83,51 +84,8 @@ abstract final class LearningMockData {
   ];
 
   static List<Course> get allCourses => [
-    Course(
-      id: 'c0-foundations',
-      title: 'Foundations of Trading',
-      subtitle: 'Mandatory base for all markets',
-      description:
-          'Master the core concepts of trading and investing. Understand how markets work, participants, exchanges, and execution.',
-      categoryId: 'trading-basics',
-      difficulty: DifficultyLevel.beginner,
-      thumbnailUrl: 'assets/courses/foundations.jpg',
-      accentColor: AppColors.primaryPurple,
-      modules: [
-        _makeModule('m0-basics', 'Trading Basics', [
-          _makeLesson(
-            'l0-1',
-            'What is trading & investing',
-            ContentType.video,
-            10,
-            1,
-          ),
-          _makeLesson(
-            'l0-2',
-            'How financial markets work',
-            ContentType.video,
-            12,
-            2,
-          ),
-          _makeLesson('l0-3', 'Market participants', ContentType.article, 5, 3),
-          _makeLesson(
-            'l0-4',
-            'Exchanges, brokers & platforms',
-            ContentType.video,
-            9,
-            4,
-          ),
-          _makeLesson('l0-5', 'Order types', ContentType.interactive, 8, 5),
-          _makeLesson('l0-quiz', 'Foundations Quiz', ContentType.quiz, 5, 6),
-        ]),
-      ],
-      totalLessons: 6,
-      estimatedMinutes: 60,
-      xpReward: 300,
-      rating: 4.9,
-      ratingsCount: 1250,
-      enrolledCount: 5400,
-    ),
+    // Use the new interactive Foundations of Trading course
+    FoundationsOfTradingCourse.getCourse(),
     Course(
       id: 'c1-stocks',
       title: 'Stock Market',

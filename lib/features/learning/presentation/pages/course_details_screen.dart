@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/learning_models.dart';
+import 'lesson_screen.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
   final Course course;
@@ -35,6 +36,79 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _startCourse() {
+    // Get the first module and first lesson
+    if (widget.course.modules.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('This course has no lessons yet.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    final firstModule = widget.course.modules.first;
+    if (firstModule.lessons.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('This module has no lessons yet.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    final firstLesson = firstModule.lessons.first;
+
+    // Navigate to the lesson screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LessonScreen(
+          lesson: firstLesson,
+          course: widget.course,
+          lessonIndex: 0,
+          totalLessons: widget.course.totalLessons,
+        ),
+      ),
+    );
+  }
+
+  void _startLesson(Lesson lesson, int globalLessonIndex) {
+    // Navigate to the specific lesson
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LessonScreen(
+          lesson: lesson,
+          course: widget.course,
+          lessonIndex: globalLessonIndex,
+          totalLessons: widget.course.totalLessons,
+        ),
+      ),
+    );
+  }
+
+  int _getGlobalLessonIndex(
+    CourseModule currentModule,
+    int lessonIndexInModule,
+  ) {
+    int globalIndex = 0;
+
+    // Count lessons in all previous modules
+    for (final module in widget.course.modules) {
+      if (module.id == currentModule.id) {
+        // We've reached the current module, add the lesson index within it
+        return globalIndex + lessonIndexInModule;
+      }
+      // Add all lessons from this module
+      globalIndex += module.lessons.length;
+    }
+
+    return globalIndex;
   }
 
   @override
@@ -448,7 +522,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
           ),
         ),
         title: Text(
-          'Chapter ${index}: ${module.title}',
+          'Chapter $index: ${module.title}',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
@@ -459,65 +533,72 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
           '${module.lessons.length} Lessons',
           style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
         ),
-        children: module.lessons.map((lesson) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: AppColors.borderLight, width: 1),
+        children: module.lessons.asMap().entries.map((entry) {
+          final lessonIndex = entry.key;
+          final lesson = entry.value;
+          final globalLessonIndex = _getGlobalLessonIndex(module, lessonIndex);
+
+          return InkWell(
+            onTap: () => _startLesson(lesson, globalLessonIndex),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: AppColors.borderLight, width: 1),
+                ),
               ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryPurple.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryPurple.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      lesson.contentType.icon,
+                      size: 16,
+                      color: AppColors.primaryPurple,
+                    ),
                   ),
-                  child: Icon(
-                    lesson.contentType.icon,
-                    size: 16,
-                    color: AppColors.primaryPurple,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        lesson.title,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textPrimary,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          lesson.title,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        lesson.formattedDuration,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
+                        const SizedBox(height: 4),
+                        Text(
+                          lesson.formattedDuration,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                if (lesson.isPremium && !widget.course.isPremium)
-                  const Icon(
-                    Icons.lock_rounded,
-                    size: 16,
-                    color: AppColors.textSecondary,
-                  )
-                else
-                  const Icon(
-                    Icons.play_circle_outline_rounded,
-                    size: 20,
-                    color: AppColors.primaryPurple,
-                  ),
-              ],
+                  if (lesson.isPremium && !widget.course.isPremium)
+                    const Icon(
+                      Icons.lock_rounded,
+                      size: 16,
+                      color: AppColors.textSecondary,
+                    )
+                  else
+                    const Icon(
+                      Icons.play_circle_outline_rounded,
+                      size: 20,
+                      color: AppColors.primaryPurple,
+                    ),
+                ],
+              ),
             ),
           );
         }).toList(),
@@ -554,7 +635,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // TODO: Start course logic
+                _startCourse();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryPurple,
