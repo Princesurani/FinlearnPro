@@ -7,6 +7,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/market_formatters.dart';
+import '../bloc/market_bloc.dart';
+import '../presentation/pages/stock_detail_screen.dart';
 
 class IndexTicker extends StatelessWidget {
   const IndexTicker({
@@ -14,6 +16,7 @@ class IndexTicker extends StatelessWidget {
     required this.market,
     required this.snapshots,
     required this.indices,
+    required this.bloc,
   });
 
   final MarketRegime market;
@@ -21,40 +24,28 @@ class IndexTicker extends StatelessWidget {
   final Map<String, MarketSnapshot> snapshots;
 
   final List<Instrument> indices;
+  final MarketBloc bloc;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 74,
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(
-          bottom: BorderSide(color: AppColors.borderLight, width: 1),
-        ),
-      ),
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.screenPaddingHorizontal,
-        ),
-        itemCount: indices.length + 1,
-        separatorBuilder: (_, _) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-          child: VerticalDivider(
-            width: 1,
-            thickness: 1,
-            color: AppColors.border.withAlpha(80),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      child: SizedBox(
+        height: 100,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenPaddingHorizontal,
           ),
+          itemCount: indices.length,
+          separatorBuilder: (_, _) => const SizedBox(width: 12),
+          itemBuilder: (context, i) => _buildIndexCard(context, indices[i]),
         ),
-        itemBuilder: (context, i) {
-          if (i == indices.length) return _buildAllIndicesLink();
-          return _buildIndexChip(indices[i]);
-        },
       ),
     );
   }
 
-  Widget _buildIndexChip(Instrument index) {
+  Widget _buildIndexCard(BuildContext context, Instrument index) {
     final snap = snapshots[index.symbol];
 
     if (snap == null) {
@@ -89,87 +80,74 @@ class IndexTicker extends StatelessWidget {
     }
 
     final isUp = snap.change >= 0;
-    final changeColor = isUp ? AppColors.profitGreen : AppColors.lossRed;
+    final changeColor = isUp ? AppColors.success : AppColors.error;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.xs,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            index.name,
-            style: AppTypography.overline.copyWith(
-              color: AppColors.textTertiary,
-              letterSpacing: 0,
-              fontSize: 10,
-            ),
-          ),
-          const SizedBox(height: 1),
-
-          Text(
-            _formatIndexValue(snap.price),
-            style: AppTypography.number.copyWith(
-              fontSize: 15,
-              fontWeight: AppTypography.semiBold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                isUp
-                    ? Icons.arrow_drop_up_rounded
-                    : Icons.arrow_drop_down_rounded,
-                size: 16,
-                color: changeColor,
-              ),
-              Text(
-                '${isUp ? '+' : ''}${_formatIndexValue(snap.change)} '
-                '(${snap.changePercent.abs().toStringAsFixed(2)}%)',
-                style: AppTypography.numberSmall.copyWith(
-                  color: changeColor,
-                  fontSize: 10.5,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAllIndicesLink() {
     return GestureDetector(
-      onTap:
-          () {}, // TODO: all the nevigation of All Indices screen will go here.
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-        child: Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'All Indices',
-                style: AppTypography.label.copyWith(
-                  color: AppColors.primaryPurple,
-                  fontWeight: AppTypography.medium,
-                ),
-              ),
-              const SizedBox(width: 2),
-              const Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 12,
-                color: AppColors.primaryPurple,
-              ),
-            ],
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => StockDetailScreen(
+              instrument: index,
+              snapshot: snap,
+              bloc: bloc,
+            ),
           ),
+        );
+      },
+      child: Container(
+        width: 160,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.borderLight, width: 1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              index.name,
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _formatIndexValue(snap.price),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(
+                  isUp ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                  size: 18,
+                  color: changeColor,
+                ),
+                Flexible(
+                  child: Text(
+                    '${isUp ? '+' : ''}${_formatIndexValue(snap.change)} (${snap.changePercent.abs().toStringAsFixed(2)}%)',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: changeColor,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

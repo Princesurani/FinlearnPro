@@ -172,6 +172,13 @@ class _FinLearnAppState extends State<FinLearnApp> {
         space: 1,
       ),
       fontFamily: 'Inter',
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
     );
   }
 }

@@ -7,6 +7,9 @@ import '../../bloc/market_bloc.dart';
 import '../../widgets/market_selector.dart';
 import '../../widgets/index_ticker.dart';
 import 'explore_tab.dart';
+import 'holdings_tab.dart';
+import 'orders_tab.dart';
+import 'watchlist_tab.dart';
 import '../../../../shared/navigation/top_navigation_shell.dart';
 
 class MarketScreen extends StatefulWidget {
@@ -21,14 +24,7 @@ class _MarketScreenState extends State<MarketScreen>
   late final MarketBloc _bloc;
   late final TabController _tabController;
 
-  static const _tabLabels = [
-    'Explore',
-    'Holdings',
-    'Positions',
-    'Orders',
-    'My Watchlist',
-    'All Watchlist',
-  ];
+  static const _tabLabels = ['Explore', 'Holdings', 'Orders', 'Watchlist'];
 
   @override
   void initState() {
@@ -70,43 +66,39 @@ class _MarketScreenState extends State<MarketScreen>
         final state = snap.data!;
 
         return TopNavigationShell(
-          title: Row(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Market insights,',
-                      style: TextStyle(
-                        fontSize: 11, // Further reduced for mobile fit
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0,
-                      ),
-                    ),
-                    const SizedBox(height: 1),
-                    const Text(
-                      'Markets',
-                      style: TextStyle(
-                        fontSize: 16, // Further reduced for mobile fit
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                  ],
+              Text(
+                'Market insights,',
+                style: TextStyle(
+                  fontSize: 11, // Further reduced for mobile fit
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0,
                 ),
               ),
-              const SizedBox(width: 12),
-              MarketSelector(
-                activeMarket: state.activeMarket,
-                onMarketChanged: (m) => _bloc.add(SwitchMarket(m)),
+              const SizedBox(height: 1),
+              const Text(
+                'Global Markets',
+                style: TextStyle(
+                  fontSize: 16, // Further reduced for mobile fit
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                  letterSpacing: -0.3,
+                ),
               ),
             ],
           ),
-          actions: [TopBarButton(icon: Icons.search_rounded, onTap: () {})],
+          actions: [
+            MarketSelector(
+              activeMarket: state.activeMarket,
+              onMarketChanged: (m) => _bloc.add(SwitchMarket(m)),
+            ),
+            const SizedBox(width: 12),
+            TopBarButton(icon: Icons.search_rounded, onTap: () {}),
+          ],
         );
       },
     );
@@ -122,6 +114,7 @@ class _MarketScreenState extends State<MarketScreen>
           market: state.activeMarket,
           snapshots: state.snapshots,
           indices: state.indices,
+          bloc: _bloc,
         );
       },
     );
@@ -130,20 +123,21 @@ class _MarketScreenState extends State<MarketScreen>
   Widget _buildTabPills() {
     return Container(
       height: 50,
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.screenPaddingHorizontal,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: AppColors.borderLight, width: 1),
+          bottom: BorderSide(
+            color: AppColors.white.withValues(alpha: 0.5),
+            width: 1,
+          ),
         ),
       ),
       child: TabBar(
         controller: _tabController,
-        isScrollable: true,
-        tabAlignment: TabAlignment.start,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.screenPaddingHorizontal - 4,
-          vertical: AppSpacing.xs,
-        ),
+        isScrollable: false, // Fill available width
         indicator: BoxDecoration(
           color: AppColors.primaryPurple,
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
@@ -162,15 +156,48 @@ class _MarketScreenState extends State<MarketScreen>
         dividerColor: Colors.transparent,
         overlayColor: WidgetStateProperty.all(Colors.transparent),
         splashFactory: NoSplash.splashFactory,
-        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-        tabs: _tabLabels.map((label) {
+        labelPadding: const EdgeInsets.symmetric(
+          horizontal: 4,
+        ), // Add spacing between tabs
+        tabs: _tabLabels.asMap().entries.map((entry) {
+          final index = entry.key;
+          final label = entry.value;
           return Tab(
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.xxs,
-              ),
-              child: Text(label),
+            child: AnimatedBuilder(
+              animation: _tabController,
+              builder: (context, child) {
+                final isSelected = _tabController.index == index;
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xs,
+                    vertical: AppSpacing.xxs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? Colors
+                              .transparent // Selected uses indicator
+                        : Colors
+                              .transparent, // Unselected: no background, just border
+                    border: isSelected
+                        ? null
+                        : Border.all(
+                            color: AppColors.textSecondary.withValues(
+                              alpha: 0.5,
+                            ), // Darker, more visible
+                            width: 1.5, // Thicker border
+                          ),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                  ),
+                  child: Center(
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                );
+              },
             ),
           );
         }).toList(),
@@ -183,43 +210,76 @@ class _MarketScreenState extends State<MarketScreen>
       controller: _tabController,
       children: [
         _ExploreStreamWrapper(bloc: _bloc),
-        _buildComingSoonTab('Holdings', Icons.pie_chart_outline_rounded),
-        _buildComingSoonTab('Positions', Icons.swap_vert_rounded),
-        _buildComingSoonTab('Orders', Icons.list_alt_rounded),
-        _buildComingSoonTab('My Watchlist', Icons.bookmark_border_rounded),
-        _buildComingSoonTab('All Watchlist', Icons.visibility_outlined),
+        _HoldingsStreamWrapper(
+          bloc: _bloc,
+          onExplore: () => _tabController.animateTo(0),
+        ),
+        _OrdersStreamWrapper(
+          bloc: _bloc,
+          onExplore: () => _tabController.animateTo(0),
+        ),
+        _WatchlistStreamWrapper(
+          bloc: _bloc,
+          onExplore: () => _tabController.animateTo(0),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildComingSoonTab(String title, IconData icon) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              color: AppColors.primaryPurple.withAlpha(15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 32, color: AppColors.primaryPurple),
-          ),
-          AppSpacing.gapLG,
-          Text(
-            title,
-            style: AppTypography.h5.copyWith(color: AppColors.textPrimary),
-          ),
-          AppSpacing.gapXS,
-          Text(
-            'Coming soon',
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.textTertiary,
-            ),
-          ),
-        ],
-      ),
+class _HoldingsStreamWrapper extends StatelessWidget {
+  const _HoldingsStreamWrapper({required this.bloc, required this.onExplore});
+  final MarketBloc bloc;
+  final VoidCallback onExplore;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<MarketState>(
+      stream: bloc.stream,
+      initialData: bloc.state,
+      builder: (_, snap) {
+        return HoldingsTab(state: snap.data!, onExplore: onExplore);
+      },
+    );
+  }
+}
+
+class _OrdersStreamWrapper extends StatelessWidget {
+  const _OrdersStreamWrapper({required this.bloc, required this.onExplore});
+  final MarketBloc bloc;
+  final VoidCallback onExplore;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<MarketState>(
+      stream: bloc.stream,
+      initialData: bloc.state,
+      builder: (_, snap) {
+        return OrdersTab(state: snap.data!, onExplore: onExplore);
+      },
+    );
+  }
+}
+
+class _WatchlistStreamWrapper extends StatelessWidget {
+  const _WatchlistStreamWrapper({required this.bloc, required this.onExplore});
+  final MarketBloc bloc;
+  final VoidCallback onExplore;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<MarketState>(
+      stream: bloc.stream,
+      initialData: bloc.state,
+      builder: (_, snap) {
+        final state = snap.data!;
+        // Assuming WatchlistTab handles its own loading/error if needed,
+        // or we can reuse error/loading logic here.
+        // Since Watchlist is just a filter on existing data, it should be fast.
+        // But if market data is loading, watchlist items might be missing snapshots.
+
+        return WatchlistTab(state: state, onExplore: onExplore);
+      },
     );
   }
 }

@@ -8,6 +8,8 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/market_formatters.dart';
 
+import '../presentation/pages/stock_detail_screen.dart';
+
 class InstrumentGrid2x2 extends StatelessWidget {
   const InstrumentGrid2x2({
     super.key,
@@ -75,73 +77,86 @@ class _StockCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatter = MarketFormatterFactory.forMarket(market);
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppSpacing.borderRadiusMD,
-        border: Border.all(color: AppColors.border, width: 0.5),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x08000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) =>
+                StockDetailScreen(instrument: instrument, snapshot: snapshot),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              _StockLogo(symbol: instrument.symbol, sector: instrument.sector),
-              AppSpacing.gapHXS,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _displaySymbol(instrument.symbol),
-                      style: AppTypography.label.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: AppTypography.semiBold,
-                        fontSize: 13,
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: AppSpacing.borderRadiusMD,
+          border: Border.all(color: AppColors.border, width: 0.5),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x08000000),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                _StockLogo(
+                  symbol: instrument.symbol,
+                  sector: instrument.sector,
+                ),
+                AppSpacing.gapHXS,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _displaySymbol(instrument.symbol),
+                        style: AppTypography.label.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: AppTypography.semiBold,
+                          fontSize: 13,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      instrument.exchange ?? instrument.name,
-                      style: AppTypography.bodyXS.copyWith(
-                        color: AppColors.textTertiary,
-                        fontSize: 10,
+                      Text(
+                        instrument.exchange ?? instrument.name,
+                        style: AppTypography.bodyXS.copyWith(
+                          color: AppColors.textTertiary,
+                          fontSize: 10,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            const Spacer(),
+
+            if (snapshot != null) ...[
+              Text(
+                formatter.formatPrice(snapshot!.price),
+                style: AppTypography.number.copyWith(
+                  fontWeight: AppTypography.semiBold,
                 ),
               ),
-            ],
-          ),
-
-          const Spacer(),
-
-          if (snapshot != null) ...[
-            Text(
-              formatter.formatPrice(snapshot!.price),
-              style: AppTypography.number.copyWith(
-                fontWeight: AppTypography.semiBold,
+              const SizedBox(height: 2),
+              _ChangeRow(
+                change: snapshot!.change,
+                changePercent: snapshot!.changePercent,
               ),
-            ),
-            const SizedBox(height: 2),
-            _ChangeRow(
-              change: snapshot!.change,
-              changePercent: snapshot!.changePercent,
-            ),
-          ] else
-            const _LoadingIndicator(),
-        ],
+            ] else
+              const _LoadingIndicator(),
+          ],
+        ),
       ),
     );
   }

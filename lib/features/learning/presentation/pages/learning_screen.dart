@@ -5,13 +5,14 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../data/learning_models.dart';
 import '../../data/learning_mock_data.dart';
 import 'widgets/learning_header.dart';
-import 'widgets/learning_search_bar.dart';
+
 import 'widgets/category_pills.dart';
 import 'widgets/continue_learning_section.dart';
-import 'widgets/featured_courses_section.dart';
+
 import 'widgets/learning_paths_section.dart';
 import 'widgets/daily_tip_card.dart';
-import 'widgets/learning_stats_card.dart';
+import 'topic_detail_screen.dart';
+import 'widgets/all_courses_section.dart';
 
 class LearningScreen extends StatefulWidget {
   const LearningScreen({super.key});
@@ -22,13 +23,6 @@ class LearningScreen extends StatefulWidget {
 
 class _LearningScreenState extends State<LearningScreen>
     with TickerProviderStateMixin {
-  String? _selectedCategoryId;
-
-  String _searchQuery = '';
-
-  // ignore: unused_field
-  bool _isSearchActive = false;
-
   late ScrollController _scrollController;
 
   late AnimationController _entranceController;
@@ -66,55 +60,25 @@ class _LearningScreenState extends State<LearningScreen>
   }
 
   void _onCategorySelected(String? categoryId) {
-    HapticFeedback.selectionClick();
-    setState(() {
-      _selectedCategoryId = categoryId;
-    });
-  }
+    HapticFeedback.lightImpact();
+    if (categoryId == null) return;
 
-  void _onSearchChanged(String query) {
-    setState(() {
-      _searchQuery = query;
-    });
-  }
+    final category = LearningMockData.categories.firstWhere(
+      (c) => c.id == categoryId,
+      orElse: () => LearningMockData.categories.first,
+    );
 
-  void _onSearchFocusChanged(bool isFocused) {
-    setState(() {
-      _isSearchActive = isFocused;
-    });
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => TopicDetailScreen(category: category)),
+    );
   }
 
   void _onCourseTap(Course course) {
     HapticFeedback.lightImpact();
   }
 
-  void _onSeeAllCourses() {
-    HapticFeedback.lightImpact();
-  }
-
   void _onLearningPathTap(LearningPath path) {
     HapticFeedback.lightImpact();
-  }
-
-  List<Course> get _filteredCourses {
-    var courses = LearningMockData.featuredCourses;
-
-    if (_selectedCategoryId != null) {
-      courses = courses
-          .where((c) => c.categoryId == _selectedCategoryId)
-          .toList();
-    }
-
-    if (_searchQuery.isNotEmpty) {
-      final query = _searchQuery.toLowerCase();
-      courses = courses.where((c) {
-        return c.title.toLowerCase().contains(query) ||
-            c.subtitle.toLowerCase().contains(query) ||
-            c.tags.any((tag) => tag.toLowerCase().contains(query));
-      }).toList();
-    }
-
-    return courses;
   }
 
   @override
@@ -156,26 +120,9 @@ class _LearningScreenState extends State<LearningScreen>
         SliverToBoxAdapter(
           child: _buildAnimatedSection(
             index: 1,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: LearningSearchBar(
-                onChanged: _onSearchChanged,
-                onFocusChanged: _onSearchFocusChanged,
-              ),
-            ),
-          ),
-        ),
-
-        const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-        SliverToBoxAdapter(
-          child: _buildAnimatedSection(
-            index: 2,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: LearningStatsCard(
-                progress: LearningMockData.currentUserProgress,
-              ),
+            child: AllCoursesSection(
+              courses: LearningMockData.allCourses,
+              onCourseTap: _onCourseTap,
             ),
           ),
         ),
@@ -184,10 +131,10 @@ class _LearningScreenState extends State<LearningScreen>
 
         SliverToBoxAdapter(
           child: _buildAnimatedSection(
-            index: 3,
+            index: 2,
             child: CategoryPills(
               categories: LearningMockData.categories,
-              selectedId: _selectedCategoryId,
+              selectedId: null,
               onSelected: _onCategorySelected,
             ),
           ),
@@ -198,7 +145,7 @@ class _LearningScreenState extends State<LearningScreen>
         if (LearningMockData.continueLearning.isNotEmpty)
           SliverToBoxAdapter(
             child: _buildAnimatedSection(
-              index: 4,
+              index: 3,
               child: ContinueLearningSection(
                 courses: LearningMockData.continueLearning,
                 onCourseTap: _onCourseTap,
@@ -211,20 +158,7 @@ class _LearningScreenState extends State<LearningScreen>
 
         SliverToBoxAdapter(
           child: _buildAnimatedSection(
-            index: 5,
-            child: FeaturedCoursesSection(
-              courses: _filteredCourses,
-              onCourseTap: _onCourseTap,
-              onViewAllTap: _onSeeAllCourses,
-            ),
-          ),
-        ),
-
-        const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-        SliverToBoxAdapter(
-          child: _buildAnimatedSection(
-            index: 6,
+            index: 3,
             child: LearningPathsSection(
               paths: LearningMockData.learningPaths,
               onPathTap: _onLearningPathTap,
@@ -236,7 +170,7 @@ class _LearningScreenState extends State<LearningScreen>
 
         SliverToBoxAdapter(
           child: _buildAnimatedSection(
-            index: 7,
+            index: 4,
             child: DailyTipCard(
               tip: LearningMockData.dailyTips.first['tip'] ?? '',
               category:

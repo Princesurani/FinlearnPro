@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart'; // For compute
 
 import '../../../core/domain/instrument.dart';
 import '../../../core/domain/instrument_catalog.dart';
@@ -29,7 +30,6 @@ class RemoveFromWatchlist extends MarketEvent {
 
 class RefreshMarketData extends MarketEvent {}
 
-
 enum MarketStatus { loading, ready, error }
 
 class MarketState {
@@ -40,12 +40,12 @@ class MarketState {
     required this.snapshots,
     required this.watchlist,
     this.errorMessage,
-  })  : indices = instruments
-            .where((i) => i.type == InstrumentType.marketIndex)
-            .toList(growable: false),
-        tradableInstruments = instruments
-            .where((i) => i.isTradable)
-            .toList(growable: false);
+  }) : indices = instruments
+           .where((i) => i.type == InstrumentType.marketIndex)
+           .toList(growable: false),
+       tradableInstruments = instruments
+           .where((i) => i.isTradable)
+           .toList(growable: false);
 
   MarketState._cached({
     required this.status,
@@ -98,8 +98,8 @@ class MarketState {
       errorMessage: errorMessage,
       indices: instrumentsChanged
           ? newInstruments
-              .where((i) => i.type == InstrumentType.marketIndex)
-              .toList(growable: false)
+                .where((i) => i.type == InstrumentType.marketIndex)
+                .toList(growable: false)
           : indices,
       tradableInstruments: instrumentsChanged
           ? newInstruments.where((i) => i.isTradable).toList(growable: false)
@@ -119,9 +119,7 @@ class MarketState {
   }
 }
 
-
 class MarketBloc {
-
   static MarketBloc? _instance;
 
   factory MarketBloc({MarketService? marketService}) {
@@ -131,7 +129,7 @@ class MarketBloc {
   }
 
   MarketBloc._internal({required MarketService marketService})
-      : _marketService = marketService {
+    : _marketService = marketService {
     _init();
   }
 
@@ -145,21 +143,21 @@ class MarketBloc {
   Stream<MarketState> get stream => _stateController.stream;
   MarketState get state => _state;
 
-
   void _init() {
     _eventController.stream.listen(_handleEvent);
-    
+
     add(LoadInstruments());
-    
+
     _updateTimer = Timer.periodic(
       const Duration(seconds: 3),
       (_) => add(UpdatePrices()),
     );
   }
 
-
   void add(MarketEvent event) {
-    _eventController.add(event);
+    if (!_eventController.isClosed) {
+      _eventController.add(event);
+    }
   }
 
   void pause() {
@@ -181,7 +179,6 @@ class MarketBloc {
     _eventController.close();
     _instance = null;
   }
-
 
   Future<void> _handleEvent(MarketEvent event) async {
     if (event is LoadInstruments) {
@@ -207,22 +204,34 @@ class MarketBloc {
       final stocks = InstrumentCatalog.getInstruments(_state.activeMarket);
       final instruments = [...indices, ...stocks];
 
-      final snapshots = <String, MarketSnapshot>{};
-      for (final instrument in instruments) {
-        final snapshot = _marketService.getCurrentSnapshot(instrument);
-        snapshots[instrument.symbol] = snapshot;
-      }
+      // Use compute to offload heavy snapshot generation
+      // Since MarketService is local we can't pass it directly so pass the seed.
+      // Assuming _marketService._globalSeed is accessible via reflection or just pass seed.
+      // But _globalSeed is private.
+      // We can create a new MarketService in isolate with a new seed or passed seed.
+      // Since it's deterministic based on instrument seed + global seed,
+      // we need the global seed to be consistent?
+      // MarketService constructor takes globalSeed.
 
-      _emit(_state.copyWith(
-        status: MarketStatus.ready,
-        instruments: instruments,
-        snapshots: snapshots,
-      ));
+      final snapshots = await compute(
+        _generateSnapshots,
+        _SnapshotParams(instruments: instruments, seed: _marketService.seed),
+      );
+
+      _emit(
+        _state.copyWith(
+          status: MarketStatus.ready,
+          instruments: instruments,
+          snapshots: snapshots,
+        ),
+      );
     } catch (e) {
-      _emit(_state.copyWith(
-        status: MarketStatus.error,
-        errorMessage: 'Failed to load instruments: $e',
-      ));
+      _emit(
+        _state.copyWith(
+          status: MarketStatus.error,
+          errorMessage: 'Failed to load instruments: $e',
+        ),
+      );
     }
   }
 
@@ -236,24 +245,27 @@ class MarketBloc {
       final stocks = InstrumentCatalog.getInstruments(market);
       final instruments = [...indices, ...stocks];
 
-      final snapshots = <String, MarketSnapshot>{};
-      for (final instrument in instruments) {
-        final snapshot = _marketService.getCurrentSnapshot(instrument);
-        snapshots[instrument.symbol] = snapshot;
-      }
+      final snapshots = await compute(
+        _generateSnapshots,
+        _SnapshotParams(instruments: instruments, seed: _marketService.seed),
+      );
 
-      _emit(_state.copyWith(
-        status: MarketStatus.ready,
-        activeMarket: market,
-        instruments: instruments,
-        snapshots: snapshots,
-        watchlist: {}, // Clear watchlist on market switch
-      ));
+      _emit(
+        _state.copyWith(
+          status: MarketStatus.ready,
+          activeMarket: market,
+          instruments: instruments,
+          snapshots: snapshots,
+          watchlist: {}, // Clear watchlist on market switch
+        ),
+      );
     } catch (e) {
-      _emit(_state.copyWith(
-        status: MarketStatus.error,
-        errorMessage: 'Failed to switch market: $e',
-      ));
+      _emit(
+        _state.copyWith(
+          status: MarketStatus.error,
+          errorMessage: 'Failed to switch market: $e',
+        ),
+      );
     }
   }
 
@@ -261,26 +273,19 @@ class MarketBloc {
     if (_state.status != MarketStatus.ready) return;
 
     try {
-      final updatedSnapshots =
-          Map<String, MarketSnapshot>.from(_state.snapshots);
-
-      for (final instrument in _state.instruments) {
-        final oldSnapshot = _state.snapshots[instrument.symbol];
-        if (oldSnapshot == null) continue;
-
-        final tick = _marketService.getQuickTick(instrument, oldSnapshot);
-
-        updatedSnapshots[instrument.symbol] = oldSnapshot.copyWithPrice(
-          price: tick.price,
-          high: tick.price > oldSnapshot.high ? tick.price : oldSnapshot.high,
-          low: tick.price < oldSnapshot.low ? tick.price : oldSnapshot.low,
-          volume: tick.volume,
-          timestamp: tick.timestamp,
-        );
-      }
+      // Use compute for updates too
+      final updatedSnapshots = await compute(
+        _updateSnapshots,
+        _UpdateParams(
+          instruments: _state.instruments,
+          currentSnapshots: _state.snapshots,
+          seed: _marketService.seed,
+        ),
+      );
 
       _emit(_state.copyWith(snapshots: updatedSnapshots));
     } catch (e) {
+      // Slient fail on tick update
     }
   }
 
@@ -298,9 +303,70 @@ class MarketBloc {
     await _handleLoadInstruments();
   }
 
-
   void _emit(MarketState newState) {
-    _state = newState;
-    _stateController.add(_state);
+    if (!_stateController.isClosed) {
+      _state = newState;
+      _stateController.add(_state);
+    }
   }
+}
+
+// --- Helper classes and functions for Isolates ---
+
+class _SnapshotParams {
+  final List<Instrument> instruments;
+  final int seed;
+
+  _SnapshotParams({required this.instruments, required this.seed});
+}
+
+class _UpdateParams {
+  final List<Instrument> instruments;
+  final Map<String, MarketSnapshot> currentSnapshots;
+  final int seed;
+
+  _UpdateParams({
+    required this.instruments,
+    required this.currentSnapshots,
+    required this.seed,
+  });
+}
+
+// Top-level function for compute
+Map<String, MarketSnapshot> _generateSnapshots(_SnapshotParams params) {
+  final service = MarketService(globalSeed: params.seed);
+  final snapshots = <String, MarketSnapshot>{};
+
+  for (final instrument in params.instruments) {
+    snapshots[instrument.symbol] = service.getCurrentSnapshot(instrument);
+  }
+
+  return snapshots;
+}
+
+// Top-level function for compute
+Map<String, MarketSnapshot> _updateSnapshots(_UpdateParams params) {
+  final service = MarketService(globalSeed: params.seed);
+  // Need to clone map for modification?
+  // params.currentSnapshots is passed by value (copy) across isolate boundary anyway?
+  // Yes.
+
+  final updated = Map<String, MarketSnapshot>.from(params.currentSnapshots);
+
+  for (final instrument in params.instruments) {
+    final old = params.currentSnapshots[instrument.symbol];
+    if (old == null) continue;
+
+    final tick = service.getQuickTick(instrument, old);
+
+    updated[instrument.symbol] = old.copyWithPrice(
+      price: tick.price,
+      high: tick.price > old.high ? tick.price : old.high,
+      low: tick.price < old.low ? tick.price : old.low,
+      volume: tick.volume,
+      timestamp: tick.timestamp,
+    );
+  }
+
+  return updated;
 }

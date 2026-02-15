@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 abstract final class AppColors {
   static const Color primaryPurple = Color(0xFF6B4EF5);
 
@@ -102,6 +103,8 @@ abstract final class AppColors {
 
   static const Color darkSurfaceVariant = Color(0xFF334155);
 
+  static const Color white = Color(0xFFFFFFFF);
+
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [primaryPurple, primaryPurpleLight],
     begin: Alignment.topLeft,
@@ -147,7 +150,8 @@ abstract final class AppColors {
     'bonds': mintGreen,
   };
 
-  static Color withBackgroundOpacity(Color color) => color.withValues(alpha: 0.08);
+  static Color withBackgroundOpacity(Color color) =>
+      color.withValues(alpha: 0.08);
 
   static Color withHoverOpacity(Color color) => color.withValues(alpha: 0.12);
 

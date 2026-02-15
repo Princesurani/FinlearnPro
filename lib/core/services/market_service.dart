@@ -8,6 +8,7 @@ class MarketService {
     : _globalSeed = globalSeed ?? DateTime.now().millisecondsSinceEpoch;
 
   final int _globalSeed;
+  int get seed => _globalSeed;
 
   List<Candle> generateCandles(
     Instrument instrument,
@@ -253,7 +254,6 @@ class MarketService {
         intradayMultiplier *
         randomMultiplier;
   }
-
 
   double _getDrift(Instrument instrument) {
     switch (instrument.type) {
