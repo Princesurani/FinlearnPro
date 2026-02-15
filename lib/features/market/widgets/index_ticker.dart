@@ -17,6 +17,7 @@ class IndexTicker extends StatelessWidget {
     required this.snapshots,
     required this.indices,
     required this.bloc,
+    this.padding = EdgeInsets.zero,
   });
 
   final MarketRegime market;
@@ -25,6 +26,7 @@ class IndexTicker extends StatelessWidget {
 
   final List<Instrument> indices;
   final MarketBloc bloc;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +36,7 @@ class IndexTicker extends StatelessWidget {
         height: 100,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.screenPaddingHorizontal,
-          ),
+          padding: padding,
           itemCount: indices.length,
           separatorBuilder: (_, _) => const SizedBox(width: 12),
           itemBuilder: (context, i) => _buildIndexCard(context, indices[i]),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../data/learning_mock_data.dart';
+import '../pages/course_details_screen.dart';
 
 class RecommendedSection extends StatelessWidget {
   const RecommendedSection({super.key});
@@ -30,43 +32,32 @@ class RecommendedSection extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             clipBehavior: Clip.none,
-            children: const [
-              RecommendedCard(
-                title: 'Technical Analysis',
-                subtitle: 'Master chart patterns & indicators',
-                icon: Icons.candlestick_chart_rounded,
-                color: Colors.blueAccent,
-                modules: 12,
-                chapterCount: 64,
-              ),
-              SizedBox(width: 20),
-              RecommendedCard(
-                title: 'Fundamental Analysis',
-                subtitle: 'Learn to value companies',
-                icon: Icons.pie_chart_rounded,
-                color: Colors.green,
-                modules: 8,
-                chapterCount: 42,
-              ),
-              SizedBox(width: 20),
-              RecommendedCard(
-                title: 'Option Trading',
-                subtitle: 'Strategies for hedging & profit',
-                icon: Icons.graphic_eq_rounded,
-                color: Colors.orange,
-                modules: 15,
-                chapterCount: 89,
-              ),
-              SizedBox(width: 20),
-              RecommendedCard(
-                title: 'Personal Finance',
-                subtitle: 'Manage your money smartly',
-                icon: Icons.savings_rounded,
-                color: Colors.purple,
-                modules: 10,
-                chapterCount: 35,
-              ),
-            ],
+            children: LearningMockData.allCourses.take(5).map((course) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CourseDetailsScreen(course: course),
+                      ),
+                    );
+                  },
+                  child: RecommendedCard(
+                    title: course.title,
+                    subtitle: course.subtitle,
+                    icon: course
+                        .difficulty
+                        .icon, // Using difficulty icon as placeholder, ideally category icon
+                    color: course.accentColor ?? Colors.blueAccent,
+                    duration: course.formattedDuration,
+                    chapterCount: course.totalLessons,
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ),
       ],
@@ -79,7 +70,7 @@ class RecommendedCard extends StatelessWidget {
   final String subtitle;
   final IconData icon;
   final Color color;
-  final int modules;
+  final String duration;
   final int chapterCount;
 
   const RecommendedCard({
@@ -88,7 +79,7 @@ class RecommendedCard extends StatelessWidget {
     required this.subtitle,
     required this.icon,
     required this.color,
-    required this.modules,
+    required this.duration,
     required this.chapterCount,
   });
 
@@ -147,7 +138,7 @@ class RecommendedCard extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              _buildBadge(Icons.view_module_rounded, '$modules Modules'),
+              _buildBadge(Icons.schedule_rounded, duration),
               const Spacer(),
               _buildBadge(Icons.article_rounded, '$chapterCount Ch'),
             ],

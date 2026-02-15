@@ -115,6 +115,9 @@ class _MarketScreenState extends State<MarketScreen>
           snapshots: state.snapshots,
           indices: state.indices,
           bloc: _bloc,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenPaddingHorizontal,
+          ),
         );
       },
     );

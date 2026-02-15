@@ -7,8 +7,9 @@ import '../../core/theme/app_colors.dart';
 import '../../features/auth/presentation/widgets/home_top_bar.dart';
 import '../../features/gamification/presentation/widgets/progress_tracker_section.dart';
 import '../../features/learning/presentation/widgets/recommended_section.dart';
-import '../../features/market/presentation/widgets/market_indices_section.dart';
+import '../../features/market/widgets/index_ticker.dart';
 import '../../features/market/presentation/widgets/blogs_section.dart';
+import '../../features/market/bloc/market_bloc.dart';
 import '../../features/market/presentation/pages/market_screen.dart';
 import '../../features/learning/presentation/pages/learning_screen.dart';
 import '../../features/portfolio/presentation/pages/portfolio_screen.dart';
@@ -57,11 +58,16 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       initialPage: _currentIndex,
       keepPage: true,
     );
+    _marketBloc = MarketBloc();
+    _marketBloc.resume();
   }
+
+  late MarketBloc _marketBloc;
 
   @override
   void dispose() {
     _pageController.dispose();
+    _marketBloc.pause();
     super.dispose();
   }
 
@@ -108,7 +114,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
               onPageChanged: _onPageChanged,
               physics: const ClampingScrollPhysics(),
               children: [
-                const _HomeScreenWrapper(),
+                _HomeScreenWrapper(bloc: _marketBloc),
                 const LearningScreen(),
                 const RepaintBoundary(child: MarketScreen()),
                 const PortfolioScreen(),
@@ -253,7 +259,9 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 }
 
 class _HomeScreenWrapper extends StatelessWidget {
-  const _HomeScreenWrapper();
+  const _HomeScreenWrapper({required this.bloc});
+
+  final MarketBloc bloc;
 
   @override
   Widget build(BuildContext context) {
@@ -265,18 +273,45 @@ class _HomeScreenWrapper extends StatelessWidget {
         20,
         100,
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HomeTopBar(),
-          SizedBox(height: 30),
-          ProgressTrackerSection(),
-          SizedBox(height: 30),
-          MarketIndicesSection(),
-          SizedBox(height: 30),
-          RecommendedSection(),
-          SizedBox(height: 30),
-          BlogsSection(),
+          const HomeTopBar(),
+          const SizedBox(height: 30),
+          const ProgressTrackerSection(),
+          const SizedBox(height: 30),
+          StreamBuilder<MarketState>(
+            stream: bloc.stream,
+            initialData: bloc.state,
+            builder: (context, snapshot) {
+              final state = snapshot.data ?? MarketState.initial();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Market Indices',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E1E2C),
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  IndexTicker(
+                    market: state.activeMarket,
+                    snapshots: state.snapshots,
+                    indices: state.indices,
+                    bloc: bloc,
+                  ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 30),
+          const RecommendedSection(),
+          const SizedBox(height: 30),
+          const BlogsSection(),
         ],
       ),
     );

@@ -82,151 +82,6 @@ abstract final class LearningMockData {
     ),
   ];
 
-  static List<Course> get featuredCourses => [
-    Course(
-      id: 'course-001',
-      title: 'Stock Market Fundamentals',
-      subtitle: 'Your journey to financial literacy begins here',
-      description:
-          'A comprehensive introduction to the stock market. Learn how exchanges work, what drives prices, and how to analyze your first stock. Perfect for complete beginners.',
-      categoryId: 'stock-basics',
-      difficulty: DifficultyLevel.beginner,
-      thumbnailUrl: 'assets/courses/stock_fundamentals.jpg',
-      modules: _stockFundamentalsModules,
-      totalLessons: 24,
-      estimatedMinutes: 180,
-      xpReward: 500,
-      instructorName: 'Sarah Mitchell',
-      instructorAvatarUrl: 'assets/instructors/sarah.jpg',
-      rating: 4.9,
-      ratingsCount: 12543,
-      enrolledCount: 45620,
-      tags: ['stocks', 'beginner', 'fundamentals', 'investing'],
-      learningOutcomes: [
-        'Understand how stock markets work',
-        'Read and interpret stock quotes',
-        'Analyze basic financial metrics',
-        'Execute your first simulated trade',
-      ],
-      isFeatured: true,
-      accentColor: AppColors.electricBlue,
-    ),
-    Course(
-      id: 'course-002',
-      title: 'Mastering Candlestick Patterns',
-      subtitle: 'Read the language of price action',
-      description:
-          'Discover the art and science of candlestick chart analysis. Learn to identify powerful patterns that signal market reversals, continuations, and breakouts.',
-      categoryId: 'technical-analysis',
-      difficulty: DifficultyLevel.intermediate,
-      thumbnailUrl: 'assets/courses/candlesticks.jpg',
-      modules: _candlestickModules,
-      totalLessons: 32,
-      estimatedMinutes: 240,
-      xpReward: 750,
-      instructorName: 'Michael Chen',
-      instructorAvatarUrl: 'assets/instructors/michael.jpg',
-      rating: 4.8,
-      ratingsCount: 8921,
-      enrolledCount: 32150,
-      tags: ['technical', 'charts', 'patterns', 'trading'],
-      learningOutcomes: [
-        'Identify all major candlestick patterns',
-        'Understand pattern psychology',
-        'Combine patterns with volume analysis',
-        'Apply patterns in live market scenarios',
-      ],
-      isFeatured: true,
-      accentColor: AppColors.auroraPurple,
-    ),
-    Course(
-      id: 'course-003',
-      title: 'Options Trading: Zero to Hero',
-      subtitle: 'Unlock the power of derivatives',
-      description:
-          'Go from options novice to confident trader. Master calls, puts, the Greeks, and profitable strategies used by professional traders.',
-      categoryId: 'options-trading',
-      difficulty: DifficultyLevel.advanced,
-      thumbnailUrl: 'assets/courses/options.jpg',
-      modules: _optionsModules,
-      totalLessons: 40,
-      estimatedMinutes: 360,
-      xpReward: 1000,
-      instructorName: 'James Rodriguez',
-      instructorAvatarUrl: 'assets/instructors/james.jpg',
-      rating: 4.9,
-      ratingsCount: 6234,
-      enrolledCount: 18750,
-      tags: ['options', 'derivatives', 'strategies', 'advanced'],
-      learningOutcomes: [
-        'Understand options mechanics completely',
-        'Calculate and interpret the Greeks',
-        'Build income-generating strategies',
-        'Manage options portfolio risk',
-      ],
-      isFeatured: true,
-      isPremium: true,
-      accentColor: AppColors.coralPink,
-    ),
-    Course(
-      id: 'course-004',
-      title: 'Crypto Fundamentals',
-      subtitle: 'Navigate the digital asset revolution',
-      description:
-          'Understand blockchain technology, evaluate crypto projects, and learn safe trading practices in the exciting world of digital currencies.',
-      categoryId: 'crypto',
-      difficulty: DifficultyLevel.beginner,
-      thumbnailUrl: 'assets/courses/crypto.jpg',
-      modules: _cryptoModules,
-      totalLessons: 28,
-      estimatedMinutes: 200,
-      xpReward: 600,
-      instructorName: 'Alex Kim',
-      instructorAvatarUrl: 'assets/instructors/alex.jpg',
-      rating: 4.7,
-      ratingsCount: 4521,
-      enrolledCount: 21340,
-      tags: ['crypto', 'blockchain', 'bitcoin', 'defi'],
-      learningOutcomes: [
-        'Understand blockchain technology',
-        'Evaluate cryptocurrency projects',
-        'Use exchanges safely',
-        'Build a crypto portfolio strategy',
-      ],
-      isFeatured: true,
-      isNew: true,
-      accentColor: AppColors.sunsetOrange,
-    ),
-    Course(
-      id: 'course-005',
-      title: 'Trading Psychology Mastery',
-      subtitle: 'Your mindset is your edge',
-      description:
-          'Conquer fear, greed, and emotional trading. Develop the mental discipline that separates successful traders from the rest.',
-      categoryId: 'psychology',
-      difficulty: DifficultyLevel.intermediate,
-      thumbnailUrl: 'assets/courses/psychology.jpg',
-      modules: _psychologyModules,
-      totalLessons: 20,
-      estimatedMinutes: 150,
-      xpReward: 450,
-      instructorName: 'Dr. Emily Parker',
-      instructorAvatarUrl: 'assets/instructors/emily.jpg',
-      rating: 4.9,
-      ratingsCount: 7832,
-      enrolledCount: 28900,
-      tags: ['psychology', 'mindset', 'discipline', 'emotions'],
-      learningOutcomes: [
-        'Identify your trading biases',
-        'Build a trading journal practice',
-        'Manage fear and greed effectively',
-        'Develop unshakeable discipline',
-      ],
-      isFeatured: true,
-      accentColor: AppColors.rose,
-    ),
-  ];
-
   static List<Course> get allCourses => [
     Course(
       id: 'c0-foundations',
@@ -601,21 +456,21 @@ abstract final class LearningMockData {
 
   static List<Map<String, dynamic>> get continueLearning => [
     {
-      'course': featuredCourses[0],
+      'course': allCourses[0], // Foundations
       'progress': 0.65,
       'lastLesson': 'Understanding Order Types',
       'nextLesson': 'Market vs Limit Orders',
       'minutesLeft': 63,
     },
     {
-      'course': featuredCourses[1],
+      'course': allCourses[5], // Technical Analysis
       'progress': 0.32,
       'lastLesson': 'Doji Patterns Explained',
       'nextLesson': 'Hammer and Hanging Man',
       'minutesLeft': 163,
     },
     {
-      'course': featuredCourses[4],
+      'course': allCourses[7], // Risk Management
       'progress': 0.15,
       'lastLesson': 'The Psychology of Fear',
       'nextLesson': 'Managing Greed in Trading',
@@ -629,7 +484,7 @@ abstract final class LearningMockData {
       title: 'Complete Stock Trader',
       description:
           'Go from complete beginner to confident stock trader with this comprehensive path',
-      courses: ['course-001', 'course-002', 'course-risk-001', 'course-005'],
+      courses: ['c0-foundations', 'c1-stocks', 'c5-technical', 'c7-risk'],
       estimatedWeeks: 8,
       difficulty: DifficultyLevel.beginner,
       skills: [
@@ -644,7 +499,7 @@ abstract final class LearningMockData {
       title: 'Options Specialist',
       description:
           'Master options trading from basic concepts to advanced strategies',
-      courses: ['course-001', 'course-003', 'course-options-adv'],
+      courses: ['c1-stocks', 'c9-derivatives'],
       estimatedWeeks: 12,
       difficulty: DifficultyLevel.advanced,
       skills: [
@@ -658,7 +513,7 @@ abstract final class LearningMockData {
       id: 'path-003',
       title: 'Crypto Navigator',
       description: 'Navigate the world of cryptocurrencies with confidence',
-      courses: ['course-004', 'course-defi-001', 'course-nft-001'],
+      courses: ['c2-crypto'],
       estimatedWeeks: 6,
       difficulty: DifficultyLevel.intermediate,
       skills: ['Blockchain', 'DeFi', 'NFTs', 'Portfolio Management'],
@@ -676,24 +531,24 @@ abstract final class LearningMockData {
     currentStreak: 12,
     longestStreak: 28,
     courseProgress: {
-      'course-001': CourseProgress(
-        courseId: 'course-001',
+      'c0-foundations': CourseProgress(
+        courseId: 'c0-foundations',
         status: ProgressStatus.inProgress,
-        completedLessons: 16,
-        totalLessons: 24,
+        completedLessons: 6, // Completed course
+        totalLessons: 6,
         lastAccessedDate: DateTime.now().subtract(const Duration(hours: 2)),
         startedDate: DateTime.now().subtract(const Duration(days: 14)),
-        quizScores: {'quiz-1': 90, 'quiz-2': 85, 'quiz-3': 95},
+        quizScores: {'l0-quiz': 90},
         timeSpentMinutes: 145,
       ),
-      'course-002': CourseProgress(
-        courseId: 'course-002',
+      'c5-technical': CourseProgress(
+        courseId: 'c5-technical',
         status: ProgressStatus.inProgress,
-        completedLessons: 10,
-        totalLessons: 32,
+        completedLessons: 2,
+        totalLessons: 3,
         lastAccessedDate: DateTime.now().subtract(const Duration(days: 1)),
         startedDate: DateTime.now().subtract(const Duration(days: 21)),
-        quizScores: {'quiz-1': 88},
+        quizScores: {},
         timeSpentMinutes: 98,
       ),
     },
@@ -797,180 +652,6 @@ abstract final class LearningMockData {
       'category': 'Risk Management',
     },
   ];
-
-  static List<CourseModule> get _stockFundamentalsModules => [
-    CourseModule(
-      id: 'mod-001',
-      title: 'Introduction to Markets',
-      description: 'Understanding how financial markets work',
-      lessons: _generateLessons(6, 'Introduction'),
-      order: 1,
-    ),
-    CourseModule(
-      id: 'mod-002',
-      title: 'Types of Securities',
-      description: 'Stocks, bonds, ETFs, and more',
-      lessons: _generateLessons(6, 'Securities'),
-      order: 2,
-    ),
-    CourseModule(
-      id: 'mod-003',
-      title: 'Order Types & Execution',
-      description: 'How to buy and sell effectively',
-      lessons: _generateLessons(6, 'Orders'),
-      order: 3,
-    ),
-    CourseModule(
-      id: 'mod-004',
-      title: 'Building Your First Portfolio',
-      description: 'Practical portfolio construction',
-      lessons: _generateLessons(6, 'Portfolio'),
-      order: 4,
-    ),
-  ];
-
-  static List<CourseModule> get _candlestickModules => [
-    CourseModule(
-      id: 'mod-cs-001',
-      title: 'Candlestick Basics',
-      description: 'The anatomy of a candlestick',
-      lessons: _generateLessons(8, 'Basics'),
-      order: 1,
-    ),
-    CourseModule(
-      id: 'mod-cs-002',
-      title: 'Single Candle Patterns',
-      description: 'Doji, Hammer, Shooting Star',
-      lessons: _generateLessons(8, 'Single'),
-      order: 2,
-    ),
-    CourseModule(
-      id: 'mod-cs-003',
-      title: 'Multi-Candle Patterns',
-      description: 'Engulfing, Morning Star, Three Soldiers',
-      lessons: _generateLessons(8, 'Multi'),
-      order: 3,
-    ),
-    CourseModule(
-      id: 'mod-cs-004',
-      title: 'Pattern Application',
-      description: 'Using patterns in real trading',
-      lessons: _generateLessons(8, 'Application'),
-      order: 4,
-    ),
-  ];
-
-  static List<CourseModule> get _optionsModules => [
-    CourseModule(
-      id: 'mod-opt-001',
-      title: 'Options Fundamentals',
-      description: 'Understanding calls and puts',
-      lessons: _generateLessons(10, 'Fundamentals'),
-      order: 1,
-    ),
-    CourseModule(
-      id: 'mod-opt-002',
-      title: 'The Greeks Explained',
-      description: 'Delta, Gamma, Theta, Vega',
-      lessons: _generateLessons(10, 'Greeks'),
-      order: 2,
-    ),
-    CourseModule(
-      id: 'mod-opt-003',
-      title: 'Basic Strategies',
-      description: 'Covered calls, protective puts',
-      lessons: _generateLessons(10, 'Basic'),
-      order: 3,
-    ),
-    CourseModule(
-      id: 'mod-opt-004',
-      title: 'Advanced Strategies',
-      description: 'Spreads, straddles, iron condors',
-      lessons: _generateLessons(10, 'Advanced'),
-      order: 4,
-    ),
-  ];
-
-  static List<CourseModule> get _cryptoModules => [
-    CourseModule(
-      id: 'mod-cr-001',
-      title: 'Blockchain Basics',
-      description: 'How blockchain technology works',
-      lessons: _generateLessons(7, 'Blockchain'),
-      order: 1,
-    ),
-    CourseModule(
-      id: 'mod-cr-002',
-      title: 'Bitcoin Deep Dive',
-      description: 'The original cryptocurrency',
-      lessons: _generateLessons(7, 'Bitcoin'),
-      order: 2,
-    ),
-    CourseModule(
-      id: 'mod-cr-003',
-      title: 'Altcoins & DeFi',
-      description: 'Beyond Bitcoin',
-      lessons: _generateLessons(7, 'Altcoins'),
-      order: 3,
-    ),
-    CourseModule(
-      id: 'mod-cr-004',
-      title: 'Crypto Trading',
-      description: 'Practical crypto trading',
-      lessons: _generateLessons(7, 'Trading'),
-      order: 4,
-    ),
-  ];
-
-  static List<CourseModule> get _psychologyModules => [
-    CourseModule(
-      id: 'mod-psy-001',
-      title: 'Understanding Trading Emotions',
-      description: 'Fear, greed, and everything between',
-      lessons: _generateLessons(5, 'Emotions'),
-      order: 1,
-    ),
-    CourseModule(
-      id: 'mod-psy-002',
-      title: 'Cognitive Biases',
-      description: 'How your brain tricks you',
-      lessons: _generateLessons(5, 'Biases'),
-      order: 2,
-    ),
-    CourseModule(
-      id: 'mod-psy-003',
-      title: 'Building Discipline',
-      description: 'Creating sustainable habits',
-      lessons: _generateLessons(5, 'Discipline'),
-      order: 3,
-    ),
-    CourseModule(
-      id: 'mod-psy-004',
-      title: 'Peak Performance',
-      description: 'Optimizing your trading mindset',
-      lessons: _generateLessons(5, 'Performance'),
-      order: 4,
-    ),
-  ];
-
-  static List<Lesson> _generateLessons(int count, String prefix) {
-    return List.generate(
-      count,
-      (index) => Lesson(
-        id: '${prefix.toLowerCase()}-lesson-${index + 1}',
-        title: '$prefix Lesson ${index + 1}',
-        description: 'Learn about $prefix concept ${index + 1}',
-        contentType: index % 3 == 0
-            ? ContentType.video
-            : index % 3 == 1
-            ? ContentType.interactive
-            : ContentType.quiz,
-        estimatedMinutes: 8 + (index % 4) * 2,
-        order: index + 1,
-        xpReward: 25 + (index * 5),
-      ),
-    );
-  }
 
   static Lesson _makeLesson(
     String id,

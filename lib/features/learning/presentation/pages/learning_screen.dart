@@ -13,6 +13,7 @@ import 'widgets/learning_paths_section.dart';
 import 'widgets/daily_tip_card.dart';
 import 'topic_detail_screen.dart';
 import 'widgets/all_courses_section.dart';
+import 'course_details_screen.dart';
 
 class LearningScreen extends StatefulWidget {
   const LearningScreen({super.key});
@@ -75,6 +76,9 @@ class _LearningScreenState extends State<LearningScreen>
 
   void _onCourseTap(Course course) {
     HapticFeedback.lightImpact();
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => CourseDetailsScreen(course: course)),
+    );
   }
 
   void _onLearningPathTap(LearningPath path) {
