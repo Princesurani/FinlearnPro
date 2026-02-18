@@ -8,10 +8,10 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 
 import '../../bloc/market_bloc.dart';
-import '../../widgets/instrument_grid_2x2.dart';
-import '../../widgets/products_tools_row.dart';
-import '../../widgets/section_header.dart';
-import '../../widgets/sector_trending_card.dart';
+import '../widgets/instrument_grid_2x2.dart';
+import '../widgets/products_tools_row.dart';
+import '../widgets/section_header.dart';
+import '../widgets/sector_trending_card.dart';
 
 class ExploreTab extends StatefulWidget {
   const ExploreTab({super.key, required this.state});

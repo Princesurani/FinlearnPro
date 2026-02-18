@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../shared/navigation/top_navigation_shell.dart';
-import '../../../../../features/gamification/presentation/widgets/streak_badge.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/navigation/top_navigation_shell.dart';
+import '../../../../features/gamification/presentation/widgets/streak_badge.dart';
 
 class LearningHeader extends StatelessWidget {
   const LearningHeader({super.key});

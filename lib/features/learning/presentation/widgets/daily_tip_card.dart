@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_animations.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_animations.dart';
 
 class DailyTipCard extends StatefulWidget {
   const DailyTipCard({

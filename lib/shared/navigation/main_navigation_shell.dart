@@ -7,7 +7,7 @@ import '../../core/theme/app_colors.dart';
 import '../../features/auth/presentation/widgets/home_top_bar.dart';
 import '../../features/gamification/presentation/widgets/progress_tracker_section.dart';
 import '../../features/learning/presentation/widgets/recommended_section.dart';
-import '../../features/market/widgets/index_ticker.dart';
+import '../../features/market/presentation/widgets/index_ticker.dart';
 import '../../features/market/presentation/widgets/blogs_section.dart';
 import '../../features/market/bloc/market_bloc.dart';
 import '../../features/market/presentation/pages/market_screen.dart';

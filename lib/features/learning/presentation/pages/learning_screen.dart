@@ -4,15 +4,15 @@ import '../../../../core/theme/app_animations.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../data/learning_models.dart';
 import '../../data/learning_mock_data.dart';
-import 'widgets/learning_header.dart';
+import '../widgets/learning_header.dart';
 
-import 'widgets/category_pills.dart';
-import 'widgets/continue_learning_section.dart';
+import '../widgets/category_pills.dart';
+import '../widgets/continue_learning_section.dart';
 
-import 'widgets/learning_paths_section.dart';
-import 'widgets/daily_tip_card.dart';
+import '../widgets/learning_paths_section.dart';
+import '../widgets/daily_tip_card.dart';
 import 'topic_detail_screen.dart';
-import 'widgets/all_courses_section.dart';
+import '../widgets/all_courses_section.dart';
 import 'course_details_screen.dart';
 
 class LearningScreen extends StatefulWidget {

@@ -1,12 +1,12 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../core/domain/instrument.dart';
-import '../../../core/domain/market_data.dart';
-import '../../../core/domain/market_regime.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_typography.dart';
+import '../../../../core/domain/instrument.dart';
+import '../../../../core/domain/market_data.dart';
+import '../../../../core/domain/market_regime.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 
 class SectorTrendingCard extends StatelessWidget {
   const SectorTrendingCard({

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/domain/instrument.dart';
-import '../../../core/domain/market_data.dart';
-import '../../../core/domain/market_regime.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_typography.dart';
-import '../../../core/utils/market_formatters.dart';
+import '../../../../core/domain/instrument.dart';
+import '../../../../core/domain/market_data.dart';
+import '../../../../core/domain/market_regime.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
+import '../../../../core/utils/market_formatters.dart';
 
-import '../presentation/pages/stock_detail_screen.dart';
+import '../pages/stock_detail_screen.dart';
 
 class InstrumentGrid2x2 extends StatelessWidget {
   const InstrumentGrid2x2({

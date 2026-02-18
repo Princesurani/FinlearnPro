@@ -17,7 +17,7 @@ class Chapter1Content {
           'title': 'Meet Raj and Priya',
           'emoji': '👥',
           'content': '''
-Raj and Priya are college friends. Both just got their first job and have ₹1 lakh saved.
+**Raj** and **Priya** are college friends. Both just got their first job and have ₹1 lakh saved.
 
 **Raj's Approach:**
 "I want to make quick money! I'll buy and sell stocks every day. I saw someone on YouTube make ₹50,000 in one day!"
@@ -39,8 +39,8 @@ She starts investing systematically:
 
 **5 Years Later...**
 
-Raj's account: ₹87,000 (Lost ₹13,000 + countless hours of stress)
-Priya's account: ₹2,85,000 (Almost 3x return + peace of mind)
+**Raj's** account: ₹87,000 (Lost ₹13,000 + countless hours of stress)
+**Priya's** account: ₹2,85,000 (Almost 3x return + peace of mind)
 
 What made the difference? Let's find out.
 ''',
@@ -185,142 +185,109 @@ This is why Warren Buffett says: "The stock market is a device for transferring 
           'title': 'Why People Trade (And Fail)',
           'emoji': '⚠️',
           'content':
-              'In this lesson, we\'re going to explore the harsh reality of trading. You\'ll learn why 90% of traders lose money and what mistakes they make. This isn\'t meant to discourage you—it\'s meant to prepare you. Let\'s meet Amit and see what went wrong...',
+              'Here\'s a shocking truth: 90-95% of retail traders lose money. Not just some money—many lose everything. In this lesson, you\'ll discover the psychological traps, hidden costs, and brutal realities that destroy trading accounts. This isn\'t meant to scare you—it\'s meant to save you. Let\'s meet Amit and see what went wrong...',
         },
         {
           'type': 'story',
-          'title': 'The Allure of Trading',
+          'title': 'The YouTube Dream',
           'emoji': '💰',
           'content': '''
-Meet Amit, a 25-year-old software engineer earning ₹8 lakhs per year.
+Meet **Amit**, a 28-year-old software engineer in Bangalore earning ₹12 lakhs per year.
 
-One day, he sees a YouTube video:
-**"I made ₹50,000 in ONE DAY trading stocks! You can too!"**
+One evening, YouTube recommends a video:
+**"I made ₹1,50,000 in ONE WEEK trading options! Here's how!"**
 
-Amit's mind races:
-"If I make ₹50k per day × 20 trading days = ₹10 lakhs per month!"
-"That's more than my annual salary in just one month!"
-"I'll quit my job and become a full-time trader!"
+**Amit** watches, mesmerized:
+• The trader shows screenshots of massive gains
+• "It's so simple! Just follow these patterns!"
+• "I quit my job and now make ₹5 lakhs per month!"
 
-**Week 1:** 
-He opens a trading account, deposits ₹1 lakh, watches 10 YouTube videos, and starts trading.
+**Amit's Calculation:**
+"If I make ₹1.5 lakhs per week × 4 weeks = ₹6 lakhs per month!"
+"That's half my annual salary in ONE month!"
+"I'll trade part-time and double my income!" 💭
 
-First trade: Buys Reliance at ₹2,500
-Price goes to ₹2,520 → He makes ₹2,000!
-"This is easy! I'm a genius!" 😎
+**Week 1: The Beginner's Luck**
+• Opens Zerodha account, deposits ₹2 lakhs (his savings)
+• Watches 5 YouTube videos, joins 3 Telegram groups
+• First trade: Buys Nifty Call Option at ₹150
+• Market goes up! Sells at ₹180 → Makes ₹15,000! 🎉
+• "This is EASY! I'm a natural trader!"
 
-**Week 2:**
-Buys TCS at ₹3,400
-Price drops to ₹3,350 → Down ₹5,000
-"It'll come back up..." (It doesn't)
-Panic sells at ₹3,320 → Lost ₹8,000 😰
+**Week 2: The Confidence Trap**
+• Increases position size (now trading ₹50k per trade)
+• Buys Bank Nifty Put Option at ₹200
+• Market moves against him → Option expires worthless
+• Loss: ₹50,000 😰
+• "It's okay, I'll recover it tomorrow..."
 
-**Week 3:**
-Desperate to recover losses
-Takes bigger risks
-Loses ₹15,000 more
-"I need to win this back!" 😡
+**Week 3: The Revenge Trading Spiral**
+• Desperate to recover ₹50k loss
+• Takes bigger risks, trades more frequently
+• Follows every "hot tip" from Telegram
+• Loses another ₹60,000 😡
+• "I NEED to win this back!"
 
-**Week 4:**
-Account down 40% (₹40,000 lost)
-Stops trading
-Deletes trading app
-Never talks about it again 😔
+**Week 4: The Crash**
+• Account down 55% (₹1,10,000 lost)
+• Takes one final "all-in" bet
+• Loses ₹30,000 more
+• Total remaining: ₹60,000 out of ₹2,00,000 😔
 
-**What went wrong?**
+**3 Months Later:**
+• **Amit** stops trading
+• Deletes all trading apps
+• Never tells anyone about the ₹1.4 lakh loss
+• Goes back to his job, feeling defeated
+
+**What destroyed Amit's account?**
 ''',
         },
         {
           'type': 'concept',
-          'title': 'Why 90% of Traders Fail',
-          'emoji': '📉',
+          'title': 'The Psychology of Failure',
+          'emoji': '🧠',
           'content': '''
-**The Harsh Truth:** 90% of retail traders lose money. Here's why:
+**Why 90-95% of Retail Traders Lose Money:**
 
-**1. Unrealistic Expectations**
-• They expect to get rich quick
-• They see success stories, not the 90% who failed
-• They underestimate how hard trading actually is
+Research shows that human psychology is the #1 killer of trading accounts. Here are the cognitive biases that destroyed Amit (and millions like him):
 
-**2. No Proper Education**
-• They watch a few YouTube videos and think they're ready
-• They don't understand risk management
-• They don't have a proven strategy
+**1. Overconfidence Bias**
+After one winning trade, Amit thought he was a genius. Studies show traders overestimate their abilities by 40-60%.
 
-**3. Emotional Decisions**
-• **Fear:** They panic-sell when prices drop
-• **Greed:** They hold winners too long, hoping for more
-• **FOMO:** They buy when everyone else is buying (at peaks)
-• **Revenge Trading:** They try to "win back" losses with bigger bets
+**Reality:** One lucky trade ≠ skill. It takes 100+ trades to know if you have an edge.
 
-**4. No Risk Management**
-• They risk too much per trade (sometimes 50%+ of capital!)
-• They don't use stop-losses
-• They don't diversify
+**2. Loss Aversion (2.5x Pain)**
+Humans feel the pain of a ₹10,000 loss 2.5 times more intensely than the pleasure of a ₹10,000 gain.
 
-**5. Overtrading**
-• They trade too frequently (racking up fees)
-• They can't sit still and wait for good opportunities
-• Every price movement feels like a "must trade" moment
+**Result:** Amit held losing trades too long (hoping they'd recover) and sold winners too early (to lock in small gains).
 
-**6. Following Tips**
-• They rely on WhatsApp groups, Twitter, Telegram
-• They don't do their own analysis
-• By the time they get the "tip," it's too late
+**3. Revenge Trading**
+After losing ₹50,000, Amit's brain entered "fight mode." He wasn't trading logically—he was trying to "beat" the market.
 
-**7. Underestimating Costs**
-• Brokerage fees
-• Taxes (short-term capital gains = 15%)
-• Time and stress
+**Fact:** 70% of traders who revenge trade blow up their accounts within 3 months.
+
+**4. FOMO (Fear of Missing Out)**
+Every price movement felt like a "must trade" opportunity. Amit couldn't sit still.
+
+**Truth:** The best traders spend 90% of their time waiting for the perfect setup.
+
+**5. Confirmation Bias**
+Amit only saw information that confirmed his trades. Ignored warning signs.
+
+**Example:** Market showing bearish signals, but he only focused on bullish news.
+
+**6. Herd Mentality**
+Following Telegram tips = buying at peaks, selling at bottoms.
+
+**Data:** By the time a "tip" reaches you, smart money has already exited.
 ''',
           'keyPoints': [
-            '90% of traders lose money - it\'s not a game',
-            'Success requires years of education and practice',
-            'Emotions (fear, greed, FOMO) are the biggest enemies',
-            'Most "trading gurus" make money selling courses, not trading',
-            'The house always wins - brokers profit from your trades',
-          ],
-        },
-        {
-          'type': 'quiz',
-          'title': 'Reality Check',
-          'question':
-              'What percentage of retail traders actually make consistent profits?',
-          'options': ['About 90%', 'About 50%', 'About 10%', 'About 1%'],
-          'correctIndex': 2,
-          'explanation':
-              'Only about 10% of retail traders make consistent profits. Some studies suggest it\'s even lower (5% or less). Trading is extremely difficult, and most people underestimate the skill, discipline, and capital required.',
-        },
-        {
-          'type': 'scenario',
-          'title': 'The Revenge Trading Trap',
-          'situation':
-              'You just lost ₹10,000 on a trade. You\'re frustrated and want to win it back. What do you do?',
-          'choices': [
-            {
-              'text': 'Take a bigger position to recover losses faster',
-              'isCorrect': false,
-              'feedback':
-                  '❌ This is "revenge trading" - the #1 way traders blow up their accounts. Emotional decisions lead to bigger losses.',
-            },
-            {
-              'text': 'Stop trading for the day and analyze what went wrong',
-              'isCorrect': true,
-              'feedback':
-                  '✅ Perfect! Taking a break prevents emotional decisions. Analyze your mistake, learn from it, and come back with a clear mind.',
-            },
-            {
-              'text': 'Follow a "hot tip" to make quick money',
-              'isCorrect': false,
-              'feedback':
-                  '❌ Desperate decisions lead to more losses. Hot tips are rarely reliable, especially when you\'re emotional.',
-            },
-            {
-              'text': 'Accept the loss and stick to your original strategy',
-              'isCorrect': true,
-              'feedback':
-                  '✅ Excellent! Losses are part of trading. The key is to keep them small and stick to your proven strategy, not chase losses.',
-            },
+            'Overconfidence after early wins is the #1 psychological trap',
+            'Loss aversion makes you hold losers and sell winners too early',
+            'Revenge trading (emotional decisions) destroys 70% of accounts',
+            'FOMO causes overtrading—the best traders wait patiently',
+            'Following tips = buying high, selling low (you\'re the exit liquidity)',
           ],
         },
         {
@@ -328,58 +295,146 @@ Never talks about it again 😔
           'title': 'The Real Cost of Trading',
           'emoji': '💸',
           'content': '''
-Let's calculate the REAL cost of active trading:
+Let's calculate the TRUE cost of active trading in India (2024 data):
 
-**Scenario:** You have ₹1 lakh and trade actively
+**Scenario:** You have ₹2 lakhs and trade options actively
 
-**Direct Costs:**
-• Brokerage: ₹20 per trade × 200 trades/year = ₹4,000
-• STT (Securities Transaction Tax): ~0.1% = ₹1,000
-• GST on brokerage: 18% of ₹4,000 = ₹720
-• Stamp duty: ~0.015% = ₹150
+**Direct Costs Per Year:**
+• Brokerage: ₹20/trade × 500 trades = ₹10,000
+• STT (Securities Transaction Tax): 0.1% on options = ₹5,000
+• Exchange charges (NSE): ₹35/lakh premium = ₹4,000
+• GST (18% on brokerage + charges): ₹2,520
+• Stamp duty: 0.003% = ₹600
 
-**Total Direct Costs:** ₹5,870 per year
+**Total Direct Costs: ₹22,120 per year** (11% of capital!)
 
 **Indirect Costs:**
-• Short-term capital gains tax: 15% of profits
+• Short-term capital gains tax: 15% of profits (if you make any!)
 • Time spent: 3 hours/day × 250 days = 750 hours/year
-  (If your time is worth ₹500/hour = ₹3,75,000!)
-• Stress and health impact: Priceless (but costly)
+  (If your time is worth ₹500/hour = ₹3,75,000 opportunity cost!)
+• Stress, anxiety, sleepless nights: Priceless 😰
 
 **Opportunity Cost:**
-If you had invested that ₹1 lakh in an index fund:
+If you had invested ₹2 lakhs in Nifty Index Fund:
 • Average return: 12% per year
-• After 5 years: ₹1,76,234
-• Gain: ₹76,234
+• After 5 years: ₹3,52,470
+• Gain: ₹1,52,470 (with ZERO stress!)
 
-**The Reality:**
-Most active traders:
-• Lose money after costs
-• Waste hundreds of hours
-• Experience high stress
-• Miss out on simple index fund returns
+**The Brutal Math:**
+To break even as an active trader, you need:
+1. Beat market return: +12%
+2. Cover all costs: +11%
+3. Beat inflation: +6%
+= **You need 29%+ annual returns just to break even!**
 
-**The Math Doesn't Lie:**
-To break even as a trader, you need to:
-1. Beat the market return (12%)
-2. Cover all costs (6%+)
-3. Beat inflation (6%)
-= You need 24%+ annual returns just to break even!
+**Reality Check:**
+• Only 1-2% of traders achieve 29%+ consistently
+• 76% of retail traders lose money
+• Average retail trader loses ₹1,200 per year globally
+• In India, losses can be much higher due to options trading
 
-Only 1-2% of traders achieve this consistently.
+**Warren Buffett's Wisdom:**
+"The stock market is a device for transferring money from the impatient to the patient."
 ''',
+        },
+        {
+          'type': 'quiz',
+          'title': 'Reality Check',
+          'question':
+              'What percentage of retail traders actually make consistent profits?',
+          'options': ['About 50%', 'About 25%', 'About 10%', 'About 1-5%'],
+          'correctIndex': 3,
+          'explanation':
+              'Only 1-5% of retail traders make consistent profits. Studies show 76% of retail accounts lose money, and 90-95% fail within the first year. The odds are worse than a casino!',
+        },
+        {
+          'type': 'scenario',
+          'title': 'The Revenge Trading Trap',
+          'situation':
+              'You just lost ₹15,000 on an options trade. You\'re frustrated and your heart is racing. The market is still open. What do you do?',
+          'choices': [
+            {
+              'text': 'Take a bigger position to recover losses faster',
+              'isCorrect': false,
+              'feedback':
+                  '❌ DANGER! This is "revenge trading"—the #1 account killer. 70% of traders who do this blow up their accounts within 3 months. Your brain is in "fight mode," not "think mode."',
+            },
+            {
+              'text': 'Close your trading app and take a 24-hour break',
+              'isCorrect': true,
+              'feedback':
+                  '✅ PERFECT! Emotional decisions = bad decisions. Taking a break prevents impulsive trades. Come back tomorrow with a clear mind. The market will still be there.',
+            },
+            {
+              'text': 'Follow a "guaranteed" tip from Telegram to recover',
+              'isCorrect': false,
+              'feedback':
+                  '❌ Desperate decisions lead to bigger losses. "Guaranteed tips" don\'t exist. By the time you get the tip, smart money has already exited. You\'re the exit liquidity.',
+            },
+            {
+              'text':
+                  'Accept the loss, journal what went wrong, stick to your plan',
+              'isCorrect': true,
+              'feedback':
+                  '✅ EXCELLENT! Losses are tuition fees. Analyze the mistake, learn from it, and move on. The best traders have a 40-60% win rate but still profit because they cut losses fast.',
+            },
+          ],
+        },
+        {
+          'type': 'concept',
+          'title': 'Why Trading Gurus Are Rich',
+          'emoji': '🎓',
+          'content': '''
+**The Uncomfortable Truth:**
+
+Most "trading gurus" on YouTube, Instagram, and Telegram don't make money from trading—they make money from YOU.
+
+**The Business Model:**
+• Show cherry-picked winning trades (hide the losses)
+• Create FOMO with flashy lifestyle posts
+• Sell courses for ₹5,000-₹50,000
+• Charge for "premium" Telegram groups
+• Earn affiliate commissions from brokers
+
+**The Math:**
+If a guru has 10,000 students paying ₹10,000 each:
+= ₹10 crore revenue (much easier than trading!)
+
+**Red Flags to Spot:**
+• They show screenshots but no verified track record
+• They promise "guaranteed returns" or "100% accuracy"
+• They create urgency ("Only 50 spots left!")
+• They never show their losing trades
+• They focus on lifestyle, not education
+
+**The Real Experts:**
+• Share knowledge for free or reasonable prices
+• Show both wins AND losses
+• Emphasize risk management over profits
+• Never promise guaranteed returns
+• Focus on education, not selling dreams
+
+**Remember:** If trading was so easy and profitable, why would they waste time selling courses instead of just trading?
+''',
+          'keyPoints': [
+            'Most trading gurus make money from courses, not trading',
+            'Cherry-picked screenshots hide the 90% of losing trades',
+            'Verified track records are rare—most are fake or misleading',
+            'Real experts emphasize risk management, not get-rich-quick schemes',
+            'If it sounds too good to be true, it always is',
+          ],
         },
         {
           'type': 'summary',
           'title': 'The Bottom Line',
           'keyPoints': [
-            'Trading looks easy but is extremely difficult in reality',
-            '90% of traders lose money due to lack of education, discipline, and realistic expectations',
-            'Emotions (fear, greed, FOMO, revenge) are the biggest killers',
-            'The costs of trading (fees, taxes, time, stress) are massive',
-            'You need 20%+ returns just to break even after all costs',
-            'If you still want to trade: Get educated, practice for years, start small',
-            'For most people: Long-term investing beats active trading',
+            '90-95% of retail traders lose money—it\'s not a game, it\'s a battlefield',
+            'Psychology (overconfidence, loss aversion, FOMO, revenge trading) kills accounts',
+            'Hidden costs (fees, taxes, time, stress) require 29%+ returns just to break even',
+            'Only 1-5% of traders achieve consistent profitability',
+            'Most trading gurus make money selling courses, not trading',
+            'If you still want to trade: Get educated, practice for 2+ years, start tiny',
+            'For 95% of people: Long-term investing beats active trading',
           ],
         },
       ],
@@ -395,91 +450,139 @@ Only 1-2% of traders achieve this consistently.
           'title': 'Reality Check Quiz',
           'emoji': '🎯',
           'content':
-              'Let\'s test if you\'ve understood the harsh truths about trading vs investing. This quiz will challenge your assumptions and ensure you\'re ready to move forward with realistic expectations.',
+              'You\'ve learned the brutal truths. Now let\'s test if you\'re truly ready. This isn\'t just a quiz—it\'s a mindset check. Can you spot the traps that destroy 95% of traders? Let\'s find out...',
+        },
+        {
+          'type': 'concept',
+          'title': 'The Mindset Shift',
+          'emoji': '🧠',
+          'content': '''
+Before we test your knowledge, understand this:
+
+**The Market Rewards:**
+• Patience over speed
+• Education over luck
+• Discipline over emotion
+• Long-term thinking over quick wins
+
+**The Market Punishes:**
+• Greed and FOMO
+• Overconfidence and arrogance
+• Following tips blindly
+• Revenge trading after losses
+
+**Your Goal in This Quiz:**
+Not to get 100% correct—but to recognize dangerous thinking patterns that lead to losses.
+
+**Remember:** Every wrong answer is a lesson learned NOW instead of a costly mistake LATER.
+''',
+          'keyPoints': [
+            'The market is a teacher, not a slot machine',
+            'Wrong answers here = lessons learned without losing money',
+            'Recognizing traps is more valuable than memorizing facts',
+            'Your mindset determines your success more than your strategy',
+          ],
         },
         {
           'type': 'quiz',
-          'title': 'Question 1',
+          'title': 'Question 1: Social Proof Trap',
           'question':
-              'Your friend made ₹20,000 in one day trading. What\'s the most likely reality?',
+              'Your friend made ₹20,000 in one day trading options. They show you screenshots. What\'s the most likely reality?',
           'options': [
-            'They have a secret strategy you should copy',
-            'They got lucky, and you\'re not seeing their losses',
-            'Trading is easy money for everyone',
-            'You should quit your job and trade too',
+            'They have a secret strategy you should copy immediately',
+            'They got lucky, and you\'re not seeing their overall losses',
+            'Trading is easy money for everyone who tries',
+            'You should quit your job and trade full-time too',
           ],
           'correctIndex': 1,
           'explanation':
-              'Most people only share their wins, not their losses. One lucky day doesn\'t make someone a successful trader. For every ₹20k win, they might have ₹50k in losses they\'re not telling you about.',
+              'Survivorship bias! People only share wins, not losses. Studies show 76% of retail traders lose money overall. One lucky day ≠ consistent profitability. For every ₹20k win, they might have ₹50k in hidden losses. Always ask: "What\'s your verified track record over 12+ months?"',
         },
         {
           'type': 'quiz',
-          'title': 'Question 2',
+          'title': 'Question 2: First Step Wisdom',
           'question':
-              'You have ₹50,000 to invest. What\'s the smartest first step?',
+              'You have ₹50,000 saved. What\'s the smartest first step before investing a single rupee?',
           'options': [
-            'Put it all in one "hot stock" for quick gains',
-            'Learn the basics, start small, and build knowledge',
-            'Follow a Telegram group\'s tips',
-            'Trade daily to maximize opportunities',
+            'Put it all in one "hot stock" recommended by a guru',
+            'Spend 3-6 months learning, then start with ₹5,000',
+            'Follow a premium Telegram group\'s daily tips',
+            'Trade daily to maximize opportunities and learn faster',
           ],
           'correctIndex': 1,
           'explanation':
-              'Education first, money second. Start with small amounts while you learn. The market will still be there when you\'re ready. Rushing in is how most people lose money.',
+              'Education first, money second! The market will still be there after you learn. Warren Buffett spent YEARS studying before investing. Start with 10% of your capital (₹5,000) while learning. Rushing in is how 90-95% lose money in their first year. Time spent learning saves money lost trading.',
         },
         {
           'type': 'quiz',
-          'title': 'Question 3',
-          'question': 'What\'s the main reason 90% of traders fail?',
-          'options': [
-            'The market is rigged against retail traders',
-            'They lack emotional discipline and proper education',
-            'They don\'t have enough capital',
-            'The brokerage fees are too high',
-          ],
-          'correctIndex': 1,
-          'explanation':
-              'While the market is competitive, the main reason is lack of education and emotional control. Fear, greed, and FOMO cause most losses, not external factors.',
-        },
-        {
-          'type': 'quiz',
-          'title': 'Question 4',
+          'title': 'Question 3: Root Cause Analysis',
           'question':
-              'If you want to build wealth over 10+ years, what should you focus on?',
+              'What\'s the #1 reason 90-95% of retail traders lose money?',
           'options': [
-            'Day trading for quick profits',
-            'Long-term investing in quality assets',
-            'Following stock tips from social media',
-            'Timing the market perfectly',
+            'The market is rigged by big institutions',
+            'Lack of emotional discipline and proper education',
+            'They don\'t have enough starting capital',
+            'Brokerage fees and taxes eat all the profits',
           ],
           'correctIndex': 1,
           'explanation':
-              'For long-term wealth building, investing beats trading. Time in the market beats timing the market. Compound interest works magic over decades.',
+              'Psychology kills accounts, not the market! While institutions have advantages, the real killers are: overconfidence, loss aversion (2.5x pain), FOMO, and revenge trading. 70% of traders who revenge trade blow up in 3 months. Education + emotional control = the 1-5% who succeed.',
         },
         {
           'type': 'quiz',
-          'title': 'Question 5',
+          'title': 'Question 4: Time Horizon Test',
           'question':
-              'You lost ₹5,000 on your first trade. What should you do?',
+              'You want to build wealth for retirement (20+ years away). What\'s the proven approach?',
           'options': [
-            'Take a bigger position to win it back quickly',
-            'Stop, analyze what went wrong, and learn from it',
-            'Follow a "guaranteed" tip to recover losses',
-            'Keep trading until you break even',
+            'Day trading to compound gains faster',
+            'Long-term investing in quality assets with patience',
+            'Following stock tips from social media influencers',
+            'Timing the market perfectly to maximize returns',
           ],
           'correctIndex': 1,
           'explanation':
-              'Losses are tuition fees in the market. Stop, learn, and improve. Revenge trading (trying to win back losses) is how small losses become big disasters.',
+              'Time in the market > Timing the market! Historical data: Nifty 50 returned 12-15% annually over 20 years. Day traders? 95% fail. Compound interest needs TIME to work magic. ₹1 lakh invested at 12% for 20 years = ₹9.6 lakhs. Same amount day-traded? Most likely ₹0 after costs and losses.',
+        },
+        {
+          'type': 'quiz',
+          'title': 'Question 5: Loss Response Test',
+          'question':
+              'You lost ₹10,000 on your first trade. You\'re frustrated. What should you do RIGHT NOW?',
+          'options': [
+            'Take a bigger position to recover losses quickly',
+            'Close the app, take a 24-hour break, then analyze',
+            'Follow a "guaranteed" tip to make it back',
+            'Keep trading until you break even today',
+          ],
+          'correctIndex': 1,
+          'explanation':
+              'STOP! Emotional decisions = bigger losses. Your brain is in "fight mode," not "think mode." 70% of revenge traders blow up their accounts. Take a break, journal what went wrong, and come back with a clear mind. The best traders have 40-60% win rates but still profit because they cut losses FAST and never revenge trade.',
+        },
+        {
+          'type': 'quiz',
+          'title': 'Question 6: Guru Detection Test',
+          'question':
+              'A "trading guru" promises "100% accuracy" and shows luxury cars. What should you think?',
+          'options': [
+            'They must be successful—I should buy their course',
+            '🚩 RED FLAG: They make money from courses, not trading',
+            'Their strategy must work—look at their lifestyle!',
+            'I should join their premium group immediately',
+          ],
+          'correctIndex': 1,
+          'explanation':
+              'SCAM ALERT! 🚨 No one has 100% accuracy—not even Warren Buffett. Real traders show: verified track records, both wins AND losses, and emphasize risk management. Gurus make money selling dreams (₹10 crore from 10,000 students) not trading. If trading was so easy, why waste time selling courses? Cherry-picked screenshots hide 90% of losing trades.',
         },
         {
           'type': 'summary',
-          'title': 'Reality Check Complete! ✅',
+          'title': 'Mindset Unlocked! 🎓',
           'keyPoints': [
-            'You now understand the difference between trading and investing',
-            'You know why 90% of traders fail (and how to avoid their mistakes)',
-            'You recognize that education and patience beat quick-money schemes',
-            'You\'re ready to learn the fundamentals with realistic expectations',
-            'Remember: The goal is to build wealth, not to gamble',
+            'You can now spot the psychological traps that destroy 95% of traders',
+            'You understand: Education + Patience + Discipline > Luck + Speed + Emotion',
+            'You know the difference: Investing builds wealth, gambling destroys it',
+            'You\'re ready to learn with realistic expectations (not get-rich-quick dreams)',
+            'Next step: Master the fundamentals before risking real money',
+            'Remember: The goal is wealth building, not lottery tickets',
           ],
         },
       ],

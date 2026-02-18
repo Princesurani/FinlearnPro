@@ -3,6 +3,12 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/learning_models.dart';
 import '../../data/courses/foundations_of_trading/chapter1_content.dart';
+import '../../data/courses/foundations_of_trading/chapter2_content.dart';
+import '../../data/courses/foundations_of_trading/chapter3_content.dart';
+import '../../data/courses/foundations_of_trading/chapter4_content.dart';
+import '../../data/courses/foundations_of_trading/chapter5_content.dart';
+import '../../data/courses/foundations_of_trading/chapter6_content.dart';
+import '../widgets/concept_slide_widget.dart';
 
 /// Interactive lesson screen with psychological engagement
 class LessonScreen extends StatefulWidget {
@@ -77,13 +83,64 @@ class _LessonScreenState extends State<LessonScreen>
 
     switch (lessonId) {
       case 'lesson-1-1':
-        contentData = _getChapter1Lesson1Content();
+        contentData = Chapter1Content.getTradingVsInvestingContent();
         break;
       case 'lesson-1-2':
-        contentData = _getChapter1Lesson2Content();
+        contentData = Chapter1Content.getWhyPeopleTradeContent();
         break;
       case 'lesson-1-3':
-        contentData = _getChapter1Lesson3Content();
+        contentData = Chapter1Content.getRealityCheckContent();
+        break;
+      case 'lesson-2-1':
+        contentData = Chapter2Content.getFinancialMarketContent();
+        break;
+      case 'lesson-2-2':
+        contentData = Chapter2Content.getExchangesContent();
+        break;
+      case 'lesson-2-3':
+        contentData = Chapter2Content.getTradeProcessContent();
+        break;
+      case 'lesson-3-1':
+        contentData = Chapter3Content.getRetailTradersContent();
+        break;
+      case 'lesson-3-2':
+        contentData = Chapter3Content.getInstitutionalPlayersContent();
+        break;
+      case 'lesson-3-3':
+        contentData = Chapter3Content.getMarketMakersContent();
+        break;
+      case 'lesson-4-1':
+        contentData = Chapter4Content.getMarketOrderContent();
+        break;
+      case 'lesson-4-2':
+        contentData = Chapter4Content.getLimitOrderContent();
+        break;
+      case 'lesson-4-3':
+        contentData = Chapter4Content.getStopOrderContent();
+        break;
+      case 'lesson-4-4':
+        contentData = Chapter4Content.getPracticeContent();
+        break;
+      case 'lesson-5-1':
+        contentData = Chapter5Content.getBidAskContent();
+        break;
+      case 'lesson-5-2':
+        contentData = Chapter5Content.getVolumeLiquidityContent();
+        break;
+      case 'lesson-5-3':
+        contentData = Chapter5Content.getBullsBearsContent();
+        break;
+      case 'lesson-6-1':
+        contentData = Chapter6Content.getBrokerSelectionContent();
+        break;
+      case 'lesson-6-2':
+        contentData = Chapter6Content.getPaperTradingContent();
+        break;
+      case 'lesson-6-3':
+        contentData = Chapter6Content.getMistakeContent();
+        break;
+      case 'lesson-6-4':
+        contentData = Chapter6Content.getFinalChallengeContent();
         break;
       default:
         // Fallback to placeholder content for lessons not yet implemented
@@ -216,19 +273,6 @@ class _LessonScreenState extends State<LessonScreen>
             : null,
       ),
     ];
-  }
-
-  // Chapter 1 Content Loaders
-  Map<String, dynamic> _getChapter1Lesson1Content() {
-    return Chapter1Content.getTradingVsInvestingContent();
-  }
-
-  Map<String, dynamic> _getChapter1Lesson2Content() {
-    return Chapter1Content.getWhyPeopleTradeContent();
-  }
-
-  Map<String, dynamic> _getChapter1Lesson3Content() {
-    return Chapter1Content.getRealityCheckContent();
   }
 
   void _handleQuizAnswer(bool isCorrect) {
@@ -882,47 +926,305 @@ class StoryContent extends LessonContent {
 
   @override
   Widget build(BuildContext context) {
+    return _StorySlideWidget(story: story, character: character);
+  }
+}
+
+class _StorySlideWidget extends StatefulWidget {
+  final String story;
+  final String character;
+
+  const _StorySlideWidget({required this.story, required this.character});
+
+  @override
+  State<_StorySlideWidget> createState() => _StorySlideWidgetState();
+}
+
+class _StorySlideWidgetState extends State<_StorySlideWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Parse story sections (split by bold markers or line breaks)
+    final sections = _parseStory(widget.story);
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+      physics: const BouncingScrollPhysics(),
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: SlideTransition(
+          position: _slideAnimation,
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Immersive header with character
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primaryPurple.withValues(alpha: 0.15),
+                        AppColors.electricBlue.withValues(alpha: 0.10),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: AppColors.primaryPurple.withValues(alpha: 0.2),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      // Animated character emoji
+                      TweenAnimationBuilder<double>(
+                        duration: const Duration(milliseconds: 600),
+                        tween: Tween(begin: 0.0, end: 1.0),
+                        builder: (context, value, child) {
+                          return Transform.scale(
+                            scale: 0.8 + (value * 0.2),
+                            child: Text(
+                              widget.character,
+                              style: const TextStyle(fontSize: 56),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Real-World Story',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primaryPurple.withValues(
+                                  alpha: 0.8,
+                                ),
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Learn from real experiences',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 28),
+
+                // Story content with visual hierarchy
+                ...sections.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final section = entry.value;
+
+                  return TweenAnimationBuilder<double>(
+                    duration: Duration(milliseconds: 400 + (index * 100)),
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.translate(
+                          offset: Offset(0, 20 * (1 - value)),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: _buildStorySection(section, index),
+                  );
+                }),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Map<String, dynamic>> _parseStory(String story) {
+    final sections = <Map<String, dynamic>>[];
+    final lines = story.split('\n');
+
+    for (final line in lines) {
+      if (line.trim().isEmpty) continue;
+
+      // Check if it's a bold section (starts with **)
+      if (line.trim().startsWith('**') && line.trim().endsWith('**')) {
+        sections.add({
+          'type': 'heading',
+          'text': line.trim().replaceAll('**', ''),
+        });
+      } else if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
+        sections.add({
+          'type': 'bullet',
+          'text': line.trim().substring(1).trim(),
+        });
+      } else {
+        sections.add({'type': 'paragraph', 'text': line.trim()});
+      }
+    }
+
+    return sections;
+  }
+
+  Widget _buildStorySection(Map<String, dynamic> section, int index) {
+    final type = section['type'];
+    final text = section['text'];
+
+    switch (type) {
+      case 'heading':
+        return Padding(
+          padding: EdgeInsets.only(bottom: 16, top: index == 0 ? 0 : 20),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.sunsetOrange.withValues(alpha: 0.12),
+                  AppColors.sunsetOrange.withValues(alpha: 0.05),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border(
+                left: BorderSide(color: AppColors.sunsetOrange, width: 3),
+              ),
+            ),
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+                height: 1.4,
+              ),
+            ),
+          ),
+        );
+
+      case 'bullet':
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12, left: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(character, style: const TextStyle(fontSize: 48)),
-              const SizedBox(width: 16),
-              const Expanded(
-                child: Text(
-                  'Real-World Story',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primaryPurple.withValues(alpha: 0.3),
+                      blurRadius: 4,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildFormattedText(
+                  text,
+                  const TextStyle(
+                    fontSize: 15,
+                    height: 1.6,
                     color: AppColors.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: AppColors.backgroundTertiary,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Text(
-              story,
-              style: const TextStyle(
-                fontSize: 16,
-                height: 1.6,
-                color: AppColors.textPrimary,
-              ),
+        );
+
+      case 'paragraph':
+      default:
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: _buildFormattedText(
+            text,
+            const TextStyle(
+              fontSize: 15.5,
+              height: 1.7,
+              color: AppColors.textPrimary,
+              letterSpacing: 0.2,
             ),
           ),
-        ],
-      ),
-    );
+        );
+    }
+  }
+
+  Widget _buildFormattedText(String text, TextStyle baseStyle) {
+    if (!text.contains('**')) {
+      return Text(text, style: baseStyle);
+    }
+
+    final spans = <InlineSpan>[];
+    final pattern = RegExp(r'\*\*(.*?)\*\*');
+
+    int lastMatchEnd = 0;
+
+    for (final match in pattern.allMatches(text)) {
+      if (match.start > lastMatchEnd) {
+        spans.add(TextSpan(text: text.substring(lastMatchEnd, match.start)));
+      }
+      spans.add(
+        TextSpan(
+          text: match.group(1),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      );
+      lastMatchEnd = match.end;
+    }
+
+    if (lastMatchEnd < text.length) {
+      spans.add(TextSpan(text: text.substring(lastMatchEnd)));
+    }
+
+    return Text.rich(TextSpan(style: baseStyle, children: spans));
   }
 }
 
@@ -935,71 +1237,7 @@ class ConceptContent extends LessonContent {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '📚 Core Concept',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            concept,
-            style: const TextStyle(
-              fontSize: 16,
-              height: 1.6,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 32),
-          const Text(
-            '🔑 Key Points',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 16),
-          ...keyPoints.map(
-            (point) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 4),
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primaryPurple,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      point,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        height: 1.5,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    return ConceptSlideWidget(concept: concept, keyPoints: keyPoints);
   }
 }
 

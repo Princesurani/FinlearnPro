@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/theme/app_animations.dart';
-import '../../../data/learning_models.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_animations.dart';
+import '../../data/learning_models.dart';
 
 class CategoryPills extends StatefulWidget {
   const CategoryPills({
