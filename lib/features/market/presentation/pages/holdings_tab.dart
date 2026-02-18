@@ -333,7 +333,7 @@ class HoldingsTab extends StatelessWidget {
                   Hero(
                     tag: 'symbol_${h.symbol}',
                     child: Material(
-                      color: Colors.transparent,
+                      color: AppColors.transparent,
                       child: Text(
                         h.symbol,
                         style: AppTypography.body.copyWith(
@@ -448,7 +448,7 @@ class HoldingsTab extends StatelessWidget {
               onPressed: onExplore,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryPurple,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.xl,
                   vertical: AppSpacing.md,

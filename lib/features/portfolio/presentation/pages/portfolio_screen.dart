@@ -8,7 +8,7 @@ class PortfolioScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       body: SingleChildScrollView(
         padding: EdgeInsets.only(
           top: MediaQuery.paddingOf(context).top + 12,
@@ -56,11 +56,11 @@ class PortfolioScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: AppColors.black.withValues(alpha: 0.05),
                     blurRadius: 20,
                     offset: const Offset(0, 4),
                   ),
@@ -71,7 +71,7 @@ class PortfolioScreen extends StatelessWidget {
                 children: [
                   const Text(
                     'Total Value',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    style: TextStyle(fontSize: 16, color: AppColors.neutralGray),
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -118,7 +118,7 @@ class PortfolioScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+        Text(label, style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
         const SizedBox(height: 4),
         Text(
           value,

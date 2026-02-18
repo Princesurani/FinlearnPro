@@ -161,7 +161,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
       leading: IconButton(
         icon: Icon(
           Icons.arrow_back_ios_new_rounded,
-          color: _isScrolled ? AppColors.textPrimary : Colors.white,
+          color: _isScrolled ? AppColors.textPrimary : AppColors.white,
           size: 20,
         ),
         onPressed: () => Navigator.pop(context),
@@ -170,14 +170,14 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
         IconButton(
           icon: Icon(
             Icons.bookmark_border_rounded,
-            color: _isScrolled ? AppColors.textPrimary : Colors.white,
+            color: _isScrolled ? AppColors.textPrimary : AppColors.white,
           ),
           onPressed: () {},
         ),
         IconButton(
           icon: Icon(
             Icons.share_rounded,
-            color: _isScrolled ? AppColors.textPrimary : Colors.white,
+            color: _isScrolled ? AppColors.textPrimary : AppColors.white,
           ),
           onPressed: () {},
         ),
@@ -223,9 +223,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withValues(alpha: 0.3),
-                    Colors.transparent,
-                    Colors.black.withValues(alpha: 0.6),
+                    AppColors.black.withValues(alpha: 0.3),
+                    AppColors.transparent,
+                    AppColors.black.withValues(alpha: 0.6),
                   ],
                 ),
               ),
@@ -240,14 +240,14 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: AppColors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.2),
+                    color: AppColors.white.withValues(alpha: 0.2),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: AppColors.black.withValues(alpha: 0.1),
                       blurRadius: 10,
                     ),
                   ],
@@ -261,14 +261,14 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                       children: [
                         Icon(
                           widget.course.difficulty.icon,
-                          color: Colors.white,
+                          color: AppColors.white,
                           size: 14,
                         ),
                         const SizedBox(width: 6),
                         Text(
                           '${widget.course.categoryId.toUpperCase()} • ${widget.course.difficulty.label}',
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -313,7 +313,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
             _buildStatBadge(
               Icons.star_rounded,
               '${widget.course.rating}',
-              Colors.amber,
+              AppColors.amber,
               '(${widget.course.ratingsCount})',
             ),
             const SizedBox(width: 20),
@@ -489,12 +489,12 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   Widget _buildModuleCard(CourseModule module, int index) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: AppColors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -619,10 +619,10 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
           top: 20,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: AppColors.black.withValues(alpha: 0.05),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -639,7 +639,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryPurple,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),

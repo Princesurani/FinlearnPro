@@ -1,3 +1,4 @@
+import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class NotificationsScreen extends StatelessWidget {
@@ -8,17 +9,17 @@ class NotificationsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FE),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.black87),
         ),
         title: const Text(
           'Notifications',
           style: TextStyle(
-            color: Colors.black87,
+            color: AppColors.black87,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -38,7 +39,7 @@ class NotificationsScreen extends StatelessWidget {
                 'Bitcoin has dropped below \$29,000 key support level. Heavy volume detected.',
             time: '2 min ago',
             icon: Icons.trending_down,
-            iconColor: Colors.red,
+            iconColor: AppColors.error,
             isUnread: true,
           ),
           const SizedBox(height: 12),
@@ -48,7 +49,7 @@ class NotificationsScreen extends StatelessWidget {
                 'You missed yesterday\'s challenge but your streak was saved!',
             time: '2h ago',
             icon: Icons.shield_outlined,
-            iconColor: Colors.orange,
+            iconColor: AppColors.sunsetOrange,
             isUnread: true,
           ),
           const SizedBox(height: 24),
@@ -60,7 +61,7 @@ class NotificationsScreen extends StatelessWidget {
                 'Congratulations! You\'ve earned the "Chart Master" badge for 7 correct predictions.',
             time: '1d ago',
             icon: Icons.emoji_events_outlined,
-            iconColor: Colors.purple,
+            iconColor: AppColors.primaryPurple,
             isUnread: false,
           ),
           const SizedBox(height: 12),
@@ -70,7 +71,7 @@ class NotificationsScreen extends StatelessWidget {
                 'Check out the latest analysis on AAPL earnings report provided by Alex.',
             time: '1d ago',
             icon: Icons.person_outline,
-            iconColor: Colors.blue,
+            iconColor: AppColors.electricBlue,
             isUnread: false,
           ),
         ],
@@ -84,7 +85,7 @@ class NotificationsScreen extends StatelessWidget {
       style: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.bold,
-        color: Colors.grey[600],
+        color: AppColors.textSecondary,
       ),
     );
   }
@@ -112,15 +113,15 @@ class _NotificationItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isUnread ? Colors.white : const Color(0xFFF8F9FE),
+        color: isUnread ? AppColors.white : const Color(0xFFF8F9FE),
         borderRadius: BorderRadius.circular(16),
         border: isUnread
-            ? Border.all(color: Colors.blue.withValues(alpha: 0.1))
+            ? Border.all(color: AppColors.electricBlue.withValues(alpha: 0.1))
             : null,
         boxShadow: [
           if (isUnread)
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: AppColors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -152,7 +153,7 @@ class _NotificationItem extends StatelessWidget {
                         fontWeight: isUnread
                             ? FontWeight.bold
                             : FontWeight.w600,
-                        color: Colors.black87,
+                        color: AppColors.black87,
                       ),
                     ),
                     if (isUnread)
@@ -160,7 +161,7 @@ class _NotificationItem extends StatelessWidget {
                         width: 8,
                         height: 8,
                         decoration: const BoxDecoration(
-                          color: Colors.red,
+                          color: AppColors.error,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -171,14 +172,14 @@ class _NotificationItem extends StatelessWidget {
                   description,
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.grey[600],
+                    color: AppColors.textSecondary,
                     height: 1.4,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   time,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                  style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
                 ),
               ],
             ),

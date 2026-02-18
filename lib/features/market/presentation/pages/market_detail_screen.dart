@@ -1,3 +1,4 @@
+import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../data/market_data.dart';
 
@@ -22,21 +23,21 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
         : const Color(0xFFFF5252);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.black87),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.bookmark_border, color: Colors.black87),
+            icon: const Icon(Icons.bookmark_border, color: AppColors.black87),
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.share_outlined, color: Colors.black87),
+            icon: const Icon(Icons.share_outlined, color: AppColors.black87),
             onPressed: () {},
           ),
         ],
@@ -55,13 +56,13 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.grey[100],
+                          color: AppColors.neutralGray,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey[200]!),
+                          border: Border.all(color: AppColors.backgroundTertiary),
                         ),
                         child: Icon(
                           Icons.show_chart,
-                          color: Colors.grey[700],
+                          color: AppColors.neutralGray,
                           size: 32,
                         ),
                       ),
@@ -74,14 +75,14 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                             style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: AppColors.black87,
                             ),
                           ),
                           Text(
                             widget.instrument.name,
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey[600],
+                              color: AppColors.textSecondary,
                             ),
                           ),
                         ],
@@ -96,7 +97,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                     style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: AppColors.black87,
                       height: 1.0,
                     ),
                   ),
@@ -123,7 +124,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                         '1D',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[500],
+                          color: AppColors.neutralGray,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -169,18 +170,18 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? color.withValues(alpha: 0.1)
-                                  : Colors.transparent,
+                                  : AppColors.transparent,
                               borderRadius: BorderRadius.circular(18),
                               border: isSelected
                                   ? null
-                                  : Border.all(color: Colors.grey[300]!),
+                                  : Border.all(color: AppColors.textDisabled),
                             ),
                             child: Text(
                               tf,
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: isSelected ? color : Colors.grey[600],
+                                color: isSelected ? color : AppColors.textSecondary,
                               ),
                             ),
                           ),
@@ -196,7 +197,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: AppColors.black87,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -220,7 +221,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: AppColors.black87,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -228,7 +229,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                     widget.instrument.about,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[700],
+                      color: AppColors.neutralGray,
                       height: 1.6,
                     ),
                   ),
@@ -242,10 +243,10 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
           Container(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 30),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: AppColors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -5),
                 ),
@@ -257,7 +258,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
+                      backgroundColor: AppColors.error,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -269,7 +270,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                     ),
                   ),
@@ -291,7 +292,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                     ),
                   ),
@@ -312,7 +313,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[500],
+            color: AppColors.neutralGray,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -322,11 +323,11 @@ class _MarketDetailScreenState extends State<MarketDetailScreen> {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: AppColors.black87,
           ),
         ),
         const SizedBox(height: 8),
-        Divider(height: 1, color: Colors.grey[200]),
+        Divider(height: 1, color: AppColors.backgroundTertiary),
       ],
     );
   }

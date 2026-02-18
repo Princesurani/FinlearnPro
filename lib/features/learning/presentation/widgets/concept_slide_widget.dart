@@ -107,7 +107,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                               ),
                               child: const Icon(
                                 Icons.lightbulb_rounded,
-                                color: Colors.white,
+                                color: AppColors.white,
                                 size: 28,
                               ),
                             ),
@@ -224,7 +224,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                               ),
                               child: const Icon(
                                 Icons.check_circle_rounded,
-                                color: Colors.white,
+                                color: AppColors.white,
                                 size: 20,
                               ),
                             ),
@@ -291,7 +291,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                                       child: Text(
                                         '${index + 1}',
                                         style: const TextStyle(
-                                          color: Colors.white,
+                                          color: AppColors.white,
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
                                         ),

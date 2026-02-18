@@ -64,7 +64,7 @@ class TopNavigationShell extends StatelessWidget {
                     width: 44, // Reduced from 48 for better mobile fit
                     padding: const EdgeInsets.all(1),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.white,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
@@ -76,14 +76,14 @@ class TopNavigationShell extends StatelessWidget {
                     ),
                     child: Container(
                       decoration: const BoxDecoration(
-                        color: AppColors.primaryPurple,
+                        gradient: AppColors.primaryGradient,
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: Text(
                           initials,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontWeight: FontWeight.bold,
                             fontSize:
                                 15, // Reduced from 16 for smaller container
@@ -138,12 +138,12 @@ class _TopBarButtonState extends State<TopBarButton> {
           height: 40, // Reduced from 44 for better mobile fit
           width: 40, // Reduced from 44 for better mobile fit
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.circular(12), // Slightly smaller radius
             border: Border.all(color: AppColors.borderLight, width: 1),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
+                color: AppColors.black.withValues(alpha: 0.03),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -167,7 +167,7 @@ class _TopBarButtonState extends State<TopBarButton> {
                     decoration: BoxDecoration(
                       color: AppColors.error,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 1.5),
+                      border: Border.all(color: AppColors.white, width: 1.5),
                     ),
                   ),
                 ),

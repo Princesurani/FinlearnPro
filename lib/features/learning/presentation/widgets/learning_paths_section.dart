@@ -56,7 +56,7 @@ class _LearningPathsSectionState extends State<LearningPathsSection> {
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColors.white,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -220,7 +220,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                     ),
                     child: Icon(
                       _getPathIcon(path.id),
-                      color: Colors.white,
+                      color: AppColors.white,
                       size: 24,
                     ),
                   ),
@@ -330,7 +330,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                           child: isCompleted
                               ? const Icon(
                                   Icons.check_rounded,
-                                  color: Colors.white,
+                                  color: AppColors.white,
                                   size: 16,
                                 )
                               : Text(
@@ -430,7 +430,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                           completedCourses > 0
                               ? Icons.play_arrow_rounded
                               : Icons.rocket_launch_rounded,
-                          color: Colors.white,
+                          color: AppColors.white,
                           size: 16,
                         ),
                         const SizedBox(width: 4),
@@ -439,7 +439,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColors.white,
                           ),
                         ),
                       ],

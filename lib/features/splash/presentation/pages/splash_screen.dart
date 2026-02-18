@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen>
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColors.transparent,
         statusBarBrightness: Brightness.dark,
         statusBarIconBrightness: Brightness.light,
       ),
@@ -258,7 +258,7 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Text(
                   'FINLEARN',
                   style: AppTypography.display1.copyWith(
-                    color: Colors.white,
+                    color: AppColors.white,
                     letterSpacing: 6,
                     fontWeight: FontWeight.w700,
                   ),
@@ -285,7 +285,7 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Text(
                   'PRO',
                   style: AppTypography.labelSmall.copyWith(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 3,
                   ),
@@ -303,7 +303,7 @@ class _SplashScreenState extends State<SplashScreen>
               child: Text(
                 'Master the Markets. Zero Risk.',
                 style: AppTypography.bodyMedium.copyWith(
-                  color: Colors.white54,
+                  color: AppColors.white54,
                   letterSpacing: 1.2,
                 ),
               ),
@@ -349,7 +349,7 @@ class _CandlestickIconPainter extends CustomPainter {
     final gap = w * 0.12;
     final startX = (w - (4 * barW + 3 * gap)) / 2;
     final paint = Paint()
-      ..color = Colors.white
+      ..color = AppColors.white
       ..strokeCap = StrokeCap.round;
 
     const bars = [
@@ -368,7 +368,7 @@ class _CandlestickIconPainter extends CustomPainter {
       paint
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5
-        ..color = Colors.white70;
+        ..color = AppColors.white70;
       canvas.drawLine(
         Offset(x, y1 - h * 0.06),
         Offset(x, y2 + h * 0.06),
@@ -378,7 +378,7 @@ class _CandlestickIconPainter extends CustomPainter {
       paint
         ..style = isBull ? PaintingStyle.fill : PaintingStyle.stroke
         ..strokeWidth = 1.5
-        ..color = Colors.white;
+        ..color = AppColors.white;
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(x - barW / 2, y1, barW, y2 - y1),
@@ -522,7 +522,7 @@ class _ChartLinePainter extends CustomPainter {
         canvas.drawCircle(
           tangent.position,
           5,
-          Paint()..color = Colors.white.withValues(alpha: opacity),
+          Paint()..color = AppColors.white.withValues(alpha: opacity),
         );
         canvas.drawCircle(
           tangent.position,

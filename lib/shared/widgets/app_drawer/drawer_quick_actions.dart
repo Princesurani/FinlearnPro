@@ -95,7 +95,7 @@ class _DrawerQuickActionsState extends State<DrawerQuickActions>
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white70,
+                  color: AppColors.white70,
                   letterSpacing: -0.2,
                 ),
                 maxLines: 1,
@@ -194,12 +194,12 @@ class _QuickActionChipState extends State<_QuickActionChip> {
         decoration: BoxDecoration(
           color: _isPressed
               ? action.color.withValues(alpha: 0.2)
-              : Colors.white.withValues(alpha: 0.06),
+              : AppColors.white.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _isPressed
                 ? action.color.withValues(alpha: 0.4)
-                : Colors.white.withValues(alpha: 0.08),
+                : AppColors.white.withValues(alpha: 0.08),
             width: 1,
           ),
         ),
@@ -227,7 +227,7 @@ class _QuickActionChipState extends State<_QuickActionChip> {
                   style: TextStyle(
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: AppColors.white.withValues(alpha: 0.7),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -261,7 +261,7 @@ class _QuickActionChipState extends State<_QuickActionChip> {
                     style: const TextStyle(
                       fontSize: 9,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.white,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.clip,

@@ -256,7 +256,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           ),
           child: const Icon(
             Icons.candlestick_chart_rounded,
-            color: Colors.white,
+            color: AppColors.white,
             size: 24,
           ),
         ),
@@ -264,7 +264,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         Text(
           'Create your\naccount',
           style: AppTypography.display2.copyWith(
-            color: Colors.white,
+            color: AppColors.white,
             fontWeight: FontWeight.w700,
             height: 1.15,
           ),
@@ -272,7 +272,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         const SizedBox(height: AppSpacing.xs),
         Text(
           'Start your financial mastery journey today',
-          style: AppTypography.bodyLarge.copyWith(color: Colors.white38),
+          style: AppTypography.bodyLarge.copyWith(color: AppColors.white38),
         ),
       ],
     );
@@ -372,7 +372,7 @@ class _SignUpScreenState extends State<SignUpScreen>
       children: [
         Text(
           'Already have an account? ',
-          style: AppTypography.bodyMedium.copyWith(color: Colors.white38),
+          style: AppTypography.bodyMedium.copyWith(color: AppColors.white38),
         ),
         GestureDetector(
           onTap: widget.onNavigateToSignIn,
@@ -419,7 +419,7 @@ class _PasswordStrengthMeter extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                   color: active
                       ? color.withValues(alpha: 0.8)
-                      : Colors.white.withValues(alpha: 0.08),
+                      : AppColors.white.withValues(alpha: 0.08),
                 ),
               ),
             );
@@ -460,12 +460,12 @@ class _TermsCheckbox extends StatelessWidget {
               border: Border.all(
                 color: value
                     ? AppColors.cyan
-                    : Colors.white.withValues(alpha: 0.25),
+                    : AppColors.white.withValues(alpha: 0.25),
                 width: 1.5,
               ),
               color: value
                   ? AppColors.cyan.withValues(alpha: 0.15)
-                  : Colors.transparent,
+                  : AppColors.transparent,
             ),
             child: value
                 ? const Icon(
@@ -480,7 +480,7 @@ class _TermsCheckbox extends StatelessWidget {
             child: Text.rich(
               TextSpan(
                 style: AppTypography.labelSmall.copyWith(
-                  color: Colors.white38,
+                  color: AppColors.white38,
                   height: 1.4,
                 ),
                 children: const [
@@ -525,7 +525,7 @@ class _GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.025)
+      ..color = AppColors.white.withValues(alpha: 0.025)
       ..strokeWidth = 0.5;
 
     const spacing = 32.0;
@@ -537,7 +537,7 @@ class _GridPainter extends CustomPainter {
     }
 
     final dotPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.05)
+      ..color = AppColors.white.withValues(alpha: 0.05)
       ..style = PaintingStyle.fill;
     for (var x = 0.0; x < size.width; x += spacing) {
       for (var y = 0.0; y < size.height; y += spacing) {

@@ -228,7 +228,7 @@ class _ExploreTabState extends State<ExploreTab>
           vertical: AppSpacing.xs,
         ),
         decoration: BoxDecoration(
-          color: isActive ? activeColor.withAlpha(20) : Colors.transparent,
+          color: isActive ? activeColor.withAlpha(20) : AppColors.transparent,
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
           border: Border.all(
             color: isActive ? activeColor : AppColors.border,

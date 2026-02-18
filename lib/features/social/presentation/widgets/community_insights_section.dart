@@ -1,3 +1,4 @@
+import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CommunityInsightsSection extends StatelessWidget {
@@ -16,7 +17,7 @@ class CommunityInsightsSection extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppColors.black87,
               ),
             ),
             TextButton(onPressed: () {}, child: const Text('View Forum')),
@@ -33,7 +34,7 @@ class CommunityInsightsSection extends StatelessWidget {
           likes: 45,
           comments: 12,
           tag: 'Technical Analysis',
-          tagColor: Colors.blue,
+          tagColor: AppColors.electricBlue,
         ),
         const SizedBox(height: 16),
         const CommunityPostCard(
@@ -46,7 +47,7 @@ class CommunityInsightsSection extends StatelessWidget {
           likes: 128,
           comments: 34,
           tag: 'Market Update',
-          tagColor: Colors.orange,
+          tagColor: AppColors.sunsetOrange,
         ),
       ],
     );
@@ -82,11 +83,11 @@ class CommunityPostCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.black.withValues(alpha: 0.05),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -100,12 +101,12 @@ class CommunityPostCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: Colors.grey[200],
+                backgroundColor: AppColors.backgroundTertiary,
                 backgroundImage: const NetworkImage(
                   'https://i.pravatar.cc/150?u=a042581f4e29026704d',
                 ),
                 onBackgroundImageError: (_, _) {},
-                child: const Icon(Icons.person, color: Colors.grey),
+                child: const Icon(Icons.person, color: AppColors.neutralGray),
               ),
               const SizedBox(width: 12),
               Column(
@@ -116,19 +117,19 @@ class CommunityPostCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: AppColors.black87,
                     ),
                   ),
                   Text(
                     userTitle,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                    style: TextStyle(fontSize: 12, color: AppColors.neutralGray),
                   ),
                 ],
               ),
               const Spacer(),
               Text(
                 timeAgo,
-                style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
               ),
             ],
           ),
@@ -139,7 +140,7 @@ class CommunityPostCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppColors.black87,
             ),
           ),
           const SizedBox(height: 6),
@@ -147,7 +148,7 @@ class CommunityPostCard extends StatelessWidget {
             content,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[700],
+              color: AppColors.neutralGray,
               height: 1.4,
             ),
             maxLines: 3,
@@ -203,14 +204,14 @@ class _EngagementItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: Colors.grey[500]),
+        Icon(icon, size: 18, color: AppColors.neutralGray),
         const SizedBox(width: 4),
         Text(
           count,
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: Colors.grey[600],
+            color: AppColors.textSecondary,
           ),
         ),
       ],

@@ -1,3 +1,4 @@
+import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../pages/daily_challenge_screen.dart';
 
@@ -19,15 +20,15 @@ class StreakBadge extends StatelessWidget {
           vertical: 6,
         ), // Reduced from 12×8
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(20), // Slightly smaller radius
           border: Border.all(
-            color: Colors.orange.withValues(alpha: 0.3),
+            color: AppColors.sunsetOrange.withValues(alpha: 0.3),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: AppColors.black.withValues(alpha: 0.05),
               blurRadius: 12,
               offset: const Offset(0, 4),
               spreadRadius: 2,
@@ -38,7 +39,8 @@ class StreakBadge extends StatelessWidget {
           children: [
             Icon(
               Icons.local_fire_department_rounded,
-              color: Colors.deepOrange, // Slightly deeper orange for contrast
+              color:
+                  AppColors.deepOrange, // Slightly deeper orange for contrast
               size: 18, // Reduced from 20
             ),
             SizedBox(width: 3), // Reduced from 4
@@ -47,7 +49,7 @@ class StreakBadge extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 13, // Reduced from 14
-                color: Colors.black87,
+                color: AppColors.black87,
               ),
             ),
           ],

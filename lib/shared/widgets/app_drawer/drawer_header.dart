@@ -70,7 +70,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.white.withValues(alpha: 0.05), Colors.transparent],
+          colors: [AppColors.white.withValues(alpha: 0.05), AppColors.transparent],
         ),
       ),
       child: Column(
@@ -121,7 +121,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: AppColors.white,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.clip,
@@ -134,7 +134,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: AppColors.white,
                 letterSpacing: -0.5,
               ),
               maxLines: 1,
@@ -150,7 +150,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: AppColors.white,
                   letterSpacing: -0.5,
                 ),
                 maxLines: 1,
@@ -218,7 +218,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColors.white,
                           letterSpacing: -0.3,
                         ),
                         maxLines: 1,
@@ -234,7 +234,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                   userData.email,
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: AppColors.white.withValues(alpha: 0.6),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -293,14 +293,14 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white70,
+                    color: AppColors.white70,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   '${_formatXp(xpRemaining.toInt())} XP left',
-                  style: const TextStyle(fontSize: 10, color: Colors.white54),
+                  style: const TextStyle(fontSize: 10, color: AppColors.white54),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -310,7 +310,7 @@ class _AppDrawerHeaderState extends State<AppDrawerHeader>
             Container(
               height: 6,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: AppColors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(3),
               ),
               child: Stack(
@@ -400,7 +400,7 @@ class _ProfileAvatar extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: AppColors.white,
               ),
               maxLines: 1,
               overflow: TextOverflow.clip,
@@ -425,7 +425,7 @@ class _ProfileAvatar extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
+                  color: AppColors.black.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -445,7 +445,7 @@ class _ProfileAvatar extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: AppColors.white,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.clip,
@@ -488,17 +488,17 @@ class _CloseButtonState extends State<_CloseButton> {
         height: 40,
         decoration: BoxDecoration(
           color: _isPressed
-              ? Colors.white.withValues(alpha: 0.15)
-              : Colors.white.withValues(alpha: 0.08),
+              ? AppColors.white.withValues(alpha: 0.15)
+              : AppColors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.white.withValues(alpha: _isPressed ? 0.2 : 0.1),
+            color: AppColors.white.withValues(alpha: _isPressed ? 0.2 : 0.1),
             width: 1,
           ),
         ),
         child: Icon(
           Icons.close_rounded,
-          color: Colors.white.withValues(alpha: 0.8),
+          color: AppColors.white.withValues(alpha: 0.8),
           size: 20,
         ),
       ),
@@ -543,7 +543,7 @@ class _SubscriptionBadge extends StatelessWidget {
         style: const TextStyle(
           fontSize: 9,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: AppColors.white,
           letterSpacing: 0.5,
         ),
         maxLines: 1,
@@ -578,7 +578,7 @@ class _QuickStatChip extends StatelessWidget {
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: AppColors.white,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -586,7 +586,7 @@ class _QuickStatChip extends StatelessWidget {
         const SizedBox(width: 3),
         Text(
           label,
-          style: const TextStyle(fontSize: 11, color: Colors.white54),
+          style: const TextStyle(fontSize: 11, color: AppColors.white54),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

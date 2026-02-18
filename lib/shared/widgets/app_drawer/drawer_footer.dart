@@ -17,7 +17,7 @@ class DrawerFooter extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.06),
+            color: AppColors.white.withValues(alpha: 0.06),
             width: 1,
           ),
         ),
@@ -46,7 +46,7 @@ class DrawerFooter extends StatelessWidget {
       children: [
         Text(
           'v$_appVersion',
-          style: const TextStyle(fontSize: 10, color: Colors.white30),
+          style: const TextStyle(fontSize: 10, color: AppColors.white30),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -65,7 +65,7 @@ class DrawerFooter extends StatelessWidget {
         width: 3,
         height: 3,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
+          color: AppColors.white.withValues(alpha: 0.2),
           shape: BoxShape.circle,
         ),
       ),
@@ -176,7 +176,7 @@ class _UpgradeBannerState extends State<_UpgradeBanner> {
               ),
               child: const Icon(
                 Icons.workspace_premium_rounded,
-                color: Colors.white,
+                color: AppColors.white,
                 size: 22,
               ),
             ),
@@ -194,7 +194,7 @@ class _UpgradeBannerState extends State<_UpgradeBanner> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.white,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -202,7 +202,7 @@ class _UpgradeBannerState extends State<_UpgradeBanner> {
                   const SizedBox(height: 2),
                   const Text(
                     'Unlock AI advisor & more',
-                    style: TextStyle(fontSize: 10, color: Colors.white60),
+                    style: TextStyle(fontSize: 10, color: AppColors.white60),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -216,7 +216,7 @@ class _UpgradeBannerState extends State<_UpgradeBanner> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: AppColors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -259,7 +259,7 @@ class _FooterLinkState extends State<_FooterLink> {
         duration: AppAnimations.fastDuration,
         style: TextStyle(
           fontSize: 10,
-          color: _isPressed ? Colors.white70 : Colors.white38,
+          color: _isPressed ? AppColors.white70 : AppColors.white38,
           fontWeight: FontWeight.w500,
         ),
         child: Text(widget.label, maxLines: 1, overflow: TextOverflow.ellipsis),
@@ -295,14 +295,14 @@ class _SocialButtonState extends State<_SocialButton> {
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: _isPressed
-              ? Colors.white.withValues(alpha: 0.12)
-              : Colors.white.withValues(alpha: 0.06),
+              ? AppColors.white.withValues(alpha: 0.12)
+              : AppColors.white.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           widget.icon,
           size: 18,
-          color: Colors.white.withValues(alpha: _isPressed ? 0.8 : 0.5),
+          color: AppColors.white.withValues(alpha: _isPressed ? 0.8 : 0.5),
         ),
       ),
     );

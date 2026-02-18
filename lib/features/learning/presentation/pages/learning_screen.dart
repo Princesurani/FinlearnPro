@@ -1,3 +1,4 @@
+import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_animations.dart';
@@ -10,7 +11,7 @@ import '../widgets/category_pills.dart';
 import '../widgets/continue_learning_section.dart';
 
 import '../widgets/learning_paths_section.dart';
-import '../widgets/daily_tip_card.dart';
+
 import 'topic_detail_screen.dart';
 import '../widgets/all_courses_section.dart';
 import 'course_details_screen.dart';
@@ -89,10 +90,10 @@ class _LearningScreenState extends State<LearningScreen>
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColors.transparent,
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         body: _buildMainContent(),
       ),
     );
@@ -166,19 +167,6 @@ class _LearningScreenState extends State<LearningScreen>
             child: LearningPathsSection(
               paths: LearningMockData.learningPaths,
               onPathTap: _onLearningPathTap,
-            ),
-          ),
-        ),
-
-        const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-        SliverToBoxAdapter(
-          child: _buildAnimatedSection(
-            index: 4,
-            child: DailyTipCard(
-              tip: LearningMockData.dailyTips.first['tip'] ?? '',
-              category:
-                  LearningMockData.dailyTips.first['category'] ?? 'Investing',
             ),
           ),
         ),

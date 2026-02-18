@@ -1,3 +1,4 @@
+import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../data/learning_mock_data.dart';
 import '../pages/course_details_screen.dart';
@@ -51,7 +52,7 @@ class RecommendedSection extends StatelessWidget {
                     icon: course
                         .difficulty
                         .icon, // Using difficulty icon as placeholder, ideally category icon
-                    color: course.accentColor ?? Colors.blueAccent,
+                    color: course.accentColor ?? AppColors.electricBlue,
                     duration: course.formattedDuration,
                     chapterCount: course.totalLessons,
                   ),
@@ -89,7 +90,7 @@ class RecommendedCard extends StatelessWidget {
       width: 200,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -130,7 +131,7 @@ class RecommendedCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.grey[600],
+                color: AppColors.textSecondary,
                 height: 1.4,
               ),
             ),
@@ -151,14 +152,14 @@ class RecommendedCard extends StatelessWidget {
   Widget _buildBadge(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 14, color: Colors.grey[400]),
+        Icon(icon, size: 14, color: AppColors.textTertiary),
         const SizedBox(width: 4),
         Text(
           text,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: Colors.grey[600],
+            color: AppColors.textSecondary,
           ),
         ),
       ],

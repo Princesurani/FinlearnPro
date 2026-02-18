@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'app_colors.dart';
 
 abstract final class AppShadows {
-
   static const Color shadowColor = Color(0xFF1E293B);
 
   static const Color shadowColorLight = Color(0xFF64748B);
@@ -274,34 +274,19 @@ abstract final class AppShadows {
   ];
 
   static const List<Shadow> textShadowSm = [
-    Shadow(
-      color: Color(0x20000000),
-      blurRadius: 4,
-      offset: Offset(0, 2),
-    ),
+    Shadow(color: Color(0x20000000), blurRadius: 4, offset: Offset(0, 2)),
   ];
 
   static const List<Shadow> textShadowMd = [
-    Shadow(
-      color: Color(0x30000000),
-      blurRadius: 8,
-      offset: Offset(0, 4),
-    ),
+    Shadow(color: Color(0x30000000), blurRadius: 8, offset: Offset(0, 4)),
   ];
 
   static const List<Shadow> textShadowLg = [
-    Shadow(
-      color: Color(0x50000000),
-      blurRadius: 16,
-      offset: Offset(0, 6),
-    ),
+    Shadow(color: Color(0x50000000), blurRadius: 16, offset: Offset(0, 6)),
   ];
 
   static List<Shadow> textGlow(Color color) => [
-    Shadow(
-      color: color.withAlpha((0.5 * 255).round()),
-      blurRadius: 20,
-    ),
+    Shadow(color: color.withAlpha((0.5 * 255).round()), blurRadius: 20),
   ];
 
   static List<BoxShadow> colored({
@@ -328,28 +313,31 @@ abstract final class AppShadows {
     if (begin.isEmpty && end.isEmpty) return [];
     if (begin.isEmpty) {
       return end
-          .map((s) => BoxShadow(
-                color: Color.lerp(Colors.transparent, s.color, t)!,
-                blurRadius: s.blurRadius * t,
-                offset: s.offset * t,
-                spreadRadius: s.spreadRadius * t,
-              ))
+          .map(
+            (s) => BoxShadow(
+              color: Color.lerp(AppColors.transparent, s.color, t)!,
+              blurRadius: s.blurRadius * t,
+              offset: s.offset * t,
+              spreadRadius: s.spreadRadius * t,
+            ),
+          )
           .toList();
     }
     if (end.isEmpty) {
       return begin
-          .map((s) => BoxShadow(
-                color: Color.lerp(s.color, Colors.transparent, t)!,
-                blurRadius: s.blurRadius * (1 - t),
-                offset: s.offset * (1 - t),
-                spreadRadius: s.spreadRadius * (1 - t),
-              ))
+          .map(
+            (s) => BoxShadow(
+              color: Color.lerp(s.color, AppColors.transparent, t)!,
+              blurRadius: s.blurRadius * (1 - t),
+              offset: s.offset * (1 - t),
+              spreadRadius: s.spreadRadius * (1 - t),
+            ),
+          )
           .toList();
     }
 
     final result = <BoxShadow>[];
-    final maxLength =
-        begin.length > end.length ? begin.length : end.length;
+    final maxLength = begin.length > end.length ? begin.length : end.length;
 
     for (int i = 0; i < maxLength; i++) {
       final s1 = i < begin.length ? begin[i] : const BoxShadow();
@@ -364,12 +352,14 @@ abstract final class AppShadows {
 extension ShadowExtensions on List<BoxShadow> {
   List<BoxShadow> combine(List<BoxShadow> other) => [...this, ...other];
 
-  List<BoxShadow> scale(double factor) => map((shadow) => BoxShadow(
-        color: shadow.color.withAlpha(
-          ((shadow.color.a * factor).clamp(0, 255)).round(),
-        ),
-        blurRadius: shadow.blurRadius * factor,
-        offset: shadow.offset * factor,
-        spreadRadius: shadow.spreadRadius * factor,
-      )).toList();
+  List<BoxShadow> scale(double factor) => map(
+    (shadow) => BoxShadow(
+      color: shadow.color.withAlpha(
+        ((shadow.color.a * factor).clamp(0, 255)).round(),
+      ),
+      blurRadius: shadow.blurRadius * factor,
+      offset: shadow.offset * factor,
+      spreadRadius: shadow.spreadRadius * factor,
+    ),
+  ).toList();
 }

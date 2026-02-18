@@ -81,13 +81,13 @@ class _DrawerStatsCardState extends State<DrawerStatsCard>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.white.withValues(alpha: 0.08),
-              Colors.white.withValues(alpha: 0.04),
+              AppColors.white.withValues(alpha: 0.08),
+              AppColors.white.withValues(alpha: 0.04),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: AppColors.white.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -122,7 +122,7 @@ class _DrawerStatsCardState extends State<DrawerStatsCard>
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            color: AppColors.white,
                             letterSpacing: -0.2,
                           ),
                           maxLines: 1,
@@ -219,7 +219,7 @@ class _DrawerStatsCardState extends State<DrawerStatsCard>
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white.withValues(alpha: 0.6),
+                      color: AppColors.white.withValues(alpha: 0.6),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -230,7 +230,7 @@ class _DrawerStatsCardState extends State<DrawerStatsCard>
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.white,
                       letterSpacing: -0.5,
                     ),
                     maxLines: 1,
@@ -354,7 +354,7 @@ class _LiveIndicatorState extends State<_LiveIndicator>
           style: TextStyle(
             fontSize: 9,
             fontWeight: FontWeight.bold,
-            color: Colors.white54,
+            color: AppColors.white54,
             letterSpacing: 0.5,
           ),
           maxLines: 1,
@@ -389,7 +389,7 @@ class _StatTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
+        color: AppColors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -406,7 +406,7 @@ class _StatTile extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: AppColors.white.withValues(alpha: 0.6),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -424,7 +424,7 @@ class _StatTile extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: AppColors.white,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -435,7 +435,7 @@ class _StatTile extends StatelessWidget {
                 subtitle,
                 style: TextStyle(
                   fontSize: 9,
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: AppColors.white.withValues(alpha: 0.4),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -447,7 +447,7 @@ class _StatTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: Colors.white.withValues(alpha: 0.1),
+              backgroundColor: AppColors.white.withValues(alpha: 0.1),
               valueColor: AlwaysStoppedAnimation<Color>(progressColor),
               minHeight: 3,
             ),

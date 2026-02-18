@@ -1,3 +1,4 @@
+import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../data/auth_service.dart';
 
@@ -36,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
                         onPressed: () => Navigator.pop(context),
                         icon: const Icon(
                           Icons.arrow_back_ios,
-                          color: Colors.white,
+                          color: AppColors.white,
                         ),
                       ),
                       const Text(
@@ -44,14 +45,14 @@ class ProfileScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColors.white,
                         ),
                       ),
                       IconButton(
                         onPressed: () {},
                         icon: const Icon(
                           Icons.settings_outlined,
-                          color: Colors.white,
+                          color: AppColors.white,
                         ),
                       ),
                     ],
@@ -61,12 +62,12 @@ class ProfileScreen extends StatelessWidget {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.white,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 4),
+                      border: Border.all(color: AppColors.white, width: 4),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: AppColors.black.withValues(alpha: 0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -84,13 +85,13 @@ class ProfileScreen extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.white,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     user?.email ?? 'prince.surani@example.com',
-                    style: const TextStyle(fontSize: 14, color: Colors.white70),
+                    style: const TextStyle(fontSize: 14, color: AppColors.white70),
                   ),
                 ],
               ),
@@ -106,7 +107,7 @@ class ProfileScreen extends StatelessWidget {
                       'Learning XP',
                       '12,450',
                       Icons.bolt,
-                      Colors.orange,
+                      AppColors.sunsetOrange,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -115,7 +116,7 @@ class ProfileScreen extends StatelessWidget {
                       'Courses',
                       '8',
                       Icons.book,
-                      Colors.blue,
+                      AppColors.electricBlue,
                     ),
                   ),
                 ],
@@ -130,28 +131,28 @@ class ProfileScreen extends StatelessWidget {
                   _buildMenuOption(
                     title: 'My Portfolio',
                     icon: Icons.pie_chart_outline,
-                    color: Colors.purple,
+                    color: AppColors.primaryPurple,
                   ),
                   _buildMenuOption(
                     title: 'Achievements',
                     icon: Icons.emoji_events_outlined,
-                    color: Colors.amber,
+                    color: AppColors.amber,
                   ),
                   _buildMenuOption(
                     title: 'Trading History',
                     icon: Icons.history,
-                    color: Colors.green,
+                    color: AppColors.success,
                   ),
                   _buildMenuOption(
                     title: 'Help & Support',
                     icon: Icons.help_outline,
-                    color: Colors.blueGrey,
+                    color: AppColors.neutralGray,
                   ),
                   const SizedBox(height: 20),
                   _buildMenuOption(
                     title: 'Log Out',
                     icon: Icons.logout,
-                    color: Colors.red,
+                    color: AppColors.error,
                     isDestructive: true,
                     onTap: () async {
                       await AuthService().signOut();
@@ -181,11 +182,11 @@ class ProfileScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.black.withValues(alpha: 0.05),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -208,7 +209,7 @@ class ProfileScreen extends StatelessWidget {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppColors.black87,
             ),
           ),
           const SizedBox(height: 4),
@@ -216,7 +217,7 @@ class ProfileScreen extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.grey[500],
+              color: AppColors.neutralGray,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -238,11 +239,11 @@ class ProfileScreen extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
+              color: AppColors.black.withValues(alpha: 0.03),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),
@@ -265,11 +266,11 @@ class ProfileScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: isDestructive ? Colors.red : Colors.black87,
+                  color: isDestructive ? AppColors.error : AppColors.black87,
                 ),
               ),
             ),
-            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[300]),
+            Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textDisabled),
           ],
         ),
       ),

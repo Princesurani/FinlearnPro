@@ -193,7 +193,7 @@ class _StockLogo extends StatelessWidget {
         child: Text(
           initials,
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.white,
             fontSize: 13,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.5,

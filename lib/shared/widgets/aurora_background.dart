@@ -127,13 +127,15 @@ class _AuroraPainter extends CustomPainter {
   final double intensity;
   final List<Color>? customColors;
 
-  late final List<Color> _auroraColors = customColors ?? [
-    AppColors.auroraPurple,
-    AppColors.auroraBlue,
-    AppColors.auroraCyan,
-    AppColors.auroraPink,
-    AppColors.auroraTeal,
-  ];
+  late final List<Color> _auroraColors =
+      customColors ??
+      [
+        AppColors.auroraPurple,
+        AppColors.auroraBlue,
+        AppColors.auroraCyan,
+        AppColors.auroraPink,
+        AppColors.auroraTeal,
+      ];
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -188,19 +190,12 @@ class _AuroraPainter extends CustomPainter {
 
   void _drawBaseBackground(Canvas canvas, Size size) {
     final paint = Paint()
-      ..shader = ui.Gradient.linear(
-        Offset.zero,
-        Offset(0, size.height),
-        [
-          AppColors.backgroundPrimary,
-          const Color(0xFFF1F5F9),
-        ],
-      );
+      ..shader = ui.Gradient.linear(Offset.zero, Offset(0, size.height), [
+        AppColors.backgroundPrimary,
+        const Color(0xFFF1F5F9),
+      ]);
 
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      paint,
-    );
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
   }
 
   void _drawAuroraLayer(
@@ -227,15 +222,20 @@ class _AuroraPainter extends CustomPainter {
       final normalizedX = i / segments;
 
       final wave1 = math.sin(normalizedX * waveFrequency * math.pi + animPhase);
-      final wave2 = math.sin(
-        normalizedX * waveFrequency * 1.5 * math.pi + animPhase * 0.7,
-      ) * 0.5;
-      final wave3 = math.sin(
-        normalizedX * waveFrequency * 2.5 * math.pi + animPhase * 1.3,
-      ) * 0.25;
+      final wave2 =
+          math.sin(
+            normalizedX * waveFrequency * 1.5 * math.pi + animPhase * 0.7,
+          ) *
+          0.5;
+      final wave3 =
+          math.sin(
+            normalizedX * waveFrequency * 2.5 * math.pi + animPhase * 1.3,
+          ) *
+          0.25;
 
       final combinedWave = (wave1 + wave2 + wave3) / 1.75;
-      final y = size.height * verticalOffset +
+      final y =
+          size.height * verticalOffset +
           combinedWave * size.height * waveAmplitude;
 
       if (i == 0) {
@@ -263,7 +263,7 @@ class _AuroraPainter extends CustomPainter {
   void _drawNoiseOverlay(Canvas canvas, Size size) {
     final random = math.Random(42);
     final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.02 * intensity)
+      ..color = AppColors.white.withValues(alpha: 0.02 * intensity)
       ..style = PaintingStyle.fill;
 
     for (int i = 0; i < 50; i++) {
@@ -282,8 +282,8 @@ class _AuroraPainter extends CustomPainter {
         Offset(size.width / 2, size.height * 0.3),
         size.width * 0.8,
         [
-          Colors.transparent,
-          Colors.white.withValues(alpha: 0.05 * intensity),
+          AppColors.transparent,
+          AppColors.white.withValues(alpha: 0.05 * intensity),
         ],
         [0.5, 1.0],
       );
@@ -301,10 +301,7 @@ class _AuroraPainter extends CustomPainter {
 }
 
 class StaticAuroraGradient extends StatelessWidget {
-  const StaticAuroraGradient({
-    super.key,
-    this.intensity = 0.4,
-  });
+  const StaticAuroraGradient({super.key, this.intensity = 0.4});
 
   final double intensity;
 
@@ -357,15 +354,16 @@ class _AuroraOrbState extends State<AuroraOrb>
       duration: const Duration(milliseconds: 3000),
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0 - widget.pulseIntensity,
-      end: 1.0 + widget.pulseIntensity,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: AppAnimations.breatheCurve,
-      ),
-    );
+    _scaleAnimation =
+        Tween<double>(
+          begin: 1.0 - widget.pulseIntensity,
+          end: 1.0 + widget.pulseIntensity,
+        ).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: AppAnimations.breatheCurve,
+          ),
+        );
 
     _controller.repeat(reverse: true);
   }

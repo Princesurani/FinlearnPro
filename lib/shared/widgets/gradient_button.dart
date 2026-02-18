@@ -194,10 +194,10 @@ class _GradientButtonState extends State<GradientButton>
           colors: [Color(0xFFFF6B6B), Color(0xFFFF5252)],
         ),
       GradientButtonVariant.outline => const LinearGradient(
-          colors: [Colors.transparent, Colors.transparent],
+          colors: [AppColors.transparent, AppColors.transparent],
         ),
       GradientButtonVariant.ghost => const LinearGradient(
-          colors: [Colors.transparent, Colors.transparent],
+          colors: [AppColors.transparent, AppColors.transparent],
         ),
     };
   }
@@ -210,7 +210,7 @@ class _GradientButtonState extends State<GradientButton>
     if (widget.variant == GradientButtonVariant.ghost) {
       return AppColors.textPrimary;
     }
-    return Colors.white;
+    return AppColors.white;
   }
 
   List<BoxShadow> get _shadows {
@@ -296,7 +296,7 @@ class _GradientButtonState extends State<GradientButton>
                 boxShadow: _shadows,
               ),
               child: Material(
-                color: Colors.transparent,
+                color: AppColors.transparent,
                 child: Padding(
                   padding: _padding,
                   child: _buildContent(),

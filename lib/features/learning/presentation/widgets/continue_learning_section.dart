@@ -348,7 +348,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                   children: [
                     Icon(
                       Icons.play_arrow_rounded,
-                      color: Colors.white,
+                      color: AppColors.white,
                       size: 20,
                     ),
                     SizedBox(width: 6),
@@ -357,7 +357,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                     ),
                   ],

@@ -387,7 +387,7 @@ extension TextStyleExtensions on TextStyle {
 
   TextStyle get error => copyWith(color: AppColors.error);
 
-  TextStyle get white => copyWith(color: Colors.white);
+  TextStyle get white => copyWith(color: AppColors.white);
 
   TextStyle get italic => copyWith(fontStyle: FontStyle.italic);
 

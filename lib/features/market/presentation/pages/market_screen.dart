@@ -44,7 +44,7 @@ class _MarketScreenState extends State<MarketScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       body: Column(
         children: [
           SizedBox(height: MediaQuery.paddingOf(context).top + 12),
@@ -146,7 +146,7 @@ class _MarketScreenState extends State<MarketScreen>
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
         ),
         indicatorSize: TabBarIndicatorSize.tab,
-        labelColor: Colors.white,
+        labelColor: AppColors.white,
         unselectedLabelColor: AppColors.textSecondary,
         labelStyle: AppTypography.label.copyWith(
           fontWeight: AppTypography.semiBold,
@@ -156,8 +156,8 @@ class _MarketScreenState extends State<MarketScreen>
           fontWeight: AppTypography.medium,
           fontSize: 13,
         ),
-        dividerColor: Colors.transparent,
-        overlayColor: WidgetStateProperty.all(Colors.transparent),
+        dividerColor: AppColors.transparent,
+        overlayColor: WidgetStateProperty.all(AppColors.transparent),
         splashFactory: NoSplash.splashFactory,
         labelPadding: const EdgeInsets.symmetric(
           horizontal: 4,
@@ -352,7 +352,7 @@ class _ExploreStreamWrapper extends StatelessWidget {
                     label: const Text('Retry'),
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.primaryPurple,
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.xl,
                         vertical: AppSpacing.sm,

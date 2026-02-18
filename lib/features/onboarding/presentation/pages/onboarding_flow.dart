@@ -638,7 +638,7 @@ class _SelectionCardState extends State<_SelectionCard>
                   shape: BoxShape.circle,
                   color: widget.isSelected
                       ? widget.iconColor
-                      : Colors.transparent,
+                      : AppColors.transparent,
                   border: Border.all(
                     color: widget.isSelected
                         ? widget.iconColor
@@ -650,7 +650,7 @@ class _SelectionCardState extends State<_SelectionCard>
                     ? const Icon(
                         Icons.check,
                         size: 14,
-                        color: Colors.white,
+                        color: AppColors.white,
                       )
                     : null,
               ),
@@ -802,7 +802,7 @@ class _TopicCard extends StatelessWidget {
                   child: const Icon(
                     Icons.check,
                     size: 14,
-                    color: Colors.white,
+                    color: AppColors.white,
                   ),
                 ),
               ),

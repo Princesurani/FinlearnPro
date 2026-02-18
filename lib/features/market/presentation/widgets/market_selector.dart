@@ -25,7 +25,7 @@ class MarketSelector extends StatelessWidget {
           vertical: 6, // Reduced from 8 (AppSpacing.xs)
         ),
         decoration: BoxDecoration(
-          color: Colors.white, // Changed from gray for better visibility
+          color: AppColors.white, // Changed from gray for better visibility
           borderRadius: AppSpacing.borderRadiusSM,
           border: Border.all(
             color: AppColors.border.withValues(alpha: 0.8), // Darker border
@@ -33,7 +33,7 @@ class MarketSelector extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
+              color: AppColors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -70,7 +70,7 @@ class MarketSelector extends StatelessWidget {
   void _showMarketSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       isScrollControlled: true,
       builder: (ctx) => _MarketSelectorSheet(
         activeMarket: activeMarket,
@@ -148,7 +148,7 @@ class _MarketSelectorSheet extends StatelessWidget {
     return Material(
       color: isActive
           ? AppColors.primaryPurple.withAlpha(15)
-          : Colors.transparent,
+          : AppColors.transparent,
       child: InkWell(
         onTap: () => onMarketChanged(market),
         child: Container(

@@ -135,7 +135,7 @@ class StockDetailScreen extends StatelessWidget {
                                     Hero(
                                       tag: 'symbol_${instrument.symbol}',
                                       child: Material(
-                                        color: Colors.transparent,
+                                        color: AppColors.transparent,
                                         child: Text(
                                           '${instrument.symbol} • ${instrument.market.name.toUpperCase()}',
                                           style: AppTypography.labelSmall
@@ -293,7 +293,7 @@ class StockDetailScreen extends StatelessWidget {
                 color: AppColors.surface,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: AppColors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, -4),
                   ),
@@ -326,7 +326,7 @@ class StockDetailScreen extends StatelessWidget {
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.lossRed,
-                          foregroundColor: Colors.white,
+                          foregroundColor: AppColors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -347,7 +347,7 @@ class StockDetailScreen extends StatelessWidget {
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.profitGreen,
-                          foregroundColor: Colors.white,
+                          foregroundColor: AppColors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -678,11 +678,11 @@ class _RangeSlider extends StatelessWidget {
                               width: 6,
                             ), // Triangle up
                             left: BorderSide(
-                              color: Colors.transparent,
+                              color: AppColors.transparent,
                               width: 6,
                             ),
                             right: BorderSide(
-                              color: Colors.transparent,
+                              color: AppColors.transparent,
                               width: 6,
                             ),
                           ),
@@ -764,7 +764,7 @@ class _TimeframeSelectorState extends State<_TimeframeSelector> {
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.textPrimary.withValues(alpha: 0.05)
-                    : Colors.transparent,
+                    : AppColors.transparent,
                 borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
                 // Reference style: Pills with light grey bg when selected? Or just text?
                 // Image 1 shows dark pills.

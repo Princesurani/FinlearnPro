@@ -531,12 +531,12 @@ class _LessonScreenState extends State<LessonScreen>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.stars_rounded, color: Colors.white, size: 16),
+          const Icon(Icons.stars_rounded, color: AppColors.white, size: 16),
           const SizedBox(width: 4),
           Text(
             '$_score',
             style: const TextStyle(
-              color: Colors.white,
+              color: AppColors.white,
               fontWeight: FontWeight.bold,
               fontSize: 14,
             ),
@@ -744,10 +744,10 @@ class _LessonScreenState extends State<LessonScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -781,7 +781,7 @@ class _LessonScreenState extends State<LessonScreen>
               onPressed: _nextPage,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryPurple,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -862,7 +862,7 @@ class IntroContent extends LessonContent {
             child: const Icon(
               Icons.school_rounded,
               size: 64,
-              color: Colors.white,
+              color: AppColors.white,
             ),
           ),
           const SizedBox(height: 32),
@@ -1332,7 +1332,7 @@ class _QuizWidgetState extends State<_QuizWidget> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: backgroundColor ?? Colors.white,
+                    color: backgroundColor ?? AppColors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: borderColor ?? AppColors.border,
@@ -1360,7 +1360,7 @@ class _QuizWidgetState extends State<_QuizWidget> {
                             ? const Icon(
                                 Icons.check,
                                 size: 16,
-                                color: Colors.white,
+                                color: AppColors.white,
                               )
                             : null,
                       ),
@@ -1500,7 +1500,7 @@ class _ScenarioWidgetState extends State<_ScenarioWidget> {
                         ? (choice.isCorrect
                               ? AppColors.success.withValues(alpha: 0.1)
                               : AppColors.warning.withValues(alpha: 0.1))
-                        : Colors.white,
+                        : AppColors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
@@ -1593,7 +1593,7 @@ class SummaryContent extends LessonContent {
                       child: Text(
                         '${entry.key + 1}',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
@@ -1625,13 +1625,13 @@ class SummaryContent extends LessonContent {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.arrow_forward_rounded, color: Colors.white),
+                  const Icon(Icons.arrow_forward_rounded, color: AppColors.white),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       nextLesson!,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
                       ),
@@ -1679,7 +1679,7 @@ class _CompletionDialog extends StatelessWidget {
               child: const Icon(
                 Icons.emoji_events_rounded,
                 size: 48,
-                color: Colors.white,
+                color: AppColors.white,
               ),
             ),
             const SizedBox(height: 24),
@@ -1724,7 +1724,7 @@ class _CompletionDialog extends StatelessWidget {
                 onPressed: onContinue,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryPurple,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

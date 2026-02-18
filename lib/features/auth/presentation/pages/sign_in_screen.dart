@@ -206,7 +206,7 @@ class _SignInScreenState extends State<SignInScreen>
           ),
           child: const Icon(
             Icons.candlestick_chart_rounded,
-            color: Colors.white,
+            color: AppColors.white,
             size: 24,
           ),
         ),
@@ -214,7 +214,7 @@ class _SignInScreenState extends State<SignInScreen>
         Text(
           'Welcome\nback',
           style: AppTypography.display2.copyWith(
-            color: Colors.white,
+            color: AppColors.white,
             fontWeight: FontWeight.w700,
             height: 1.15,
           ),
@@ -222,7 +222,7 @@ class _SignInScreenState extends State<SignInScreen>
         const SizedBox(height: AppSpacing.xs),
         Text(
           'Sign in to continue your learning journey',
-          style: AppTypography.bodyLarge.copyWith(color: Colors.white38),
+          style: AppTypography.bodyLarge.copyWith(color: AppColors.white38),
         ),
       ],
     );
@@ -289,7 +289,7 @@ class _SignInScreenState extends State<SignInScreen>
               children: [
                 Expanded(
                   child: Divider(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: AppColors.white.withValues(alpha: 0.1),
                     thickness: 1,
                   ),
                 ),
@@ -300,13 +300,13 @@ class _SignInScreenState extends State<SignInScreen>
                   child: Text(
                     'Or continue with',
                     style: AppTypography.labelSmall.copyWith(
-                      color: Colors.white38,
+                      color: AppColors.white38,
                     ),
                   ),
                 ),
                 Expanded(
                   child: Divider(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: AppColors.white.withValues(alpha: 0.1),
                     thickness: 1,
                   ),
                 ),
@@ -324,7 +324,7 @@ class _SignInScreenState extends State<SignInScreen>
                       width: 24,
                       errorBuilder: (context, error, stackTrace) => const Icon(
                         Icons.g_mobiledata,
-                        color: Colors.black,
+                        color: AppColors.black,
                         size: 28,
                       ),
                     ),
@@ -338,7 +338,7 @@ class _SignInScreenState extends State<SignInScreen>
                     icon: const Icon(
                       Icons.apple,
                       size: 28,
-                      color: Colors.black,
+                      color: AppColors.black,
                     ),
                     label: 'Apple',
                   ),
@@ -394,7 +394,7 @@ class _SignInScreenState extends State<SignInScreen>
       children: [
         Text(
           "Don't have an account? ",
-          style: AppTypography.bodyMedium.copyWith(color: Colors.white38),
+          style: AppTypography.bodyMedium.copyWith(color: AppColors.white38),
         ),
         GestureDetector(
           onTap: widget.onNavigateToSignUp,
@@ -426,7 +426,7 @@ class _GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.025)
+      ..color = AppColors.white.withValues(alpha: 0.025)
       ..strokeWidth = 0.5;
 
     const spacing = 32.0;
@@ -437,7 +437,7 @@ class _GridPainter extends CustomPainter {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
     }
     final dotPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.05)
+      ..color = AppColors.white.withValues(alpha: 0.05)
       ..style = PaintingStyle.fill;
     for (var x = 0.0; x < size.width; x += spacing) {
       for (var y = 0.0; y < size.height; y += spacing) {
@@ -548,16 +548,16 @@ class _SocialSignInButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
         onTap: onPressed,
         borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+            border: Border.all(color: AppColors.white.withValues(alpha: 0.1)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -567,7 +567,7 @@ class _SocialSignInButton extends StatelessWidget {
               Text(
                 label,
                 style: AppTypography.button.copyWith(
-                  color: Colors.black87,
+                  color: AppColors.black87,
                   fontWeight: FontWeight.w600,
                 ),
               ),

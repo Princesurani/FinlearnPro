@@ -1,3 +1,4 @@
+import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class DailyChallengeScreen extends StatefulWidget {
@@ -51,11 +52,11 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
       context: context,
       isDismissible: false,
       enableDrag: false,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (context) => Container(
         padding: const EdgeInsets.all(24),
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -67,12 +68,12 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isCorrect ? Colors.green[100] : Colors.red[100],
+                color: isCorrect ? AppColors.successLight : AppColors.errorLight,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 isCorrect ? Icons.check_rounded : Icons.close_rounded,
-                color: isCorrect ? Colors.green[700] : Colors.red[700],
+                color: isCorrect ? AppColors.success : AppColors.error,
                 size: 32,
               ),
             ),
@@ -82,7 +83,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppColors.black87,
               ),
             ),
             const SizedBox(height: 8),
@@ -91,7 +92,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: AppColors.textSecondary,
                 height: 1.5,
               ),
             ),
@@ -116,7 +117,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: AppColors.white,
                   ),
                 ),
               ),
@@ -133,22 +134,22 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FE),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.close, color: Colors.black87),
+          icon: const Icon(Icons.close, color: AppColors.black87),
         ),
         title: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.local_fire_department_rounded, color: Colors.orange),
+            Icon(Icons.local_fire_department_rounded, color: AppColors.sunsetOrange),
             SizedBox(width: 8),
             Text(
               'Daily Shield',
               style: TextStyle(
-                color: Colors.black87,
+                color: AppColors.black87,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
@@ -168,11 +169,11 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: AppColors.black.withValues(alpha: 0.05),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -186,12 +187,12 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.orange[50],
+                          color: AppColors.sunsetOrange.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Icon(
                           Icons.currency_bitcoin,
-                          color: Colors.orange,
+                          color: AppColors.sunsetOrange,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -203,12 +204,12 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: AppColors.black87,
                             ),
                           ),
                           Text(
                             '4H Timeframe',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: TextStyle(fontSize: 12, color: AppColors.neutralGray),
                           ),
                         ],
                       ),
@@ -222,7 +223,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                     decoration: BoxDecoration(
                       color: const Color(0xFFF8F9FE),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey[200]!),
+                      border: Border.all(color: AppColors.backgroundTertiary),
                     ),
                     child: Stack(
                       children: [
@@ -232,7 +233,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                           children: List.generate(
                             5,
                             (index) =>
-                                Divider(height: 1, color: Colors.grey[300]),
+                                Divider(height: 1, color: AppColors.textDisabled),
                           ),
                         ),
                         // Chart simulated Text acting as a visual description for now
@@ -241,7 +242,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                           child: Icon(
                             Icons.show_chart_rounded,
                             size: 100,
-                            color: Colors.grey[400],
+                            color: AppColors.textTertiary,
                           ),
                         ),
                         const Positioned(
@@ -251,7 +252,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                             'Price: \$29,450',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.black54,
+                              color: AppColors.black54,
                             ),
                           ),
                         ),
@@ -272,7 +273,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                     'Bitcoin is forming lower highs on the RSI indicator while price is making higher highs. The volume is steadily decreasing as price approaches resistance.',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey[800],
+                      color: AppColors.neutralGray,
                       height: 1.5,
                     ),
                   ),
@@ -287,7 +288,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppColors.black87,
               ),
             ),
             const SizedBox(height: 16),
@@ -298,7 +299,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
               title: 'Long (Buy)',
               subtitle: 'Price will break out upward',
               icon: Icons.trending_up,
-              color: Colors.green,
+              color: AppColors.success,
             ),
             const SizedBox(height: 12),
             _buildOptionCard(
@@ -306,7 +307,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
               title: 'Short (Sell)',
               subtitle: 'Price will reject and drop',
               icon: Icons.trending_down,
-              color: Colors.red,
+              color: AppColors.error,
             ),
             const SizedBox(height: 12),
             _buildOptionCard(
@@ -314,7 +315,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
               title: 'Wait / Neutral',
               subtitle: 'Wait for confirmation candle',
               icon: Icons.remove_circle_outline,
-              color: Colors.grey,
+              color: AppColors.neutralGray,
             ),
 
             const SizedBox(height: 40),
@@ -328,7 +329,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                     : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF6B4EF5),
-                  disabledBackgroundColor: Colors.grey[300],
+                  disabledBackgroundColor: AppColors.textDisabled,
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -341,8 +342,8 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: _selectedOptionIndex != null
-                        ? Colors.white
-                        : Colors.grey[500],
+                        ? AppColors.white
+                        : AppColors.neutralGray,
                   ),
                 ),
               ),
@@ -362,16 +363,16 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
   }) {
     final bool isSelected = _selectedOptionIndex == index;
     // Show correct/incorrect colors ONLY after submission
-    Color borderColor = Colors.transparent;
-    Color backgroundColor = Colors.white;
+    Color borderColor = AppColors.transparent;
+    Color backgroundColor = AppColors.white;
 
     if (_isSubmitted) {
       if (index == _correctOptionIndex) {
-        borderColor = Colors.green;
-        backgroundColor = Colors.green[50]!;
+        borderColor = AppColors.success;
+        backgroundColor = AppColors.success.withValues(alpha: 0.1);
       } else if (isSelected && index != _correctOptionIndex) {
-        borderColor = Colors.red;
-        backgroundColor = Colors.red[50]!;
+        borderColor = AppColors.error;
+        backgroundColor = AppColors.error.withValues(alpha: 0.1);
       }
     } else {
       if (isSelected) {
@@ -392,7 +393,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
           boxShadow: [
             if (!isSelected && !_isSubmitted)
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: AppColors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -418,25 +419,25 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: AppColors.black87,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
                   ),
                 ],
               ),
             ),
             if (_isSubmitted && index == _correctOptionIndex)
-              const Icon(Icons.check_circle, color: Colors.green),
+              const Icon(Icons.check_circle, color: AppColors.success),
             if (_isSubmitted && isSelected && index != _correctOptionIndex)
-              const Icon(Icons.cancel, color: Colors.red),
+              const Icon(Icons.cancel, color: AppColors.error),
             if (!_isSubmitted && isSelected)
               const Icon(Icons.radio_button_checked, color: Color(0xFF6B4EF5)),
             if (!_isSubmitted && !isSelected)
-              Icon(Icons.radio_button_unchecked, color: Colors.grey[400]),
+              Icon(Icons.radio_button_unchecked, color: AppColors.textTertiary),
           ],
         ),
       ),

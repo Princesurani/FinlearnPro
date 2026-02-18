@@ -221,7 +221,7 @@ class _CategoryPillItemState extends State<_CategoryPillItem>
               BoxShadow(
                 color: isSelected
                     ? category.color.withValues(alpha: 0.35)
-                    : Colors.black.withValues(alpha: 0.06),
+                    : AppColors.black.withValues(alpha: 0.06),
                 blurRadius: isSelected ? 16 : 10,
                 offset: const Offset(0, 4),
                 spreadRadius: isSelected ? 2 : 0,
@@ -237,14 +237,14 @@ class _CategoryPillItemState extends State<_CategoryPillItem>
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Colors.white.withValues(alpha: 0.25)
+                      ? AppColors.white.withValues(alpha: 0.25)
                       : category.color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   category.icon,
                   size: 18,
-                  color: isSelected ? Colors.white : category.color,
+                  color: isSelected ? AppColors.white : category.color,
                 ),
               ),
               const SizedBox(height: 4),
@@ -254,7 +254,7 @@ class _CategoryPillItemState extends State<_CategoryPillItem>
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: isSelected ? Colors.white : AppColors.textPrimary,
+                  color: isSelected ? AppColors.white : AppColors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,

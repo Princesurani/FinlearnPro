@@ -78,7 +78,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColors.transparent,
         statusBarIconBrightness: Brightness.light,
       ),
     );
@@ -134,7 +134,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 onPressed: widget.onComplete,
                 child: Text(
                   'Skip',
-                  style: AppTypography.label.copyWith(color: Colors.white38),
+                  style: AppTypography.label.copyWith(color: AppColors.white38),
                 ),
               ),
             ),
@@ -258,7 +258,7 @@ class _PageContent extends StatelessWidget {
                     data.headline,
                     textAlign: TextAlign.center,
                     style: AppTypography.display2.copyWith(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.w700,
                       height: 1.15,
                     ),
@@ -268,7 +268,7 @@ class _PageContent extends StatelessWidget {
                     data.body,
                     textAlign: TextAlign.center,
                     style: AppTypography.bodyLarge.copyWith(
-                      color: Colors.white54,
+                      color: AppColors.white54,
                       height: 1.5,
                     ),
                   ),
@@ -319,7 +319,7 @@ class _ChartIllustrationPainter extends CustomPainter {
       Paint()..color = accent.withValues(alpha: 0.08),
     );
     final gridPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.06)
+      ..color = AppColors.white.withValues(alpha: 0.06)
       ..strokeWidth = 0.5;
     for (var i = 0; i < 5; i++) {
       final y = cy - size.height * 0.28 + i * size.height * 0.14;
@@ -448,7 +448,7 @@ class _WalletIllustrationPainter extends CustomPainter {
       canvas.drawCircle(
         coinPositions[i],
         r + 3,
-        Paint()..color = Colors.white.withValues(alpha: 0.05),
+        Paint()..color = AppColors.white.withValues(alpha: 0.05),
       );
       canvas.drawCircle(
         coinPositions[i],
@@ -459,7 +459,7 @@ class _WalletIllustrationPainter extends CustomPainter {
         text: TextSpan(
           text: '\$',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.8),
+            color: AppColors.white.withValues(alpha: 0.8),
             fontSize: r,
             fontWeight: FontWeight.bold,
           ),
@@ -513,7 +513,7 @@ class _AnalyticsIllustrationPainter extends CustomPainter {
       accent,
       AppColors.success,
       AppColors.warning,
-      Colors.white24,
+      AppColors.white24,
     ];
 
     for (var i = 0; i < segments.length; i++) {
@@ -535,7 +535,7 @@ class _AnalyticsIllustrationPainter extends CustomPainter {
       text: TextSpan(
         text: '87%',
         style: TextStyle(
-          color: Colors.white.withValues(alpha: 0.7),
+          color: AppColors.white.withValues(alpha: 0.7),
           fontSize: 13,
           fontWeight: FontWeight.bold,
           fontFamily: 'JetBrains Mono',
@@ -661,7 +661,7 @@ class _PageIndicators extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 3),
           decoration: BoxDecoration(
             borderRadius: AppSpacing.borderRadiusFull,
-            color: Colors.white.withValues(alpha: opacity),
+            color: AppColors.white.withValues(alpha: opacity),
           ),
         );
       }),

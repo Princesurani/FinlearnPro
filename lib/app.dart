@@ -33,9 +33,9 @@ class _FinLearnAppState extends State<FinLearnApp> {
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.white,
+        systemNavigationBarColor: AppColors.white,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -94,16 +94,16 @@ class _FinLearnAppState extends State<FinLearnApp> {
         seedColor: AppColors.primaryPurple,
         brightness: Brightness.light,
         primary: AppColors.primaryPurple,
-        onPrimary: Colors.white,
+        onPrimary: AppColors.white,
         secondary: AppColors.oceanTeal,
-        onSecondary: Colors.white,
+        onSecondary: AppColors.white,
         error: AppColors.error,
         surface: AppColors.surface,
         onSurface: AppColors.textPrimary,
       ),
       scaffoldBackgroundColor: AppColors.backgroundPrimary,
       appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         centerTitle: true,
         iconTheme: IconThemeData(color: AppColors.textPrimary),
@@ -114,7 +114,7 @@ class _FinLearnAppState extends State<FinLearnApp> {
         ),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         selectedItemColor: AppColors.primaryPurple,
         unselectedItemColor: AppColors.textTertiary,
         type: BottomNavigationBarType.fixed,
@@ -123,7 +123,7 @@ class _FinLearnAppState extends State<FinLearnApp> {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryPurple,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
@@ -160,7 +160,7 @@ class _FinLearnAppState extends State<FinLearnApp> {
       ),
       cardTheme: const CardThemeData(
         elevation: 0,
-        color: Colors.white,
+        color: AppColors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
           side: BorderSide(color: AppColors.border),

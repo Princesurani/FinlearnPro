@@ -1,7 +1,7 @@
-
 library;
 
 import 'package:flutter/material.dart';
+import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/services.dart';
 import '../../../core/theme/app_animations.dart';
 import 'drawer_header.dart';
@@ -15,20 +15,17 @@ class AppDrawer extends StatefulWidget {
 
   static Future<T?> show<T>(BuildContext context) {
     HapticFeedback.mediumImpact();
-    return Navigator.of(context).push<T>(
-      _DrawerRoute<T>(
-        builder: (context) => const AppDrawer(),
-      ),
-    );
+    return Navigator.of(
+      context,
+    ).push<T>(_DrawerRoute<T>(builder: (context) => const AppDrawer()));
   }
 
   @override
   State<AppDrawer> createState() => _AppDrawerState();
 }
 
-class _AppDrawerState extends State<AppDrawer> 
+class _AppDrawerState extends State<AppDrawer>
     with SingleTickerProviderStateMixin {
-
   late final AnimationController _controller;
   late final Animation<double> _slideAnimation;
   late final Animation<double> _fadeAnimation;
@@ -51,31 +48,22 @@ class _AppDrawerState extends State<AppDrawer>
     );
 
     // Slide from left with a slight overshoot for polish
-    _slideAnimation = Tween<double>(
-      begin: -1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: AppAnimations.overshootCurve,
-    ));
+    _slideAnimation = Tween<double>(begin: -1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _controller, curve: AppAnimations.overshootCurve),
+    );
 
     // Fade in the content
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
 
     // Subtle scale for depth
-    _scaleAnimation = Tween<double>(
-      begin: 0.95,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: AppAnimations.entranceCurve,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: AppAnimations.entranceCurve),
+    );
 
     // Start the entrance animation
     _controller.forward();
@@ -146,7 +134,9 @@ class _AppDrawerState extends State<AppDrawer>
               // Scrim overlay (no blur for performance)
               Positioned.fill(
                 child: Container(
-                  color: Colors.black.withValues(alpha: 0.5 * _fadeAnimation.value),
+                  color: AppColors.black.withValues(
+                    alpha: 0.5 * _fadeAnimation.value,
+                  ),
                 ),
               ),
 
@@ -190,73 +180,64 @@ class _AppDrawerState extends State<AppDrawer>
           color: const Color(0xFF1A1A2E),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
+              color: AppColors.black.withValues(alpha: 0.4),
               blurRadius: 20,
               offset: const Offset(5, 0),
             ),
           ],
           // Subtle right border
           border: const Border(
-            right: BorderSide(
-              color: Color(0xFF2A2A3E),
-              width: 1,
-            ),
+            right: BorderSide(color: Color(0xFF2A2A3E), width: 1),
           ),
         ),
         child: SafeArea(
-        child: Column(
-          children: [
-            // Drawer Header with Profile
-            AppDrawerHeader(
-              onClose: _closeDrawer,
-            ),
+          child: Column(
+            children: [
+              // Drawer Header with Profile
+              AppDrawerHeader(onClose: _closeDrawer),
 
-            // Scrollable Content
-            Expanded(
-              child: ScrollConfiguration(
-                behavior: _NoGlowScrollBehavior(),
-                child: ListView(
-                  controller: _scrollController,
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  children: [
-                    const SizedBox(height: 8),
+              // Scrollable Content
+              Expanded(
+                child: ScrollConfiguration(
+                  behavior: _NoGlowScrollBehavior(),
+                  child: ListView(
+                    controller: _scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    children: [
+                      const SizedBox(height: 8),
 
-                    // Quick Stats Dashboard
-                    const DrawerStatsCard(),
+                      // Quick Stats Dashboard
+                      const DrawerStatsCard(),
 
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                    // Quick Actions
-                    const DrawerQuickActions(),
+                      // Quick Actions
+                      const DrawerQuickActions(),
 
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                    // Main Menu Sections
-                    DrawerMenuSection(
-                      onItemTap: _closeDrawer,
-                    ),
+                      // Main Menu Sections
+                      DrawerMenuSection(onItemTap: _closeDrawer),
 
-                    const SizedBox(height: 24),
-                  ],
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // Footer with version and legal
-            const DrawerFooter(),
-          ],
+              // Footer with version and legal
+              const DrawerFooter(),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
 }
 
 class _DrawerRoute<T> extends PopupRoute<T> {
-  _DrawerRoute({
-    required this.builder,
-  });
+  _DrawerRoute({required this.builder});
 
   final WidgetBuilder builder;
 

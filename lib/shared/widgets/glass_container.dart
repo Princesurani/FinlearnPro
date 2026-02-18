@@ -72,8 +72,8 @@ class GlassContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveBorderRadius = borderRadius ?? AppSpacing.borderRadiusXL;
-    final effectiveBackgroundColor = backgroundColor ?? Colors.white;
-    final effectiveBorderColor = borderColor ?? Colors.white;
+    final effectiveBackgroundColor = backgroundColor ?? AppColors.white;
+    final effectiveBorderColor = borderColor ?? AppColors.white;
 
     Widget content = ClipRRect(
       borderRadius: effectiveBorderRadius as BorderRadius,
@@ -101,8 +101,8 @@ class GlassContainer extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.white.withAlpha((gradientOpacity * 2 * 255).round()),
-                      Colors.white.withAlpha((gradientOpacity * 0.5 * 255).round()),
+                      AppColors.white.withAlpha((gradientOpacity * 2 * 255).round()),
+                      AppColors.white.withAlpha((gradientOpacity * 0.5 * 255).round()),
                     ],
                   )
                 : null,
@@ -341,7 +341,7 @@ class GlassOverlay extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Container(
-          color: Colors.black.withAlpha((0.3 * 255).round()),
+          color: AppColors.black.withAlpha((0.3 * 255).round()),
           alignment: Alignment.center,
           child: GestureDetector(
             onTap: () {}, // Prevent tap propagation
@@ -372,7 +372,7 @@ class GlassBottomSheet extends StatelessWidget {
         maxHeight: maxHeight ?? MediaQuery.sizeOf(context).height * 0.85,
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha((0.95 * 255).round()),
+        color: AppColors.white.withAlpha((0.95 * 255).round()),
         borderRadius: AppSpacing.borderRadiusTopXXL,
         boxShadow: AppShadows.xxl,
       ),

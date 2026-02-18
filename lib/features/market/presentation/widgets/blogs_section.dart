@@ -1,3 +1,4 @@
+import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class BlogsSection extends StatelessWidget {
@@ -33,7 +34,7 @@ class BlogsSection extends StatelessWidget {
           readTime: '5 min read',
           likes: '1.2k',
           category: 'Strategy',
-          categoryColor: Colors.blue,
+          categoryColor: AppColors.electricBlue,
         ),
         const SizedBox(height: 16),
         const BlogCard(
@@ -45,7 +46,7 @@ class BlogsSection extends StatelessWidget {
           readTime: '3 min read',
           likes: '856',
           category: 'Updates',
-          categoryColor: Colors.orange,
+          categoryColor: AppColors.sunsetOrange,
         ),
         const SizedBox(height: 16),
         const BlogCard(
@@ -57,7 +58,7 @@ class BlogsSection extends StatelessWidget {
           readTime: '6 min read',
           likes: '2.4k',
           category: 'Crypto',
-          categoryColor: Colors.purple,
+          categoryColor: AppColors.primaryPurple,
         ),
       ],
     );
@@ -91,7 +92,7 @@ class BlogCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -131,7 +132,7 @@ class BlogCard extends StatelessWidget {
                   ),
                   Text(
                     authorTitle,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                    style: TextStyle(fontSize: 12, color: AppColors.neutralGray),
                   ),
                 ],
               ),
@@ -174,7 +175,7 @@ class BlogCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: AppColors.textSecondary,
               height: 1.5,
             ),
           ),
@@ -184,19 +185,19 @@ class BlogCard extends StatelessWidget {
               Icon(
                 Icons.access_time_rounded,
                 size: 16,
-                color: Colors.grey[400],
+                color: AppColors.textTertiary,
               ),
               const SizedBox(width: 4),
               Text(
                 readTime,
-                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                style: TextStyle(fontSize: 12, color: AppColors.neutralGray),
               ),
               const Spacer(),
-              Icon(Icons.favorite_rounded, size: 16, color: Colors.red[300]),
+              Icon(Icons.favorite_rounded, size: 16, color: AppColors.error.withValues(alpha: 0.7)),
               const SizedBox(width: 4),
               Text(
                 likes,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
             ],
           ),

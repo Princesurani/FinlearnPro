@@ -229,7 +229,7 @@ class _DrawerMenuSectionState extends State<DrawerMenuSection>
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white38,
+                    color: AppColors.white38,
                     letterSpacing: 1.2,
                   ),
                   maxLines: 1,
@@ -242,10 +242,10 @@ class _DrawerMenuSectionState extends State<DrawerMenuSection>
           // Menu items
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.04),
+              color: AppColors.white.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.06),
+                color: AppColors.white.withValues(alpha: 0.06),
                 width: 1,
               ),
             ),
@@ -265,7 +265,7 @@ class _DrawerMenuSectionState extends State<DrawerMenuSection>
                       thickness: 1,
                       indent: 48,
                       endIndent: 12,
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: AppColors.white.withValues(alpha: 0.05),
                     ),
                 ],
               ],
@@ -337,7 +337,7 @@ class _DrawerMenuItemState extends State<_DrawerMenuItem> {
         decoration: BoxDecoration(
           color: _isPressed 
               ? item.color.withValues(alpha: 0.1)
-              : Colors.transparent,
+              : AppColors.transparent,
           borderRadius: BorderRadius.vertical(
             top: widget.isFirst ? const Radius.circular(14) : Radius.zero,
             bottom: widget.isLast ? const Radius.circular(14) : Radius.zero,
@@ -376,7 +376,7 @@ class _DrawerMenuItemState extends State<_DrawerMenuItem> {
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            color: AppColors.white,
                             letterSpacing: -0.2,
                           ),
                           maxLines: 1,
@@ -394,7 +394,7 @@ class _DrawerMenuItemState extends State<_DrawerMenuItem> {
                     item.description,
                     style: TextStyle(
                       fontSize: 10,
-                      color: Colors.white.withValues(alpha: 0.45),
+                      color: AppColors.white.withValues(alpha: 0.45),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -407,7 +407,7 @@ class _DrawerMenuItemState extends State<_DrawerMenuItem> {
             Icon(
               Icons.chevron_right_rounded,
               size: 18,
-              color: Colors.white.withValues(alpha: 0.25),
+              color: AppColors.white.withValues(alpha: 0.25),
             ),
           ],
         ),
@@ -430,7 +430,7 @@ class _BadgeWidget extends StatelessWidget {
     switch (badge) {
       case _MenuBadge.newFeature:
         bgColor = AppColors.primaryPurple;
-        textColor = Colors.white;
+        textColor = AppColors.white;
         text = 'NEW';
       case _MenuBadge.beta:
         bgColor = AppColors.electricBlue.withValues(alpha: 0.2);
@@ -442,7 +442,7 @@ class _BadgeWidget extends StatelessWidget {
         text = 'HOT';
       case _MenuBadge.pro:
         bgColor = AppColors.goldenYellow;
-        textColor = Colors.black87;
+        textColor = AppColors.black87;
         text = 'PRO';
     }
 

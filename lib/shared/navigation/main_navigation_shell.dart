@@ -101,7 +101,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColors.transparent,
       ),
       child: Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
@@ -130,7 +130,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                   borderRadius: BorderRadius.circular(40),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
+                      color: AppColors.black.withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -150,7 +150,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                         ).withValues(alpha: 0.90),
                         borderRadius: BorderRadius.circular(40),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.08),
+                          color: AppColors.white.withValues(alpha: 0.08),
                           width: 1,
                         ),
                       ),
@@ -214,8 +214,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                                                     : screen.icon,
                                                 size: 24,
                                                 color: isSelected
-                                                    ? Colors.white
-                                                    : Colors.white.withValues(
+                                                    ? AppColors.white
+                                                    : AppColors.white.withValues(
                                                         alpha: 0.5,
                                                       ),
                                               ),
@@ -224,8 +224,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                                                 screen.label,
                                                 style: TextStyle(
                                                   color: isSelected
-                                                      ? Colors.white
-                                                      : Colors.white.withValues(
+                                                      ? AppColors.white
+                                                      : AppColors.white.withValues(
                                                           alpha: 0.5,
                                                         ),
                                                   fontSize: 11,

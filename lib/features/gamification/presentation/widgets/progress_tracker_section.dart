@@ -1,3 +1,4 @@
+import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ProgressTrackerSection extends StatelessWidget {
@@ -32,7 +33,7 @@ class ProgressTrackerSection extends StatelessWidget {
               const Text(
                 'Weekly Progress',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -43,12 +44,12 @@ class ProgressTrackerSection extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: AppColors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Text(
                   'On Track',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
+                  style: TextStyle(color: AppColors.white, fontSize: 12),
                 ),
               ),
             ],
@@ -59,7 +60,7 @@ class ProgressTrackerSection extends StatelessWidget {
               const Text(
                 '65%',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
@@ -77,8 +78,8 @@ class ProgressTrackerSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: 0.65,
-              backgroundColor: Colors.white.withValues(alpha: 0.2),
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+              backgroundColor: AppColors.white.withValues(alpha: 0.2),
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.white),
               minHeight: 6,
             ),
           ),
@@ -94,7 +95,7 @@ class ProgressTrackerSection extends StatelessWidget {
       height: 24,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: completed ? Colors.white : Colors.white.withValues(alpha: 0.1),
+        color: completed ? AppColors.white : AppColors.white.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: Text(
@@ -102,7 +103,7 @@ class ProgressTrackerSection extends StatelessWidget {
         style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.bold,
-          color: completed ? const Color(0xFF6B4EF5) : Colors.white,
+          color: completed ? const Color(0xFF6B4EF5) : AppColors.white,
         ),
       ),
     );
