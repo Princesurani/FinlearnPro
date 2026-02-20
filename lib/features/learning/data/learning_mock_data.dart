@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import 'learning_models.dart';
 import 'courses/foundations_of_trading/foundations_of_trading.dart';
+import 'courses/stock_market/stock_market_course.dart';
 
 abstract final class LearningMockData {
   static const List<LearningCategory> categories = [
@@ -86,55 +87,8 @@ abstract final class LearningMockData {
   static List<Course> get allCourses => [
     // Use the new interactive Foundations of Trading course
     FoundationsOfTradingCourse.getCourse(),
-    Course(
-      id: 'c1-stocks',
-      title: 'Stock Market',
-      subtitle: 'Equity trading & investing',
-      description:
-          'Dive into the stock market. Learn about IPOs, market caps, long-term vs short-term, and risks involved.',
-      categoryId: 'stocks',
-      difficulty: DifficultyLevel.beginner,
-      thumbnailUrl: 'assets/courses/stocks.jpg',
-      accentColor: AppColors.electricBlue,
-      modules: [
-        _makeModule('m1-equity', 'Equity Essentials', [
-          _makeLesson(
-            'l1-1',
-            'What is the stock market',
-            ContentType.video,
-            8,
-            1,
-          ),
-          _makeLesson(
-            'l1-2',
-            'How companies issue shares (IPO)',
-            ContentType.article,
-            6,
-            2,
-          ),
-          _makeLesson(
-            'l1-3',
-            'Types of stocks (Cap sizes)',
-            ContentType.video,
-            10,
-            3,
-          ),
-          _makeLesson(
-            'l1-4',
-            'Long-term vs short-term',
-            ContentType.interactive,
-            7,
-            4,
-          ),
-        ]),
-      ],
-      totalLessons: 4,
-      estimatedMinutes: 45,
-      xpReward: 350,
-      rating: 4.8,
-      ratingsCount: 3200,
-      enrolledCount: 8900,
-    ),
+    // Course 1: Stock Market (fully interactive)
+    StockMarketCourse.getCourse(),
     Course(
       id: 'c2-crypto',
       title: 'Cryptocurrency Market',

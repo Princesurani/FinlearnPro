@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import 'lesson_slide_header.dart';
 
 class ConceptSlideWidget extends StatefulWidget {
   final String concept;
@@ -59,87 +60,49 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
         child: SlideTransition(
           position: _slideAnimation,
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Stunning header with gradient
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.indigo.withValues(alpha: 0.12),
-                        AppColors.lavender.withValues(alpha: 0.08),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: AppColors.indigo.withValues(alpha: 0.25),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      // Animated lightbulb icon
-                      TweenAnimationBuilder<double>(
-                        duration: const Duration(milliseconds: 700),
-                        tween: Tween(begin: 0.0, end: 1.0),
-                        builder: (context, value, child) {
-                          return Transform.scale(
-                            scale: 0.7 + (value * 0.3),
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                gradient: AppColors.primaryGradient,
-                                borderRadius: BorderRadius.circular(14),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.primaryPurple.withValues(
-                                      alpha: 0.3,
-                                    ),
-                                    blurRadius: 12,
-                                    spreadRadius: 2,
-                                  ),
-                                ],
+                LessonSlideHeader(
+                  title: 'CORE CONCEPT',
+                  subtitle: 'Master the fundamentals',
+                  gradientColors: [
+                    AppColors.indigo.withValues(alpha: 0.12),
+                    AppColors.lavender.withValues(alpha: 0.08),
+                  ],
+                  borderColor: AppColors.indigo.withValues(alpha: 0.25),
+                  titleColor: AppColors.indigo,
+                  icon: TweenAnimationBuilder<double>(
+                    duration: const Duration(milliseconds: 700),
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    builder: (context, value, child) {
+                      return Transform.scale(
+                        scale: 0.7 + (value * 0.3),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primaryPurple.withValues(
+                                  alpha: 0.3,
+                                ),
+                                blurRadius: 12,
+                                spreadRadius: 2,
                               ),
-                              child: const Icon(
-                                Icons.lightbulb_rounded,
-                                color: AppColors.white,
-                                size: 28,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'CORE CONCEPT',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.indigo.withValues(alpha: 0.9),
-                                letterSpacing: 1.5,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            const Text(
-                              'Master the fundamentals',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.lightbulb_rounded,
+                            color: AppColors.white,
+                            size: 28,
+                          ),
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 28),

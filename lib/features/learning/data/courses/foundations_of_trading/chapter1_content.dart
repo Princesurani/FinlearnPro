@@ -248,39 +248,23 @@ One evening, YouTube recommends a video:
           'title': 'The Psychology of Failure',
           'emoji': '🧠',
           'content': '''
-**Why 90-95% of Retail Traders Lose Money:**
-
-Research shows that human psychology is the #1 killer of trading accounts. Here are the cognitive biases that destroyed Amit (and millions like him):
+**Why 90% of Traders Fail: It's All in the Mind.**
 
 **1. Overconfidence Bias**
-After one winning trade, Amit thought he was a genius. Studies show traders overestimate their abilities by 40-60%.
+One win ≠ Skill. Amit felt like a genius after one lucky trade.
+**Reality:** You need 100+ trades to prove you're good.
 
-**Reality:** One lucky trade ≠ skill. It takes 100+ trades to know if you have an edge.
+**2. Loss Aversion**
+We feel losses 2.5x more than gains.
+**Result:** Holding losers hoping they recover (Gambling) vs Selling winners too early (Fear).
 
-**2. Loss Aversion (2.5x Pain)**
-Humans feel the pain of a ₹10,000 loss 2.5 times more intensely than the pleasure of a ₹10,000 gain.
+**3. Revenge Trading (The Killer)**
+Trying to "win back" lost money immediately.
+**Fact:** 70% of revenge traders blow up their accounts in 3 months.
 
-**Result:** Amit held losing trades too long (hoping they'd recover) and sold winners too early (to lock in small gains).
-
-**3. Revenge Trading**
-After losing ₹50,000, Amit's brain entered "fight mode." He wasn't trading logically—he was trying to "beat" the market.
-
-**Fact:** 70% of traders who revenge trade blow up their accounts within 3 months.
-
-**4. FOMO (Fear of Missing Out)**
-Every price movement felt like a "must trade" opportunity. Amit couldn't sit still.
-
-**Truth:** The best traders spend 90% of their time waiting for the perfect setup.
-
-**5. Confirmation Bias**
-Amit only saw information that confirmed his trades. Ignored warning signs.
-
-**Example:** Market showing bearish signals, but he only focused on bullish news.
-
-**6. Herd Mentality**
-Following Telegram tips = buying at peaks, selling at bottoms.
-
-**Data:** By the time a "tip" reaches you, smart money has already exited.
+**4. FOMO & The Herd**
+Chasing "Hot Tips" or moving prices.
+**Truth:** By the time you hear a tip, the smart money has already sold.
 ''',
           'keyPoints': [
             'Overconfidence after early wins is the #1 psychological trap',
@@ -295,46 +279,30 @@ Following Telegram tips = buying at peaks, selling at bottoms.
           'title': 'The Real Cost of Trading',
           'emoji': '💸',
           'content': '''
-Let's calculate the TRUE cost of active trading in India (2024 data):
+**The BRUTAL Math of Trading (India 2024):**
 
-**Scenario:** You have ₹2 lakhs and trade options actively
+**Scenario:** ₹2 Lakhs Capital, Active Options Trading.
 
-**Direct Costs Per Year:**
-• Brokerage: ₹20/trade × 500 trades = ₹10,000
-• STT (Securities Transaction Tax): 0.1% on options = ₹5,000
-• Exchange charges (NSE): ₹35/lakh premium = ₹4,000
-• GST (18% on brokerage + charges): ₹2,520
-• Stamp duty: 0.003% = ₹600
+**1. The Hidden Fees (11% Loss)**
+Before you even start, you pay:
+• Brokerage + GST
+• STT (Transaction Tax)
+• Exchange Charges
+**Total:** ~₹22,000/year (Just to play!)
 
-**Total Direct Costs: ₹22,120 per year** (11% of capital!)
+**2. The Break-Even Challenge**
+To make REAL money, you need to beat:
+• Market Return (12%)
+• Inflation (6%)
+• Costs (11%)
+**Target:** You need **29% returns** just to be *average*.
 
-**Indirect Costs:**
-• Short-term capital gains tax: 15% of profits (if you make any!)
-• Time spent: 3 hours/day × 250 days = 750 hours/year
-  (If your time is worth ₹500/hour = ₹3,75,000 opportunity cost!)
-• Stress, anxiety, sleepless nights: Priceless 😰
+**3. The Reality**
+• Only 1% of traders consistently beat 29%.
+• 76% of retail traders lose money.
 
-**Opportunity Cost:**
-If you had invested ₹2 lakhs in Nifty Index Fund:
-• Average return: 12% per year
-• After 5 years: ₹3,52,470
-• Gain: ₹1,52,470 (with ZERO stress!)
-
-**The Brutal Math:**
-To break even as an active trader, you need:
-1. Beat market return: +12%
-2. Cover all costs: +11%
-3. Beat inflation: +6%
-= **You need 29%+ annual returns just to break even!**
-
-**Reality Check:**
-• Only 1-2% of traders achieve 29%+ consistently
-• 76% of retail traders lose money
-• Average retail trader loses ₹1,200 per year globally
-• In India, losses can be much higher due to options trading
-
-**Warren Buffett's Wisdom:**
-"The stock market is a device for transferring money from the impatient to the patient."
+**Warren Buffett says:**
+"The stock market transfers money from the impatient to the patient."
 ''',
         },
         {
@@ -385,36 +353,24 @@ To break even as an active trader, you need:
           'title': 'Why Trading Gurus Are Rich',
           'emoji': '🎓',
           'content': '''
-**The Uncomfortable Truth:**
+**The "Guru" Business Model:**
 
-Most "trading gurus" on YouTube, Instagram, and Telegram don't make money from trading—they make money from YOU.
+Most Instagram/YouTube gurus don't trade. They sell dreams.
 
-**The Business Model:**
-• Show cherry-picked winning trades (hide the losses)
-• Create FOMO with flashy lifestyle posts
-• Sell courses for ₹5,000-₹50,000
-• Charge for "premium" Telegram groups
-• Earn affiliate commissions from brokers
+**1. How they make money:**
+• Selling courses (₹10 Crores revenue > Trading profits)
+• Premium Telegram Channels
+• Affiliate links
 
-**The Math:**
-If a guru has 10,000 students paying ₹10,000 each:
-= ₹10 crore revenue (much easier than trading!)
+**2. Red Flags 🚩**
+• "Guaranteed Returns" or "100% Accuracy" (Impossible!)
+• Rented luxury cars & lifestyle flexing.
+• Only showing winning screenshots (hiding losses).
 
-**Red Flags to Spot:**
-• They show screenshots but no verified track record
-• They promise "guaranteed returns" or "100% accuracy"
-• They create urgency ("Only 50 spots left!")
-• They never show their losing trades
-• They focus on lifestyle, not education
+**The Reality Test:**
+If they could double money every month, why would they need your ₹5,000 for a course?
 
-**The Real Experts:**
-• Share knowledge for free or reasonable prices
-• Show both wins AND losses
-• Emphasize risk management over profits
-• Never promise guaranteed returns
-• Focus on education, not selling dreams
-
-**Remember:** If trading was so easy and profitable, why would they waste time selling courses instead of just trading?
+**Real Mentors:** Talk about Risk, Psychology, and Losses. Not Lamborghinis.
 ''',
           'keyPoints': [
             'Most trading gurus make money from courses, not trading',
