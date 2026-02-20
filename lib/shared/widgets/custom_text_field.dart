@@ -254,12 +254,9 @@ class _AppTextFieldState extends State<AppTextField>
         AnimatedContainer(
           duration: AppAnimations.fastDuration,
           curve: Curves.easeOutCubic,
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            color:
-                widget.fillColor ??
-                (_isFocused
-                    ? AppColors.primaryPurple.withAlpha((0.03 * 255).round())
-                    : AppColors.surfaceVariant),
+            color: widget.fillColor ?? AppColors.surfaceVariant,
             borderRadius: widget.borderRadius ?? AppSpacing.borderRadiusMD,
             border: Border.all(
               color: _borderColor,
@@ -341,6 +338,7 @@ class _AppTextFieldState extends State<AppTextField>
                   focusedBorder: InputBorder.none,
                   errorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
+                  filled: false,
                   contentPadding:
                       widget.contentPadding ??
                       EdgeInsets.fromLTRB(
