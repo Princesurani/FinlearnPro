@@ -8,6 +8,17 @@ class Candle {
     required this.volume,
   });
 
+  factory Candle.fromJson(Map<String, dynamic> json) {
+    return Candle(
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      open: (json['open'] as num).toDouble(),
+      high: (json['high'] as num).toDouble(),
+      low: (json['low'] as num).toDouble(),
+      close: (json['close'] as num).toDouble(),
+      volume: (json['volume'] as num).toDouble(),
+    );
+  }
+
   final DateTime timestamp;
   final double open;
   final double high;
@@ -69,13 +80,26 @@ class PriceTick {
     required this.changePercent,
   });
 
+  factory PriceTick.fromJson(Map<String, dynamic> json) {
+    return PriceTick(
+      symbol: json['symbol'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      price: (json['price'] as num).toDouble(),
+      bid: (json['bid'] as num).toDouble(),
+      ask: (json['ask'] as num).toDouble(),
+      volume: (json['volume'] as num).toDouble(),
+      change: (json['change'] as num).toDouble(),
+      changePercent: (json['changePercent'] as num).toDouble(),
+    );
+  }
+
   final String symbol;
   final DateTime timestamp;
-  final double price;       // Last traded price
-  final double bid;         // Best bid (buyer willing to pay)
-  final double ask;         // Best ask (seller offering)
-  final double volume;      // Cumulative volume today
-  final double change;      // Change from yesterday's close
+  final double price; // Last traded price
+  final double bid; // Best bid (buyer willing to pay)
+  final double ask; // Best ask (seller offering)
+  final double volume; // Cumulative volume today
+  final double change; // Change from yesterday's close
   final double changePercent; // Percentage change
 
   double get spread => ask - bid;
@@ -109,6 +133,34 @@ class MarketSnapshot {
     this.marketCap,
     this.avgVolume,
   });
+
+  factory MarketSnapshot.fromJson(Map<String, dynamic> json) {
+    return MarketSnapshot(
+      symbol: json['symbol'] as String,
+      name: json['name'] as String,
+      price: (json['price'] as num).toDouble(),
+      open: (json['open'] as num).toDouble(),
+      high: (json['high'] as num).toDouble(),
+      low: (json['low'] as num).toDouble(),
+      previousClose: (json['previousClose'] as num).toDouble(),
+      change: (json['change'] as num).toDouble(),
+      changePercent: (json['changePercent'] as num).toDouble(),
+      volume: (json['volume'] as num).toDouble(),
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      fiftyTwoWeekHigh: json['fiftyTwoWeekHigh'] != null
+          ? (json['fiftyTwoWeekHigh'] as num).toDouble()
+          : null,
+      fiftyTwoWeekLow: json['fiftyTwoWeekLow'] != null
+          ? (json['fiftyTwoWeekLow'] as num).toDouble()
+          : null,
+      marketCap: json['marketCap'] != null
+          ? (json['marketCap'] as num).toDouble()
+          : null,
+      avgVolume: json['avgVolume'] != null
+          ? (json['avgVolume'] as num).toDouble()
+          : null,
+    );
+  }
 
   final String symbol;
   final String name;

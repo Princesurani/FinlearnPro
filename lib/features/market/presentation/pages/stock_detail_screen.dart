@@ -4,7 +4,9 @@ import '../../../../core/domain/market_data.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../../../../core/utils/market_formatters.dart';
+import '../../../../core/services/api_market_service.dart';
 import '../../bloc/market_bloc.dart';
 
 class StockDetailScreen extends StatelessWidget {
@@ -23,11 +25,6 @@ class StockDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveBloc = bloc ?? MarketBloc();
     final formatter = MarketFormatterFactory.forMarket(instrument.market);
-    final price = snapshot?.price ?? 0;
-    final change = snapshot?.change ?? 0;
-    final changePercent = snapshot?.changePercent ?? 0;
-    final isUp = change >= 0;
-    final color = isUp ? AppColors.profitGreen : AppColors.lossRed;
 
     return DefaultTabController(
       length: 5,
@@ -87,286 +84,291 @@ class StockDetailScreen extends StatelessWidget {
             const SizedBox(width: AppSpacing.sm),
           ],
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: NestedScrollView(
-                headerSliverBuilder: (context, innerBoxIsScrolled) {
-                  return [
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.lg,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Symbol & Name Header
-                            Row(
+        body: StreamBuilder<MarketState>(
+          stream: effectiveBloc.stream,
+          initialData: effectiveBloc.state,
+          builder: (context, stateSnapshot) {
+            final state = stateSnapshot.data!;
+            final currentSnapshot =
+                state.snapshots[instrument.symbol] ?? snapshot;
+            final price = currentSnapshot?.price ?? 0;
+            final change = currentSnapshot?.change ?? 0;
+            final changePercent = currentSnapshot?.changePercent ?? 0;
+            final isUp = change >= 0;
+            final color = isUp ? AppColors.profitGreen : AppColors.lossRed;
+
+            return Column(
+              children: [
+                Expanded(
+                  child: NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) {
+                      return [
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.lg,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Hero(
-                                  tag: 'box_${instrument.symbol}',
-                                  child: Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: _getSectorColor(
-                                        instrument.sector,
-                                      ).withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      instrument.symbol.substring(0, 1),
-                                      style: TextStyle(
-                                        color: _getSectorColor(
-                                          instrument.sector,
-                                        ),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.md),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                // Symbol & Name Header
+                                Row(
                                   children: [
                                     Hero(
-                                      tag: 'symbol_${instrument.symbol}',
-                                      child: Material(
-                                        color: AppColors.transparent,
+                                      tag: 'box_${instrument.symbol}',
+                                      child: Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: _getSectorColor(
+                                            instrument.sector,
+                                          ).withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        alignment: Alignment.center,
                                         child: Text(
-                                          '${instrument.symbol} • ${instrument.market.name.toUpperCase()}',
-                                          style: AppTypography.labelSmall
-                                              .copyWith(
-                                                color: AppColors.textTertiary,
-                                                fontSize: 10,
-                                              ),
+                                          instrument.symbol.substring(0, 1),
+                                          style: TextStyle(
+                                            color: _getSectorColor(
+                                              instrument.sector,
+                                            ),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 2),
+                                    const SizedBox(width: AppSpacing.md),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Hero(
+                                          tag: 'symbol_${instrument.symbol}',
+                                          child: Material(
+                                            color: AppColors.transparent,
+                                            child: Text(
+                                              '${instrument.symbol} • ${instrument.market.name.toUpperCase()}',
+                                              style: AppTypography.labelSmall
+                                                  .copyWith(
+                                                    color:
+                                                        AppColors.textTertiary,
+                                                    fontSize: 10,
+                                                  ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          instrument.name,
+                                          style: AppTypography.bodySmall
+                                              .copyWith(
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: AppSpacing.lg),
+
+                                // Price Header
+                                Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.alphabetic,
+                                  children: [
                                     Text(
-                                      instrument.name,
-                                      style: AppTypography.bodySmall.copyWith(
+                                      formatter.formatPrice(price),
+                                      style: AppTypography.h2.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: -0.5,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.sm),
+                                    Text(
+                                      '${change >= 0 ? '+' : ''}${change.abs().toStringAsFixed(2)} (${changePercent.abs().toStringAsFixed(2)}%)',
+                                      style: AppTypography.body.copyWith(
+                                        color: color,
                                         fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '1D',
+                                      style: AppTypography.labelSmall.copyWith(
+                                        color: AppColors.textTertiary,
                                       ),
                                     ),
                                   ],
                                 ),
+                                const SizedBox(height: AppSpacing.xl),
                               ],
                             ),
-                            const SizedBox(height: AppSpacing.lg),
-
-                            // Price Header
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  formatter.formatPrice(price),
-                                  style: AppTypography.h2.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: -0.5,
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.sm),
-                                Text(
-                                  '${change >= 0 ? '+' : ''}${change.abs().toStringAsFixed(2)} (${changePercent.abs().toStringAsFixed(2)}%)',
-                                  style: AppTypography.body.copyWith(
-                                    color: color,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '1D',
-                                  style: AppTypography.labelSmall.copyWith(
-                                    color: AppColors.textTertiary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: AppSpacing.xl),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
 
-                    // Chart Section (BoxAdapter)
-                    SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 250,
-                            width: double.infinity,
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.lg,
-                            ),
-                            decoration: BoxDecoration(
-                              // No border in reference, purely graph
-                            ),
-                            child: Stack(
-                              children: [
-                                // Placeholder for Graph
-                                Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.show_chart_rounded,
-                                        size: 48,
-                                        color: AppColors.textTertiary
-                                            .withValues(alpha: 0.3),
-                                      ),
-                                      const SizedBox(height: AppSpacing.sm),
-                                      Text(
-                                        'Interactive Chart',
-                                        style: AppTypography.labelSmall
-                                            .copyWith(
-                                              color: AppColors.textTertiary,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
+                        // Chart Section (BoxAdapter)
+                        SliverToBoxAdapter(
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 250,
+                                width: double.infinity,
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.lg,
                                 ),
-                                // In a real app, this would be the graph
+                                decoration: BoxDecoration(
+                                  // No border in reference, purely graph
+                                ),
+                                child: Stack(
+                                  children: [
+                                    _InteractiveChart(
+                                      instrument: instrument,
+                                      color: color,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: AppSpacing.lg),
+                              // Timeframe Selector
+                              const Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.lg,
+                                ),
+                                child: _TimeframeSelector(),
+                              ),
+                              const SizedBox(height: AppSpacing.xl),
+                            ],
+                          ),
+                        ),
+
+                        // TabBar (Current Page)
+                        SliverPersistentHeader(
+                          delegate: _SliverAppBarDelegate(
+                            TabBar(
+                              isScrollable: true,
+                              labelColor: AppColors.textPrimary,
+                              unselectedLabelColor: AppColors.textSecondary,
+                              labelStyle: AppTypography.label.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              unselectedLabelStyle: AppTypography.label,
+                              indicatorColor: AppColors.primaryPurple,
+                              indicatorWeight: 3,
+                              indicatorSize: TabBarIndicatorSize.label,
+                              tabs: const [
+                                Tab(text: 'Overview'),
+                                Tab(text: 'Technicals'),
+                                Tab(text: 'F&O'),
+                                Tab(text: 'News'),
+                                Tab(text: 'Events'),
                               ],
                             ),
                           ),
-                          const SizedBox(height: AppSpacing.lg),
-                          // Timeframe Selector
-                          const Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppSpacing.lg,
-                            ),
-                            child: _TimeframeSelector(),
-                          ),
-                          const SizedBox(height: AppSpacing.xl),
-                        ],
-                      ),
-                    ),
-
-                    // TabBar (Current Page)
-                    SliverPersistentHeader(
-                      delegate: _SliverAppBarDelegate(
-                        TabBar(
-                          isScrollable: true,
-                          labelColor: AppColors.textPrimary,
-                          unselectedLabelColor: AppColors.textSecondary,
-                          labelStyle: AppTypography.label.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                          unselectedLabelStyle: AppTypography.label,
-                          indicatorColor: AppColors.primaryPurple,
-                          indicatorWeight: 3,
-                          indicatorSize: TabBarIndicatorSize.label,
-                          tabs: const [
-                            Tab(text: 'Overview'),
-                            Tab(text: 'Technicals'),
-                            Tab(text: 'F&O'),
-                            Tab(text: 'News'),
-                            Tab(text: 'Events'),
-                          ],
+                          pinned: true,
                         ),
-                      ),
-                      pinned: true,
+                      ];
+                    },
+                    body: TabBarView(
+                      children: [
+                        _OverviewTab(
+                          snapshot: currentSnapshot,
+                          formatter: formatter,
+                        ),
+                        const _PlaceholderTab(title: 'Technicals'),
+                        const _PlaceholderTab(title: 'F&O'),
+                        const _PlaceholderTab(title: 'News'),
+                        const _PlaceholderTab(title: 'Events'),
+                      ],
                     ),
-                  ];
-                },
-                body: TabBarView(
-                  children: [
-                    _OverviewTab(snapshot: snapshot, formatter: formatter),
-                    const _PlaceholderTab(title: 'Technicals'),
-                    const _PlaceholderTab(title: 'F&O'),
-                    const _PlaceholderTab(title: 'News'),
-                    const _PlaceholderTab(title: 'Events'),
-                  ],
-                ),
-              ),
-            ),
-            // Sticky Bottom Action Bar
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, -4),
                   ),
-                ],
-              ),
-              child: SafeArea(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.border),
-                        borderRadius: BorderRadius.circular(
-                          AppSpacing.radiusMD,
-                        ),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.calendar_month_outlined,
-                          size: 20,
-                        ),
-                        color: AppColors.textPrimary,
-                        onPressed: () {},
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.lossRed,
-                          foregroundColor: AppColors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              AppSpacing.radiusMD,
-                            ),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: const Text(
-                          'SELL',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.profitGreen,
-                          foregroundColor: AppColors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              AppSpacing.radiusMD,
-                            ),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: const Text(
-                          'BUY',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
-              ),
-            ),
-          ],
+                // Sticky Bottom Action Bar
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, -4),
+                      ),
+                    ],
+                  ),
+                  child: SafeArea(
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColors.border),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusMD,
+                            ),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.calendar_month_outlined,
+                              size: 20,
+                            ),
+                            color: AppColors.textPrimary,
+                            onPressed: () {},
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.lossRed,
+                              foregroundColor: AppColors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppSpacing.radiusMD,
+                                ),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              'SELL',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.profitGreen,
+                              foregroundColor: AppColors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppSpacing.radiusMD,
+                                ),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              'BUY',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -782,6 +784,116 @@ class _TimeframeSelectorState extends State<_TimeframeSelector> {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _InteractiveChart extends StatefulWidget {
+  final Instrument instrument;
+  final Color color;
+  const _InteractiveChart({required this.instrument, required this.color});
+
+  @override
+  State<_InteractiveChart> createState() => _InteractiveChartState();
+}
+
+class _InteractiveChartState extends State<_InteractiveChart> {
+  List<Candle>? _candles;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHistory();
+  }
+
+  Future<void> _loadHistory() async {
+    try {
+      final candles = await ApiMarketService().getHistory(
+        widget.instrument.symbol,
+        Timeframe.fourHour,
+      );
+      if (mounted) {
+        setState(() {
+          _candles = candles;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_candles == null || _candles!.isEmpty) {
+      return Center(
+        child: Text(
+          'No chart data available',
+          style: AppTypography.labelSmall.copyWith(
+            color: AppColors.textTertiary,
+          ),
+        ),
+      );
+    }
+
+    final minPrice = _candles!
+        .map((c) => c.low)
+        .reduce((a, b) => a < b ? a : b);
+    final maxPrice = _candles!
+        .map((c) => c.high)
+        .reduce((a, b) => a > b ? a : b);
+
+    final spots = _candles!.asMap().entries.map((e) {
+      return FlSpot(e.key.toDouble(), e.value.close);
+    }).toList();
+
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(show: false),
+        titlesData: FlTitlesData(show: false),
+        borderData: FlBorderData(show: false),
+        minY: minPrice * 0.999,
+        maxY: maxPrice * 1.001,
+        lineBarsData: [
+          LineChartBarData(
+            spots: spots,
+            isCurved: true,
+            color: widget.color,
+            barWidth: 2,
+            isStrokeCapRound: true,
+            dotData: FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              color: widget.color.withValues(alpha: 0.1),
+            ),
+          ),
+        ],
+        lineTouchData: LineTouchData(
+          enabled: true,
+          touchTooltipData: LineTouchTooltipData(
+            getTooltipColor: (_) => AppColors.surface,
+            getTooltipItems: (touchedSpots) {
+              return touchedSpots.map((spot) {
+                return LineTooltipItem(
+                  spot.y.toStringAsFixed(2),
+                  AppTypography.labelSmall.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              }).toList();
+            },
+          ),
+        ),
       ),
     );
   }

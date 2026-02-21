@@ -1,0 +1,48 @@
+services:
+  market-api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://market_user:market_pass@timescaledb:5432/market_sim
+    depends_on:
+      - redis
+      - timescaledb
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=market_user
+      - POSTGRES_PASSWORD=market_pass
+      - POSTGRES_DB=market_sim
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+
+  worker:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://market_user:market_pass@timescaledb:5432/market_sim
+    depends_on:
+      - redis
+      - timescaledb
+    command: celery -A simulation.tasks worker -l info
+
+volumes:
+  redis_data:
+  timescale_data:

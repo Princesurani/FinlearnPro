@@ -40,6 +40,31 @@ class Instrument {
     this.isin,
   });
 
+  factory Instrument.fromJson(Map<String, dynamic> json) {
+    return Instrument(
+      symbol: json['symbol'] as String,
+      name: json['name'] as String,
+      type: InstrumentType.values.firstWhere(
+        (e) => e.name == json['type'],
+        orElse: () => InstrumentType.stock,
+      ),
+      sector: Sector.values.firstWhere(
+        (e) => e.name == json['sector'],
+        orElse: () => Sector.unknown,
+      ),
+      market: MarketRegime.values.firstWhere(
+        (e) => e.name == json['market'],
+        orElse: () => MarketRegime.usa,
+      ),
+      basePrice: (json['basePrice'] as num).toDouble(),
+      volatility: (json['volatility'] as num).toDouble(),
+      description: json['description'] as String,
+      logoUrl: json['logoUrl'] as String?,
+      exchange: json['exchange'] as String?,
+      isin: json['isin'] as String?,
+    );
+  }
+
   final String symbol;
 
   final String name;
