@@ -15,36 +15,44 @@ class HoldingsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Mock Data
-    final holdings = [
+    final initialHoldings = [
       _Holding(
         symbol: 'RELIANCE',
         name: 'Reliance Industries',
         qty: 10,
         avgPrice: 2100.0,
-        ltp: 2450.0,
+        ltp: 2100.0,
       ),
       _Holding(
         symbol: 'TCS',
         name: 'Tata Consultancy Services',
         qty: 5,
         avgPrice: 3200.0,
-        ltp: 3450.0,
+        ltp: 3200.0,
       ),
       _Holding(
         symbol: 'HDFCBANK',
         name: 'HDFC Bank',
         qty: 20,
         avgPrice: 1600.0,
-        ltp: 1580.0,
+        ltp: 1600.0,
       ),
       _Holding(
         symbol: 'INFY',
         name: 'Infosys',
         qty: 15,
         avgPrice: 1400.0,
-        ltp: 1550.0,
+        ltp: 1400.0,
       ),
     ];
+
+    final holdings = initialHoldings.map((h) {
+      final snap = state.snapshots[h.symbol];
+      if (snap != null) {
+        return h.copyWith(ltp: snap.price);
+      }
+      return h;
+    }).toList();
 
     if (holdings.isEmpty) {
       return _buildEmptyState(context);
@@ -487,4 +495,14 @@ class _Holding {
   double get currentValue => qty * ltp;
   double get pnl => currentValue - investedValue;
   double get pnlPercent => (pnl / investedValue) * 100;
+
+  _Holding copyWith({double? ltp}) {
+    return _Holding(
+      symbol: symbol,
+      name: name,
+      qty: qty,
+      avgPrice: avgPrice,
+      ltp: ltp ?? this.ltp,
+    );
+  }
 }

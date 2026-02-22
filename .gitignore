@@ -13,6 +13,7 @@
 migrate_working_dir/
 Document
 Document/ADR
+venv/
 dart_scanner.py
 
 # IntelliJ related
@@ -47,3 +48,35 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .env
+
+# --- Backend / Python / Docker ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+.venv/
+env.bak/
+venv.bak/
+
+# Poetry / Pipenv
+.poetry/
+Pipfile.lock
+
+# Testing / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Databases
+*.db
+*.sqlite3
+
+# MyPy
+.mypy_cache/

@@ -35,13 +35,11 @@ class _ExploreTabState extends State<ExploreTab>
   MarketRegime get _market => _s.activeMarket;
 
   Map<String, MarketSnapshot>? _lastSnaps;
-  List<Instrument>? _cachedTopByVolume;
   List<Instrument>? _cachedStocksInNews;
 
   void _ensureCache() {
     if (!identical(_lastSnaps, _snaps)) {
       _lastSnaps = _snaps;
-      _cachedTopByVolume = null;
       _cachedStocksInNews = null;
     }
   }
@@ -58,13 +56,11 @@ class _ExploreTabState extends State<ExploreTab>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(
-                title: 'Most Bought',
-                subtitle: 'Popular among investors on FinLearn',
-                actionText: 'See more',
-              ),
+              const SectionHeader(title: 'Top Movers Today'),
+              _buildMoverFilters(),
+              const SizedBox(height: AppSpacing.sm),
               InstrumentGrid2x2(
-                instruments: _topByVolume(4),
+                instruments: _topMovers(),
                 market: _market,
                 snapshots: _snaps,
               ),
@@ -83,24 +79,6 @@ class _ExploreTabState extends State<ExploreTab>
                 actionText: 'See more',
               ),
               const ProductsToolsRow(),
-            ],
-          ),
-        ),
-
-        _sectionGap(),
-
-        _section(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionHeader(title: 'Top Movers Today'),
-              _buildMoverFilters(),
-              const SizedBox(height: AppSpacing.sm),
-              InstrumentGrid2x2(
-                instruments: _topMovers(),
-                market: _market,
-                snapshots: _snaps,
-              ),
             ],
           ),
         ),
@@ -247,20 +225,6 @@ class _ExploreTabState extends State<ExploreTab>
         ),
       ),
     );
-  }
-
-  List<Instrument> _topByVolume(int n) {
-    if (_cachedTopByVolume != null) return _cachedTopByVolume!;
-    final sorted =
-        List<Instrument>.from(
-          _tradable.where((i) => i.type == InstrumentType.stock),
-        )..sort((a, b) {
-          final va = _snaps[a.symbol]?.volume ?? 0;
-          final vb = _snaps[b.symbol]?.volume ?? 0;
-          return vb.compareTo(va);
-        });
-    _cachedTopByVolume = sorted.take(n).toList();
-    return _cachedTopByVolume!;
   }
 
   List<Instrument> _topMovers() {
