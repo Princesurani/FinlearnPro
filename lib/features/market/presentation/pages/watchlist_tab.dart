@@ -9,10 +9,16 @@ import '../../bloc/market_bloc.dart';
 import 'stock_detail_screen.dart';
 
 class WatchlistTab extends StatelessWidget {
-  const WatchlistTab({super.key, required this.state, required this.onExplore});
+  const WatchlistTab({
+    super.key,
+    required this.state,
+    required this.onExplore,
+    required this.bloc,
+  });
 
   final MarketState state;
   final VoidCallback onExplore;
+  final MarketBloc bloc;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +40,11 @@ class WatchlistTab extends StatelessWidget {
       itemBuilder: (context, index) {
         final instrument = watchlistInstruments[index];
         final snapshot = state.snapshots[instrument.symbol];
-        return _WatchlistTile(instrument: instrument, snapshot: snapshot);
+        return _WatchlistTile(
+          instrument: instrument,
+          snapshot: snapshot,
+          bloc: bloc,
+        );
       },
     );
   }
@@ -98,10 +108,15 @@ class WatchlistTab extends StatelessWidget {
 }
 
 class _WatchlistTile extends StatelessWidget {
-  const _WatchlistTile({required this.instrument, required this.snapshot});
+  const _WatchlistTile({
+    required this.instrument,
+    required this.snapshot,
+    required this.bloc,
+  });
 
   final Instrument instrument;
   final MarketSnapshot? snapshot;
+  final MarketBloc bloc;
 
   @override
   Widget build(BuildContext context) {
@@ -113,8 +128,11 @@ class _WatchlistTile extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) =>
-                StockDetailScreen(instrument: instrument, snapshot: snapshot),
+            builder: (_) => StockDetailScreen(
+              instrument: instrument,
+              snapshot: snapshot,
+              bloc: bloc,
+            ),
           ),
         );
       },

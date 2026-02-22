@@ -208,3 +208,133 @@ class MarketSnapshot {
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// Trading domain models — mirror the backend DB schema
+// ---------------------------------------------------------------------------
+
+/// A user's current holding in a single instrument.
+class PortfolioPosition {
+  const PortfolioPosition({
+    required this.symbol,
+    required this.quantity,
+    required this.averageCost,
+  });
+
+  factory PortfolioPosition.fromJson(Map<String, dynamic> json) {
+    return PortfolioPosition(
+      symbol: json['symbol'] as String,
+      quantity: (json['quantity'] as num).toInt(),
+      averageCost: (json['average_cost'] as num).toDouble(),
+    );
+  }
+
+  final String symbol;
+  final int quantity;
+  final double averageCost;
+
+  /// Unrealised P&L — requires a live price.
+  double unrealisedPnl(double currentPrice) =>
+      (currentPrice - averageCost) * quantity;
+
+  double unrealisedPnlPercent(double currentPrice) =>
+      averageCost == 0 ? 0 : ((currentPrice - averageCost) / averageCost) * 100;
+
+  @override
+  String toString() =>
+      'Position($symbol qty:$quantity avg:₹${averageCost.toStringAsFixed(2)})';
+}
+
+/// An order placed by the user (filled or pending).
+class Order {
+  const Order({
+    required this.id,
+    required this.firebaseUid,
+    required this.symbol,
+    required this.side,
+    required this.orderType,
+    required this.quantity,
+    required this.status,
+    required this.createdAt,
+    this.price,
+    this.filledAt,
+  });
+
+  factory Order.fromJson(Map<String, dynamic> json) {
+    return Order(
+      id: json['id'] as int,
+      firebaseUid: (json['firebase_uid'] as String?) ?? '',
+      symbol: json['symbol'] as String,
+      side: json['side'] as String,
+      orderType: json['order_type'] as String,
+      quantity: (json['quantity'] as num).toInt(),
+      status: json['status'] as String,
+      price: json['fill_price'] != null
+          ? (json['fill_price'] as num).toDouble()
+          : null,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      filledAt: json['filled_at'] != null
+          ? DateTime.parse(json['filled_at'] as String)
+          : null,
+    );
+  }
+
+  final int id;
+  final String firebaseUid;
+  final String symbol;
+  final String side; // "buy" | "sell"
+  final String orderType; // "market" | "limit"
+  final int quantity;
+  final String status; // "pending" | "filled" | "rejected"
+  final double? price; // fill price from trade record
+  final DateTime createdAt;
+  final DateTime? filledAt;
+
+  bool get isBuy => side == 'buy';
+  bool get isFilled => status == 'filled';
+
+  @override
+  String toString() => 'Order($id $side $quantity×$symbol [$status])';
+}
+
+/// A single executed trade — the atomic fill record for an order.
+class Trade {
+  const Trade({
+    required this.id,
+    required this.orderId,
+    required this.firebaseUid,
+    required this.symbol,
+    required this.side,
+    required this.quantity,
+    required this.price,
+    required this.timestamp,
+  });
+
+  factory Trade.fromJson(Map<String, dynamic> json) {
+    return Trade(
+      id: json['id'] as int,
+      orderId: json['order_id'] as int,
+      firebaseUid: json['firebase_uid'] as String,
+      symbol: json['symbol'] as String,
+      side: json['side'] as String,
+      quantity: (json['quantity'] as num).toInt(),
+      price: (json['price'] as num).toDouble(),
+      timestamp: DateTime.parse(json['timestamp'] as String),
+    );
+  }
+
+  final int id;
+  final int orderId;
+  final String firebaseUid;
+  final String symbol;
+  final String side;
+  final int quantity;
+  final double price;
+  final DateTime timestamp;
+
+  double get totalValue => price * quantity;
+
+  @override
+  String toString() =>
+      'Trade($id $side $quantity×$symbol @₹${price.toStringAsFixed(2)})';
+}

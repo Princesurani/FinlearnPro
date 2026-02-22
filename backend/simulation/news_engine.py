@@ -122,8 +122,8 @@ class NewsEngine:
         """
         Generate a random news event or return None if probability fails.
         """
-        # 10% chance to generate news on a given poll tick (should be called sparingly)
-        if random.random() > 0.10:
+        # 1% chance to generate news on a given poll tick (to avoid constant chaos)
+        if random.random() > 0.01:
             return None
 
         cat_key = random.choice(list(self.NEWS_CATEGORIES.keys()))
@@ -145,7 +145,8 @@ class NewsEngine:
             
         headline = self._fill_template(template, cat_key, sub_key, target)
         
-        impact = random.uniform(*config["impact_range"])
+        # Divide raw theoretical impact by 10 for realistic sub-1% minute-tick jumps
+        impact = random.uniform(*config["impact_range"]) / 10.0
         
         # Amplify impact if sentiment matches
         if context.sentiment == "bullish" and impact > 0:

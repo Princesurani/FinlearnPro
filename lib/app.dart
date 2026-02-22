@@ -15,6 +15,7 @@ class FinLearnApp extends StatefulWidget {
 
 class _FinLearnAppState extends State<FinLearnApp> {
   AppState _appState = AppState.splash;
+  String _uid = '';
 
   @override
   void initState() {
@@ -24,6 +25,7 @@ class _FinLearnAppState extends State<FinLearnApp> {
     AuthService().authStateChanges.listen((user) {
       if (mounted) {
         setState(() {
+          _uid = user?.uid ?? '';
           _appState = user != null ? AppState.main : AppState.auth;
         });
       }
@@ -48,7 +50,10 @@ class _FinLearnAppState extends State<FinLearnApp> {
 
   void _handleSplashComplete() {
     final user = AuthService().currentUser;
-    setState(() => _appState = user != null ? AppState.main : AppState.auth);
+    setState(() {
+      _uid = user?.uid ?? '';
+      _appState = user != null ? AppState.main : AppState.auth;
+    });
   }
 
   void _handleAuthComplete() {
@@ -82,7 +87,10 @@ class _FinLearnAppState extends State<FinLearnApp> {
           showWelcome: true,
         );
       case AppState.main:
-        return const MainNavigationShell(key: ValueKey('main'));
+        return MainNavigationShell(
+          key: ValueKey('main_$_uid'),
+          firebaseUid: _uid,
+        );
     }
   }
 

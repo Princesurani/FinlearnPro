@@ -24,7 +24,6 @@ class MarketFormatterFactory {
   }
 }
 
-
 class IndianMarketFormatter implements MarketFormatter {
   @override
   String formatCurrency(double amount, {int? decimals}) {
@@ -67,7 +66,11 @@ class IndianMarketFormatter implements MarketFormatter {
   }
 
   @override
-  String formatPercentage(double pct, {int decimals = 2, bool showSign = true}) {
+  String formatPercentage(
+    double pct, {
+    int decimals = 2,
+    bool showSign = true,
+  }) {
     final sign = showSign && pct > 0 ? '+' : '';
     return '$sign${_formatNumber(pct, decimals)}%';
   }
@@ -79,8 +82,8 @@ class IndianMarketFormatter implements MarketFormatter {
 
   @override
   String formatChange(double change, double changePercent) {
-    final sign = change >= 0 ? '+' : '';
-    return '$sign${formatPrice(change.abs())} ($sign${_formatNumber(changePercent, 2)}%)';
+    final sign = change > 0 ? '+' : (change < 0 ? '-' : '');
+    return '$sign${formatPrice(change.abs())} ($sign${_formatNumber(changePercent.abs(), 2)}%)';
   }
 
   String _formatNumber(double value, int decimals) {
@@ -105,7 +108,6 @@ class IndianMarketFormatter implements MarketFormatter {
         : formatted;
   }
 }
-
 
 class WesternMarketFormatter implements MarketFormatter {
   WesternMarketFormatter({required this.currencySymbol});
@@ -148,7 +150,11 @@ class WesternMarketFormatter implements MarketFormatter {
   }
 
   @override
-  String formatPercentage(double pct, {int decimals = 2, bool showSign = true}) {
+  String formatPercentage(
+    double pct, {
+    int decimals = 2,
+    bool showSign = true,
+  }) {
     final sign = showSign && pct > 0 ? '+' : '';
     return '$sign${_formatNumber(pct, decimals)}%';
   }
@@ -160,15 +166,14 @@ class WesternMarketFormatter implements MarketFormatter {
 
   @override
   String formatChange(double change, double changePercent) {
-    final sign = change >= 0 ? '+' : '';
-    return '$sign${formatPrice(change.abs())} ($sign${_formatNumber(changePercent, 2)}%)';
+    final sign = change > 0 ? '+' : (change < 0 ? '-' : '');
+    return '$sign${formatPrice(change.abs())} ($sign${_formatNumber(changePercent.abs(), 2)}%)';
   }
 
   String _formatNumber(double value, int decimals) {
     return value.toStringAsFixed(decimals);
   }
 }
-
 
 class CryptoMarketFormatter implements MarketFormatter {
   @override
@@ -223,7 +228,11 @@ class CryptoMarketFormatter implements MarketFormatter {
   }
 
   @override
-  String formatPercentage(double pct, {int decimals = 2, bool showSign = true}) {
+  String formatPercentage(
+    double pct, {
+    int decimals = 2,
+    bool showSign = true,
+  }) {
     final sign = showSign && pct > 0 ? '+' : '';
     return '$sign${_formatNumber(pct, decimals)}%';
   }
@@ -235,8 +244,8 @@ class CryptoMarketFormatter implements MarketFormatter {
 
   @override
   String formatChange(double change, double changePercent) {
-    final sign = change >= 0 ? '+' : '';
-    return '$sign${formatPrice(change.abs())} ($sign${_formatNumber(changePercent, 2)}%)';
+    final sign = change > 0 ? '+' : (change < 0 ? '-' : '');
+    return '$sign${formatPrice(change.abs())} ($sign${_formatNumber(changePercent.abs(), 2)}%)';
   }
 
   String _formatNumber(double value, int decimals) {
@@ -248,11 +257,11 @@ class CryptoMarketFormatter implements MarketFormatter {
   }
 }
 
-
 extension NumberFormatExtensions on double {
   String toCurrency(MarketRegime market, {int? decimals}) {
-    return MarketFormatterFactory.forMarket(market)
-        .formatCurrency(this, decimals: decimals);
+    return MarketFormatterFactory.forMarket(
+      market,
+    ).formatCurrency(this, decimals: decimals);
   }
 
   String toPercent({int decimals = 2, bool showSign = true}) {

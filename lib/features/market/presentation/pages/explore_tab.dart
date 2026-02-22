@@ -14,8 +14,9 @@ import '../widgets/section_header.dart';
 import '../widgets/sector_trending_card.dart';
 
 class ExploreTab extends StatefulWidget {
-  const ExploreTab({super.key, required this.state});
+  const ExploreTab({super.key, required this.state, required this.bloc});
   final MarketState state;
+  final MarketBloc bloc;
 
   @override
   State<ExploreTab> createState() => _ExploreTabState();
@@ -63,6 +64,7 @@ class _ExploreTabState extends State<ExploreTab>
                 instruments: _topMovers(),
                 market: _market,
                 snapshots: _snaps,
+                bloc: widget.bloc,
               ),
             ],
           ),
@@ -116,6 +118,7 @@ class _ExploreTabState extends State<ExploreTab>
                 instruments: _stocksInNews(),
                 market: _market,
                 snapshots: _snaps,
+                bloc: widget.bloc,
               ),
             ],
           ),

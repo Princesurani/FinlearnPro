@@ -9,6 +9,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/market_formatters.dart';
 
 import '../pages/stock_detail_screen.dart';
+import '../../bloc/market_bloc.dart';
 
 class InstrumentGrid2x2 extends StatelessWidget {
   const InstrumentGrid2x2({
@@ -18,6 +19,7 @@ class InstrumentGrid2x2 extends StatelessWidget {
     required this.snapshots,
     this.onSeeMore,
     this.showSeeMore = true,
+    this.bloc,
   });
 
   final List<Instrument> instruments;
@@ -25,6 +27,7 @@ class InstrumentGrid2x2 extends StatelessWidget {
   final Map<String, MarketSnapshot> snapshots;
   final VoidCallback? onSeeMore;
   final bool showSeeMore;
+  final MarketBloc? bloc;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +59,7 @@ class InstrumentGrid2x2 extends StatelessWidget {
           instrument: instrument,
           snapshot: snapshot,
           market: market,
+          bloc: bloc,
         );
       },
     );
@@ -67,11 +71,13 @@ class _StockCell extends StatelessWidget {
     required this.instrument,
     required this.snapshot,
     required this.market,
+    this.bloc,
   });
 
   final Instrument instrument;
   final MarketSnapshot? snapshot;
   final MarketRegime market;
+  final MarketBloc? bloc;
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +87,11 @@ class _StockCell extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) =>
-                StockDetailScreen(instrument: instrument, snapshot: snapshot),
+            builder: (_) => StockDetailScreen(
+              instrument: instrument,
+              snapshot: snapshot,
+              bloc: bloc,
+            ),
           ),
         );
       },

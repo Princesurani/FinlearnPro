@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -13,7 +14,9 @@ import 'watchlist_tab.dart';
 import '../../../../shared/navigation/top_navigation_shell.dart';
 
 class MarketScreen extends StatefulWidget {
-  const MarketScreen({super.key});
+  const MarketScreen({super.key, this.bloc});
+
+  final MarketBloc? bloc;
 
   @override
   State<MarketScreen> createState() => _MarketScreenState();
@@ -29,14 +32,18 @@ class _MarketScreenState extends State<MarketScreen>
   @override
   void initState() {
     super.initState();
-    _bloc = MarketBloc();
+    final uid =
+        widget.bloc?.firebaseUid ??
+        FirebaseAuth.instance.currentUser?.uid ??
+        '';
+    _bloc = widget.bloc ?? MarketBloc(firebaseUid: uid);
     _bloc.resume();
     _tabController = TabController(length: _tabLabels.length, vsync: this);
   }
 
   @override
   void dispose() {
-    _bloc.pause();
+    if (widget.bloc == null) _bloc.dispose(); // Only dispose if we own it
     _tabController.dispose();
     super.dispose();
   }
@@ -241,7 +248,7 @@ class _HoldingsStreamWrapper extends StatelessWidget {
       stream: bloc.stream,
       initialData: bloc.state,
       builder: (_, snap) {
-        return HoldingsTab(state: snap.data!, onExplore: onExplore);
+        return HoldingsTab(state: snap.data!, onExplore: onExplore, bloc: bloc);
       },
     );
   }
@@ -258,7 +265,7 @@ class _OrdersStreamWrapper extends StatelessWidget {
       stream: bloc.stream,
       initialData: bloc.state,
       builder: (_, snap) {
-        return OrdersTab(state: snap.data!, onExplore: onExplore);
+        return OrdersTab(state: snap.data!, onExplore: onExplore, bloc: bloc);
       },
     );
   }
@@ -276,12 +283,7 @@ class _WatchlistStreamWrapper extends StatelessWidget {
       initialData: bloc.state,
       builder: (_, snap) {
         final state = snap.data!;
-        // Assuming WatchlistTab handles its own loading/error if needed,
-        // or we can reuse error/loading logic here.
-        // Since Watchlist is just a filter on existing data, it should be fast.
-        // But if market data is loading, watchlist items might be missing snapshots.
-
-        return WatchlistTab(state: state, onExplore: onExplore);
+        return WatchlistTab(state: state, onExplore: onExplore, bloc: bloc);
       },
     );
   }
@@ -365,7 +367,7 @@ class _ExploreStreamWrapper extends StatelessWidget {
           );
         }
 
-        return ExploreTab(state: state);
+        return ExploreTab(state: state, bloc: bloc);
       },
     );
   }

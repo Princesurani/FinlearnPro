@@ -16,7 +16,9 @@ import '../../features/portfolio/presentation/pages/portfolio_screen.dart';
 import '../widgets/aurora_background.dart';
 
 class MainNavigationShell extends StatefulWidget {
-  const MainNavigationShell({super.key});
+  const MainNavigationShell({super.key, required this.firebaseUid});
+
+  final String firebaseUid;
 
   @override
   State<MainNavigationShell> createState() => _MainNavigationShellState();
@@ -58,7 +60,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       initialPage: _currentIndex,
       keepPage: true,
     );
-    _marketBloc = MarketBloc();
+    _marketBloc = MarketBloc(firebaseUid: widget.firebaseUid);
     _marketBloc.resume();
   }
 
@@ -116,7 +118,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
               children: [
                 _HomeScreenWrapper(bloc: _marketBloc),
                 const LearningScreen(),
-                const RepaintBoundary(child: MarketScreen()),
+                RepaintBoundary(child: MarketScreen(bloc: _marketBloc)),
                 const PortfolioScreen(),
               ],
             ),
@@ -215,9 +217,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                                                 size: 24,
                                                 color: isSelected
                                                     ? AppColors.white
-                                                    : AppColors.white.withValues(
-                                                        alpha: 0.5,
-                                                      ),
+                                                    : AppColors.white
+                                                          .withValues(
+                                                            alpha: 0.5,
+                                                          ),
                                               ),
                                               const SizedBox(height: 4),
                                               Text(
@@ -225,9 +228,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                                                 style: TextStyle(
                                                   color: isSelected
                                                       ? AppColors.white
-                                                      : AppColors.white.withValues(
-                                                          alpha: 0.5,
-                                                        ),
+                                                      : AppColors.white
+                                                            .withValues(
+                                                              alpha: 0.5,
+                                                            ),
                                                   fontSize: 11,
                                                   fontWeight: isSelected
                                                       ? FontWeight.w600

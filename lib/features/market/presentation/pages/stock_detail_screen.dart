@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/domain/instrument.dart';
 import '../../../../core/domain/market_data.dart';
@@ -5,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/utils/market_formatters.dart';
 import '../../../../core/services/api_market_service.dart';
 import '../../bloc/market_bloc.dart';
@@ -23,7 +25,9 @@ class StockDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveBloc = bloc ?? MarketBloc();
+    final effectiveBloc =
+        bloc ??
+        MarketBloc(firebaseUid: FirebaseAuth.instance.currentUser?.uid ?? '');
     final formatter = MarketFormatterFactory.forMarket(instrument.market);
 
     return DefaultTabController(
@@ -212,36 +216,9 @@ class StockDetailScreen extends StatelessWidget {
 
                         // Chart Section (BoxAdapter)
                         SliverToBoxAdapter(
-                          child: Column(
-                            children: [
-                              Container(
-                                height: 250,
-                                width: double.infinity,
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.lg,
-                                ),
-                                decoration: BoxDecoration(
-                                  // No border in reference, purely graph
-                                ),
-                                child: Stack(
-                                  children: [
-                                    _InteractiveChart(
-                                      instrument: instrument,
-                                      color: color,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: AppSpacing.lg),
-                              // Timeframe Selector
-                              const Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.lg,
-                                ),
-                                child: _TimeframeSelector(),
-                              ),
-                              const SizedBox(height: AppSpacing.xl),
-                            ],
+                          child: _ChartSection(
+                            instrument: instrument,
+                            color: color,
                           ),
                         ),
 
@@ -287,84 +264,9 @@ class StockDetailScreen extends StatelessWidget {
                   ),
                 ),
                 // Sticky Bottom Action Bar
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, -4),
-                      ),
-                    ],
-                  ),
-                  child: SafeArea(
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.border),
-                            borderRadius: BorderRadius.circular(
-                              AppSpacing.radiusMD,
-                            ),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.calendar_month_outlined,
-                              size: 20,
-                            ),
-                            color: AppColors.textPrimary,
-                            onPressed: () {},
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.lossRed,
-                              foregroundColor: AppColors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppSpacing.radiusMD,
-                                ),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: const Text(
-                              'SELL',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.profitGreen,
-                              foregroundColor: AppColors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppSpacing.radiusMD,
-                                ),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: const Text(
-                              'BUY',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                _BottomActionButtons(
+                  instrument: instrument,
+                  bloc: effectiveBloc,
                 ),
               ],
             );
@@ -373,34 +275,226 @@ class StockDetailScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Color _getSectorColor(Sector sector) {
-    switch (sector) {
-      case Sector.technology:
-        return AppColors.electricBlue;
-      case Sector.financialServices:
-        return AppColors.emerald;
-      case Sector.healthcare:
-        return AppColors.oceanTeal;
-      case Sector.consumerCyclical:
-        return AppColors.primaryPurple;
-      case Sector.consumerDefensive:
-        return AppColors.lavender;
-      case Sector.industrials:
-        return AppColors.indigo;
-      case Sector.energy:
-        return AppColors.sunsetOrange;
-      case Sector.utilities:
-        return AppColors.amber;
-      case Sector.realEstate:
-        return AppColors.coralPink;
-      case Sector.basicMaterials:
-        return AppColors.goldenYellow;
-      case Sector.communicationServices:
-        return AppColors.cyan;
-      case Sector.unknown:
-        return AppColors.neutralGray;
-    }
+class _BottomActionButtons extends StatelessWidget {
+  const _BottomActionButtons({required this.instrument, required this.bloc});
+
+  final Instrument instrument;
+  final MarketBloc bloc;
+
+  void _showOrderBottomSheet(BuildContext context, String side) {
+    int quantity = 1;
+    final isBuy = side == 'buy';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.backgroundPrimary,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (bottomSheetContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: AppSpacing.lg,
+                right: AppSpacing.lg,
+                top: AppSpacing.xl,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${isBuy ? "Buy" : "Sell"} ${instrument.symbol}',
+                    style: AppTypography.h3.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Quantity', style: AppTypography.body),
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              if (quantity > 1) setState(() => quantity--);
+                            },
+                            icon: const Icon(Icons.remove_circle_outline),
+                            color: AppColors.textPrimary,
+                          ),
+                          Text(
+                            '$quantity',
+                            style: AppTypography.h3.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () => setState(() => quantity++),
+                            icon: const Icon(Icons.add_circle_outline),
+                            color: AppColors.textPrimary,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        bloc.add(
+                          PlaceOrder(
+                            symbol: instrument.symbol,
+                            side: side,
+                            quantity: quantity,
+                          ),
+                        );
+                        Navigator.pop(context); // Close sheet
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '$side order placed for $quantity shares of ${instrument.symbol}!',
+                            ),
+                            backgroundColor: isBuy
+                                ? AppColors.profitGreen
+                                : AppColors.lossRed,
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isBuy
+                            ? AppColors.profitGreen
+                            : AppColors.lossRed,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        isBuy ? 'CONFIRM BUY' : 'CONFIRM SELL',
+                        style: AppTypography.button.copyWith(
+                          color: AppColors.surface,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.calendar_month_outlined, size: 20),
+                color: AppColors.textPrimary,
+                onPressed: () {},
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () => _showOrderBottomSheet(context, 'sell'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.lossRed,
+                  foregroundColor: AppColors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'SELL',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () => _showOrderBottomSheet(context, 'buy'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.profitGreen,
+                  foregroundColor: AppColors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'BUY',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Color _getSectorColor(Sector sector) {
+  switch (sector) {
+    case Sector.technology:
+      return AppColors.electricBlue;
+    case Sector.financialServices:
+      return AppColors.emerald;
+    case Sector.healthcare:
+      return AppColors.oceanTeal;
+    case Sector.consumerCyclical:
+      return AppColors.primaryPurple;
+    case Sector.consumerDefensive:
+      return AppColors.lavender;
+    case Sector.industrials:
+      return AppColors.indigo;
+    case Sector.energy:
+      return AppColors.sunsetOrange;
+    case Sector.utilities:
+      return AppColors.amber;
+    case Sector.realEstate:
+      return AppColors.coralPink;
+    case Sector.basicMaterials:
+      return AppColors.goldenYellow;
+    case Sector.communicationServices:
+      return AppColors.cyan;
+    case Sector.unknown:
+      return AppColors.neutralGray;
   }
 }
 
@@ -737,16 +831,78 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   }
 }
 
-class _TimeframeSelector extends StatefulWidget {
-  const _TimeframeSelector();
-
-  @override
-  State<_TimeframeSelector> createState() => _TimeframeSelectorState();
+class _TimeframeOption {
+  final String label;
+  final Timeframe resolution;
+  const _TimeframeOption(this.label, this.resolution);
 }
 
-class _TimeframeSelectorState extends State<_TimeframeSelector> {
-  int _selectedIndex = 0;
-  final _timeframes = ['1D', '1W', '1M', '1Y', '5Y', 'ALL'];
+class _ChartSection extends StatefulWidget {
+  const _ChartSection({required this.instrument, required this.color});
+  final Instrument instrument;
+  final Color color;
+
+  @override
+  State<_ChartSection> createState() => _ChartSectionState();
+}
+
+class _ChartSectionState extends State<_ChartSection> {
+  late _TimeframeOption _selectedOption;
+
+  static const _options = [
+    _TimeframeOption('1D', Timeframe.fiveMinute),
+    _TimeframeOption('1W', Timeframe.oneHour),
+    _TimeframeOption('1M', Timeframe.fourHour),
+    _TimeframeOption('1Y', Timeframe.oneDay),
+    _TimeframeOption('5Y', Timeframe.oneWeek),
+    _TimeframeOption('ALL', Timeframe.oneMonth),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedOption = _options.first;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          height: 250,
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          child: _InteractiveChart(
+            instrument: widget.instrument,
+            color: widget.color,
+            timeframe: _selectedOption.resolution,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          child: _TimeframeSelector(
+            selected: _selectedOption,
+            options: _options,
+            onChanged: (opt) => setState(() => _selectedOption = opt),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+      ],
+    );
+  }
+}
+
+class _TimeframeSelector extends StatelessWidget {
+  const _TimeframeSelector({
+    required this.selected,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final _TimeframeOption selected;
+  final List<_TimeframeOption> options;
+  final ValueChanged<_TimeframeOption> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -754,12 +910,13 @@ class _TimeframeSelectorState extends State<_TimeframeSelector> {
       height: 32,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: _timeframes.length,
+        itemCount: options.length,
         separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
         itemBuilder: (context, index) {
-          final isSelected = index == _selectedIndex;
+          final option = options[index];
+          final isSelected = selected.label == option.label;
           return GestureDetector(
-            onTap: () => setState(() => _selectedIndex = index),
+            onTap: () => onChanged(option),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               alignment: Alignment.center,
@@ -768,12 +925,9 @@ class _TimeframeSelectorState extends State<_TimeframeSelector> {
                     ? AppColors.textPrimary.withValues(alpha: 0.05)
                     : AppColors.transparent,
                 borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-                // Reference style: Pills with light grey bg when selected? Or just text?
-                // Image 1 shows dark pills.
-                // I'll stick to my style but refine colors.
               ),
               child: Text(
-                _timeframes[index],
+                option.label,
                 style: AppTypography.labelSmall.copyWith(
                   color: isSelected
                       ? AppColors.textPrimary
@@ -792,7 +946,12 @@ class _TimeframeSelectorState extends State<_TimeframeSelector> {
 class _InteractiveChart extends StatefulWidget {
   final Instrument instrument;
   final Color color;
-  const _InteractiveChart({required this.instrument, required this.color});
+  final Timeframe timeframe;
+  const _InteractiveChart({
+    required this.instrument,
+    required this.color,
+    required this.timeframe,
+  });
 
   @override
   State<_InteractiveChart> createState() => _InteractiveChartState();
@@ -808,11 +967,20 @@ class _InteractiveChartState extends State<_InteractiveChart> {
     _loadHistory();
   }
 
+  @override
+  void didUpdateWidget(_InteractiveChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.timeframe != widget.timeframe) {
+      setState(() => _isLoading = true);
+      _loadHistory();
+    }
+  }
+
   Future<void> _loadHistory() async {
     try {
       final candles = await ApiMarketService().getHistory(
         widget.instrument.symbol,
-        Timeframe.fourHour,
+        widget.timeframe,
       );
       if (mounted) {
         setState(() {
@@ -879,16 +1047,58 @@ class _InteractiveChartState extends State<_InteractiveChart> {
         ],
         lineTouchData: LineTouchData(
           enabled: true,
+          getTouchedSpotIndicator: (barData, spotIndexes) {
+            return spotIndexes.map((index) {
+              return TouchedSpotIndicatorData(
+                FlLine(
+                  color: widget.color,
+                  strokeWidth: 1.5,
+                  dashArray: [4, 4],
+                ),
+                FlDotData(
+                  show: true,
+                  getDotPainter: (spot, percent, barData, index) {
+                    return FlDotCirclePainter(
+                      radius: 4,
+                      color: widget.color,
+                      strokeWidth: 2,
+                      strokeColor: AppColors.backgroundPrimary,
+                    );
+                  },
+                ),
+              );
+            }).toList();
+          },
           touchTooltipData: LineTouchTooltipData(
             getTooltipColor: (_) => AppColors.surface,
+            maxContentWidth: 250,
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((spot) {
+                final candle = _candles![spot.spotIndex.toInt()];
+                final timeStr = DateFormat(
+                  "hh:mm a d MMM",
+                ).format(candle.timestamp.toLocal()).toUpperCase();
+
                 return LineTooltipItem(
-                  spot.y.toStringAsFixed(2),
+                  '₹${spot.y.toStringAsFixed(2)}',
                   AppTypography.labelSmall.copyWith(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.bold,
                   ),
+                  children: [
+                    TextSpan(
+                      text: ' | ',
+                      style: AppTypography.labelSmall.copyWith(
+                        color: AppColors.textTertiary,
+                      ),
+                    ),
+                    TextSpan(
+                      text: timeStr,
+                      style: AppTypography.labelSmall.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 );
               }).toList();
             },

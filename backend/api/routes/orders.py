@@ -1,0 +1,147 @@
+import os
+import json
+import redis.asyncio as aioredis
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from datetime import datetime
+from pydantic import BaseModel
+
+from db.database import get_db
+from db.models import DbOrder, DbTrade, DbPortfolioPosition, DbUser
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+STARTING_BALANCE = 10_000.0  # ₹10,000 paper trading balance
+
+router = APIRouter()
+
+
+class OrderRequest(BaseModel):
+    firebase_uid: str
+    symbol: str
+    side: str           # "buy" or "sell"
+    quantity: int
+    order_type: str = "market"
+
+
+@router.post("/place")
+async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db)):
+    """
+    Execute a market order against the live Redis quote price.
+    Atomically updates user balance and portfolio position.
+    """
+    if order_req.quantity <= 0:
+        raise HTTPException(status_code=400, detail="Quantity must be greater than 0")
+
+    # 1. Fetch live price from Redis (key written by simulation/tasks.py)
+    r = aioredis.from_url(REDIS_URL)
+    try:
+        raw_data = await r.get(f"market:quote:{order_req.symbol}")
+    finally:
+        await r.aclose()
+
+    if not raw_data:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Market data unavailable for {order_req.symbol}. Is the simulation running?"
+        )
+
+    quote = json.loads(raw_data)
+    current_price: float = quote.get("price")
+    if not current_price:
+        raise HTTPException(status_code=400, detail="Could not parse current price from Redis")
+
+    total_value = current_price * order_req.quantity
+
+    # 2. Get or auto-create user with ₹10,000 starting balance
+    result = await db.execute(select(DbUser).where(DbUser.firebase_uid == order_req.firebase_uid))
+    user = result.scalar_one_or_none()
+    if not user:
+        user = DbUser(firebase_uid=order_req.firebase_uid, email=None, balance=STARTING_BALANCE)
+        db.add(user)
+        await db.flush()
+
+    # 3. Get or create portfolio position for this symbol
+    pos_result = await db.execute(
+        select(DbPortfolioPosition).where(
+            DbPortfolioPosition.firebase_uid == order_req.firebase_uid,
+            DbPortfolioPosition.symbol == order_req.symbol
+        )
+    )
+    position = pos_result.scalar_one_or_none()
+
+    if not position:
+        position = DbPortfolioPosition(
+            firebase_uid=order_req.firebase_uid,
+            symbol=order_req.symbol,
+            quantity=0,
+            average_cost=0.0,
+        )
+        db.add(position)
+        await db.flush()
+
+    # 4. Apply buy / sell logic
+    side = order_req.side.lower()
+
+    if side == "buy":
+        if user.balance < total_value:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Insufficient funds. Balance: ₹{user.balance:.2f}, Cost: ₹{total_value:.2f}"
+            )
+        # Weighted average cost
+        new_total_cost = (position.quantity * position.average_cost) + total_value
+        position.quantity += order_req.quantity
+        position.average_cost = new_total_cost / position.quantity
+        user.balance -= total_value
+
+    elif side == "sell":
+        if position.quantity < order_req.quantity:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Insufficient shares. Held: {position.quantity}, Requested: {order_req.quantity}"
+            )
+        position.quantity -= order_req.quantity
+        user.balance += total_value
+        if position.quantity == 0:
+            position.average_cost = 0.0
+
+    else:
+        raise HTTPException(status_code=400, detail="side must be 'buy' or 'sell'")
+
+    # 5. Write order + trade records
+    order = DbOrder(
+        firebase_uid=order_req.firebase_uid,
+        symbol=order_req.symbol,
+        side=side,
+        order_type=order_req.order_type,
+        quantity=order_req.quantity,
+        status="filled",
+        filled_at=datetime.utcnow(),
+    )
+    db.add(order)
+    await db.flush()  # populate order.id before trade
+
+    trade = DbTrade(
+        order_id=order.id,
+        firebase_uid=order_req.firebase_uid,
+        symbol=order_req.symbol,
+        side=side,
+        quantity=order_req.quantity,
+        price=current_price,
+    )
+    db.add(trade)
+
+    # Remove position row if fully sold (keeps the table clean)
+    if position.quantity == 0:
+        await db.delete(position)
+
+    await db.commit()
+
+    return {
+        "status": "success",
+        "message": f"Successfully {side} {order_req.quantity} shares of {order_req.symbol}",
+        "fill_price": current_price,
+        "total_value": total_value,
+        "new_balance": user.balance,
+    }

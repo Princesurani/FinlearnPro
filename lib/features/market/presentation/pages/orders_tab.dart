@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/domain/market_data.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -7,48 +8,20 @@ import '../../bloc/market_bloc.dart';
 import 'stock_detail_screen.dart';
 
 class OrdersTab extends StatelessWidget {
-  const OrdersTab({super.key, required this.onExplore, required this.state});
+  const OrdersTab({
+    super.key,
+    required this.onExplore,
+    required this.state,
+    required this.bloc,
+  });
 
   final VoidCallback onExplore;
   final MarketState state;
+  final MarketBloc bloc;
 
   @override
   Widget build(BuildContext context) {
-    // Mock Data
-    final orders = [
-      _Order(
-        symbol: 'RELIANCE',
-        type: _OrderType.buy,
-        qty: 10,
-        price: 2400,
-        status: _OrderStatus.executed,
-        time: DateTime.now().subtract(const Duration(hours: 2)),
-      ),
-      _Order(
-        symbol: 'TCS',
-        type: _OrderType.buy,
-        qty: 5,
-        price: 3450,
-        status: _OrderStatus.executed,
-        time: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      _Order(
-        symbol: 'INFY',
-        type: _OrderType.sell,
-        qty: 10,
-        price: 1550,
-        status: _OrderStatus.pending,
-        time: DateTime.now().subtract(const Duration(minutes: 30)),
-      ),
-      _Order(
-        symbol: 'HDFCBANK',
-        type: _OrderType.buy,
-        qty: 20,
-        price: 1580,
-        status: _OrderStatus.rejected,
-        time: DateTime.now().subtract(const Duration(days: 2)),
-      ),
-    ];
+    final orders = state.orders;
 
     if (orders.isEmpty) {
       return _buildEmptyState(context);
@@ -61,24 +34,20 @@ class OrdersTab extends StatelessWidget {
       ),
       itemCount: orders.length,
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
-      itemBuilder: (context, index) {
-        return _buildOrderItem(context, orders[index]);
-      },
+      itemBuilder: (context, index) => _buildOrderItem(context, orders[index]),
     );
   }
 
-  Widget _buildOrderItem(BuildContext context, _Order order) {
-    // Attempt to find real instrument
+  Widget _buildOrderItem(BuildContext context, Order order) {
+    final isBuy = order.isBuy;
     final instrument = state.tradableInstruments
-        .where((i) => i.symbol.contains(order.symbol))
+        .where((i) => i.symbol == order.symbol)
         .firstOrNull;
     final snapshot = instrument != null
         ? state.snapshots[instrument.symbol]
         : null;
 
-    final isBuy = order.type == _OrderType.buy;
-    final statusColor = _getStatusColor(order.status);
-    final statusLabel = order.status.name.toUpperCase();
+    final statusColor = _statusColor(order.status);
 
     Widget content = Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -132,7 +101,7 @@ class OrdersTab extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  statusLabel,
+                  order.status.toUpperCase(),
                   style: AppTypography.label.copyWith(
                     color: statusColor,
                     fontWeight: FontWeight.bold,
@@ -148,12 +117,23 @@ class OrdersTab extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildOrderStat('Qty', '${order.qty}'),
-              _buildOrderStat('Price', '₹${order.price.toStringAsFixed(2)}'),
-              _buildOrderStat(
+              _stat('Qty', '${order.quantity}'),
+              _stat(
+                'Price',
+                order.price != null
+                    ? '₹${order.price!.toStringAsFixed(2)}'
+                    : '—',
+              ),
+              _stat(
+                'Total',
+                order.price != null
+                    ? '₹${(order.price! * order.quantity).toStringAsFixed(2)}'
+                    : '—',
+              ),
+              _stat(
                 'Time',
-                _formatTime(order.time),
-                alignment: CrossAxisAlignment.end,
+                _formatDateTime(order.createdAt),
+                align: CrossAxisAlignment.end,
               ),
             ],
           ),
@@ -163,27 +143,28 @@ class OrdersTab extends StatelessWidget {
 
     if (instrument != null) {
       return GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) =>
-                  StockDetailScreen(instrument: instrument, snapshot: snapshot),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => StockDetailScreen(
+              instrument: instrument,
+              snapshot: snapshot,
+              bloc: bloc,
             ),
-          );
-        },
+          ),
+        ),
         child: content,
       );
     }
     return content;
   }
 
-  Widget _buildOrderStat(
+  Widget _stat(
     String label,
     String value, {
-    CrossAxisAlignment alignment = CrossAxisAlignment.start,
+    CrossAxisAlignment align = CrossAxisAlignment.start,
   }) {
     return Column(
-      crossAxisAlignment: alignment,
+      crossAxisAlignment: align,
       children: [
         Text(
           label,
@@ -213,7 +194,7 @@ class OrdersTab extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppSpacing.xl),
               decoration: BoxDecoration(
-                color: AppColors.surface, // Used surface as safer default
+                color: AppColors.backgroundSecondary,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -260,53 +241,39 @@ class OrdersTab extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(_OrderStatus status) {
-    switch (status) {
-      case _OrderStatus.executed:
+  Color _statusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'filled':
         return AppColors.profitGreen;
-      case _OrderStatus.pending:
+      case 'pending':
         return AppColors.primaryPurple;
-      case _OrderStatus.rejected:
+      case 'rejected':
         return AppColors.lossRed;
-      case _OrderStatus.cancelled:
+      default:
         return AppColors.textSecondary;
     }
   }
 
-  String _formatTime(DateTime time) {
-    final now = DateTime.now();
-    final diff = now.difference(time);
-
-    if (diff.inDays > 0) {
-      return '${diff.inDays}d ago';
-    } else if (diff.inHours > 0) {
-      return '${diff.inHours}h ago';
-    } else if (diff.inMinutes > 0) {
-      return '${diff.inMinutes}m ago';
-    } else {
-      return 'Just now';
-    }
+  String _formatDateTime(DateTime? time) {
+    if (time == null) return '—';
+    final local = time.toLocal();
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final hour = local.hour % 12 == 0 ? 12 : local.hour % 12;
+    final minute = local.minute.toString().padLeft(2, '0');
+    final period = local.hour >= 12 ? 'PM' : 'AM';
+    return '${local.day} ${months[local.month - 1]}, $hour:$minute $period';
   }
-}
-
-enum _OrderType { buy, sell }
-
-enum _OrderStatus { executed, pending, rejected, cancelled }
-
-class _Order {
-  _Order({
-    required this.symbol,
-    required this.type,
-    required this.qty,
-    required this.price,
-    required this.status,
-    required this.time,
-  });
-
-  final String symbol;
-  final _OrderType type;
-  final int qty;
-  final double price;
-  final _OrderStatus status;
-  final DateTime time;
 }

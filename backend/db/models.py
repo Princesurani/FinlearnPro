@@ -22,7 +22,7 @@ class DbPriceTick(Base):
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     symbol = Column(String(50), ForeignKey("instruments.symbol"), index=True, nullable=False)
-    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True, nullable=False)
+    timestamp = Column(DateTime(timezone=True), primary_key=True, default=lambda: datetime.now(timezone.utc), index=True, nullable=False)
     price = Column(Float, nullable=False)
     bid = Column(Float, nullable=False)
     ask = Column(Float, nullable=False)
@@ -39,8 +39,60 @@ class DbNewsEvent(Base):
     impact = Column(Float, nullable=False)
     duration_minutes = Column(Integer, nullable=False)
     affected_scope = Column(String(50), nullable=False)
-    # A JSON string for simplicity, or could use postgres JSONB.
     affected_symbols = Column(String, nullable=True) 
+
+class DbUser(Base):
+    __tablename__ = "users"
+    
+    # Using Firebase UID as primary key for Auth-as-a-Service architecture
+    firebase_uid = Column(String(128), primary_key=True, index=True)
+    email = Column(String(255), unique=True, index=True, nullable=True)
+    balance = Column(Float, nullable=False, default=10000.0) # ₹10,000 paper trading starting balance
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+class DbPortfolioPosition(Base):
+    __tablename__ = "portfolio_positions"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    firebase_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
+    symbol = Column(String(50), index=True, nullable=False)  # no FK — instruments live in Redis/mock
+    quantity = Column(Integer, nullable=False, default=0)
+    average_cost = Column(Float, nullable=False, default=0.0)
+    last_updated = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+class DbOrder(Base):
+    __tablename__ = "orders"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    firebase_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
+    symbol = Column(String(50), index=True, nullable=False)  # no FK — instruments live in Redis/mock
+    side = Column(String(10), nullable=False)
+    order_type = Column(String(20), nullable=False, default="market")
+    quantity = Column(Integer, nullable=False)
+    status = Column(String(20), nullable=False, default="pending")
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    filled_at = Column(DateTime(timezone=True), nullable=True)
+
+class DbTrade(Base):
+    __tablename__ = "trades"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    order_id = Column(Integer, ForeignKey("orders.id"), index=True, nullable=False)
+    firebase_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
+    symbol = Column(String(50), nullable=False)  # no FK — instruments live in Redis/mock
+    side = Column(String(10), nullable=False)
+    quantity = Column(Integer, nullable=False)
+    price = Column(Float, nullable=False)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+class DbWatchlist(Base):
+    __tablename__ = "watchlist"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    firebase_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
+    symbol = Column(String(50), index=True, nullable=False)
+    added_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
 
 # Note: Candles in TimescaleDB typically use Continuous Aggregates built precisely on top of the price_ticks table.
 # E.g. 

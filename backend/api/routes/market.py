@@ -122,7 +122,61 @@ async def get_history(
     Returns historical candlestick data for charting.
     """
     # In a full Timescale implementation, this would query the continuous aggregate view.
-    # For now, we mock some candles representing the past N periods so the UI has charts.
+    # Alternatively, you can just query price_ticks via time_bucket directly if the view isn't there:
+    
+    interval_str = "4 hours"
+    if timeframe == Timeframe.oneMinute:
+        interval_str = "1 minute"
+    elif timeframe == Timeframe.fiveMinute:
+        interval_str = "5 minutes"
+    elif timeframe == Timeframe.fifteenMinute:
+        interval_str = "15 minutes"
+    elif timeframe == Timeframe.oneHour:
+        interval_str = "1 hour"
+    elif timeframe == Timeframe.oneDay:
+        interval_str = "1 day"
+    elif timeframe == Timeframe.oneWeek:
+        interval_str = "1 week"
+    
+    import random
+    from sqlalchemy import text
+    try:
+        query = text(f"""
+            SELECT 
+                time_bucket('{interval_str}', timestamp) AS bucket,
+                first(price, timestamp) AS open, 
+                max(price) AS high, 
+                min(price) AS low, 
+                last(price, timestamp) AS close, 
+                sum(volume) AS volume
+            FROM price_ticks
+            WHERE symbol = :symbol
+            GROUP BY bucket
+            ORDER BY bucket DESC
+            LIMIT 100
+        """)
+        
+        result = await db.execute(query, {"symbol": symbol})
+        rows = result.fetchall()
+        
+        if rows:
+            candles = []
+            for row in rows:
+                if row.bucket is None:
+                    continue
+                candles.append({
+                    "timestamp": row.bucket.isoformat(),
+                    "open": row.open,
+                    "high": row.high,
+                    "low": row.low,
+                    "close": row.close,
+                    "volume": row.volume
+                })
+            return list(reversed(candles)) # Return chronological
+    except Exception as e:
+        print(f"Error reading from TimescaleDB: {e}")
+        pass
+
     # Quick mock instrument fetching to get the base price
     base_price = 100.0
     # Search the hardcoded list we made above
@@ -144,7 +198,6 @@ async def get_history(
     except Exception:
         pass
 
-    import random
     candles = []
     current_price = base_price
     now = datetime.now(timezone.utc)
@@ -154,11 +207,7 @@ async def get_history(
     for i in range(50):
         t = now - timedelta(hours=i*4 if timeframe == Timeframe.fourHour else i)
         
-        # We start with the known 'current_price' at this point backward, and work out what open/high/low would be
-        # Actually random walk backwards:
-        # P(t-1) = P(t) / (1 + random_return)
-        
-        variation = random.uniform(-0.015, 0.015)
+        variation = random.uniform(-0.002, 0.002)
         old_price = current_price / (1 + variation)
         
         high = max(old_price, current_price) * (1 + random.uniform(0, 0.01))

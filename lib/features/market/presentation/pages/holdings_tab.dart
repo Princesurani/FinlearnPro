@@ -3,75 +3,45 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/domain/market_data.dart';
 import '../../bloc/market_bloc.dart';
 import 'stock_detail_screen.dart';
 
 class HoldingsTab extends StatelessWidget {
-  const HoldingsTab({super.key, required this.onExplore, required this.state});
+  const HoldingsTab({
+    super.key,
+    required this.onExplore,
+    required this.state,
+    required this.bloc,
+  });
 
   final VoidCallback onExplore;
   final MarketState state;
+  final MarketBloc bloc;
 
   @override
   Widget build(BuildContext context) {
-    // Mock Data
-    final initialHoldings = [
-      _Holding(
-        symbol: 'RELIANCE',
-        name: 'Reliance Industries',
-        qty: 10,
-        avgPrice: 2100.0,
-        ltp: 2100.0,
-      ),
-      _Holding(
-        symbol: 'TCS',
-        name: 'Tata Consultancy Services',
-        qty: 5,
-        avgPrice: 3200.0,
-        ltp: 3200.0,
-      ),
-      _Holding(
-        symbol: 'HDFCBANK',
-        name: 'HDFC Bank',
-        qty: 20,
-        avgPrice: 1600.0,
-        ltp: 1600.0,
-      ),
-      _Holding(
-        symbol: 'INFY',
-        name: 'Infosys',
-        qty: 15,
-        avgPrice: 1400.0,
-        ltp: 1400.0,
-      ),
-    ];
+    // Real data from BLoC — populated by the backend portfolio API
+    final positions = state.portfolioPositions.values.toList();
 
-    final holdings = initialHoldings.map((h) {
-      final snap = state.snapshots[h.symbol];
-      if (snap != null) {
-        return h.copyWith(ltp: snap.price);
-      }
-      return h;
-    }).toList();
-
-    if (holdings.isEmpty) {
+    if (positions.isEmpty) {
       return _buildEmptyState(context);
     }
 
-    final totalCurrentValue = holdings.fold<double>(
-      0,
-      (sum, h) => sum + h.currentValue,
-    );
-    final totalInvested = holdings.fold<double>(
-      0,
-      (sum, h) => sum + h.investedValue,
-    );
-    final totalPnl = totalCurrentValue - totalInvested;
-    final totalPnlPercent = (totalPnl / totalInvested) * 100;
+    // Compute portfolio totals using live prices where available
+    double totalCurrentValue = 0;
+    double totalInvested = 0;
 
-    // Mock 1D Change (since we don't have prev close in holdings)
-    final totalOneDayChange = totalCurrentValue * 0.0123;
-    final totalOneDayChangePercent = 1.23;
+    for (final pos in positions) {
+      final livePrice = state.snapshots[pos.symbol]?.price ?? pos.averageCost;
+      totalCurrentValue += livePrice * pos.quantity;
+      totalInvested += pos.averageCost * pos.quantity;
+    }
+
+    final totalPnl = totalCurrentValue - totalInvested;
+    final totalPnlPercent = totalInvested == 0
+        ? 0.0
+        : (totalPnl / totalInvested) * 100;
 
     return Column(
       children: [
@@ -79,12 +49,10 @@ class HoldingsTab extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.md),
           child: _buildSummaryCard(
             totalCurrentValue,
-            totalOneDayChange,
-            totalOneDayChangePercent,
             totalInvested,
             totalPnl,
             totalPnlPercent,
-            holdings.length,
+            positions.length,
           ),
         ),
         Padding(
@@ -135,10 +103,10 @@ class HoldingsTab extends StatelessWidget {
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.screenPaddingHorizontal,
             ),
-            itemCount: holdings.length,
+            itemCount: positions.length,
             separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
             itemBuilder: (context, index) {
-              return _buildHoldingItem(context, holdings[index]);
+              return _buildHoldingItem(context, positions[index]);
             },
           ),
         ),
@@ -148,8 +116,6 @@ class HoldingsTab extends StatelessWidget {
 
   Widget _buildSummaryCard(
     double currentValue,
-    double oneDayChange,
-    double oneDayChangePercent,
     double invested,
     double pnl,
     double pnlPercent,
@@ -157,9 +123,6 @@ class HoldingsTab extends StatelessWidget {
   ) {
     final isProfit = pnl >= 0;
     final pnlColor = isProfit ? AppColors.profitGreen : AppColors.lossRed;
-
-    final isDayProfit = oneDayChange >= 0;
-    final dayColor = isDayProfit ? AppColors.profitGreen : AppColors.lossRed;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -228,13 +191,6 @@ class HoldingsTab extends StatelessWidget {
           const Divider(height: 1),
           const SizedBox(height: AppSpacing.md),
           _buildSummaryRow(
-            '1D returns',
-            '${isDayProfit ? '+' : ''}₹${oneDayChange.toStringAsFixed(2)}',
-            '(${oneDayChangePercent.toStringAsFixed(2)}%)',
-            dayColor,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          _buildSummaryRow(
             'Total returns',
             '${isProfit ? '+' : ''}₹${pnl.toStringAsFixed(2)}',
             '(${pnlPercent.toStringAsFixed(2)}%)',
@@ -246,6 +202,13 @@ class HoldingsTab extends StatelessWidget {
             '₹${invested.toStringAsFixed(2)}',
             '',
             AppColors.textPrimary,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _buildSummaryRow(
+            'Available Balance',
+            '₹${state.portfolioBalance.toStringAsFixed(2)}',
+            '',
+            AppColors.textSecondary,
           ),
         ],
       ),
@@ -289,17 +252,18 @@ class HoldingsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildHoldingItem(BuildContext context, _Holding h) {
-    // Attempt to find real instrument and snapshot
-    // Since mock data use symbols like 'RELIANCE', we need to match broadly or hope for exact match if real data exists.
-    // In a real app, mock data wouldn't be here.
-    // I'll try to find instrument.
+  Widget _buildHoldingItem(BuildContext context, PortfolioPosition pos) {
+    final liveSnap = state.snapshots[pos.symbol];
+    final livePrice = liveSnap?.price ?? pos.averageCost;
+    final currentValue = livePrice * pos.quantity;
+    final investedValue = pos.averageCost * pos.quantity;
+    final pnl = currentValue - investedValue;
+    final pnlPercent = investedValue == 0 ? 0.0 : (pnl / investedValue) * 100;
+    final isProfit = pnl >= 0;
+
     final instrument = state.tradableInstruments
-        .where((i) => i.symbol.contains(h.symbol))
+        .where((i) => i.symbol == pos.symbol)
         .firstOrNull;
-    final snapshot = instrument != null
-        ? state.snapshots[instrument.symbol]
-        : null;
 
     Widget content = Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -314,7 +278,7 @@ class HoldingsTab extends StatelessWidget {
           Row(
             children: [
               Hero(
-                tag: 'box_${h.symbol}',
+                tag: 'box_${pos.symbol}',
                 child: Container(
                   width: 40,
                   height: 40,
@@ -324,7 +288,7 @@ class HoldingsTab extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      h.symbol[0],
+                      pos.symbol[0],
                       style: const TextStyle(
                         color: AppColors.primaryPurple,
                         fontWeight: FontWeight.bold,
@@ -339,11 +303,11 @@ class HoldingsTab extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Hero(
-                    tag: 'symbol_${h.symbol}',
+                    tag: 'symbol_${pos.symbol}',
                     child: Material(
                       color: AppColors.transparent,
                       child: Text(
-                        h.symbol,
+                        pos.symbol,
                         style: AppTypography.body.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -351,7 +315,7 @@ class HoldingsTab extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    h.name,
+                    'Qty: ${pos.quantity} · Avg ₹${pos.averageCost.toStringAsFixed(2)}',
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -364,7 +328,7 @@ class HoldingsTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '₹${h.currentValue.toStringAsFixed(2)}',
+                '₹${currentValue.toStringAsFixed(2)}',
                 style: AppTypography.body.copyWith(fontWeight: FontWeight.bold),
               ),
               Row(
@@ -379,7 +343,7 @@ class HoldingsTab extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '₹${h.ltp.toStringAsFixed(2)}',
+                    '₹${livePrice.toStringAsFixed(2)}',
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -388,9 +352,9 @@ class HoldingsTab extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                '${h.pnl >= 0 ? '+' : ''}₹${h.pnl.toStringAsFixed(2)} (${h.pnlPercent.toStringAsFixed(2)}%)',
+                '${isProfit ? '+' : ''}₹${pnl.toStringAsFixed(2)} (${pnlPercent.toStringAsFixed(2)}%)',
                 style: AppTypography.labelSmall.copyWith(
-                  color: h.pnl >= 0 ? AppColors.profitGreen : AppColors.lossRed,
+                  color: isProfit ? AppColors.profitGreen : AppColors.lossRed,
                   fontWeight: AppTypography.semiBold,
                   fontSize: 10,
                 ),
@@ -406,8 +370,11 @@ class HoldingsTab extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) =>
-                  StockDetailScreen(instrument: instrument, snapshot: snapshot),
+              builder: (_) => StockDetailScreen(
+                instrument: instrument,
+                snapshot: liveSnap,
+                bloc: bloc,
+              ),
             ),
           );
         },
@@ -438,18 +405,26 @@ class HoldingsTab extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              'No holdings found',
+              'No holdings yet',
               style: AppTypography.h3.copyWith(color: AppColors.textPrimary),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'You can start building your portfolio by exploring stocks.',
+              'Buy your first stock to start building your portfolio.',
               style: AppTypography.labelSmall.copyWith(
                 color: AppColors.textTertiary,
                 fontSize: 11,
               ),
               textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'Wallet: ₹${state.portfolioBalance > 0 ? state.portfolioBalance.toStringAsFixed(2) : "Loading..."}',
+              style: AppTypography.body.copyWith(
+                color: AppColors.profitGreen,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: AppSpacing.xl),
             ElevatedButton(
@@ -472,37 +447,6 @@ class HoldingsTab extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _Holding {
-  _Holding({
-    required this.symbol,
-    required this.name,
-    required this.qty,
-    required this.avgPrice,
-    required this.ltp,
-  });
-
-  final String symbol;
-  final String name;
-  final int qty;
-  final double avgPrice;
-  final double ltp;
-
-  double get investedValue => qty * avgPrice;
-  double get currentValue => qty * ltp;
-  double get pnl => currentValue - investedValue;
-  double get pnlPercent => (pnl / investedValue) * 100;
-
-  _Holding copyWith({double? ltp}) {
-    return _Holding(
-      symbol: symbol,
-      name: name,
-      qty: qty,
-      avgPrice: avgPrice,
-      ltp: ltp ?? this.ltp,
     );
   }
 }

@@ -18,11 +18,13 @@ String _getHost() {
 }
 
 class ApiMarketService {
-  ApiMarketService({String? baseUrl, String? wsUrl})
+  ApiMarketService({String? baseUrl, String? wsUrl, String? baseApiUrl})
     : baseUrl = baseUrl ?? 'http://${_getHost()}:8000/api/v1/market',
+      baseApiUrl = baseApiUrl ?? 'http://${_getHost()}:8000/api/v1',
       wsUrl = wsUrl ?? 'ws://${_getHost()}:8000/ws/market/stream';
 
   final String baseUrl;
+  final String baseApiUrl;
   final String wsUrl;
 
   WebSocketChannel? _channel;
@@ -80,8 +82,9 @@ class ApiMarketService {
           .map((event) {
             try {
               final Map<String, dynamic> data = jsonDecode(event);
-              if (data.containsKey('type') && data['type'] == 'system')
+              if (data.containsKey('type') && data['type'] == 'system') {
                 return null;
+              }
               if (data.containsKey('headline')) return null;
               return PriceTick.fromJson(data);
             } catch (e) {
@@ -94,6 +97,96 @@ class ApiMarketService {
     }
 
     return _tickStream!;
+  }
+
+  // NEW: Orders and Portfolio API
+
+  Future<Map<String, dynamic>> placeOrder({
+    required String firebaseUid,
+    required String symbol,
+    required String side,
+    required int quantity,
+    String type = 'market',
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseApiUrl/orders/place'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'firebase_uid': firebaseUid,
+          'symbol': symbol,
+          'side': side,
+          'quantity': quantity,
+          'order_type': type,
+        }),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Failed to place order: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Network error during order placement: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getPortfolioPositions(String firebaseUid) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseApiUrl/portfolio/positions/$firebaseUid'),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Failed to load portfolio for $firebaseUid');
+      }
+    } catch (e) {
+      throw Exception('Network error loading portfolio: $e');
+    }
+  }
+
+  Future<List<dynamic>> getOrders(String firebaseUid) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseApiUrl/portfolio/orders/$firebaseUid'),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as List<dynamic>;
+      } else {
+        throw Exception('Failed to load orders for $firebaseUid');
+      }
+    } catch (e) {
+      throw Exception('Network error loading orders: $e');
+    }
+  }
+
+  Future<Set<String>> getWatchlist(String firebaseUid) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseApiUrl/portfolio/watchlist/$firebaseUid'),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        return Set<String>.from(data['symbols'] as List);
+      }
+    } catch (_) {}
+    return {};
+  }
+
+  Future<void> watchlistAdd(String firebaseUid, String symbol) async {
+    try {
+      await http.post(
+        Uri.parse('$baseApiUrl/portfolio/watchlist/$firebaseUid/$symbol'),
+      );
+    } catch (_) {}
+  }
+
+  Future<void> watchlistRemove(String firebaseUid, String symbol) async {
+    try {
+      await http.delete(
+        Uri.parse('$baseApiUrl/portfolio/watchlist/$firebaseUid/$symbol'),
+      );
+    } catch (_) {}
   }
 
   void dispose() {
