@@ -2,6 +2,7 @@ import os
 from celery import Celery
 import asyncio
 import json
+import time
 import random
 from datetime import datetime, timezone
 import redis
@@ -27,11 +28,11 @@ celery_app.conf.update(
 
 # Mock set of instruments to simulate initially
 MOCK_INSTRUMENTS = [
-    # Indices
-    {"symbol": "NIFTY 50", "price": 21495.70, "volatility": 0.15, "drift": 0.08},
-    {"symbol": "BANKNIFTY", "price": 47854.20, "volatility": 0.22, "drift": 0.10},
-    {"symbol": "SENSEX", "price": 71350.50, "volatility": 0.14, "drift": 0.08},
-    {"symbol": "NIFTY IT", "price": 35240.10, "volatility": 0.20, "drift": 0.12},
+    # Indices (low volatility, realistic bundled index drift)
+    {"symbol": "NIFTY 50", "price": 21495.70, "volatility": 0.08, "drift": 0.08},
+    {"symbol": "BANKNIFTY", "price": 47854.20, "volatility": 0.12, "drift": 0.10},
+    {"symbol": "SENSEX", "price": 71350.50, "volatility": 0.07, "drift": 0.08},
+    {"symbol": "NIFTY IT", "price": 35240.10, "volatility": 0.10, "drift": 0.12},
     
     # Stocks
     {"symbol": "RELIANCE", "price": 2580.40, "volatility": 0.18, "drift": 0.10},
@@ -46,10 +47,10 @@ MOCK_INSTRUMENTS = [
     {"symbol": "TATASTEEL", "price": 132.40, "volatility": 0.28, "drift": 0.04},
 
     # USA 
-    {"symbol": "S&P 500", "price": 4780.20, "volatility": 0.12, "drift": 0.08},
-    {"symbol": "NASDAQ", "price": 15200.50, "volatility": 0.18, "drift": 0.10},
-    {"symbol": "DOW JONES", "price": 37600.40, "volatility": 0.10, "drift": 0.06},
-    {"symbol": "RUSSELL 2000", "price": 1980.20, "volatility": 0.16, "drift": 0.08},
+    {"symbol": "S&P 500", "price": 4780.20, "volatility": 0.08, "drift": 0.08},
+    {"symbol": "NASDAQ", "price": 15200.50, "volatility": 0.12, "drift": 0.10},
+    {"symbol": "DOW JONES", "price": 37600.40, "volatility": 0.06, "drift": 0.06},
+    {"symbol": "RUSSELL 2000", "price": 1980.20, "volatility": 0.10, "drift": 0.08},
     {"symbol": "AAPL", "price": 192.50, "volatility": 0.15, "drift": 0.08},
     {"symbol": "MSFT", "price": 390.20, "volatility": 0.14, "drift": 0.10},
     {"symbol": "NVDA", "price": 540.80, "volatility": 0.30, "drift": 0.20},
@@ -62,10 +63,10 @@ MOCK_INSTRUMENTS = [
     {"symbol": "JNJ", "price": 158.40, "volatility": 0.10, "drift": 0.05},
 
     # UK
-    {"symbol": "FTSE 100", "price": 7680.50, "volatility": 0.12, "drift": 0.05},
-    {"symbol": "FTSE 250", "price": 19200.40, "volatility": 0.15, "drift": 0.06},
-    {"symbol": "FTSE AIM 100", "price": 3800.20, "volatility": 0.20, "drift": 0.08},
-    {"symbol": "FTSE techMARK", "price": 4500.80, "volatility": 0.18, "drift": 0.10},
+    {"symbol": "FTSE 100", "price": 7680.50, "volatility": 0.06, "drift": 0.05},
+    {"symbol": "FTSE 250", "price": 19200.40, "volatility": 0.08, "drift": 0.06},
+    {"symbol": "FTSE AIM 100", "price": 3800.20, "volatility": 0.10, "drift": 0.08},
+    {"symbol": "FTSE techMARK", "price": 4500.80, "volatility": 0.10, "drift": 0.10},
     {"symbol": "SHEL", "price": 2500.40, "volatility": 0.14, "drift": 0.06},
     {"symbol": "AZN", "price": 10800.50, "volatility": 0.16, "drift": 0.08},
     {"symbol": "HSBA", "price": 630.20, "volatility": 0.12, "drift": 0.05},
@@ -182,6 +183,5 @@ def simulate_tick_loop():
                 engine.volatility *= 0.98  # Slowly decay spiked volatility back to normal
                 
         # sleep slightly to mock real time
-        import time
-        time.sleep(random.uniform(0.5, 2.0))
+        time.sleep(random.uniform(2.0, 3.0))
 

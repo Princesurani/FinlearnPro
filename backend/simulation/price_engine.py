@@ -5,11 +5,11 @@ from typing import Tuple, List
 
 class GBMPriceModel:
     """Base price model using Geometric Brownian Motion (GBM)"""
-    def __init__(self, initial_price: float, drift: float, volatility: float, dt: float = 1 / 252 / 390):
+    def __init__(self, initial_price: float, drift: float, volatility: float, dt: float = 15 / (252 * 390 * 60)):
         self.price = initial_price
         self.drift = drift
         self.volatility = volatility
-        self.dt = dt  # Default to 1 simulated minute per tick
+        self.dt = dt  # Realistic 15 simulated seconds per tick
 
     def generate_next_price(self) -> float:
         dW = np.random.normal(0, np.sqrt(self.dt))
@@ -34,7 +34,7 @@ class JumpDiffusionModel:
         self.jump_intensity = jump_intensity
         self.jump_mean = jump_mean
         self.jump_std = jump_std
-        self.dt = 1 / 252 / 390
+        self.dt = 15 / (252 * 390 * 60)
 
     def generate_next_price(self) -> float:
         k = np.exp(self.jump_mean + 0.5 * self.jump_std**2) - 1
@@ -81,7 +81,7 @@ class GBMWithGARCH:
         self.drift = drift
         self.garch = GARCHVolatilityModel()
         self.garch.variance = base_volatility**2
-        self.dt = 1 / 252 / 390
+        self.dt = 15 / (252 * 390 * 60)
 
     def generate_next_price(self) -> Tuple[float, float]:
         volatility = np.sqrt(self.garch.variance)

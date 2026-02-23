@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/domain/market_regime.dart';
 import '../../bloc/market_bloc.dart';
 import '../widgets/market_selector.dart';
 import '../widgets/index_ticker.dart';
@@ -216,23 +217,72 @@ class _MarketScreenState extends State<MarketScreen>
   }
 
   Widget _buildContent() {
-    return TabBarView(
-      controller: _tabController,
-      children: [
-        _ExploreStreamWrapper(bloc: _bloc),
-        _HoldingsStreamWrapper(
-          bloc: _bloc,
-          onExplore: () => _tabController.animateTo(0),
-        ),
-        _OrdersStreamWrapper(
-          bloc: _bloc,
-          onExplore: () => _tabController.animateTo(0),
-        ),
-        _WatchlistStreamWrapper(
-          bloc: _bloc,
-          onExplore: () => _tabController.animateTo(0),
-        ),
-      ],
+    return StreamBuilder<MarketState>(
+      stream: _bloc.stream,
+      initialData: _bloc.state,
+      builder: (_, snap) {
+        final state = snap.data!;
+
+        if (state.activeMarket == MarketRegime.crypto) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(AppSpacing.xl),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundSecondary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.currency_bitcoin_rounded,
+                      size: 64,
+                      color: AppColors.primaryPurple,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    'Crypto Trading',
+                    style: AppTypography.h3.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    'Crypto capabilities are currently in development. You will soon be able to track and trade your favorite coins here!',
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return TabBarView(
+          controller: _tabController,
+          children: [
+            _ExploreStreamWrapper(bloc: _bloc),
+            _HoldingsStreamWrapper(
+              bloc: _bloc,
+              onExplore: () => _tabController.animateTo(0),
+            ),
+            _OrdersStreamWrapper(
+              bloc: _bloc,
+              onExplore: () => _tabController.animateTo(0),
+            ),
+            _WatchlistStreamWrapper(
+              bloc: _bloc,
+              onExplore: () => _tabController.animateTo(0),
+            ),
+          ],
+        );
+      },
     );
   }
 }

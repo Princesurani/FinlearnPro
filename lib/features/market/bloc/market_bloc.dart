@@ -56,7 +56,7 @@ class MarketState {
     required this.snapshots,
     required this.watchlist,
     required this.portfolioPositions,
-    required this.portfolioBalance,
+    required this.portfolioBalances,
     required this.orders,
     this.errorMessage,
   }) : indices = instruments
@@ -73,7 +73,7 @@ class MarketState {
     required this.snapshots,
     required this.watchlist,
     required this.portfolioPositions,
-    required this.portfolioBalance,
+    required this.portfolioBalances,
     required this.orders,
     required this.indices,
     required this.tradableInstruments,
@@ -86,9 +86,12 @@ class MarketState {
   final Map<String, MarketSnapshot> snapshots; // symbol → snapshot
   final Set<String> watchlist; // symbol set
   final Map<String, PortfolioPosition> portfolioPositions; // symbol → position
-  final double portfolioBalance;
+  final Map<String, double> portfolioBalances;
   final List<Order> orders; // order history, newest first
   final String? errorMessage;
+
+  double get portfolioBalance =>
+      portfolioBalances[activeMarket.name] ?? 10000.0;
 
   final List<Instrument> indices;
   final List<Instrument> tradableInstruments;
@@ -101,7 +104,7 @@ class MarketState {
       snapshots: const {},
       watchlist: const {},
       portfolioPositions: const <String, PortfolioPosition>{},
-      portfolioBalance: 0.0,
+      portfolioBalances: const <String, double>{},
       orders: const [],
     );
   }
@@ -113,7 +116,7 @@ class MarketState {
     Map<String, MarketSnapshot>? snapshots,
     Set<String>? watchlist,
     Map<String, PortfolioPosition>? portfolioPositions,
-    double? portfolioBalance,
+    Map<String, double>? portfolioBalances,
     List<Order>? orders,
     String? errorMessage,
   }) {
@@ -127,7 +130,7 @@ class MarketState {
       snapshots: snapshots ?? this.snapshots,
       watchlist: watchlist ?? this.watchlist,
       portfolioPositions: portfolioPositions ?? this.portfolioPositions,
-      portfolioBalance: portfolioBalance ?? this.portfolioBalance,
+      portfolioBalances: portfolioBalances ?? this.portfolioBalances,
       orders: orders ?? this.orders,
       errorMessage: errorMessage,
       indices: instrumentsChanged
@@ -241,17 +244,23 @@ class MarketBloc {
         instruments = [...indices, ...stocks];
       }
 
-      // 2. Fetch initial quotes for all
+      // 2. Fetch initial quotes for all in bulk
       final snapshots = <String, MarketSnapshot>{};
-      await Future.wait(
-        instruments.map((i) async {
-          try {
-            snapshots[i.symbol] = await _marketService.getQuote(i.symbol);
-          } catch (e) {
-            // Skip if backend fails for a single quote
+      try {
+        final symbols = instruments.map((i) => i.symbol).toList();
+        for (var i = 0; i < symbols.length; i += 50) {
+          final batch = symbols.sublist(
+            i,
+            i + 50 > symbols.length ? symbols.length : i + 50,
+          );
+          final bulkQuotes = await _marketService.getQuotes(batch);
+          for (final q in bulkQuotes) {
+            snapshots[q.symbol] = q;
           }
-        }),
-      );
+        }
+      } catch (e) {
+        debugPrint('Failed to load bulk quotes: $e');
+      }
 
       _emit(
         _state.copyWith(
@@ -283,8 +292,9 @@ class MarketBloc {
     _tickSubscription = _marketService.streamTicks().listen((tick) {
       if (_state.status != MarketStatus.ready) return;
 
-      _pendingUpdates ??= Map<String, MarketSnapshot>.from(_state.snapshots);
-      final old = _pendingUpdates![tick.symbol];
+      _pendingUpdates ??= {};
+      final old =
+          _pendingUpdates![tick.symbol] ?? _state.snapshots[tick.symbol];
 
       if (old != null) {
         _pendingUpdates![tick.symbol] = old.copyWithPrice(
@@ -296,9 +306,11 @@ class MarketBloc {
         );
 
         if (_emitTimer == null || !_emitTimer!.isActive) {
-          _emitTimer = Timer(const Duration(milliseconds: 1000), () {
-            if (_pendingUpdates != null) {
-              _emit(_state.copyWith(snapshots: _pendingUpdates));
+          _emitTimer = Timer(const Duration(milliseconds: 500), () {
+            if (_pendingUpdates != null && _pendingUpdates!.isNotEmpty) {
+              final newMap = Map<String, MarketSnapshot>.of(_state.snapshots);
+              newMap.addAll(_pendingUpdates!);
+              _emit(_state.copyWith(snapshots: newMap));
               _pendingUpdates = null;
             }
           });
@@ -355,9 +367,14 @@ class MarketBloc {
         positionsMap[pos.symbol] = pos;
       }
 
+      final balancesData = data['balances'] as Map<String, dynamic>;
+      final Map<String, double> balancesMap = balancesData.map(
+        (k, v) => MapEntry(k, (v as num).toDouble()),
+      );
+
       _emit(
         _state.copyWith(
-          portfolioBalance: (data['balance'] as num).toDouble(),
+          portfolioBalances: balancesMap,
           portfolioPositions: positionsMap,
         ),
       );
@@ -374,6 +391,7 @@ class MarketBloc {
         symbol: event.symbol,
         side: event.side,
         quantity: event.quantity,
+        market: _state.activeMarket.name,
       );
 
       if (result['status'] == 'success') {

@@ -24,7 +24,10 @@ async def get_portfolio_positions(firebase_uid: str, db: AsyncSession = Depends(
         user = DbUser(
             firebase_uid=firebase_uid,
             email=None,  # Email is optional — set by Firebase later
-            balance=STARTING_BALANCE
+            balance_india=STARTING_BALANCE,
+            balance_usa=STARTING_BALANCE,
+            balance_uk=STARTING_BALANCE,
+            balance_crypto=STARTING_BALANCE,
         )
         db.add(user)
         await db.commit()
@@ -37,7 +40,12 @@ async def get_portfolio_positions(firebase_uid: str, db: AsyncSession = Depends(
     positions = pos_result.scalars().all()
 
     return {
-        "balance": user.balance,
+        "balances": {
+            "india": user.balance_india,
+            "usa": user.balance_usa,
+            "uk": user.balance_uk,
+            "crypto": user.balance_crypto,
+        },
         "positions": [
             {
                 "symbol": p.symbol,

@@ -22,18 +22,20 @@ class WatchlistTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (state.watchlist.isEmpty) {
-      return _buildEmptyState(context);
-    }
-
     final watchlistInstruments = state.tradableInstruments
         .where((i) => state.watchlist.contains(i.symbol))
         .toList();
 
+    if (watchlistInstruments.isEmpty) {
+      return _buildEmptyState(context);
+    }
+
     return ListView.separated(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.screenPaddingHorizontal,
-        vertical: AppSpacing.lg,
+      padding: const EdgeInsets.only(
+        left: AppSpacing.screenPaddingHorizontal,
+        right: AppSpacing.screenPaddingHorizontal,
+        top: AppSpacing.lg,
+        bottom: 120, // Padding for floating navbar
       ),
       itemCount: watchlistInstruments.length,
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),

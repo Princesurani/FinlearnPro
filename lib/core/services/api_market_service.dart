@@ -26,13 +26,14 @@ class ApiMarketService {
   final String baseUrl;
   final String baseApiUrl;
   final String wsUrl;
+  final http.Client _client = http.Client();
 
   WebSocketChannel? _channel;
   Stream<PriceTick>? _tickStream;
 
   Future<List<Instrument>> getInstruments() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/instruments'));
+      final response = await _client.get(Uri.parse('$baseUrl/instruments'));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         return data.map((json) => Instrument.fromJson(json)).toList();
@@ -46,7 +47,7 @@ class ApiMarketService {
 
   Future<MarketSnapshot> getQuote(String symbol) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/quote/$symbol'));
+      final response = await _client.get(Uri.parse('$baseUrl/quote/$symbol'));
       if (response.statusCode == 200) {
         return MarketSnapshot.fromJson(jsonDecode(response.body));
       } else {
@@ -57,10 +58,28 @@ class ApiMarketService {
     }
   }
 
+  Future<List<MarketSnapshot>> getQuotes(List<String> symbols) async {
+    try {
+      final query = symbols.join(",");
+      final uri = Uri.parse(
+        '$baseUrl/quotes',
+      ).replace(queryParameters: {'symbols': query});
+      final response = await _client.get(uri);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => MarketSnapshot.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load bulk quotes');
+      }
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
+
   Future<List<Candle>> getHistory(String symbol, Timeframe timeframe) async {
     try {
       // Send timeframe label, although Python enum uses standard strings (1m, 1h, 1D). Dart enum label happens to match if we use Timeframe.label.
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$baseUrl/history/$symbol?timeframe=${timeframe.label}'),
       );
       if (response.statusCode == 200) {
@@ -106,10 +125,11 @@ class ApiMarketService {
     required String symbol,
     required String side,
     required int quantity,
+    required String market,
     String type = 'market',
   }) async {
     try {
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('$baseApiUrl/orders/place'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
@@ -117,6 +137,7 @@ class ApiMarketService {
           'symbol': symbol,
           'side': side,
           'quantity': quantity,
+          'market': market,
           'order_type': type,
         }),
       );
@@ -132,7 +153,7 @@ class ApiMarketService {
 
   Future<Map<String, dynamic>> getPortfolioPositions(String firebaseUid) async {
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$baseApiUrl/portfolio/positions/$firebaseUid'),
       );
       if (response.statusCode == 200) {
@@ -147,7 +168,7 @@ class ApiMarketService {
 
   Future<List<dynamic>> getOrders(String firebaseUid) async {
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$baseApiUrl/portfolio/orders/$firebaseUid'),
       );
       if (response.statusCode == 200) {
@@ -162,7 +183,7 @@ class ApiMarketService {
 
   Future<Set<String>> getWatchlist(String firebaseUid) async {
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$baseApiUrl/portfolio/watchlist/$firebaseUid'),
       );
       if (response.statusCode == 200) {
@@ -175,7 +196,7 @@ class ApiMarketService {
 
   Future<void> watchlistAdd(String firebaseUid, String symbol) async {
     try {
-      await http.post(
+      await _client.post(
         Uri.parse('$baseApiUrl/portfolio/watchlist/$firebaseUid/$symbol'),
       );
     } catch (_) {}
@@ -183,7 +204,7 @@ class ApiMarketService {
 
   Future<void> watchlistRemove(String firebaseUid, String symbol) async {
     try {
-      await http.delete(
+      await _client.delete(
         Uri.parse('$baseApiUrl/portfolio/watchlist/$firebaseUid/$symbol'),
       );
     } catch (_) {}
@@ -193,5 +214,6 @@ class ApiMarketService {
     _channel?.sink.close();
     _channel = null;
     _tickStream = null;
+    _client.close();
   }
 }

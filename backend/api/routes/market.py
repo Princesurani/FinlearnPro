@@ -83,17 +83,17 @@ async def get_all_instruments(db: AsyncSession = Depends(get_db)):
         Instrument(symbol="DGE", name="Diageo", type="stock", sector="consumerDefensive", market="uk", basePrice=2800.50, volatility=0.12, description="Diageo PLC"),
         Instrument(symbol="GLEN", name="Glencore", type="stock", sector="basicMaterials", market="uk", basePrice=460.20, volatility=0.22, description="Glencore"),
 
-        # Crypto Top 10
-        Instrument(symbol="BTC", name="Bitcoin", type="crypto", sector="unknown", market="crypto", basePrice=43000.50, volatility=0.45, description="Bitcoin"),
-        Instrument(symbol="ETH", name="Ethereum", type="crypto", sector="unknown", market="crypto", basePrice=2300.20, volatility=0.55, description="Ethereum"),
-        Instrument(symbol="USDT", name="Tether", type="crypto", sector="unknown", market="crypto", basePrice=1.00, volatility=0.01, description="Tether"),
-        Instrument(symbol="BNB", name="BNB", type="crypto", sector="unknown", market="crypto", basePrice=310.40, volatility=0.50, description="Binance Coin"),
-        Instrument(symbol="SOL", name="Solana", type="crypto", sector="unknown", market="crypto", basePrice=105.80, volatility=0.70, description="Solana"),
-        Instrument(symbol="XRP", name="XRP", type="crypto", sector="unknown", market="crypto", basePrice=0.55, volatility=0.60, description="Ripple"),
-        Instrument(symbol="USDC", name="USDC", type="crypto", sector="unknown", market="crypto", basePrice=1.00, volatility=0.01, description="USDC Coin"),
-        Instrument(symbol="ADA", name="Cardano", type="crypto", sector="unknown", market="crypto", basePrice=0.52, volatility=0.65, description="Cardano"),
-        Instrument(symbol="AVAX", name="Avalanche", type="crypto", sector="unknown", market="crypto", basePrice=35.40, volatility=0.75, description="Avalanche"),
-        Instrument(symbol="DOGE", name="Dogecoin", type="crypto", sector="unknown", market="crypto", basePrice=0.08, volatility=0.80, description="Dogecoin"),
+        # # Crypto Top 10
+        # Instrument(symbol="BTC", name="Bitcoin", type="crypto", sector="unknown", market="crypto", basePrice=43000.50, volatility=0.45, description="Bitcoin"),
+        # Instrument(symbol="ETH", name="Ethereum", type="crypto", sector="unknown", market="crypto", basePrice=2300.20, volatility=0.55, description="Ethereum"),
+        # Instrument(symbol="USDT", name="Tether", type="crypto", sector="unknown", market="crypto", basePrice=1.00, volatility=0.01, description="Tether"),
+        # Instrument(symbol="BNB", name="BNB", type="crypto", sector="unknown", market="crypto", basePrice=310.40, volatility=0.50, description="Binance Coin"),
+        # Instrument(symbol="SOL", name="Solana", type="crypto", sector="unknown", market="crypto", basePrice=105.80, volatility=0.70, description="Solana"),
+        # Instrument(symbol="XRP", name="XRP", type="crypto", sector="unknown", market="crypto", basePrice=0.55, volatility=0.60, description="Ripple"),
+        # Instrument(symbol="USDC", name="USDC", type="crypto", sector="unknown", market="crypto", basePrice=1.00, volatility=0.01, description="USDC Coin"),
+        # Instrument(symbol="ADA", name="Cardano", type="crypto", sector="unknown", market="crypto", basePrice=0.52, volatility=0.65, description="Cardano"),
+        # Instrument(symbol="AVAX", name="Avalanche", type="crypto", sector="unknown", market="crypto", basePrice=35.40, volatility=0.75, description="Avalanche"),
+        # Instrument(symbol="DOGE", name="Dogecoin", type="crypto", sector="unknown", market="crypto", basePrice=0.08, volatility=0.80, description="Dogecoin"),
     ]
 
 @router.get("/quote/{symbol}", response_model=MarketSnapshot)
@@ -109,6 +109,33 @@ async def get_quote(symbol: str):
         
         # Fallback if not populated by celery worker yet
         raise HTTPException(status_code=404, detail=f"Quote for {symbol} not found")
+    finally:
+        await redis_client.close()
+
+@router.get("/quotes", response_model=List[MarketSnapshot])
+async def get_all_quotes(symbols: str = Query(None)):
+    """
+    Returns bulk quotes. If symbols is provided (comma-separated), returns only those.
+    Otherwise returns all available quotes.
+    """
+    redis_client = await redis.from_url(REDIS_URL)
+    try:
+        keys = []
+        if symbols:
+            keys = [f"market:quote:{sym}" for sym in symbols.split(",")]
+        else:
+            keys_bytes = await redis_client.keys("market:quote:*")
+            keys = [k.decode('utf-8') if isinstance(k, bytes) else k for k in keys_bytes]
+            
+        if not keys:
+            return []
+            
+        raw_values = await redis_client.mget(keys)
+        quotes = []
+        for raw in raw_values:
+            if raw:
+                quotes.append(json.loads(raw))
+        return quotes
     finally:
         await redis_client.close()
 

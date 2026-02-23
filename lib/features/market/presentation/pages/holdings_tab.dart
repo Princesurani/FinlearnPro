@@ -21,8 +21,10 @@ class HoldingsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Real data from BLoC — populated by the backend portfolio API
-    final positions = state.portfolioPositions.values.toList();
+    // Filter positions to only those in the currently active market
+    final positions = state.portfolioPositions.values.where((pos) {
+      return state.instruments.any((i) => i.symbol == pos.symbol);
+    }).toList();
 
     if (positions.isEmpty) {
       return _buildEmptyState(context);
@@ -100,8 +102,10 @@ class HoldingsTab extends StatelessWidget {
         ),
         Expanded(
           child: ListView.separated(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.screenPaddingHorizontal,
+            padding: const EdgeInsets.only(
+              left: AppSpacing.screenPaddingHorizontal,
+              right: AppSpacing.screenPaddingHorizontal,
+              bottom: 120, // Padding for floating navbar
             ),
             itemCount: positions.length,
             separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
@@ -178,7 +182,7 @@ class HoldingsTab extends StatelessWidget {
           Row(
             children: [
               Text(
-                '₹${currentValue.toStringAsFixed(2)}',
+                '${state.activeMarket.currencySymbol}${currentValue.toStringAsFixed(2)}',
                 style: AppTypography.h3.copyWith(
                   fontWeight: FontWeight.bold,
                   letterSpacing: -0.5,
@@ -192,21 +196,21 @@ class HoldingsTab extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           _buildSummaryRow(
             'Total returns',
-            '${isProfit ? '+' : ''}₹${pnl.toStringAsFixed(2)}',
+            '${isProfit ? '+' : ''}${state.activeMarket.currencySymbol}${pnl.toStringAsFixed(2)}',
             '(${pnlPercent.toStringAsFixed(2)}%)',
             pnlColor,
           ),
           const SizedBox(height: AppSpacing.sm),
           _buildSummaryRow(
             'Invested',
-            '₹${invested.toStringAsFixed(2)}',
+            '${state.activeMarket.currencySymbol}${invested.toStringAsFixed(2)}',
             '',
             AppColors.textPrimary,
           ),
           const SizedBox(height: AppSpacing.sm),
           _buildSummaryRow(
             'Available Balance',
-            '₹${state.portfolioBalance.toStringAsFixed(2)}',
+            '${state.activeMarket.currencySymbol}${state.portfolioBalance.toStringAsFixed(2)}',
             '',
             AppColors.textSecondary,
           ),
@@ -315,7 +319,7 @@ class HoldingsTab extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Qty: ${pos.quantity} · Avg ₹${pos.averageCost.toStringAsFixed(2)}',
+                    'Qty: ${pos.quantity} · Avg ${state.activeMarket.currencySymbol}${pos.averageCost.toStringAsFixed(2)}',
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -328,7 +332,7 @@ class HoldingsTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '₹${currentValue.toStringAsFixed(2)}',
+                '${state.activeMarket.currencySymbol}${currentValue.toStringAsFixed(2)}',
                 style: AppTypography.body.copyWith(fontWeight: FontWeight.bold),
               ),
               Row(
@@ -343,7 +347,7 @@ class HoldingsTab extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '₹${livePrice.toStringAsFixed(2)}',
+                    '${state.activeMarket.currencySymbol}${livePrice.toStringAsFixed(2)}',
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -352,7 +356,7 @@ class HoldingsTab extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                '${isProfit ? '+' : ''}₹${pnl.toStringAsFixed(2)} (${pnlPercent.toStringAsFixed(2)}%)',
+                '${isProfit ? '+' : ''}${state.activeMarket.currencySymbol}${pnl.toStringAsFixed(2)} (${pnlPercent.toStringAsFixed(2)}%)',
                 style: AppTypography.labelSmall.copyWith(
                   color: isProfit ? AppColors.profitGreen : AppColors.lossRed,
                   fontWeight: AppTypography.semiBold,
@@ -420,7 +424,7 @@ class HoldingsTab extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Wallet: ₹${state.portfolioBalance > 0 ? state.portfolioBalance.toStringAsFixed(2) : "Loading..."}',
+              'Wallet: ${state.activeMarket.currencySymbol}${state.portfolioBalance > 0 ? state.portfolioBalance.toStringAsFixed(2) : "Loading..."}',
               style: AppTypography.body.copyWith(
                 color: AppColors.profitGreen,
                 fontWeight: FontWeight.bold,

@@ -47,7 +47,10 @@ class DbUser(Base):
     # Using Firebase UID as primary key for Auth-as-a-Service architecture
     firebase_uid = Column(String(128), primary_key=True, index=True)
     email = Column(String(255), unique=True, index=True, nullable=True)
-    balance = Column(Float, nullable=False, default=10000.0) # ₹10,000 paper trading starting balance
+    balance_india = Column(Float, nullable=False, default=10000.0)
+    balance_usa = Column(Float, nullable=False, default=10000.0)
+    balance_uk = Column(Float, nullable=False, default=10000.0)
+    balance_crypto = Column(Float, nullable=False, default=10000.0)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 class DbPortfolioPosition(Base):

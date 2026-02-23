@@ -9,8 +9,10 @@ services:
       - REDIS_URL=redis://redis:6379
       - DATABASE_URL=postgresql://market_user:market_pass@timescaledb:5432/market_sim
     depends_on:
-      - redis
-      - timescaledb
+      redis:
+        condition: service_started
+      timescaledb:
+        condition: service_healthy
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
   redis:
@@ -28,6 +30,11 @@ services:
       - POSTGRES_USER=market_user
       - POSTGRES_PASSWORD=market_pass
       - POSTGRES_DB=market_sim
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U market_user -d market_sim" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - timescale_data:/var/lib/postgresql/data
 
@@ -39,8 +46,10 @@ services:
       - REDIS_URL=redis://redis:6379
       - DATABASE_URL=postgresql://market_user:market_pass@timescaledb:5432/market_sim
     depends_on:
-      - redis
-      - timescaledb
+      redis:
+        condition: service_started
+      timescaledb:
+        condition: service_healthy
     command: celery -A simulation.tasks worker -l info
 
 volumes:

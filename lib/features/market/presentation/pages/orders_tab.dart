@@ -21,16 +21,21 @@ class OrdersTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orders = state.orders;
+    // Filter to only orders for the active market
+    final orders = state.orders.where((order) {
+      return state.tradableInstruments.any((i) => i.symbol == order.symbol);
+    }).toList();
 
     if (orders.isEmpty) {
       return _buildEmptyState(context);
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.screenPaddingHorizontal,
-        vertical: AppSpacing.lg,
+      padding: const EdgeInsets.only(
+        left: AppSpacing.screenPaddingHorizontal,
+        right: AppSpacing.screenPaddingHorizontal,
+        top: AppSpacing.lg,
+        bottom: 120,
       ),
       itemCount: orders.length,
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
@@ -121,13 +126,13 @@ class OrdersTab extends StatelessWidget {
               _stat(
                 'Price',
                 order.price != null
-                    ? '₹${order.price!.toStringAsFixed(2)}'
+                    ? '${state.activeMarket.currencySymbol}${order.price!.toStringAsFixed(2)}'
                     : '—',
               ),
               _stat(
                 'Total',
                 order.price != null
-                    ? '₹${(order.price! * order.quantity).toStringAsFixed(2)}'
+                    ? '${state.activeMarket.currencySymbol}${(order.price! * order.quantity).toStringAsFixed(2)}'
                     : '—',
               ),
               _stat(

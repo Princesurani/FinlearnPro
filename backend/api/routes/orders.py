@@ -21,6 +21,7 @@ class OrderRequest(BaseModel):
     symbol: str
     side: str           # "buy" or "sell"
     quantity: int
+    market: str
     order_type: str = "market"
 
 
@@ -53,11 +54,18 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
 
     total_value = current_price * order_req.quantity
 
-    # 2. Get or auto-create user with ₹10,000 starting balance
+    # 2. Get or auto-create user with 10k paper trading starting balance across markets
     result = await db.execute(select(DbUser).where(DbUser.firebase_uid == order_req.firebase_uid))
     user = result.scalar_one_or_none()
     if not user:
-        user = DbUser(firebase_uid=order_req.firebase_uid, email=None, balance=STARTING_BALANCE)
+        user = DbUser(
+            firebase_uid=order_req.firebase_uid, 
+            email=None, 
+            balance_india=STARTING_BALANCE,
+            balance_usa=STARTING_BALANCE,
+            balance_uk=STARTING_BALANCE,
+            balance_crypto=STARTING_BALANCE
+        )
         db.add(user)
         await db.flush()
 
@@ -80,20 +88,27 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
         db.add(position)
         await db.flush()
 
-    # 4. Apply buy / sell logic
+    # 4. Apply buy / sell logic against specific market balance
     side = order_req.side.lower()
+    
+    market_attr = f"balance_{order_req.market}"
+    current_balance = getattr(user, market_attr, None)
+    
+    if current_balance is None: # fallback
+        market_attr = "balance_india"
+        current_balance = user.balance_india
 
     if side == "buy":
-        if user.balance < total_value:
+        if current_balance < total_value:
             raise HTTPException(
                 status_code=400,
-                detail=f"Insufficient funds. Balance: ₹{user.balance:.2f}, Cost: ₹{total_value:.2f}"
+                detail=f"Insufficient funds. Balance: {current_balance:.2f}, Cost: {total_value:.2f}"
             )
         # Weighted average cost
         new_total_cost = (position.quantity * position.average_cost) + total_value
         position.quantity += order_req.quantity
         position.average_cost = new_total_cost / position.quantity
-        user.balance -= total_value
+        setattr(user, market_attr, current_balance - total_value)
 
     elif side == "sell":
         if position.quantity < order_req.quantity:
@@ -102,7 +117,7 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
                 detail=f"Insufficient shares. Held: {position.quantity}, Requested: {order_req.quantity}"
             )
         position.quantity -= order_req.quantity
-        user.balance += total_value
+        setattr(user, market_attr, current_balance + total_value)
         if position.quantity == 0:
             position.average_cost = 0.0
 
@@ -143,5 +158,5 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
         "message": f"Successfully {side} {order_req.quantity} shares of {order_req.symbol}",
         "fill_price": current_price,
         "total_value": total_value,
-        "new_balance": user.balance,
+        "new_balance": getattr(user, market_attr),
     }

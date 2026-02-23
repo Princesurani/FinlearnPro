@@ -8,7 +8,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/market_formatters.dart';
 import '../../bloc/market_bloc.dart';
-import '../pages/stock_detail_screen.dart';
+import '../pages/index_detail_screen.dart';
 
 class IndexTicker extends StatelessWidget {
   const IndexTicker({
@@ -86,7 +86,7 @@ class IndexTicker extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => StockDetailScreen(
+            builder: (_) => IndexDetailScreen(
               instrument: index,
               snapshot: snap,
               bloc: bloc,

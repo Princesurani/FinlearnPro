@@ -11,8 +11,8 @@ import '../../../../core/utils/market_formatters.dart';
 import '../../../../core/services/api_market_service.dart';
 import '../../bloc/market_bloc.dart';
 
-class StockDetailScreen extends StatelessWidget {
-  const StockDetailScreen({
+class IndexDetailScreen extends StatelessWidget {
+  const IndexDetailScreen({
     super.key,
     required this.instrument,
     required this.snapshot,
@@ -43,43 +43,6 @@ class StockDetailScreen extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
           ),
           actions: [
-            StreamBuilder<MarketState>(
-              stream: effectiveBloc.stream,
-              initialData: effectiveBloc.state,
-              builder: (context, snapshot) {
-                final state = snapshot.data!;
-                final isInWatchlist = state.isInWatchlist(instrument.symbol);
-                return IconButton(
-                  icon: Icon(
-                    isInWatchlist
-                        ? Icons.bookmark_rounded
-                        : Icons.bookmark_border_rounded,
-                    color: isInWatchlist
-                        ? AppColors.primaryPurple
-                        : AppColors.textPrimary,
-                  ),
-                  onPressed: () {
-                    if (isInWatchlist) {
-                      effectiveBloc.add(RemoveFromWatchlist(instrument.symbol));
-                    } else {
-                      effectiveBloc.add(AddToWatchlist(instrument.symbol));
-                    }
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          isInWatchlist
-                              ? '${instrument.symbol} removed from watchlist'
-                              : '${instrument.symbol} added to watchlist',
-                        ),
-                        duration: const Duration(seconds: 1),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
             IconButton(
               icon: const Icon(Icons.search_rounded),
               onPressed: () {},
@@ -185,7 +148,9 @@ class StockDetailScreen extends StatelessWidget {
                                   textBaseline: TextBaseline.alphabetic,
                                   children: [
                                     Text(
-                                      formatter.formatPrice(price),
+                                      formatter
+                                          .formatPrice(price)
+                                          .replaceAll(RegExp(r'[\$₹£]'), ''),
                                       style: AppTypography.h2.copyWith(
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: -0.5,
@@ -254,7 +219,6 @@ class StockDetailScreen extends StatelessWidget {
                         _OverviewTab(
                           snapshot: currentSnapshot,
                           formatter: formatter,
-                          currencySymbol: instrument.currencySymbol,
                         ),
                         const _PlaceholderTab(title: 'Technicals'),
                         const _PlaceholderTab(title: 'F&O'),
@@ -264,254 +228,9 @@ class StockDetailScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Sticky Bottom Action Bar
-                _BottomActionButtons(
-                  instrument: instrument,
-                  bloc: effectiveBloc,
-                ),
               ],
             );
           },
-        ),
-      ),
-    );
-  }
-}
-
-class _BottomActionButtons extends StatelessWidget {
-  const _BottomActionButtons({required this.instrument, required this.bloc});
-
-  final Instrument instrument;
-  final MarketBloc bloc;
-
-  void _showOrderBottomSheet(BuildContext rootContext, String side) {
-    int quantity = 1;
-    final isBuy = side == 'buy';
-    final price = bloc.state.snapshots[instrument.symbol]?.price ?? 0.0;
-
-    showDialog(
-      context: rootContext,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (stateContext, setState) {
-            final totalCost = price * quantity;
-            final availableBalance = bloc.state.portfolioBalance;
-            final currentHoldings =
-                bloc.state.portfolioPositions[instrument.symbol]?.quantity ?? 0;
-
-            bool canAfford = true;
-            String? errorMsg;
-            if (isBuy) {
-              if (totalCost > availableBalance) {
-                canAfford = false;
-                errorMsg =
-                    'Insufficient balance (Available: ${instrument.currencySymbol}${availableBalance.toStringAsFixed(2)})';
-              }
-            } else {
-              if (quantity > currentHoldings) {
-                canAfford = false;
-                errorMsg =
-                    'Insufficient holdings (Available: $currentHoldings)';
-              }
-            }
-            return AlertDialog(
-              backgroundColor: AppColors.backgroundPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              title: Text(
-                '${isBuy ? "Buy" : "Sell"} ${instrument.symbol}',
-                style: AppTypography.h3.copyWith(fontWeight: FontWeight.bold),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: AppSpacing.sm),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Quantity', style: AppTypography.body),
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              if (quantity > 1) setState(() => quantity--);
-                            },
-                            icon: const Icon(Icons.remove_circle_outline),
-                            color: AppColors.textPrimary,
-                          ),
-                          Text(
-                            '$quantity',
-                            style: AppTypography.h3.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () => setState(() => quantity++),
-                            icon: const Icon(Icons.add_circle_outline),
-                            color: AppColors.textPrimary,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Est. Total', style: AppTypography.bodySmall),
-                      Text(
-                        '${instrument.currencySymbol}${totalCost.toStringAsFixed(2)}',
-                        style: AppTypography.body.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (errorMsg != null) ...[
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      errorMsg,
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.lossRed,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: AppSpacing.xl),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: canAfford
-                          ? () {
-                              bloc.add(
-                                PlaceOrder(
-                                  symbol: instrument.symbol,
-                                  side: side,
-                                  quantity: quantity,
-                                ),
-                              );
-                              Navigator.pop(stateContext); // Close dialog
-
-                              showDialog(
-                                context: rootContext,
-                                builder: (innerContext) => AlertDialog(
-                                  backgroundColor: AppColors.surface,
-                                  title: const Text('Order Placed'),
-                                  content: Text(
-                                    '$side order placed for $quantity shares of ${instrument.symbol}!',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(innerContext),
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: canAfford
-                            ? (isBuy
-                                  ? AppColors.profitGreen
-                                  : AppColors.lossRed)
-                            : AppColors.neutralGray,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        isBuy ? 'CONFIRM BUY' : 'CONFIRM SELL',
-                        style: AppTypography.button.copyWith(
-                          color: canAfford
-                              ? AppColors.surface
-                              : AppColors.textTertiary,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.border),
-                borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.calendar_month_outlined, size: 20),
-                color: AppColors.textPrimary,
-                onPressed: () {},
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () => _showOrderBottomSheet(context, 'sell'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.lossRed,
-                  foregroundColor: AppColors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'SELL',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () => _showOrderBottomSheet(context, 'buy'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.profitGreen,
-                  foregroundColor: AppColors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'BUY',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -548,15 +267,10 @@ Color _getSectorColor(Sector sector) {
 }
 
 class _OverviewTab extends StatelessWidget {
-  const _OverviewTab({
-    required this.snapshot,
-    required this.formatter,
-    required this.currencySymbol,
-  });
+  const _OverviewTab({required this.snapshot, required this.formatter});
 
   final MarketSnapshot? snapshot;
   final MarketFormatter formatter;
-  final String currencySymbol;
 
   @override
   Widget build(BuildContext context) {
@@ -566,14 +280,6 @@ class _OverviewTab extends StatelessWidget {
     final prevClose = snapshot?.previousClose ?? 0;
     final open = snapshot?.open ?? 0;
     final volume = snapshot?.volume ?? 0;
-    final marketCap = snapshot?.marketCap ?? 0;
-
-    // Mock Fundamentals
-    final mktCapStr = formatter.formatLargeNumber(marketCap);
-    final pe = (20 + (price % 50)).toStringAsFixed(2); // Random mock
-    final pb = (1.2 + (price % 5)).toStringAsFixed(2);
-    final roe = (12.5 + (price % 10)).toStringAsFixed(2);
-    final divYield = (0.5 + (price % 2)).toStringAsFixed(2);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -650,55 +356,6 @@ class _OverviewTab extends StatelessWidget {
               ), // Mock
             ],
           ),
-
-          const SizedBox(height: AppSpacing.xl * 2),
-
-          // Fundamentals Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Text('Fundamentals', style: AppTypography.h5),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.info_outline_rounded,
-                    size: 16,
-                    color: AppColors.textTertiary,
-                  ),
-                ],
-              ),
-              Icon(
-                Icons.keyboard_arrow_up_rounded,
-                color: AppColors.textSecondary,
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-
-          // Fundamentals Grid
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            childAspectRatio: 3.5,
-            crossAxisSpacing: AppSpacing.md,
-            mainAxisSpacing: AppSpacing.sm,
-            children: [
-              _StatItem(label: 'Mkt Cap', value: '$currencySymbol$mktCapStr'),
-              _StatItem(label: 'ROE', value: '$roe%'),
-              _StatItem(label: 'P/E Ratio(TTM)', value: pe),
-              _StatItem(label: 'EPS(TTM)', value: '12.45'), // Mock
-              _StatItem(label: 'P/B Ratio', value: pb),
-              _StatItem(label: 'Div Yield', value: '$divYield%'),
-              _StatItem(label: 'Industry P/E', value: '25.60'), // Mock
-              _StatItem(label: 'Book Value', value: '212.08'), // Mock
-              _StatItem(label: 'Debt to Equity', value: '0.08'), // Mock
-              _StatItem(label: 'Face Value', value: '10'), // Mock
-            ],
-          ),
-
-          const SizedBox(height: 100), // Space for bottom bar
         ],
       ),
     );
@@ -1136,7 +793,7 @@ class _InteractiveChartState extends State<_InteractiveChart> {
                 ).format(candle.timestamp.toLocal()).toUpperCase();
 
                 return LineTooltipItem(
-                  '${widget.instrument.currencySymbol}${spot.y.toStringAsFixed(2)}',
+                  spot.y.toStringAsFixed(2),
                   AppTypography.labelSmall.copyWith(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.bold,
