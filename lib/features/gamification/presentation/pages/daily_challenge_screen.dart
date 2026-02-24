@@ -1,6 +1,9 @@
 import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
+import '../../../learning/bloc/learning_bloc.dart';
+import '../../../learning/bloc/learning_bloc_provider.dart';
+
 class DailyChallengeScreen extends StatefulWidget {
   const DailyChallengeScreen({super.key});
 
@@ -25,6 +28,14 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
     setState(() {
       _isSubmitted = true;
     });
+
+    try {
+      final isCorrect = _selectedOptionIndex == _correctOptionIndex;
+      final bloc = LearningBlocProvider.of(context);
+      bloc.dispatch(CompleteDailyChallengeEvent(xpReward: isCorrect ? 50 : 10));
+    } catch (e) {
+      debugPrint('No learning bloc found: $e');
+    }
 
     if (_selectedOptionIndex == _correctOptionIndex) {
       _showFeedbackBottomSheet(
@@ -68,7 +79,9 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isCorrect ? AppColors.successLight : AppColors.errorLight,
+                color: isCorrect
+                    ? AppColors.successLight
+                    : AppColors.errorLight,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -144,7 +157,10 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
         title: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.local_fire_department_rounded, color: AppColors.sunsetOrange),
+            Icon(
+              Icons.local_fire_department_rounded,
+              color: AppColors.sunsetOrange,
+            ),
             SizedBox(width: 8),
             Text(
               'Daily Shield',
@@ -209,7 +225,10 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                           ),
                           Text(
                             '4H Timeframe',
-                            style: TextStyle(fontSize: 12, color: AppColors.neutralGray),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.neutralGray,
+                            ),
                           ),
                         ],
                       ),
@@ -232,8 +251,10 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: List.generate(
                             5,
-                            (index) =>
-                                Divider(height: 1, color: AppColors.textDisabled),
+                            (index) => Divider(
+                              height: 1,
+                              color: AppColors.textDisabled,
+                            ),
                           ),
                         ),
                         // Chart simulated Text acting as a visual description for now
@@ -425,7 +446,10 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),

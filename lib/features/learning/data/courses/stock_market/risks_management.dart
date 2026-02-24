@@ -1,6 +1,6 @@
 /// Chapter 6: Risks & Getting Started
 /// Stock market risks, who should trade, and building a plan
-class SMChapter6Content {
+class RisksManagementContent {
   // Lesson 1: The Risks No One Talks About
   static Map<String, dynamic> getRisksContent() {
     return {

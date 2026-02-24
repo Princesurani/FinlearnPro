@@ -15,6 +15,7 @@ import '../widgets/learning_paths_section.dart';
 import 'topic_detail_screen.dart';
 import '../widgets/all_courses_section.dart';
 import 'course_details_screen.dart';
+import '../../bloc/learning_bloc_provider.dart';
 
 class LearningScreen extends StatefulWidget {
   const LearningScreen({super.key});
@@ -77,8 +78,14 @@ class _LearningScreenState extends State<LearningScreen>
 
   void _onCourseTap(Course course) {
     HapticFeedback.lightImpact();
+    final bloc = LearningBlocProvider.of(context);
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => CourseDetailsScreen(course: course)),
+      MaterialPageRoute(
+        builder: (_) => LearningBlocProvider(
+          bloc: bloc,
+          child: CourseDetailsScreen(course: course),
+        ),
+      ),
     );
   }
 

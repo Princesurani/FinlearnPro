@@ -1,6 +1,6 @@
 /// Chapter 6: Before You Start Trading
 /// Complete interactive content for all lessons in Chapter 6
-class Chapter6Content {
+class BeforeYouStartTradingContent {
   // Lesson 6.1: Choosing a Broker: What Actually Matters
   static Map<String, dynamic> getBrokerSelectionContent() {
     return {

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, JSON
 from datetime import datetime, timezone
 from db.database import Base
 
@@ -52,6 +52,16 @@ class DbUser(Base):
     balance_uk = Column(Float, nullable=False, default=10000.0)
     balance_crypto = Column(Float, nullable=False, default=10000.0)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+class DbUserLearningProgress(Base):
+    """
+    Stores the user's hybrid learning progress payload synced from the device
+    """
+    __tablename__ = "user_learning_progress"
+    
+    firebase_uid = Column(String(128), ForeignKey("users.firebase_uid", ondelete="CASCADE"), primary_key=True, index=True)
+    progress_data = Column(JSON, nullable=False)
+    last_synced = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 class DbPortfolioPosition(Base):
     __tablename__ = "portfolio_positions"

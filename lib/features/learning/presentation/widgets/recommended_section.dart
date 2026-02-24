@@ -2,6 +2,7 @@ import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import '../../data/learning_mock_data.dart';
 import '../pages/course_details_screen.dart';
+import '../../bloc/learning_bloc_provider.dart';
 
 class RecommendedSection extends StatelessWidget {
   const RecommendedSection({super.key});
@@ -38,11 +39,21 @@ class RecommendedSection extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 20),
                 child: GestureDetector(
                   onTap: () {
+                    if (context
+                            .dependOnInheritedWidgetOfExactType<
+                              LearningBlocProvider
+                            >() ==
+                        null) {
+                      return;
+                    }
+                    final bloc = LearningBlocProvider.of(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            CourseDetailsScreen(course: course),
+                        builder: (context) => LearningBlocProvider(
+                          bloc: bloc,
+                          child: CourseDetailsScreen(course: course),
+                        ),
                       ),
                     );
                   },

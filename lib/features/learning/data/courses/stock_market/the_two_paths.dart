@@ -1,6 +1,6 @@
 /// Chapter 5: The Two Paths
 /// Long-term investing vs short-term trading
-class SMChapter5Content {
+class TheTwoPathsContent {
   // Lesson 1: The Long-Term Investor
   static Map<String, dynamic> getLongTermContent() {
     return {

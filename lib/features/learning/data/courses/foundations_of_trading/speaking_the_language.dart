@@ -1,6 +1,6 @@
 /// Chapter 5: Speaking the Language
 /// Complete interactive content for all lessons in Chapter 5
-class Chapter5Content {
+class SpeakingTheLanguageContent {
   // Lesson 5.1: Bid, Ask, and Spread
   static Map<String, dynamic> getBidAskContent() {
     return {

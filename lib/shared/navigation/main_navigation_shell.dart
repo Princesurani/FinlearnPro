@@ -14,6 +14,8 @@ import '../../features/market/presentation/pages/market_screen.dart';
 import '../../features/learning/presentation/pages/learning_screen.dart';
 import '../../features/portfolio/presentation/pages/portfolio_screen.dart';
 import '../widgets/aurora_background.dart';
+import '../../features/learning/bloc/learning_bloc.dart';
+import '../../features/learning/bloc/learning_bloc_provider.dart';
 
 class MainNavigationShell extends StatefulWidget {
   const MainNavigationShell({super.key, required this.firebaseUid});
@@ -62,14 +64,17 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     );
     _marketBloc = MarketBloc(firebaseUid: widget.firebaseUid);
     _marketBloc.resume();
+    _learningBloc = LearningBloc(userId: widget.firebaseUid);
   }
 
   late MarketBloc _marketBloc;
+  late LearningBloc _learningBloc;
 
   @override
   void dispose() {
     _pageController.dispose();
     _marketBloc.pause();
+    _learningBloc.dispose();
     super.dispose();
   }
 
@@ -105,157 +110,162 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       value: SystemUiOverlayStyle.light.copyWith(
         statusBarColor: AppColors.transparent,
       ),
-      child: Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
-        extendBody: true,
-        body: Stack(
-          children: [
-            const Positioned.fill(child: AuroraBackground()),
-            PageView(
-              controller: _pageController,
-              onPageChanged: _onPageChanged,
-              physics: const ClampingScrollPhysics(),
-              children: [
-                _HomeScreenWrapper(bloc: _marketBloc),
-                const LearningScreen(),
-                RepaintBoundary(child: MarketScreen(bloc: _marketBloc)),
-                const PortfolioScreen(),
-              ],
-            ),
-            Positioned(
-              left: 24,
-              right: 24,
-              bottom: 34,
-              height: 64,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.black.withValues(alpha: 0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(40),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(
-                          255,
-                          19,
-                          19,
-                          28,
-                        ).withValues(alpha: 0.90),
-                        borderRadius: BorderRadius.circular(40),
-                        border: Border.all(
-                          color: AppColors.white.withValues(alpha: 0.08),
-                          width: 1,
-                        ),
+      child: LearningBlocProvider(
+        bloc: _learningBloc,
+        child: Scaffold(
+          backgroundColor: AppColors.backgroundPrimary,
+          extendBody: true,
+          body: Stack(
+            children: [
+              const Positioned.fill(child: AuroraBackground()),
+              PageView(
+                controller: _pageController,
+                onPageChanged: _onPageChanged,
+                physics: const ClampingScrollPhysics(),
+                children: [
+                  _HomeScreenWrapper(bloc: _marketBloc),
+                  const LearningScreen(),
+                  RepaintBoundary(child: MarketScreen(bloc: _marketBloc)),
+                  const PortfolioScreen(),
+                ],
+              ),
+              Positioned(
+                left: 24,
+                right: 24,
+                bottom: 34,
+                height: 64,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(40),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.black.withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final itemWidth =
-                              constraints.maxWidth / _screens.length;
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(40),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(
+                            255,
+                            19,
+                            19,
+                            28,
+                          ).withValues(alpha: 0.90),
+                          borderRadius: BorderRadius.circular(40),
+                          border: Border.all(
+                            color: AppColors.white.withValues(alpha: 0.08),
+                            width: 1,
+                          ),
+                        ),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final itemWidth =
+                                constraints.maxWidth / _screens.length;
 
-                          return Stack(
-                            children: [
-                              AnimatedPositioned(
-                                duration: const Duration(milliseconds: 250),
-                                curve: Curves.easeOutCubic,
-                                left: itemWidth * _currentIndex,
-                                top: 4,
-                                bottom: 4,
-                                width: itemWidth,
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    gradient: AppColors.primaryGradient,
-                                    borderRadius: BorderRadius.circular(36),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppColors.primaryPurple
-                                            .withValues(alpha: 0.4),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
+                            return Stack(
+                              children: [
+                                AnimatedPositioned(
+                                  duration: const Duration(milliseconds: 250),
+                                  curve: Curves.easeOutCubic,
+                                  left: itemWidth * _currentIndex,
+                                  top: 4,
+                                  bottom: 4,
+                                  width: itemWidth,
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: AppColors.primaryGradient,
+                                      borderRadius: BorderRadius.circular(36),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.primaryPurple
+                                              .withValues(alpha: 0.4),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Row(
-                                children: _screens.asMap().entries.map((entry) {
-                                  final index = entry.key;
-                                  final screen = entry.value;
-                                  final isSelected = index == _currentIndex;
+                                Row(
+                                  children: _screens.asMap().entries.map((
+                                    entry,
+                                  ) {
+                                    final index = entry.key;
+                                    final screen = entry.value;
+                                    final isSelected = index == _currentIndex;
 
-                                  return Expanded(
-                                    child: GestureDetector(
-                                      behavior: HitTestBehavior.opaque,
-                                      onTap: () => _onNavTap(index),
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: AnimatedScale(
-                                          scale: isSelected ? 1.05 : 1.0,
-                                          duration: const Duration(
-                                            milliseconds: 200,
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                isSelected
-                                                    ? screen.activeIcon
-                                                    : screen.icon,
-                                                size: 24,
-                                                color: isSelected
-                                                    ? AppColors.white
-                                                    : AppColors.white
-                                                          .withValues(
-                                                            alpha: 0.5,
-                                                          ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                screen.label,
-                                                style: TextStyle(
+                                    return Expanded(
+                                      child: GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
+                                        onTap: () => _onNavTap(index),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          child: AnimatedScale(
+                                            scale: isSelected ? 1.05 : 1.0,
+                                            duration: const Duration(
+                                              milliseconds: 200,
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  isSelected
+                                                      ? screen.activeIcon
+                                                      : screen.icon,
+                                                  size: 24,
                                                   color: isSelected
                                                       ? AppColors.white
                                                       : AppColors.white
                                                             .withValues(
                                                               alpha: 0.5,
                                                             ),
-                                                  fontSize: 11,
-                                                  fontWeight: isSelected
-                                                      ? FontWeight.w600
-                                                      : FontWeight.w500,
                                                 ),
-                                              ),
-                                            ],
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  screen.label,
+                                                  style: TextStyle(
+                                                    color: isSelected
+                                                        ? AppColors.white
+                                                        : AppColors.white
+                                                              .withValues(
+                                                                alpha: 0.5,
+                                                              ),
+                                                    fontSize: 11,
+                                                    fontWeight: isSelected
+                                                        ? FontWeight.w600
+                                                        : FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ],
-                          );
-                        },
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

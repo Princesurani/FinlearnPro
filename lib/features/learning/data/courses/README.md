@@ -6,19 +6,19 @@
 lib/features/learning/data/courses/
 ├── foundations_of_trading.dart          # Main course definition
 └── foundations_of_trading/              # Course-specific folder
-    ├── chapter1_content.dart            # Chapter 1: What is Trading & Investing
-    ├── chapter2_content.dart            # Chapter 2: How Financial Markets Work (TODO)
-    ├── chapter3_content.dart            # Chapter 3: Market Participants (TODO)
-    ├── chapter4_content.dart            # Chapter 4: Mastering Order Types (TODO)
-    ├── chapter5_content.dart            # Chapter 5: Trading Terminology (TODO)
-    └── chapter6_content.dart            # Chapter 6: Before You Start Trading (TODO)
+    ├── what_is_trading_investing.dart   # Chapter 1: What is Trading & Investing
+    ├── how_financial_markets_work.dart  # Chapter 2: How Financial Markets Work
+    ├── whos_in_the_market.dart          # Chapter 3: Market Participants
+    ├── mastering_order_types.dart       # Chapter 4: Mastering Order Types
+    ├── speaking_the_language.dart       # Chapter 5: Trading Terminology
+    └── before_you_start_trading.dart    # Chapter 6: Before You Start Trading
 ```
 
 ## Naming Convention
 
 ### ✅ Use "Chapter" (not "Module")
 - **IDs**: `chapter-1`, `chapter-2`, etc.
-- **Files**: `chapter1_content.dart`, `chapter2_content.dart`, etc.
+- **Files**: Use descriptive snake_case (e.g., `what_is_trading_investing.dart`, `how_financial_markets_work.dart`).
 - **Classes**: `Chapter1Content`, `Chapter2Content`, etc.
 - **Methods**: `getTradingVsInvestingContent()`, `getWhyPeopleTradeContent()`, etc.
 
@@ -202,7 +202,7 @@ class ChapterXContent {
 
 To add a new chapter:
 
-1. Create `chapterX_content.dart` in the course folder
+1. Create a descriptively named file like `my_new_chapter.dart` in the course folder
 2. Define `ChapterXContent` class
 3. Add static methods for each lesson
 4. Follow the slide structure format

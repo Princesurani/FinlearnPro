@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/learning_models.dart';
 import 'lesson_screen.dart';
+import '../../bloc/learning_bloc.dart';
+import '../../bloc/learning_bloc_provider.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
   final Course course;
@@ -55,29 +57,36 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
       return;
     }
 
-    // Navigate to the first lesson
+    final bloc = LearningBlocProvider.of(context);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => LessonScreen(
-          lesson: widget.course.modules.first.lessons.first,
-          course: widget.course,
-          lessonIndex: 0,
-          totalLessons: widget.course.totalLessons,
+        builder: (context) => LearningBlocProvider(
+          bloc: bloc,
+          child: LessonScreen(
+            lesson: widget.course.modules.first.lessons.first,
+            course: widget.course,
+            lessonIndex: 0,
+            totalLessons: widget.course.totalLessons,
+          ),
         ),
       ),
     );
   }
 
   void _startLesson(Lesson lesson, int globalLessonIndex) {
+    final bloc = LearningBlocProvider.of(context);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => LessonScreen(
-          lesson: lesson,
-          course: widget.course,
-          lessonIndex: globalLessonIndex,
-          totalLessons: widget.course.totalLessons,
+        builder: (context) => LearningBlocProvider(
+          bloc: bloc,
+          child: LessonScreen(
+            lesson: lesson,
+            course: widget.course,
+            lessonIndex: globalLessonIndex,
+            totalLessons: widget.course.totalLessons,
+          ),
         ),
       ),
     );
@@ -517,16 +526,37 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   }
 
   Widget _buildCurriculumTab() {
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
-      itemCount: widget.course.modules.length,
-      itemBuilder: (context, index) {
-        return _buildModuleCard(widget.course.modules[index], index + 1);
+    final bloc = LearningBlocProvider.of(context);
+    return StreamBuilder<LearningState>(
+      stream: bloc.stream,
+      initialData: bloc.state,
+      builder: (context, snapshot) {
+        final state = snapshot.data;
+        if (state == null) return const SizedBox();
+        final courseProgress =
+            state.userProgress.courseProgress[widget.course.id];
+        final completedLessonIds = courseProgress?.completedLessonIds ?? [];
+
+        return ListView.builder(
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
+          itemCount: widget.course.modules.length,
+          itemBuilder: (context, index) {
+            return _buildModuleCard(
+              widget.course.modules[index],
+              index + 1,
+              completedLessonIds,
+            );
+          },
+        );
       },
     );
   }
 
-  Widget _buildModuleCard(CourseModule module, int index) {
+  Widget _buildModuleCard(
+    CourseModule module,
+    int index,
+    List<String> completedLessonIds,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -584,6 +614,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
             lesson,
             globalIndex,
             entry.key == module.lessons.length - 1,
+            completedLessonIds.contains(lesson.id),
           );
         }).toList(),
       ),
@@ -604,7 +635,12 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
     return globalIndex;
   }
 
-  Widget _buildLessonTile(Lesson lesson, int globalIndex, bool isLast) {
+  Widget _buildLessonTile(
+    Lesson lesson,
+    int globalIndex,
+    bool isLast,
+    bool isCompleted,
+  ) {
     return InkWell(
       onTap: () => _startLesson(lesson, globalIndex),
       child: Container(
@@ -675,9 +711,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                 ],
               ),
             ),
-            const Icon(
-              Icons.play_circle_fill_rounded,
-              color: AppColors.primaryPurple,
+            Icon(
+              isCompleted
+                  ? Icons.check_circle_rounded
+                  : Icons.play_circle_fill_rounded,
+              color: isCompleted ? AppColors.success : AppColors.primaryPurple,
               size: 28,
             ),
           ],

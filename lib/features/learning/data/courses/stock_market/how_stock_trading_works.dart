@@ -1,6 +1,6 @@
 /// Chapter 4: How Stock Trading Works
 /// Practical mechanics of stock trading in India
-class SMChapter4Content {
+class HowStockTradingWorksContent {
   // Lesson 1: Your Trading Toolkit
   static Map<String, dynamic> getTradingToolkitContent() {
     return {

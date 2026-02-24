@@ -1,6 +1,6 @@
 /// Chapter 1: What is the Stock Market?
 /// Complete interactive content for all lessons in this chapter
-class SMChapter1Content {
+class WhatIsTheStockMarketContent {
   // Lesson 1: The Marketplace of Ownership
   static Map<String, dynamic> getMarketplaceContent() {
     return {

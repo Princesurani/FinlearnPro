@@ -1,6 +1,6 @@
 /// Chapter 2: How Financial Markets Work
 /// Complete interactive content for all lessons in Chapter 2
-class Chapter2Content {
+class HowFinancialMarketsWorkContent {
   // Lesson 2.1: What is a Financial Market?
   static Map<String, dynamic> getFinancialMarketContent() {
     return {

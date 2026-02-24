@@ -1,6 +1,6 @@
 /// Chapter 4: Types of Orders
 /// Complete interactive content for all lessons in Chapter 4
-class Chapter4Content {
+class MasteringOrderTypesContent {
   // Lesson 4.1: Market Orders: Fast but Risky
   static Map<String, dynamic> getMarketOrderContent() {
     return {

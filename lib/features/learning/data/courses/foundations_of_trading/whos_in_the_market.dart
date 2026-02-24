@@ -1,6 +1,6 @@
 /// Chapter 3: Who's in the Market?
 /// Complete interactive content for all lessons in Chapter 3
-class Chapter3Content {
+class WhosInTheMarketContent {
   // Lesson 3.1: Retail Traders (That's You!)
   static Map<String, dynamic> getRetailTradersContent() {
     return {

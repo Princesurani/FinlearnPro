@@ -1,6 +1,6 @@
 /// Chapter 2: From Startup to Stock Exchange
 /// How companies issue shares - IPO, Listing, and Markets
-class SMChapter2Content {
+class FromStartupToStockExchangeContent {
   // Lesson 1: Why Companies Sell Shares
   static Map<String, dynamic> getWhyCompaniesSellContent() {
     return {

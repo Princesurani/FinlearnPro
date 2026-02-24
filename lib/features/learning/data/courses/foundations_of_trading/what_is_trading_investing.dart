@@ -1,6 +1,6 @@
 /// Chapter 1: What is Trading & Investing
 /// Complete interactive content for all lessons in this chapter
-class Chapter1Content {
+class WhatIsTradingInvestingContent {
   // Lesson 1: Trading vs Investing
   static Map<String, dynamic> getTradingVsInvestingContent() {
     return {

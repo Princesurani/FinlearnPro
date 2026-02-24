@@ -3,24 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/learning_models.dart' hide QuizQuestion;
-import '../../data/courses/foundations_of_trading/chapter1_content.dart';
-import '../../data/courses/foundations_of_trading/chapter2_content.dart';
-import '../../data/courses/foundations_of_trading/chapter3_content.dart';
-import '../../data/courses/foundations_of_trading/chapter4_content.dart';
-import '../../data/courses/foundations_of_trading/chapter5_content.dart';
-import '../../data/courses/foundations_of_trading/chapter6_content.dart';
-import '../../data/courses/stock_market/chapter1_content.dart';
-import '../../data/courses/stock_market/chapter2_content.dart';
-import '../../data/courses/stock_market/chapter3_content.dart';
-import '../../data/courses/stock_market/chapter4_content.dart';
-import '../../data/courses/stock_market/chapter5_content.dart';
-import '../../data/courses/stock_market/chapter6_content.dart';
+import '../../data/courses/foundations_of_trading/what_is_trading_investing.dart';
+import '../../data/courses/foundations_of_trading/how_financial_markets_work.dart';
+import '../../data/courses/foundations_of_trading/whos_in_the_market.dart';
+import '../../data/courses/foundations_of_trading/mastering_order_types.dart';
+import '../../data/courses/foundations_of_trading/speaking_the_language.dart';
+import '../../data/courses/foundations_of_trading/before_you_start_trading.dart';
+import '../../data/courses/stock_market/what_is_the_stock_market.dart';
+import '../../data/courses/stock_market/from_startup_to_stock_exchange.dart';
+import '../../data/courses/stock_market/know_your_stocks.dart';
+import '../../data/courses/stock_market/how_stock_trading_works.dart';
+import '../../data/courses/stock_market/the_two_paths.dart';
+import '../../data/courses/stock_market/risks_management.dart';
 import '../widgets/concept_slide_widget.dart';
 import '../widgets/story_slide_widget.dart';
 import '../widgets/quiz_slide_widget.dart';
 import '../widgets/scenario_slide_widget.dart';
 import '../widgets/summary_slide_widget.dart';
 import '../widgets/interaction_models.dart';
+import '../../bloc/learning_bloc.dart';
+import '../../bloc/learning_bloc_provider.dart';
 
 /// Interactive lesson screen with psychological engagement
 class LessonScreen extends StatefulWidget {
@@ -95,126 +97,130 @@ class _LessonScreenState extends State<LessonScreen>
 
     switch (lessonId) {
       case 'lesson-1-1':
-        contentData = Chapter1Content.getTradingVsInvestingContent();
+        contentData =
+            WhatIsTradingInvestingContent.getTradingVsInvestingContent();
         break;
       case 'lesson-1-2':
-        contentData = Chapter1Content.getWhyPeopleTradeContent();
+        contentData = WhatIsTradingInvestingContent.getWhyPeopleTradeContent();
         break;
       case 'lesson-1-3':
-        contentData = Chapter1Content.getRealityCheckContent();
+        contentData = WhatIsTradingInvestingContent.getRealityCheckContent();
         break;
       case 'lesson-2-1':
-        contentData = Chapter2Content.getFinancialMarketContent();
+        contentData =
+            HowFinancialMarketsWorkContent.getFinancialMarketContent();
         break;
       case 'lesson-2-2':
-        contentData = Chapter2Content.getExchangesContent();
+        contentData = HowFinancialMarketsWorkContent.getExchangesContent();
         break;
       case 'lesson-2-3':
-        contentData = Chapter2Content.getTradeProcessContent();
+        contentData = HowFinancialMarketsWorkContent.getTradeProcessContent();
         break;
       case 'lesson-3-1':
-        contentData = Chapter3Content.getRetailTradersContent();
+        contentData = WhosInTheMarketContent.getRetailTradersContent();
         break;
       case 'lesson-3-2':
-        contentData = Chapter3Content.getInstitutionalPlayersContent();
+        contentData = WhosInTheMarketContent.getInstitutionalPlayersContent();
         break;
       case 'lesson-3-3':
-        contentData = Chapter3Content.getMarketMakersContent();
+        contentData = WhosInTheMarketContent.getMarketMakersContent();
         break;
       case 'lesson-4-1':
-        contentData = Chapter4Content.getMarketOrderContent();
+        contentData = MasteringOrderTypesContent.getMarketOrderContent();
         break;
       case 'lesson-4-2':
-        contentData = Chapter4Content.getLimitOrderContent();
+        contentData = MasteringOrderTypesContent.getLimitOrderContent();
         break;
       case 'lesson-4-3':
-        contentData = Chapter4Content.getStopOrderContent();
+        contentData = MasteringOrderTypesContent.getStopOrderContent();
         break;
       case 'lesson-4-4':
-        contentData = Chapter4Content.getPracticeContent();
+        contentData = MasteringOrderTypesContent.getPracticeContent();
         break;
       case 'lesson-5-1':
-        contentData = Chapter5Content.getBidAskContent();
+        contentData = SpeakingTheLanguageContent.getBidAskContent();
         break;
       case 'lesson-5-2':
-        contentData = Chapter5Content.getVolumeLiquidityContent();
+        contentData = SpeakingTheLanguageContent.getVolumeLiquidityContent();
         break;
       case 'lesson-5-3':
-        contentData = Chapter5Content.getBullsBearsContent();
+        contentData = SpeakingTheLanguageContent.getBullsBearsContent();
         break;
       case 'lesson-6-1':
-        contentData = Chapter6Content.getBrokerSelectionContent();
+        contentData = BeforeYouStartTradingContent.getBrokerSelectionContent();
         break;
       case 'lesson-6-2':
-        contentData = Chapter6Content.getPaperTradingContent();
+        contentData = BeforeYouStartTradingContent.getPaperTradingContent();
         break;
       case 'lesson-6-3':
-        contentData = Chapter6Content.getMistakeContent();
+        contentData = BeforeYouStartTradingContent.getMistakeContent();
         break;
       case 'lesson-6-4':
-        contentData = Chapter6Content.getFinalChallengeContent();
+        contentData = BeforeYouStartTradingContent.getFinalChallengeContent();
         break;
 
       // ── Stock Market Course (Course 1) ──
       case 'sm-1-1':
-        contentData = SMChapter1Content.getMarketplaceContent();
+        contentData = WhatIsTheStockMarketContent.getMarketplaceContent();
         break;
       case 'sm-1-2':
-        contentData = SMChapter1Content.getShareMeaningContent();
+        contentData = WhatIsTheStockMarketContent.getShareMeaningContent();
         break;
       case 'sm-1-3':
-        contentData = SMChapter1Content.getRealityCheckContent();
+        contentData = WhatIsTheStockMarketContent.getRealityCheckContent();
         break;
       case 'sm-2-1':
-        contentData = SMChapter2Content.getWhyCompaniesSellContent();
+        contentData =
+            FromStartupToStockExchangeContent.getWhyCompaniesSellContent();
         break;
       case 'sm-2-2':
-        contentData = SMChapter2Content.getIPOJourneyContent();
+        contentData = FromStartupToStockExchangeContent.getIPOJourneyContent();
         break;
       case 'sm-2-3':
-        contentData = SMChapter2Content.getPrimarySecondaryContent();
+        contentData =
+            FromStartupToStockExchangeContent.getPrimarySecondaryContent();
         break;
       case 'sm-3-1':
-        contentData = SMChapter3Content.getMarketCapContent();
+        contentData = KnowYourStocksContent.getMarketCapContent();
         break;
       case 'sm-3-2':
-        contentData = SMChapter3Content.getCapCategoriesContent();
+        contentData = KnowYourStocksContent.getCapCategoriesContent();
         break;
       case 'sm-3-3':
-        contentData = SMChapter3Content.getSectorsContent();
+        contentData = KnowYourStocksContent.getSectorsContent();
         break;
       case 'sm-4-1':
-        contentData = SMChapter4Content.getTradingToolkitContent();
+        contentData = HowStockTradingWorksContent.getTradingToolkitContent();
         break;
       case 'sm-4-2':
-        contentData = SMChapter4Content.getFirstTradeContent();
+        contentData = HowStockTradingWorksContent.getFirstTradeContent();
         break;
       case 'sm-4-3':
-        contentData = SMChapter4Content.getTradingDayContent();
+        contentData = HowStockTradingWorksContent.getTradingDayContent();
         break;
       case 'sm-4-4':
-        contentData = SMChapter4Content.getPracticeTradeContent();
+        contentData = HowStockTradingWorksContent.getPracticeTradeContent();
         break;
       case 'sm-5-1':
-        contentData = SMChapter5Content.getLongTermContent();
+        contentData = TheTwoPathsContent.getLongTermContent();
         break;
       case 'sm-5-2':
-        contentData = SMChapter5Content.getShortTermContent();
+        contentData = TheTwoPathsContent.getShortTermContent();
         break;
       case 'sm-5-3':
-        contentData = SMChapter5Content.getFindStyleContent();
+        contentData = TheTwoPathsContent.getFindStyleContent();
         break;
       case 'sm-6-1':
-        contentData = SMChapter6Content.getRisksContent();
+        contentData = RisksManagementContent.getRisksContent();
         break;
       case 'sm-6-2':
-        contentData = SMChapter6Content.getWhoShouldTradeContent();
+        contentData = RisksManagementContent.getWhoShouldTradeContent();
         break;
       case 'sm-6-3':
-        contentData = SMChapter6Content.getFirstPlanContent();
+        contentData = RisksManagementContent.getFirstPlanContent();
         break;
       case 'sm-6-4':
-        contentData = SMChapter6Content.getFinalChallengeContent();
+        contentData = RisksManagementContent.getFinalChallengeContent();
         break;
       default:
         // Fallback to placeholder content for lessons not yet implemented
@@ -462,6 +468,21 @@ class _LessonScreenState extends State<LessonScreen>
     _celebrationController.forward();
     HapticFeedback.heavyImpact();
 
+    // Dispatch lesson completion to update progress
+    try {
+      final bloc = LearningBlocProvider.of(context);
+      bloc.dispatch(
+        CompleteLessonEvent(
+          courseId: widget.course.id,
+          lessonId: widget.lesson.id,
+          xpReward: widget.lesson.xpReward,
+          totalLessonsInCourse: widget.totalLessons,
+        ),
+      );
+    } catch (e) {
+      debugPrint('LearningBlocProvider not found: $e');
+    }
+
     // Show completion dialog
     Future.delayed(const Duration(milliseconds: 500), () {
       _showCompletionDialog();
@@ -476,7 +497,9 @@ class _LessonScreenState extends State<LessonScreen>
       context: context,
       barrierDismissible: false,
       builder: (context) => _CompletionDialog(
-        score: _score,
+        score: widget
+            .lesson
+            .xpReward, // Used to be _score, but we want to show standard lesson XP reward
         lessonTitle: widget.lesson.title,
         hasNextLesson: hasNextLesson,
         onContinue: () {
@@ -1150,13 +1173,8 @@ class _CompletionDialog extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildStat('⭐', 'Points', '$score'),
-                  _buildStat('🎯', 'Accuracy', '85%'),
-                  _buildStat('⚡', 'Speed', 'Fast'),
-                  _buildStat('🔥', 'Streak', '3'),
-                ],
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [_buildStat('⭐', 'Points Earned', '+$score XP')],
               ),
             ),
             const SizedBox(height: 24),

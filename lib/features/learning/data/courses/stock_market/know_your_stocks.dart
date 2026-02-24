@@ -1,6 +1,6 @@
 /// Chapter 3: Know Your Stocks
 /// Types of stocks - Market Cap, Cap categories, Sectors
-class SMChapter3Content {
+class KnowYourStocksContent {
   // Lesson 1: Market Capitalization Explained
   static Map<String, dynamic> getMarketCapContent() {
     return {

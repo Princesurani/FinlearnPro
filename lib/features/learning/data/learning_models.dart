@@ -257,10 +257,8 @@ class CourseModule {
 
   final String? unlockRequirement;
 
-  int get totalMinutes => lessons.fold(
-    0,
-    (sum, lesson) => sum + lesson.estimatedMinutes,
-  );
+  int get totalMinutes =>
+      lessons.fold(0, (sum, lesson) => sum + lesson.estimatedMinutes);
 
   int get lessonCount => lessons.length;
 }
@@ -358,14 +356,7 @@ class LessonResource {
   final ResourceType type;
 }
 
-enum ResourceType {
-  article,
-  video,
-  pdf,
-  externalLink,
-  tool,
-  spreadsheet,
-}
+enum ResourceType { article, video, pdf, externalLink, tool, spreadsheet }
 
 class UserLearningProgress {
   const UserLearningProgress({
@@ -381,6 +372,7 @@ class UserLearningProgress {
     required this.courseProgress,
     required this.achievements,
     required this.lastActivityDate,
+    this.lastDailyChallengeDate,
   });
 
   final String userId;
@@ -406,6 +398,8 @@ class UserLearningProgress {
   final List<Achievement> achievements;
 
   final DateTime lastActivityDate;
+
+  final DateTime? lastDailyChallengeDate;
 
   int get xpToNextLevel => (currentLevel + 1) * 1000 - totalXp;
 
@@ -435,6 +429,7 @@ class CourseProgress {
     this.completedDate,
     required this.quizScores,
     required this.timeSpentMinutes,
+    this.completedLessonIds = const [],
   });
 
   final String courseId;
@@ -446,6 +441,7 @@ class CourseProgress {
   final DateTime? completedDate;
   final Map<String, int> quizScores;
   final int timeSpentMinutes;
+  final List<String> completedLessonIds;
 
   double get completionPercentage => completedLessons / totalLessons;
 
