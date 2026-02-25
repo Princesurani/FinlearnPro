@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 abstract final class AppTypography {
-
   static const String fontFamilyDisplay = 'Inter';
 
   static const String fontFamilyBody = 'Inter';
@@ -192,7 +191,16 @@ abstract final class AppTypography {
     color: AppColors.textOnPrimary,
   );
 
-  static const TextStyle label = TextStyle(
+  static const TextStyle labelLarge = TextStyle(
+    fontFamily: fontFamilyBody,
+    fontSize: 16.0,
+    fontWeight: medium,
+    height: lineHeightNormal,
+    letterSpacing: letterSpacingNormal,
+    color: AppColors.textPrimary,
+  );
+
+  static const TextStyle labelMedium = TextStyle(
     fontFamily: fontFamilyBody,
     fontSize: 14.0,
     fontWeight: medium,
@@ -200,6 +208,8 @@ abstract final class AppTypography {
     letterSpacing: letterSpacingNormal,
     color: AppColors.textSecondary,
   );
+
+  static const TextStyle label = labelMedium; // Alias for bw compatibility
 
   static const TextStyle labelSmall = TextStyle(
     fontFamily: fontFamilyBody,
@@ -341,10 +351,10 @@ abstract final class AppTypography {
     color: style.color == AppColors.textPrimary
         ? AppColors.textOnDark
         : style.color == AppColors.textSecondary
-            ? AppColors.textOnDark.withAlpha((0.7 * 255).round())
-            : style.color == AppColors.textTertiary
-                ? AppColors.textOnDark.withAlpha((0.5 * 255).round())
-                : style.color,
+        ? AppColors.textOnDark.withAlpha((0.7 * 255).round())
+        : style.color == AppColors.textTertiary
+        ? AppColors.textOnDark.withAlpha((0.5 * 255).round())
+        : style.color,
   );
 
   static TextStyle withPrimary(TextStyle style) =>

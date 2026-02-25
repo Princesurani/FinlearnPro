@@ -5,11 +5,11 @@ from typing import Tuple, List
 
 class GBMPriceModel:
     """Base price model using Geometric Brownian Motion (GBM)"""
-    def __init__(self, initial_price: float, drift: float, volatility: float, dt: float = 15 / (252 * 390 * 60)):
+    def __init__(self, initial_price: float, drift: float, volatility: float, dt: float = 1 / (252 * 10000)):
         self.price = initial_price
         self.drift = drift
         self.volatility = volatility
-        self.dt = dt  # Realistic 15 simulated seconds per tick
+        self.dt = dt  # Balanced to allow visible but stable cent-level ticks
 
     def generate_next_price(self) -> float:
         dW = np.random.normal(0, np.sqrt(self.dt))

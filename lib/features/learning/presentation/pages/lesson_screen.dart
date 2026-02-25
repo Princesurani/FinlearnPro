@@ -317,9 +317,6 @@ class _LessonScreenState extends State<LessonScreen>
           content.add(
             SummaryContent(
               keyTakeaways: List<String>.from(slideMap['keyPoints'] ?? []),
-              nextLesson: widget.lessonIndex < widget.totalLessons - 1
-                  ? 'Next: Continue your learning journey'
-                  : null,
             ),
           );
           break;
@@ -346,12 +343,7 @@ class _LessonScreenState extends State<LessonScreen>
           'Stay tuned for updates',
         ],
       ),
-      SummaryContent(
-        keyTakeaways: ['Lesson content coming soon'],
-        nextLesson: widget.lessonIndex < widget.totalLessons - 1
-            ? 'Next: Continue to the next lesson'
-            : null,
-      ),
+      SummaryContent(keyTakeaways: ['Lesson content coming soon']),
     ];
   }
 
@@ -619,32 +611,6 @@ class _LessonScreenState extends State<LessonScreen>
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
-            ),
-          ),
-          _buildScoreBadge(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildScoreBadge() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.stars_rounded, color: AppColors.white, size: 16),
-          const SizedBox(width: 4),
-          Text(
-            '$_score',
-            style: const TextStyle(
-              color: AppColors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
             ),
           ),
         ],

@@ -20,8 +20,12 @@ class CompleteLessonEvent extends LearningEvent {
 }
 
 class CompleteDailyChallengeEvent extends LearningEvent {
-  CompleteDailyChallengeEvent({required this.xpReward});
+  CompleteDailyChallengeEvent({
+    required this.xpReward,
+    required this.isCorrect,
+  });
   final int xpReward;
+  final bool isCorrect;
 }
 
 class LearningState {
@@ -255,27 +259,34 @@ class LearningBloc {
     final now = DateTime.now();
     bool streakUpdated = false;
 
-    if (prog.lastDailyChallengeDate == null) {
-      newStreak = 1;
-      streakUpdated = true;
-    } else {
-      final last = prog.lastDailyChallengeDate!;
-      final diff = DateTime(
-        now.year,
-        now.month,
-        now.day,
-      ).difference(DateTime(last.year, last.month, last.day)).inDays;
-
-      if (diff == 1) {
-        newStreak += 1;
-        streakUpdated = true;
-      } else if (diff > 1) {
-        // Missed yesterday, streak breaks and restarts at 1
+    if (event.isCorrect) {
+      if (prog.lastDailyChallengeDate == null) {
         newStreak = 1;
         streakUpdated = true;
       } else {
-        // diff == 0, already completed today, streak remains same
+        final last = prog.lastDailyChallengeDate!;
+        final diff = DateTime(
+          now.year,
+          now.month,
+          now.day,
+        ).difference(DateTime(last.year, last.month, last.day)).inDays;
+
+        if (diff == 1) {
+          newStreak += 1;
+          streakUpdated = true;
+        } else if (diff > 1) {
+          // Missed yesterday, streak breaks and restarts at 1
+          newStreak = 1;
+          streakUpdated = true;
+        } else {
+          // diff == 0, already completed today manually bypass if re-trying though the UI blocks this
+          streakUpdated = true;
+        }
       }
+    } else {
+      // Answered wrong. We just record they did it for XP, but we don't increase streak.
+      streakUpdated = true;
+      // Optionally break streak, but standard is just no change for wrong answer.
     }
 
     if (newStreak > longestStreak) {

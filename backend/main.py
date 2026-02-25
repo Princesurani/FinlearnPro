@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import market, portfolio, orders, learning
+from api.routes import market, portfolio, orders, learning, challenges
 from api.websockets import stream
 
 app = FastAPI(
@@ -23,6 +23,7 @@ app.include_router(market.router, prefix="/api/v1/market", tags=["market"])
 app.include_router(portfolio.router, prefix="/api/v1/portfolio", tags=["portfolio"])
 app.include_router(orders.router, prefix="/api/v1/orders", tags=["orders"])
 app.include_router(learning.router, prefix="/api/v1/learning", tags=["learning"])
+app.include_router(challenges.router, prefix="/api/v1/challenges", tags=["challenges"])
 app.include_router(stream.router, prefix="/ws/market", tags=["stream"])
 
 @app.on_event("startup")
@@ -31,6 +32,14 @@ async def startup_event():
     from simulation.tasks import simulate_tick_loop
     # Create all DB tables (including new trading tables) if they don't exist
     await init_db()
+    
+    # Start Cron for Daily Challenges
+    from cron_runner import start_cron
+    try:
+        start_cron()
+    except Exception as e:
+        print(f"Failed to start challenge cron: {e}")
+
     # Trigger background simulation loop
     print("Market Service Starting Up... Triggering Simulation Engine.")
     try:

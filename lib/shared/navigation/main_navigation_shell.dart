@@ -5,17 +5,19 @@ import 'package:flutter/services.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../features/auth/presentation/widgets/home_top_bar.dart';
-import '../../features/gamification/presentation/widgets/progress_tracker_section.dart';
 import '../../features/learning/presentation/widgets/recommended_section.dart';
-import '../../features/market/presentation/widgets/index_ticker.dart';
-import '../../features/market/presentation/widgets/blogs_section.dart';
 import '../../features/market/bloc/market_bloc.dart';
 import '../../features/market/presentation/pages/market_screen.dart';
 import '../../features/learning/presentation/pages/learning_screen.dart';
 import '../../features/portfolio/presentation/pages/portfolio_screen.dart';
+import '../../features/home/presentation/widgets/home_overview_card.dart';
+import '../../features/home/presentation/widgets/continue_learning_card.dart';
+import '../../features/home/presentation/widgets/market_news_sentiment_card.dart';
+import '../../features/learning/data/learning_mock_data.dart';
+import '../../features/learning/presentation/pages/course_details_screen.dart';
+import '../../features/learning/bloc/learning_bloc_provider.dart';
 import '../widgets/aurora_background.dart';
 import '../../features/learning/bloc/learning_bloc.dart';
-import '../../features/learning/bloc/learning_bloc_provider.dart';
 
 class MainNavigationShell extends StatefulWidget {
   const MainNavigationShell({super.key, required this.firebaseUid});
@@ -292,40 +294,28 @@ class _HomeScreenWrapper extends StatelessWidget {
         children: [
           const HomeTopBar(),
           const SizedBox(height: 30),
-          const ProgressTrackerSection(),
+          HomeOverviewCard(marketBloc: bloc),
           const SizedBox(height: 30),
-          StreamBuilder<MarketState>(
-            stream: bloc.stream,
-            initialData: bloc.state,
-            builder: (context, snapshot) {
-              final state = snapshot.data ?? MarketState.initial();
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Market Indices',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E1E2C),
-                      letterSpacing: -0.5,
+          ContinueLearningCard(
+            course: LearningMockData.allCourses.first,
+            onTap: () {
+              final bloc = LearningBlocProvider.of(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => LearningBlocProvider(
+                    bloc: bloc,
+                    child: CourseDetailsScreen(
+                      course: LearningMockData.allCourses.first,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  IndexTicker(
-                    market: state.activeMarket,
-                    snapshots: state.snapshots,
-                    indices: state.indices,
-                    bloc: bloc,
-                  ),
-                ],
+                ),
               );
             },
           ),
           const SizedBox(height: 30),
           const RecommendedSection(),
           const SizedBox(height: 30),
-          const BlogsSection(),
+          const MarketNewsSentimentCard(),
         ],
       ),
     );

@@ -58,15 +58,38 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
     }
 
     final bloc = LearningBlocProvider.of(context);
+    final courseProgress =
+        bloc.state.userProgress.courseProgress[widget.course.id];
+    final completedLessonIds = courseProgress?.completedLessonIds ?? [];
+
+    Lesson? targetLesson;
+    int targetGlobalIndex = 0;
+
+    int globalIndex = 0;
+    for (final module in widget.course.modules) {
+      for (final lesson in module.lessons) {
+        if (targetLesson == null && !completedLessonIds.contains(lesson.id)) {
+          targetLesson = lesson;
+          targetGlobalIndex = globalIndex;
+        }
+        globalIndex++;
+      }
+    }
+
+    if (targetLesson == null) {
+      targetLesson = widget.course.modules.first.lessons.first;
+      targetGlobalIndex = 0;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => LearningBlocProvider(
           bloc: bloc,
           child: LessonScreen(
-            lesson: widget.course.modules.first.lessons.first,
+            lesson: targetLesson!,
             course: widget.course,
-            lessonIndex: 0,
+            lessonIndex: targetGlobalIndex,
             totalLessons: widget.course.totalLessons,
           ),
         ),
@@ -737,49 +760,63 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   }
 
   Widget _buildBottomBar() {
-    return Positioned(
-      bottom: 30,
-      left: 32,
-      right: 32,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primaryPurple.withValues(alpha: 0.4),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: ElevatedButton(
-          onPressed: _startCourse,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primaryPurple,
-            foregroundColor: AppColors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            elevation: 0,
-            shape: RoundedRectangleBorder(
+    final bloc = LearningBlocProvider.of(context);
+    return StreamBuilder<LearningState>(
+      stream: bloc.stream,
+      initialData: bloc.state,
+      builder: (context, snapshot) {
+        final state = snapshot.data;
+        if (state == null) return const SizedBox();
+        final courseProgress =
+            state.userProgress.courseProgress[widget.course.id];
+        final completedLessonIds = courseProgress?.completedLessonIds ?? [];
+        final bool hasStarted = completedLessonIds.isNotEmpty;
+
+        return Positioned(
+          bottom: 30,
+          left: 32,
+          right: 32,
+          child: Container(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primaryPurple.withValues(alpha: 0.4),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Start Course',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
+            child: ElevatedButton(
+              onPressed: _startCourse,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryPurple,
+                foregroundColor: AppColors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              SizedBox(width: 8),
-              Icon(Icons.arrow_forward_rounded, size: 20),
-            ],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    hasStarted ? 'Continue Learning' : 'Start Course',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward_rounded, size: 20),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

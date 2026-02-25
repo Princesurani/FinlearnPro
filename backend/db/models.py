@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, JSON
-from datetime import datetime, timezone
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, JSON, Date
+from datetime import datetime, timezone, date
 from db.database import Base
 
 class DbInstrument(Base):
@@ -105,6 +105,31 @@ class DbWatchlist(Base):
     firebase_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
     symbol = Column(String(50), index=True, nullable=False)
     added_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class DbDailyChallenge(Base):
+    __tablename__ = "daily_challenges"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    challenge_date = Column(Date, unique=True, index=True, nullable=False)
+    asset_symbol = Column(String(50), nullable=False)
+    timeframe = Column(String(20), nullable=False)
+    scenario_text = Column(String, nullable=False)
+    chart_data = Column(JSON, nullable=True)
+    choices = Column(JSON, nullable=False)
+    correct_choice_index = Column(Integer, nullable=False)
+    explanation_correct = Column(String, nullable=False)
+    explanation_incorrect = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+class DbUserChallengeProgress(Base):
+    __tablename__ = "user_challenge_progress"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    firebase_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
+    challenge_id = Column(Integer, ForeignKey("daily_challenges.id"), index=True, nullable=False)
+    completed_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    was_correct = Column(Boolean, nullable=False)
 
 
 # Note: Candles in TimescaleDB typically use Continuous Aggregates built precisely on top of the price_ticks table.

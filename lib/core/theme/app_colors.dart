@@ -10,6 +10,7 @@ abstract final class AppColors {
   static const Color primaryPurpleSubtle = Color(0xFFF3F0FF);
 
   static const Color electricBlue = Color(0xFF4E8BF5);
+  static const Color primaryBlue = Color(0xFF4E8BF5); // Alias for consistency
 
   static const Color oceanTeal = Color(0xFF00BFA5);
 
@@ -50,6 +51,7 @@ abstract final class AppColors {
   static const Color auroraMist = Color(0xFF1E293B);
 
   static const Color success = Color(0xFF00BFA5);
+  static const Color successGreen = Color(0xFF00BFA5); // Alias for consistency
 
   static const Color successLight = Color(0xFFE8F5F1);
 
@@ -80,8 +82,10 @@ abstract final class AppColors {
   static const Color surface = Color(0xFFFFFFFF);
 
   static const Color surfaceVariant = Color(0xFFF8FAFC);
+  static const Color surfaceLayer1 = Color(0xFFFFFFFF); // Alias for cards
 
   static const Color border = Color(0xFFE2E8F0);
+  static const Color borderHint = Color(0xFFE2E8F0); // Alias for subtle borders
 
   static const Color borderLight = Color(0xFFF1F5F9);
 

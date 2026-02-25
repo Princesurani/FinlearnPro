@@ -4,6 +4,8 @@ import '../pages/daily_challenge_screen.dart';
 
 import '../../../learning/bloc/learning_bloc.dart';
 import '../../../learning/bloc/learning_bloc_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../bloc/challenge_cubit.dart';
 
 class StreakBadge extends StatelessWidget {
   const StreakBadge({super.key});
@@ -32,7 +34,10 @@ class StreakBadge extends StatelessWidget {
               MaterialPageRoute(
                 builder: (_) => LearningBlocProvider(
                   bloc: bloc,
-                  child: const DailyChallengeScreen(),
+                  child: BlocProvider(
+                    create: (_) => ChallengeCubit(),
+                    child: const DailyChallengeScreen(),
+                  ),
                 ),
               ),
             );
