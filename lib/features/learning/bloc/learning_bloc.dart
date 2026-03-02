@@ -279,7 +279,11 @@ class LearningBloc {
           newStreak = 1;
           streakUpdated = true;
         } else {
-          // diff == 0, already completed today manually bypass if re-trying though the UI blocks this
+          // diff == 0, already completed today.
+          // If the DB was cleared and they re-did it correctly today but their streak is 0, bump it to 1.
+          if (prog.currentStreak == 0) {
+            newStreak = 1;
+          }
           streakUpdated = true;
         }
       }

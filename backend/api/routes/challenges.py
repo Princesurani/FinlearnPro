@@ -50,8 +50,18 @@ async def get_daily_challenge(firebase_uid: str, db: AsyncSession = Depends(get_
     result = await db.execute(stmt)
     challenge = result.scalars().first()
     
-    if not challenge:
-        raise HTTPException(status_code=404, detail="No daily challenges found.")
+    # Auto-generate if today's challenge is missing
+    if not challenge or challenge.challenge_date != now_date:
+        from services.llm_challenge_generator import generate_and_save_challenge
+        await generate_and_save_challenge(now_date)
+        
+        # Re-fetch
+        stmt = select(DbDailyChallenge).where(DbDailyChallenge.challenge_date == now_date)
+        result = await db.execute(stmt)
+        challenge = result.scalars().first()
+
+        if not challenge:
+            raise HTTPException(status_code=404, detail="No daily challenges found and generation failed.")
 
     response_data = {
         "id": challenge.id,
@@ -87,12 +97,13 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
     Submits an answer. Awards XP and increments streak if correct.
     """
     # 1. Fetch latest daily challenge
+    now_date = datetime.now(timezone.utc).date()
     stmt = select(DbDailyChallenge).order_by(desc(DbDailyChallenge.challenge_date)).limit(1)
     result = await db.execute(stmt)
     challenge = result.scalars().first()
     
-    if not challenge:
-        raise HTTPException(status_code=404, detail="No daily challenge active.")
+    if not challenge or challenge.challenge_date != now_date:
+        raise HTTPException(status_code=400, detail="Today's challenge is not active or hasn't been generated yet.")
         
     # 2. Check if already submitted
     prog_stmt = select(DbUserChallengeProgress).where(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:finnn/core/theme/app_colors.dart';
 
 import '../../../learning/bloc/learning_bloc.dart';
@@ -16,6 +17,7 @@ class DailyChallengeScreen extends StatefulWidget {
 
 class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
   int? _selectedOptionIndex;
+  bool _explanationRevealed = false;
 
   @override
   void initState() {
@@ -89,13 +91,18 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  description,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: AppColors.textSecondary,
-                    height: 1.5,
+                MarkdownBody(
+                  data: description,
+                  styleSheet: MarkdownStyleSheet(
+                    p: const TextStyle(
+                      fontSize: 16,
+                      color: AppColors.textSecondary,
+                      height: 1.5,
+                    ),
+                    listBullet: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -118,7 +125,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        '+\$xpAwarded XP',
+                        '+$xpAwarded XP',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFFF9A825),
@@ -430,38 +437,80 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                 }),
 
                 if (isSubmitted)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryPurple.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Explanation",
+                  if (!submissionResult!.isCorrect &&
+                      !_explanationRevealed &&
+                      !challenge.isCompleted)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _explanationRevealed = true;
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.remove_red_eye,
+                            color: AppColors.primaryPurple,
+                          ),
+                          label: const Text(
+                            "Reveal Correct Answer & Explanation",
                             style: TextStyle(
+                              color: AppColors.primaryPurple,
                               fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(
                               color: AppColors.primaryPurple,
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            submissionResult?.explanation ??
-                                challenge.explanation ??
-                                "Already completed today.",
-                            style: const TextStyle(
-                              color: AppColors.black87,
-                              height: 1.5,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
                             ),
                           ),
-                        ],
+                        ),
+                      ),
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryPurple.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Explanation",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryPurple,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            MarkdownBody(
+                              data: submissionResult.explanation,
+                              styleSheet: MarkdownStyleSheet(
+                                p: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.black87,
+                                  height: 1.5,
+                                ),
+                                listBullet: const TextStyle(
+                                  color: AppColors.black87,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
 
                 const SizedBox(height: 40),
 
@@ -516,11 +565,19 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
     Color borderColor = AppColors.transparent;
     Color backgroundColor = AppColors.white;
 
+    // Only show correct styling if the explanation is revealed OR they got it right in the first place
+    final bool shouldShowCorrect =
+        _explanationRevealed ||
+        (correctOptionIndex != null &&
+            _selectedOptionIndex == correctOptionIndex);
+
     // If already submitted and we know the exact result (for local submission UI)
     if (isSubmitted && correctOptionIndex != null) {
       if (index == correctOptionIndex) {
-        borderColor = AppColors.success;
-        backgroundColor = AppColors.success.withValues(alpha: 0.1);
+        if (shouldShowCorrect) {
+          borderColor = AppColors.success;
+          backgroundColor = AppColors.success.withValues(alpha: 0.1);
+        }
       } else if (isSelected && index != correctOptionIndex) {
         borderColor = AppColors.error;
         backgroundColor = AppColors.error.withValues(alpha: 0.1);
@@ -576,7 +633,8 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
             ),
             if (isSubmitted &&
                 correctOptionIndex != null &&
-                index == correctOptionIndex)
+                index == correctOptionIndex &&
+                shouldShowCorrect)
               const Icon(Icons.check_circle, color: AppColors.success),
             if (isSubmitted &&
                 correctOptionIndex != null &&

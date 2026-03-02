@@ -27,6 +27,10 @@ SYSTEM_PROMPT = """
 You are an expert financial educator. Your task is to generate a dynamic, interactive "Daily Challenge" for a stock market learning app.
 The challenge should look like a realistic market scenario (e.g., technical analysis, fundamental analysis, or trading psychology).
 
+CRITICAL CONSTRAINTS:
+1. Make your choices concise but descriptive (around 15-25 words).
+2. Keep `explanation_correct` and `explanation_incorrect` informative and engaging (about 2-4 sentences each). Provide clear reasoning without overwhelming the user, but don't make it too brief either.
+
 Please output ONLY a valid JSON object matching this schema exactly:
 {
     "asset_symbol": "String (e.g., BTC/USDT, AAPL, RELIANCE)",
@@ -46,6 +50,7 @@ Please output ONLY a valid JSON object matching this schema exactly:
 Ensure the distractors (wrong choices) are plausible but demonstrably incorrect to teach a valid financial lesson.
 """
 
+
 async def generate_and_save_challenge(target_date: datetime.date):
     """
     Calls the LLM to generate a challenge and saves it to the DB for the given target_date.
@@ -53,10 +58,15 @@ async def generate_and_save_challenge(target_date: datetime.date):
     # 1. Check if challenge for this date already exists in DB
     async with AsyncSessionLocal() as db:
         from sqlalchemy import select
-        stmt = select(DbDailyChallenge).where(DbDailyChallenge.challenge_date == target_date)
+
+        stmt = select(DbDailyChallenge).where(
+            DbDailyChallenge.challenge_date == target_date
+        )
         res = await db.execute(stmt)
         if res.scalars().first():
-            print(f"Challenge for {target_date} already exists. Skipping LLM generation.")
+            print(
+                f"Challenge for {target_date} already exists. Skipping LLM generation."
+            )
             return
 
     topics = [
@@ -66,19 +76,19 @@ async def generate_and_save_challenge(target_date: datetime.date):
         "Head and Shoulders pattern",
         "Fed interest rate hike impact on growth stocks",
         "Value vs Growth investing dynamic",
-        "Double bottom support hold"
+        "Double bottom support hold",
     ]
     selected_topic = random.choice(topics)
-    
+
     prompt = f"Generate a challenge focusing on: {selected_topic}."
-    
+
     print(f"Generating challenge for {target_date} on topic: {selected_topic}...")
-    
+
     try:
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=[SYSTEM_PROMPT, prompt],
-            config=generation_config
+            config=generation_config,
         )
         content = response.text.strip()
         if content.startswith("```json"):
@@ -88,11 +98,11 @@ async def generate_and_save_challenge(target_date: datetime.date):
         if content.endswith("```"):
             content = content[:-3]
         content = content.strip()
-        
+
         # Parse JSON
         print(f"DEBUG raw LLM output: {repr(content)}")
         data = json.loads(content)
-        
+
         async with AsyncSessionLocal() as db:
             challenge = DbDailyChallenge(
                 challenge_date=target_date,
@@ -102,14 +112,15 @@ async def generate_and_save_challenge(target_date: datetime.date):
                 choices=data["choices"],
                 correct_choice_index=data["correct_choice_index"],
                 explanation_correct=data["explanation_correct"],
-                explanation_incorrect=data["explanation_incorrect"]
+                explanation_incorrect=data["explanation_incorrect"],
             )
             db.add(challenge)
             await db.commit()
             print(f"Successfully saved challenge for {target_date}.")
-            
+
     except Exception as e:
         print(f"Error generating challenge: {e}")
+
 
 if __name__ == "__main__":
     # If run directly as a script, generate a challenge for today
