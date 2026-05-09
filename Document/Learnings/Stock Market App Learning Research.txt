@@ -3,130 +3,129 @@ This is optimized for a Varsity-like learning app, but clearer and more structur
 
 📘 All-in-One Trading Learning Path
 
-🔰 Course 0: Foundations of Trading (Mandatory for All Users)
-Common base before entering any market
-What is trading & investing
-How financial markets work
-Market participants (retail, institutions, market makers)
-Exchanges, brokers & trading platforms
-Order types (market, limit, stop)
-How trades are executed
-Basic trading terminology
-✅ Outcome: User understands how trading works at a core level
+🔰 Course 1: Foundations of Trading (Mandatory for All Users)
+chapter1: Common base before entering any market
+chapter2: What is trading & investing
+chapter3: How financial markets work
+chapter4: Market participants (retail, institutions, market makers)
+chapter5: Exchanges, brokers & trading platforms
+chapter6: Order types (market, limit, stop)
+chapter7: How trades are executed
+chapter8: Basic trading terminology
 
-📈 Course 1: Stock Market
-Equity trading & investing
-What is the stock market
-How companies issue shares (IPO, listing)
-Types of stocks (large-cap, mid-cap, small-cap)
-How stock trading works
-Long-term investing vs short-term trading
-Risks in stock market
-Who should trade stocks
+📈 Course 2: Stock Market
+chapter1: Equity trading & investing
+chapter2: What is the stock market
+chapter3: How companies issue shares (IPO, listing)
+chapter4: Types of stocks (large-cap, mid-cap, small-cap)
+chapter5: How stock trading works
+chapter6: Long-term investing vs short-term trading
+chapter7: Risks in stock market
+chapter8: Who should trade stocks
 
-🪙 Course 2: Cryptocurrency Market
-Digital assets & blockchain-based trading
-What is cryptocurrency
-Blockchain basics (simple explanation)
-Types of crypto assets (coins, tokens, stablecoins)
-How crypto trading works
-Centralized vs decentralized exchanges
-Volatility & crypto-specific risks
-Who should trade crypto
+🪙 Course 3: Cryptocurrency Market
+chapter1: Digital assets & blockchain-based trading
+chapter2: What is cryptocurrency
+chapter3: Blockchain basics (simple explanation)
+chapter4: Types of crypto assets (coins, tokens, stablecoins)
+chapter5: How crypto trading works
+chapter6: Centralized vs decentralized exchanges
+chapter7: Volatility & crypto-specific risks
+chapter8: Who should trade crypto
 
-💱 Course 3: Forex (Currency Market)
-Global currency trading
-What is forex market
-How currencies are traded in pairs
-Major, minor & exotic pairs
-How forex trading works
-Trading sessions & liquidity
-Leverage & margin basics
-Risks in forex trading
-Who should trade forex
+💱 Course 4: Forex (Currency Market)
+chapter1: Global currency trading
+chapter2: What is forex market
+chapter3: How currencies are traded in pairs
+chapter4: Major, minor & exotic pairs
+chapter5: How forex trading works
+chapter6: Trading sessions & liquidity
+chapter7: Leverage & margin basics
+chapter8: Risks in forex trading
+chapter9: Who should trade forex
 
-🛢 Course 4: Commodities Market
-Physical assets trading
-What are commodities
-Types (metals, energy, agriculture)
-How commodity trading works
-Spot vs derivative trading
-Factors affecting commodity prices
-Risks in commodity trading
-Who should trade commodities
+🛢 Course 5: Commodities Market
+chapter1: Physical assets trading
+chapter2: What are commodities
+chapter3: Types (metals, energy, agriculture)
+chapter4: How commodity trading works
+chapter5: Spot vs derivative trading
+chapter6: Factors affecting commodity prices
+chapter7: Risks in commodity trading
+chapter8: Who should trade commodities
 
-📊 Course 5: Technical Analysis (Cross-Market Skill)
-Used in all markets
-Price charts & timeframes
-Support & resistance
-Trend analysis
-Candlestick patterns
-Indicators (moving averages, RSI, MACD)
-Entry & exit planning
-Common technical mistakes
+📊 Course 6: Technical Analysis (Cross-Market Skill)
+chapter1: Used in all markets
+chapter2: Price charts & timeframes
+chapter3: Support & resistance
+chapter4: Trend analysis
+chapter5: Candlestick patterns
+chapter6: Indicators (moving averages, RSI, MACD)
+chapter7: Entry & exit planning
+chapter8: Common technical mistakes
 
-📉 Course 6: Fundamental Analysis (Cross-Market Skill)
-Value & macro understanding
-What is fundamental analysis
-Company financial basics (stocks)
-Economic indicators (GDP, inflation, interest rates)
-News & event impact on markets
-Crypto fundamentals (use cases, tokenomics)
-When fundamentals matter more than charts
+📉 Course 7: Fundamental Analysis (Cross-Market Skill)
+chapter1: Value & macro understanding
+chapter2: What is fundamental analysis
+chapter3: Company financial basics (stocks)
+chapter4: Economic indicators (GDP, inflation, interest rates)
+chapter5: News & event impact on markets
+chapter6: Crypto fundamentals (use cases, tokenomics)
+chapter7: When fundamentals matter more than charts
 
-⚠️ Course 7: Risk Management & Trading Psychology (CORE Course)
-Most important Course
-Why most traders lose money
-Risk vs reward (thinking in probabilities)
-Position sizing basics
-Stop-loss & capital protection
-Drawdowns & loss recovery mindset
-Fear, greed & overconfidence
-Overtrading & revenge trading
-Discipline, patience & consistency
-Building a risk-first mindset
+⚠️ Course 8: Risk Management & Trading Psychology (CORE Course)
+chapter1: Most important Course
+chapter2: Why most traders lose money
+chapter3: Risk vs reward (thinking in probabilities)
+chapter4: Position sizing basics
+chapter5: Stop-loss & capital protection
+chapter6: Drawdowns & loss recovery mindset
+chapter7: Fear, greed & overconfidence
+chapter8: Overtrading & revenge trading
+chapter9: Discipline, patience & consistency
+chapter10: Building a risk-first mindset
 
-🧪 Course 8: Practice & Skill Building
-No real money yet
-Paper trading
-Trade planning
-Backtesting basics
-Maintaining a trade journal
-Reviewing past trades
-Improving decision-making
+🧪 Course 9: Practice & Skill Building
+chapter1: No real money yet
+chapter2: Paper trading
+chapter3: Trade planning
+chapter4: Backtesting basics
+chapter5: Maintaining a trade journal
+chapter6: Reviewing past trades
+chapter7: Improving decision-making
 
-🧾 Course 9: Derivatives Market (Advanced)
-High-risk instruments
-What are derivatives
-Futures basics
-Options basics
-Calls & puts (simple)
-Margin & leverage risks
-When NOT to trade derivatives
-Beginner mistakes in derivatives
+🧾 Course 10: Derivatives Market (Advanced)
+chapter1: High-risk instruments
+chapter2: What are derivatives
+chapter3: Futures basics
+chapter4: Options basics
+chapter5: Calls & puts (simple)
+chapter6: Margin & leverage risks
+chapter7: When NOT to trade derivatives
+chapter8: Beginner mistakes in derivatives
 
-🚀 Course 10: Trading Styles & Strategies
-Choose based on personality
-Scalping (overview)
-Intraday trading
-Swing trading
-Long-term investing
-Strategy selection based on time & capital
-Why copying strategies fails
+🚀 Course 11: Trading Styles & Strategies
+chapter1: Choose based on personality
+chapter2: Scalping (overview)
+chapter3: Intraday trading
+chapter4: Swing trading
+chapter5: Long-term investing
+chapter6: Strategy selection based on time & capital
+chapter7: Why copying strategies fails
 
-🏦 Course 11: Real-World Trading Setup
-Practical execution
-Choosing the right broker
-Fees, commissions & hidden costs
-Regulations & compliance basics
-Taxation overview (country-agnostic)
-Trading safely & legally
+🏦 Course 12: Real-World Trading Setup
+chapter1: Practical execution
+chapter2: Choosing the right broker
+chapter3: Fees, commissions & hidden costs
+chapter4: Regulations & compliance basics
+chapter5: Taxation overview (country-agnostic)
+chapter6: Trading safely & legally
 
-🎯 Course 12: Becoming a Consistent Trader
-Final mindset Course
-Building a personal trading plan
-Performance evaluation
-Risk-first approach
-Continuous learning
-Long-term consistency over profits
+🎯 Course 13: Becoming a Consistent Trader
+chapter1: Final mindset Course
+chapter2: Building a personal trading plan
+chapter3: Performance evaluation
+chapter4: Risk-first approach
+chapter5: Continuous learning
+chapter6: Long-term consistency over profits
 

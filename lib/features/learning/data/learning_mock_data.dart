@@ -3,372 +3,102 @@ import '../../../core/theme/app_colors.dart';
 import 'learning_models.dart';
 import 'courses/foundations_of_trading/foundations_of_trading.dart';
 import 'courses/stock_market/stock_market_course.dart';
+import 'courses/cryptocurrency_market/cryptocurrency_market_course.dart';
+import 'courses/forex_market/forex_market_course.dart';
+import 'courses/commodities_market/commodities_market_course.dart';
+import 'courses/technical_analysis/technical_analysis_course.dart';
+import 'courses/fundamental_analysis/fundamental_analysis_course.dart';
+import 'courses/risk_management/risk_management_course.dart';
+import 'courses/practice_skill_building/practice_skill_building_course.dart';
+import 'courses/derivatives_market/derivatives_market_course.dart';
+import 'courses/trading_styles/trading_styles_course.dart';
+import 'courses/real_world_setup/real_world_setup_course.dart';
+import 'courses/consistent_trader/consistent_trader_course.dart';
 
 abstract final class LearningMockData {
+  // ── Categories that reflect the actual 13-course curriculum ──
   static const List<LearningCategory> categories = [
     LearningCategory(
-      id: 'stock-basics',
-      name: 'Stock Market Basics',
-      description: 'Master the fundamentals of stock market investing',
-      icon: Icons.candlestick_chart_outlined,
+      id: 'foundations',
+      name: 'Foundations',
+      description: 'Trading basics, market types, and order mechanics',
+      icon: Icons.school_outlined,
       color: AppColors.electricBlue,
-      courseCount: 12,
-      estimatedHours: 18,
-      isNew: false,
-    ),
-    LearningCategory(
-      id: 'technical-analysis',
-      name: 'Technical Analysis',
-      description: 'Chart patterns, indicators, and price action',
-      icon: Icons.show_chart_rounded,
-      color: AppColors.auroraPurple,
-      courseCount: 15,
-      estimatedHours: 24,
-      isNew: false,
-    ),
-    LearningCategory(
-      id: 'options-trading',
-      name: 'Options Trading',
-      description: 'From basics to advanced options strategies',
-      icon: Icons.call_split_rounded,
-      color: AppColors.coralPink,
-      courseCount: 10,
-      estimatedHours: 20,
-      isPremium: true,
-    ),
-    LearningCategory(
-      id: 'crypto',
-      name: 'Cryptocurrency',
-      description: 'Bitcoin, Ethereum, DeFi, and blockchain',
-      icon: Icons.currency_bitcoin,
-      color: AppColors.sunsetOrange,
-      courseCount: 8,
-      estimatedHours: 14,
-      isNew: true,
-    ),
-    LearningCategory(
-      id: 'fundamental-analysis',
-      name: 'Fundamental Analysis',
-      description: 'Financial statements and company valuation',
-      icon: Icons.account_balance_outlined,
-      color: AppColors.indigo,
-      courseCount: 9,
+      courseCount: 5,
       estimatedHours: 16,
     ),
     LearningCategory(
-      id: 'risk-management',
-      name: 'Risk Management',
-      description: 'Protect your portfolio and manage exposure',
+      id: 'analysis',
+      name: 'Analysis',
+      description: 'Technical and fundamental analysis skills',
+      icon: Icons.show_chart_rounded,
+      color: AppColors.auroraPurple,
+      courseCount: 2,
+      estimatedHours: 12,
+    ),
+    LearningCategory(
+      id: 'risk-psychology',
+      name: 'Risk & Psychology',
+      description: 'Risk management, trading psychology, and discipline',
       icon: Icons.shield_outlined,
       color: AppColors.amber,
-      courseCount: 6,
+      courseCount: 2,
       estimatedHours: 10,
     ),
     LearningCategory(
-      id: 'psychology',
-      name: 'Trading Psychology',
-      description: 'Master your emotions and trading mindset',
-      icon: Icons.psychology_outlined,
-      color: AppColors.rose,
-      courseCount: 5,
-      estimatedHours: 8,
+      id: 'advanced',
+      name: 'Advanced',
+      description: 'Derivatives, trading styles, and real-world setup',
+      icon: Icons.rocket_launch_outlined,
+      color: AppColors.coralPink,
+      courseCount: 3,
+      estimatedHours: 14,
     ),
     LearningCategory(
-      id: 'retirement',
-      name: 'Retirement Planning',
-      description: 'Build wealth for your future',
-      icon: Icons.beach_access_outlined,
+      id: 'mastery',
+      name: 'Mastery',
+      description: 'Consistency, performance, and becoming a pro',
+      icon: Icons.emoji_events_outlined,
       color: AppColors.emerald,
-      courseCount: 7,
-      estimatedHours: 12,
+      courseCount: 1,
+      estimatedHours: 6,
     ),
   ];
 
+  // ── All 13 fully interactive courses ──
   static List<Course> get allCourses => [
-    // Use the new interactive Foundations of Trading course
+    // Course 1: Foundations of Trading
     FoundationsOfTradingCourse.getCourse(),
-    // Course 1: Stock Market (fully interactive)
+    // Course 2: Stock Market
     StockMarketCourse.getCourse(),
-    Course(
-      id: 'c2-crypto',
-      title: 'Cryptocurrency Market',
-      subtitle: 'Digital assets & blockchain',
-      description:
-          'Explore the world of crypto. Blockchain basics, asset types, exchanges, and handling volatility.',
-      categoryId: 'crypto',
-      difficulty: DifficultyLevel.intermediate,
-      thumbnailUrl: 'assets/courses/crypto.jpg',
-      accentColor: AppColors.sunsetOrange,
-      modules: [
-        _makeModule('m2-crypto', 'Crypto Core', [
-          _makeLesson(
-            'l2-1',
-            'What is cryptocurrency',
-            ContentType.video,
-            9,
-            1,
-          ),
-          _makeLesson(
-            'l2-2',
-            'Blockchain simple explanation',
-            ContentType.article,
-            8,
-            2,
-          ),
-          _makeLesson(
-            'l2-3',
-            'Coins, tokens, stablecoins',
-            ContentType.video,
-            10,
-            3,
-          ),
-          _makeLesson(
-            'l2-4',
-            'Centralized vs Decentralized Exchanges',
-            ContentType.article,
-            7,
-            4,
-          ),
-        ]),
-      ],
-      totalLessons: 4,
-      estimatedMinutes: 50,
-      xpReward: 400,
-      rating: 4.7,
-      ratingsCount: 2100,
-      enrolledCount: 6500,
-    ),
-    Course(
-      id: 'c3-forex',
-      title: 'Forex Trading',
-      subtitle: 'Currency markets explained',
-      description:
-          'Trade currencies globally. Understand pairs, sessions, leverage, and margin risks.',
-      categoryId: 'forex',
-      difficulty: DifficultyLevel.intermediate,
-      thumbnailUrl: 'assets/courses/forex.jpg',
-      accentColor: AppColors.emerald,
-      modules: [
-        _makeModule('m3-fx', 'FX Basics', [
-          _makeLesson('l3-1', 'What is forex market', ContentType.video, 8, 1),
-          _makeLesson(
-            'l3-2',
-            'Currency pairs explained',
-            ContentType.interactive,
-            8,
-            2,
-          ),
-          _makeLesson(
-            'l3-3',
-            'Leverage & margin basics',
-            ContentType.article,
-            10,
-            3,
-          ),
-        ]),
-      ],
-      totalLessons: 3,
-      estimatedMinutes: 40,
-      xpReward: 450,
-      rating: 4.6,
-      ratingsCount: 1500,
-      enrolledCount: 3200,
-    ),
-    Course(
-      id: 'c4-commodities',
-      title: 'Commodities Market',
-      subtitle: 'Physical assets trading',
-      description:
-          'Trade metals, energy, and agriculture. Spot vs derivative trading and price factors.',
-      categoryId: 'commodities',
-      difficulty: DifficultyLevel.advanced,
-      thumbnailUrl: 'assets/courses/commodities.jpg',
-      accentColor: AppColors.goldenYellow,
-      modules: [
-        _makeModule('m4-comm', 'Commodity Types', [
-          _makeLesson('l4-1', 'What are commodities', ContentType.video, 7, 1),
-          _makeLesson(
-            'l4-2',
-            'Spot vs Derivative trading',
-            ContentType.article,
-            8,
-            2,
-          ),
-        ]),
-      ],
-      totalLessons: 2,
-      estimatedMinutes: 30,
-      xpReward: 500,
-      rating: 4.5,
-      ratingsCount: 900,
-      enrolledCount: 1800,
-    ),
-    Course(
-      id: 'c5-technical',
-      title: 'Technical Analysis',
-      subtitle: 'Master the charts',
-      description:
-          'Cross-market skill. Learn charts, trends, patterns, and indicators.',
-      categoryId: 'analysis',
-      difficulty: DifficultyLevel.intermediate,
-      thumbnailUrl: 'assets/courses/technical_analysis.jpg',
-      accentColor: AppColors.cyan,
-      modules: [
-        _makeModule('m5-ta', 'Charting', [
-          _makeLesson(
-            'l5-1',
-            'Price charts & timeframes',
-            ContentType.video,
-            10,
-            1,
-          ),
-          _makeLesson(
-            'l5-2',
-            'Support & Resistance',
-            ContentType.interactive,
-            9,
-            2,
-          ),
-          _makeLesson('l5-3', 'Candlestick patterns', ContentType.video, 12, 3),
-        ]),
-      ],
-      totalLessons: 3,
-      estimatedMinutes: 60,
-      xpReward: 550,
-      rating: 4.9,
-      ratingsCount: 4500,
-      enrolledCount: 12000,
-    ),
-    Course(
-      id: 'c6-fundamental',
-      title: 'Fundamental Analysis',
-      subtitle: 'Value & Macro',
-      description:
-          'Understand value. Financials, economic indicators, and news impact.',
-      categoryId: 'analysis',
-      difficulty: DifficultyLevel.intermediate,
-      thumbnailUrl: 'assets/courses/fundamental_analysis.jpg',
-      accentColor: AppColors.indigo,
-      modules: [],
-      totalLessons: 0,
-      estimatedMinutes: 45,
-      xpReward: 500,
-      rating: 4.7,
-      ratingsCount: 3000,
-      enrolledCount: 8000,
-    ),
-    Course(
-      id: 'c7-risk',
-      title: 'Risk Management',
-      subtitle: 'Psychology & Discipline',
-      description:
-          'The most important course. Risk/Reward, position sizing, and trading psychology.',
-      categoryId: 'risk',
-      difficulty: DifficultyLevel.beginner,
-      thumbnailUrl: 'assets/courses/risk_management.jpg',
-      accentColor: AppColors.lossRed,
-      modules: [],
-      totalLessons: 0,
-      estimatedMinutes: 90,
-      xpReward: 600,
-      rating: 5.0,
-      ratingsCount: 5000,
-      enrolledCount: 15000,
-    ),
-    Course(
-      id: 'c8-practice',
-      title: 'Practice & Skill',
-      subtitle: 'Paper trading & journaling',
-      description:
-          'Build skills without risk. Paper trading, backtesting, and journaling.',
-      categoryId: 'practice',
-      difficulty: DifficultyLevel.beginner,
-      thumbnailUrl: 'assets/courses/practice.jpg',
-      accentColor: AppColors.mintGreen,
-      modules: [],
-      totalLessons: 0,
-      estimatedMinutes: 40,
-      xpReward: 300,
-      rating: 4.6,
-      ratingsCount: 1200,
-      enrolledCount: 4000,
-    ),
-    Course(
-      id: 'c9-derivatives',
-      title: 'Derivatives Market',
-      subtitle: 'Advanced Instruments',
-      description: 'Futures, Options, and leverage. High risk, high reward.',
-      categoryId: 'derivatives',
-      difficulty: DifficultyLevel.advanced,
-      thumbnailUrl: 'assets/courses/derivatives.jpg',
-      accentColor: AppColors.rose,
-      modules: [],
-      totalLessons: 0,
-      estimatedMinutes: 120,
-      xpReward: 800,
-      rating: 4.8,
-      ratingsCount: 2500,
-      enrolledCount: 6000,
-    ),
-    Course(
-      id: 'c10-styles',
-      title: 'Trading Styles',
-      subtitle: 'Find your fit',
-      description:
-          'Scalping, Intraday, Swing, Long-term. Choose based on personality and capital.',
-      categoryId: 'strategies',
-      difficulty: DifficultyLevel.intermediate,
-      thumbnailUrl: 'assets/courses/trading_styles.jpg',
-      accentColor: AppColors.amber,
-      modules: [],
-      totalLessons: 0,
-      estimatedMinutes: 50,
-      xpReward: 400,
-      rating: 4.7,
-      ratingsCount: 1800,
-      enrolledCount: 5000,
-    ),
-    Course(
-      id: 'c11-setup',
-      title: 'Trading Setup',
-      subtitle: 'Practical Execution',
-      description:
-          'Brokers, fees, regulations, and taxes. Setting up for success.',
-      categoryId: 'setup',
-      difficulty: DifficultyLevel.beginner,
-      thumbnailUrl: 'assets/courses/setup.jpg',
-      accentColor: AppColors.auroraBlue,
-      modules: [],
-      totalLessons: 0,
-      estimatedMinutes: 45,
-      xpReward: 350,
-      rating: 4.5,
-      ratingsCount: 1100,
-      enrolledCount: 3500,
-    ),
-    Course(
-      id: 'c12-consistent',
-      title: 'Consistency',
-      subtitle: 'Becoming a Pro',
-      description:
-          'Final mindset course. Trading plan, evaluation, and long-term consistency.',
-      categoryId: 'mindset',
-      difficulty: DifficultyLevel.expert,
-      thumbnailUrl: 'assets/courses/consistency.jpg',
-      accentColor: AppColors.auroraTeal,
-      modules: [],
-      totalLessons: 0,
-      estimatedMinutes: 60,
-      xpReward: 700,
-      rating: 4.9,
-      ratingsCount: 2000,
-      enrolledCount: 4500,
-    ),
+    // Course 3: Cryptocurrency Market
+    CryptocurrencyMarketCourse.getCourse(),
+    // Course 4: Forex Market
+    ForexMarketCourse.getCourse(),
+    // Course 5: Commodities Market
+    CommoditiesMarketCourse.getCourse(),
+    // Course 6: Technical Analysis
+    TechnicalAnalysisCourse.getCourse(),
+    // Course 7: Fundamental Analysis
+    FundamentalAnalysisCourse.getCourse(),
+    // Course 8: Risk Management & Trading Psychology
+    RiskManagementCourse.getCourse(),
+    // Course 9: Practice & Skill Building
+    PracticeSkillBuildingCourse.getCourse(),
+    // Course 10: Derivatives Market
+    DerivativesMarketCourse.getCourse(),
+    // Course 11: Trading Styles & Strategies
+    TradingStylesCourse.getCourse(),
+    // Course 12: Real-World Trading Setup
+    RealWorldSetupCourse.getCourse(),
+    // Course 13: Becoming a Consistent Trader
+    ConsistentTraderCourse.getCourse(),
   ];
 
+  // ── Continue Learning (references real courses) ──
   static List<Map<String, dynamic>> get continueLearning => [
     {
-      'course': allCourses[0], // Foundations
+      'course': allCourses[0], // Foundations of Trading
       'progress': 0.65,
       'lastLesson': 'Understanding Order Types',
       'nextLesson': 'Market vs Limit Orders',
@@ -377,97 +107,91 @@ abstract final class LearningMockData {
     {
       'course': allCourses[5], // Technical Analysis
       'progress': 0.32,
-      'lastLesson': 'Doji Patterns Explained',
-      'nextLesson': 'Hammer and Hanging Man',
+      'lastLesson': 'Candlestick Patterns',
+      'nextLesson': 'Support & Resistance',
       'minutesLeft': 163,
     },
     {
       'course': allCourses[7], // Risk Management
       'progress': 0.15,
-      'lastLesson': 'The Psychology of Fear',
-      'nextLesson': 'Managing Greed in Trading',
+      'lastLesson': 'Why Most Traders Lose',
+      'nextLesson': 'Risk vs Reward',
       'minutesLeft': 128,
     },
   ];
 
+  // ── Learning Paths (references real course IDs) ──
   static List<LearningPath> get learningPaths => [
     const LearningPath(
       id: 'path-001',
-      title: 'Complete Stock Trader',
+      title: 'Complete Beginner to Trader',
       description:
-          'Go from complete beginner to confident stock trader with this comprehensive path',
-      courses: ['c0-foundations', 'c1-stocks', 'c5-technical', 'c7-risk'],
-      estimatedWeeks: 8,
+          'Master the foundations, learn analysis, and build risk management skills',
+      courses: [
+        'c0-foundations',
+        'c1-stocks',
+        'c5-technical',
+        'c7-risk',
+        'c8-practice',
+      ],
+      estimatedWeeks: 10,
       difficulty: DifficultyLevel.beginner,
       skills: [
-        'Stock Analysis',
-        'Technical Trading',
+        'Market Fundamentals',
+        'Technical Analysis',
         'Risk Management',
-        'Trading Psychology',
+        'Paper Trading',
       ],
     ),
     const LearningPath(
       id: 'path-002',
-      title: 'Options Specialist',
+      title: 'Advanced Trader',
       description:
-          'Master options trading from basic concepts to advanced strategies',
-      courses: ['c1-stocks', 'c9-derivatives'],
-      estimatedWeeks: 12,
+          'Derivatives, trading styles, and building long-term consistency',
+      courses: ['c10-derivatives', 'c11-styles', 'c12-setup', 'c13-consistent'],
+      estimatedWeeks: 8,
       difficulty: DifficultyLevel.advanced,
       skills: [
-        'Options Mechanics',
-        'Greeks Analysis',
-        'Strategy Building',
-        'Portfolio Hedging',
+        'Options & Futures',
+        'Strategy Selection',
+        'Tax & Compliance',
+        'Performance Evaluation',
       ],
     ),
     const LearningPath(
       id: 'path-003',
-      title: 'Crypto Navigator',
-      description: 'Navigate the world of cryptocurrencies with confidence',
-      courses: ['c2-crypto'],
+      title: 'Multi-Market Explorer',
+      description:
+          'Stocks, crypto, forex, and commodities — understand all markets',
+      courses: ['c1-stocks', 'c2-crypto', 'c3-forex', 'c4-commodities'],
       estimatedWeeks: 6,
       difficulty: DifficultyLevel.intermediate,
-      skills: ['Blockchain', 'DeFi', 'NFTs', 'Portfolio Management'],
+      skills: [
+        'Stock Trading',
+        'Crypto & Blockchain',
+        'Forex Pairs',
+        'Commodity Markets',
+      ],
     ),
   ];
 
+  // ── User Progress (clean starting state) ──
   static UserLearningProgress get currentUserProgress => UserLearningProgress(
     userId: 'user-001',
-    totalXp: 8450,
-    currentLevel: 8,
-    coursesStarted: 5,
-    coursesCompleted: 2,
-    lessonsCompleted: 87,
-    totalLearningMinutes: 1240,
-    currentStreak: 12,
-    longestStreak: 28,
-    courseProgress: {
-      'c0-foundations': CourseProgress(
-        courseId: 'c0-foundations',
-        status: ProgressStatus.inProgress,
-        completedLessons: 6, // Completed course
-        totalLessons: 6,
-        lastAccessedDate: DateTime.now().subtract(const Duration(hours: 2)),
-        startedDate: DateTime.now().subtract(const Duration(days: 14)),
-        quizScores: {'l0-quiz': 90},
-        timeSpentMinutes: 145,
-      ),
-      'c5-technical': CourseProgress(
-        courseId: 'c5-technical',
-        status: ProgressStatus.inProgress,
-        completedLessons: 2,
-        totalLessons: 3,
-        lastAccessedDate: DateTime.now().subtract(const Duration(days: 1)),
-        startedDate: DateTime.now().subtract(const Duration(days: 21)),
-        quizScores: {},
-        timeSpentMinutes: 98,
-      ),
-    },
-    achievements: achievements.where((a) => a.isEarned).toList(),
-    lastActivityDate: DateTime.now().subtract(const Duration(hours: 2)),
+    totalXp: 0,
+    currentLevel: 1,
+    coursesStarted: 0,
+    coursesCompleted: 0,
+    lessonsCompleted: 0,
+    totalLearningMinutes: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+    courseProgress: const {},
+    achievements: achievements,
+    lastActivityDate: DateTime.now(),
   );
 
+  // ── Achievements ──
   static List<Achievement> get achievements => [
     Achievement(
       id: 'ach-001',
@@ -477,7 +201,6 @@ abstract final class LearningMockData {
       color: AppColors.mintGreen,
       xpReward: 50,
       rarity: AchievementRarity.common,
-      earnedDate: DateTime.now().subtract(const Duration(days: 30)),
     ),
     Achievement(
       id: 'ach-002',
@@ -487,7 +210,8 @@ abstract final class LearningMockData {
       color: AppColors.electricBlue,
       xpReward: 100,
       rarity: AchievementRarity.common,
-      earnedDate: DateTime.now().subtract(const Duration(days: 20)),
+      progress: 0,
+      maxProgress: 10,
     ),
     Achievement(
       id: 'ach-003',
@@ -497,7 +221,8 @@ abstract final class LearningMockData {
       color: AppColors.sunsetOrange,
       xpReward: 200,
       rarity: AchievementRarity.rare,
-      earnedDate: DateTime.now().subtract(const Duration(days: 5)),
+      progress: 0,
+      maxProgress: 7,
     ),
     Achievement(
       id: 'ach-004',
@@ -507,7 +232,7 @@ abstract final class LearningMockData {
       color: AppColors.goldenYellow,
       xpReward: 300,
       rarity: AchievementRarity.rare,
-      progress: 3,
+      progress: 0,
       maxProgress: 5,
     ),
     Achievement(
@@ -518,7 +243,8 @@ abstract final class LearningMockData {
       color: AppColors.auroraPurple,
       xpReward: 500,
       rarity: AchievementRarity.epic,
-      earnedDate: DateTime.now().subtract(const Duration(days: 10)),
+      progress: 0,
+      maxProgress: 1,
     ),
     Achievement(
       id: 'ach-006',
@@ -528,22 +254,23 @@ abstract final class LearningMockData {
       color: AppColors.indigo,
       xpReward: 1000,
       rarity: AchievementRarity.epic,
-      progress: 2,
+      progress: 0,
       maxProgress: 5,
     ),
     Achievement(
       id: 'ach-007',
       title: 'Trading Legend',
-      description: 'Reach Level 25',
+      description: 'Complete all 13 courses',
       iconData: Icons.star_outline_rounded,
       color: AppColors.goldenYellow,
       xpReward: 2500,
       rarity: AchievementRarity.legendary,
-      progress: 8,
-      maxProgress: 25,
+      progress: 0,
+      maxProgress: 13,
     ),
   ];
 
+  // ── Daily Tips ──
   static List<Map<String, String>> get dailyTips => [
     {
       'title': 'The Power of Compound Interest',
@@ -564,37 +291,4 @@ abstract final class LearningMockData {
       'category': 'Risk Management',
     },
   ];
-
-  static Lesson _makeLesson(
-    String id,
-    String title,
-    ContentType type,
-    int minutes,
-    int order,
-  ) {
-    return Lesson(
-      id: id,
-      title: title,
-      description: 'Learn about $title',
-      contentType: type,
-      estimatedMinutes: minutes,
-      order: order,
-      xpReward: 50,
-      thumbnailUrl: 'assets/lessons/$id.jpg', // Placeholder
-    );
-  }
-
-  static CourseModule _makeModule(
-    String id,
-    String title,
-    List<Lesson> lessons,
-  ) {
-    return CourseModule(
-      id: id,
-      title: title,
-      description: 'Module: $title',
-      lessons: lessons,
-      order: 1,
-    );
-  }
 }

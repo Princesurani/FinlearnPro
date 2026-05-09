@@ -15,6 +15,83 @@ import '../../data/courses/stock_market/know_your_stocks.dart';
 import '../../data/courses/stock_market/how_stock_trading_works.dart';
 import '../../data/courses/stock_market/the_two_paths.dart';
 import '../../data/courses/stock_market/risks_management.dart';
+import '../../data/courses/cryptocurrency_market/digital_assets_trading.dart';
+import '../../data/courses/cryptocurrency_market/what_is_cryptocurrency.dart';
+import '../../data/courses/cryptocurrency_market/blockchain_basics.dart';
+import '../../data/courses/cryptocurrency_market/crypto_assets_types.dart';
+import '../../data/courses/cryptocurrency_market/how_crypto_trading_works.dart';
+import '../../data/courses/cryptocurrency_market/cex_vs_dex.dart';
+import '../../data/courses/cryptocurrency_market/volatility_and_risks.dart';
+import '../../data/courses/cryptocurrency_market/who_should_trade.dart';
+import '../../data/courses/forex_market/global_currency_trading.dart';
+import '../../data/courses/forex_market/what_is_forex_market.dart';
+import '../../data/courses/forex_market/currency_pairs.dart';
+import '../../data/courses/forex_market/major_minor_exotic_pairs.dart';
+import '../../data/courses/forex_market/how_forex_trading_works.dart';
+import '../../data/courses/forex_market/trading_sessions.dart';
+import '../../data/courses/forex_market/leverage_margin.dart';
+import '../../data/courses/forex_market/forex_risks.dart';
+import '../../data/courses/forex_market/who_should_trade_forex.dart';
+import '../../data/courses/commodities_market/physical_assets_trading.dart';
+import '../../data/courses/commodities_market/what_are_commodities.dart';
+import '../../data/courses/commodities_market/commodity_types.dart';
+import '../../data/courses/commodities_market/how_commodity_trading_works.dart';
+import '../../data/courses/commodities_market/spot_vs_derivative.dart';
+import '../../data/courses/commodities_market/commodity_price_factors.dart';
+import '../../data/courses/commodities_market/commodity_risks.dart';
+import '../../data/courses/commodities_market/who_should_trade_commodities.dart';
+import '../../data/courses/technical_analysis/used_in_all_markets.dart';
+import '../../data/courses/technical_analysis/price_charts.dart';
+import '../../data/courses/technical_analysis/support_resistance.dart';
+import '../../data/courses/technical_analysis/trend_analysis.dart';
+import '../../data/courses/technical_analysis/candlestick_patterns.dart';
+import '../../data/courses/technical_analysis/indicators.dart';
+import '../../data/courses/technical_analysis/entry_exit_planning.dart';
+import '../../data/courses/technical_analysis/technical_mistakes.dart';
+import '../../data/courses/fundamental_analysis/value_macro.dart';
+import '../../data/courses/fundamental_analysis/what_is_fa.dart';
+import '../../data/courses/fundamental_analysis/company_financials.dart';
+import '../../data/courses/fundamental_analysis/economic_indicators.dart';
+import '../../data/courses/fundamental_analysis/news_event_impact.dart';
+import '../../data/courses/fundamental_analysis/crypto_fundamentals.dart';
+import '../../data/courses/fundamental_analysis/fundamentals_vs_charts.dart';
+import '../../data/courses/risk_management/most_important_course.dart';
+import '../../data/courses/risk_management/why_traders_lose.dart';
+import '../../data/courses/risk_management/risk_vs_reward.dart';
+import '../../data/courses/risk_management/position_sizing.dart';
+import '../../data/courses/risk_management/stop_loss_protection.dart';
+import '../../data/courses/risk_management/drawdowns_recovery.dart';
+import '../../data/courses/risk_management/fear_greed_overconfidence.dart';
+import '../../data/courses/risk_management/overtrading_revenge.dart';
+import '../../data/courses/risk_management/discipline_patience.dart';
+import '../../data/courses/risk_management/risk_first_mindset.dart';
+import '../../data/courses/practice_skill_building/no_real_money.dart';
+import '../../data/courses/practice_skill_building/paper_trading.dart';
+import '../../data/courses/practice_skill_building/trade_planning.dart';
+import '../../data/courses/practice_skill_building/backtesting_basics.dart';
+import '../../data/courses/practice_skill_building/maintaining_journal.dart';
+import '../../data/courses/practice_skill_building/reviewing_trades.dart';
+import '../../data/courses/practice_skill_building/improving_decision_making.dart';
+import '../../data/courses/derivatives_market/high_risk_instruments.dart';
+import '../../data/courses/derivatives_market/what_are_derivatives.dart';
+import '../../data/courses/derivatives_market/futures_basics.dart';
+import '../../data/courses/derivatives_market/options_basics.dart';
+import '../../data/courses/derivatives_market/calls_and_puts.dart';
+import '../../data/courses/derivatives_market/margin_leverage.dart';
+import '../../data/courses/derivatives_market/when_not_derivatives.dart';
+import '../../data/courses/derivatives_market/derivative_mistakes.dart';
+import '../../data/courses/trading_styles/personality_style.dart';
+import '../../data/courses/trading_styles/scalping_overview.dart';
+import '../../data/courses/trading_styles/intraday_trading.dart';
+import '../../data/courses/trading_styles/swing_trading.dart';
+import '../../data/courses/trading_styles/long_term_investing.dart';
+import '../../data/courses/trading_styles/strategy_selection.dart';
+import '../../data/courses/trading_styles/copying_strategies.dart';
+import '../../data/courses/real_world_setup/practical_execution.dart';
+import '../../data/courses/real_world_setup/fees_regulations.dart';
+import '../../data/courses/real_world_setup/taxes_safety.dart';
+import '../../data/courses/consistent_trader/mindset_plan_performance.dart';
+import '../../data/courses/consistent_trader/risk_learning_consistency.dart';
 import '../widgets/concept_slide_widget.dart';
 import '../widgets/story_slide_widget.dart';
 import '../widgets/quiz_slide_widget.dart';
@@ -222,6 +299,567 @@ class _LessonScreenState extends State<LessonScreen>
       case 'sm-6-4':
         contentData = RisksManagementContent.getFinalChallengeContent();
         break;
+
+      // ── Cryptocurrency Market Course (Course 3) ──
+      case 'crypto-1-1':
+        contentData = DigitalAssetsTradingContent.getDigitalRevolutionContent();
+        break;
+      case 'crypto-1-2':
+        contentData =
+            DigitalAssetsTradingContent.getWhyDigitalAssetsMatterContent();
+        break;
+      case 'crypto-2-1':
+        contentData = WhatIsCryptocurrencyContent.getBirthOfBitcoinContent();
+        break;
+      case 'crypto-2-2':
+        contentData = WhatIsCryptocurrencyContent.getHowCryptoWorksContent();
+        break;
+      case 'crypto-2-3':
+        contentData =
+            WhatIsCryptocurrencyContent.getCryptoRealityCheckContent();
+        break;
+      case 'crypto-3-1':
+        contentData = BlockchainBasicsContent.getPublicLedgerContent();
+        break;
+      case 'crypto-3-2':
+        contentData = BlockchainBasicsContent.getMiningStakingContent();
+        break;
+      case 'crypto-4-1':
+        contentData = CryptoAssetsTypesContent.getCoinsVsTokensContent();
+        break;
+      case 'crypto-4-2':
+        contentData = CryptoAssetsTypesContent.getStablecoinsContent();
+        break;
+      case 'crypto-4-3':
+        contentData = CryptoAssetsTypesContent.getNftsDeFiContent();
+        break;
+      case 'crypto-5-1':
+        contentData = HowCryptoTradingWorksContent.getTradingPairsContent();
+        break;
+      case 'crypto-5-2':
+        contentData = HowCryptoTradingWorksContent.getWalletsSecurityContent();
+        break;
+      case 'crypto-5-3':
+        contentData = HowCryptoTradingWorksContent.getFirstTradeContent();
+        break;
+      case 'crypto-6-1':
+        contentData = CexVsDexContent.getCexBasicsContent();
+        break;
+      case 'crypto-6-2':
+        contentData = CexVsDexContent.getDexBasicsContent();
+        break;
+      case 'crypto-7-1':
+        contentData = VolatilityAndRisksContent.getWhyVolatileContent();
+        break;
+      case 'crypto-7-2':
+        contentData = VolatilityAndRisksContent.getScamsHacksContent();
+        break;
+      case 'crypto-7-3':
+        contentData = VolatilityAndRisksContent.getRiskManagementContent();
+        break;
+      case 'crypto-8-1':
+        contentData =
+            WhoShouldTradeCryptoContent.getReadinessChecklistContent();
+        break;
+      case 'crypto-8-2':
+        contentData = WhoShouldTradeCryptoContent.getFinalChallengeContent();
+        break;
+
+      // ── Forex Market Course (Course 4) ──
+      case 'forex-1-1':
+        contentData = GlobalCurrencyTradingContent.getInvisibleMarketContent();
+        break;
+      case 'forex-1-2':
+        contentData =
+            GlobalCurrencyTradingContent.getWhoTradesCurrenciesContent();
+        break;
+      case 'forex-2-1':
+        contentData = WhatIsForexMarketContent.getDecentralizedGiantContent();
+        break;
+      case 'forex-2-2':
+        contentData = WhatIsForexMarketContent.getForexVsStocksContent();
+        break;
+      case 'forex-3-1':
+        contentData = CurrencyPairsContent.getReadingPairsContent();
+        break;
+      case 'forex-3-2':
+        contentData = CurrencyPairsContent.getPipsLotsContent();
+        break;
+      case 'forex-4-1':
+        contentData = MajorMinorExoticPairsContent.getMajorPairsContent();
+        break;
+      case 'forex-4-2':
+        contentData = MajorMinorExoticPairsContent.getMinorsExoticsContent();
+        break;
+      case 'forex-5-1':
+        contentData = HowForexTradingWorksContent.getForexBrokersContent();
+        break;
+      case 'forex-5-2':
+        contentData = HowForexTradingWorksContent.getFirstForexTradeContent();
+        break;
+      case 'forex-6-1':
+        contentData = TradingSessionsContent.getThreeSessionsContent();
+        break;
+      case 'forex-6-2':
+        contentData = TradingSessionsContent.getLiquiditySpreadsContent();
+        break;
+      case 'forex-7-1':
+        contentData = LeverageMarginContent.getWhatIsLeverageContent();
+        break;
+      case 'forex-7-2':
+        contentData = LeverageMarginContent.getMarginCallsContent();
+        break;
+      case 'forex-8-1':
+        contentData = ForexRisksContent.getSevenRisksContent();
+        break;
+      case 'forex-8-2':
+        contentData = ForexRisksContent.getRiskToolkitContent();
+        break;
+      case 'forex-9-1':
+        contentData = WhoShouldTradeForexContent.getReadinessChecklistContent();
+        break;
+      case 'forex-9-2':
+        contentData = WhoShouldTradeForexContent.getFinalChallengeContent();
+        break;
+
+      // ── Commodities Market Course (Course 5) ──
+      case 'comm-1-1':
+        contentData = PhysicalAssetsTradingContent.getTradingRealWorldContent();
+        break;
+      case 'comm-1-2':
+        contentData =
+            PhysicalAssetsTradingContent.getWhyCommoditiesMatterContent();
+        break;
+      case 'comm-2-1':
+        contentData = WhatAreCommoditiesContent.getBuildingBlocksContent();
+        break;
+      case 'comm-2-2':
+        contentData = WhatAreCommoditiesContent.getIndiaExchangesContent();
+        break;
+      case 'comm-3-1':
+        contentData = CommodityTypesContent.getMetalsContent();
+        break;
+      case 'comm-3-2':
+        contentData = CommodityTypesContent.getEnergyContent();
+        break;
+      case 'comm-3-3':
+        contentData = CommodityTypesContent.getAgricultureContent();
+        break;
+      case 'comm-4-1':
+        contentData =
+            HowCommodityTradingWorksContent.getFuturesContractsContent();
+        break;
+      case 'comm-4-2':
+        contentData = HowCommodityTradingWorksContent.getFirstTradeContent();
+        break;
+      case 'comm-5-1':
+        contentData = SpotVsDerivativeContent.getSpotMarketsContent();
+        break;
+      case 'comm-5-2':
+        contentData = SpotVsDerivativeContent.getDerivativesContent();
+        break;
+      case 'comm-6-1':
+        contentData = CommodityPriceFactorsContent.getSupplyDemandContent();
+        break;
+      case 'comm-6-2':
+        contentData = CommodityPriceFactorsContent.getExternalFactorsContent();
+        break;
+      case 'comm-7-1':
+        contentData = CommodityRisksContent.getSixRisksContent();
+        break;
+      case 'comm-7-2':
+        contentData = CommodityRisksContent.getRiskManagementContent();
+        break;
+      case 'comm-8-1':
+        contentData =
+            WhoShouldTradeCommoditiesContent.getReadinessChecklistContent();
+        break;
+      case 'comm-8-2':
+        contentData =
+            WhoShouldTradeCommoditiesContent.getFinalChallengeContent();
+        break;
+
+      // ── Technical Analysis Course (Course 6) ──
+      case 'ta-1-1':
+        contentData = UsedInAllMarketsContent.getUniversalLanguageContent();
+        break;
+      case 'ta-1-2':
+        contentData = UsedInAllMarketsContent.getTaVsFaContent();
+        break;
+      case 'ta-2-1':
+        contentData = PriceChartsContent.getChartTypesContent();
+        break;
+      case 'ta-2-2':
+        contentData = PriceChartsContent.getTimeframesContent();
+        break;
+      case 'ta-3-1':
+        contentData = SupportResistanceContent.getFindingSRContent();
+        break;
+      case 'ta-3-2':
+        contentData = SupportResistanceContent.getBreakoutsContent();
+        break;
+      case 'ta-4-1':
+        contentData = TrendAnalysisContent.getIdentifyingTrendsContent();
+        break;
+      case 'ta-4-2':
+        contentData = TrendAnalysisContent.getTrendlinesContent();
+        break;
+      case 'ta-5-1':
+        contentData = CandlestickPatternsContent.getSingleCandleContent();
+        break;
+      case 'ta-5-2':
+        contentData = CandlestickPatternsContent.getMultiCandleContent();
+        break;
+      case 'ta-5-3':
+        contentData = CandlestickPatternsContent.getChartPatternsContent();
+        break;
+      case 'ta-6-1':
+        contentData = IndicatorsContent.getMovingAveragesContent();
+        break;
+      case 'ta-6-2':
+        contentData = IndicatorsContent.getRsiMacdContent();
+        break;
+      case 'ta-6-3':
+        contentData = IndicatorsContent.getBollingerVolumeContent();
+        break;
+      case 'ta-7-1':
+        contentData = EntryExitPlanningContent.getPlanningEntryContent();
+        break;
+      case 'ta-7-2':
+        contentData = EntryExitPlanningContent.getPlanningExitContent();
+        break;
+      case 'ta-8-1':
+        contentData = TechnicalMistakesContent.getSevenMistakesContent();
+        break;
+      case 'ta-8-2':
+        contentData = TechnicalMistakesContent.getFinalChallengeContent();
+        break;
+
+      // ── Fundamental Analysis Course (Course 7) ──
+      case 'fa-1-1':
+        contentData = ValueMacroContent.getPriceVsValueContent();
+        break;
+      case 'fa-1-2':
+        contentData = ValueMacroContent.getMacroLensContent();
+        break;
+      case 'fa-2-1':
+        contentData =
+            WhatIsFundamentalAnalysisContent.getFundamentalFrameworkContent();
+        break;
+      case 'fa-2-2':
+        contentData =
+            WhatIsFundamentalAnalysisContent.getFaAcrossAssetsContent();
+        break;
+      case 'fa-3-1':
+        contentData = CompanyFinancialsContent.getThreeStatementsContent();
+        break;
+      case 'fa-3-2':
+        contentData = CompanyFinancialsContent.getKeyRatiosContent();
+        break;
+      case 'fa-3-3':
+        contentData = CompanyFinancialsContent.getAnnualReportContent();
+        break;
+      case 'fa-4-1':
+        contentData = EconomicIndicatorsContent.getGdpInflationRatesContent();
+        break;
+      case 'fa-4-2':
+        contentData = EconomicIndicatorsContent.getRbiPolicyContent();
+        break;
+      case 'fa-5-1':
+        contentData = NewsEventImpactContent.getEarningsSeasonContent();
+        break;
+      case 'fa-5-2':
+        contentData = NewsEventImpactContent.getGeopoliticsContent();
+        break;
+      case 'fa-6-1':
+        contentData = CryptoFundamentalsContent.getEvaluatingProjectsContent();
+        break;
+      case 'fa-6-2':
+        contentData = CryptoFundamentalsContent.getTokenomicsContent();
+        break;
+      case 'fa-7-1':
+        contentData = FundamentalsVsChartsContent.getFaVsTaContent();
+        break;
+      case 'fa-7-2':
+        contentData = FundamentalsVsChartsContent.getFinalChallengeContent();
+        break;
+
+      // ── Risk Management Course (Course 8) ──
+      case 'rm-1-1':
+        contentData = MostImportantCourseContent.getWhyRmIsEverythingContent();
+        break;
+      case 'rm-1-2':
+        contentData = MostImportantCourseContent.getSurvivalHierarchyContent();
+        break;
+      case 'rm-2-1':
+        contentData = WhyTradersLoseContent.getNinetyRuleContent();
+        break;
+      case 'rm-2-2':
+        contentData = WhyTradersLoseContent.getFiveKillersContent();
+        break;
+      case 'rm-3-1':
+        contentData = RiskVsRewardContent.getProbabilitiesContent();
+        break;
+      case 'rm-3-2':
+        contentData = RiskVsRewardContent.getRiskRewardContent();
+        break;
+      case 'rm-4-1':
+        contentData = PositionSizingContent.getOneTwoPercentContent();
+        break;
+      case 'rm-4-2':
+        contentData = PositionSizingContent.getCalculatingSizeContent();
+        break;
+      case 'rm-5-1':
+        contentData = StopLossContent.getTypesOfStopsContent();
+        break;
+      case 'rm-5-2':
+        contentData = StopLossContent.getLossLimitsContent();
+        break;
+      case 'rm-6-1':
+        contentData = DrawdownRecoveryContent.getDrawdownMathContent();
+        break;
+      case 'rm-6-2':
+        contentData = DrawdownRecoveryContent.getSurvivingLosingStreakContent();
+        break;
+      case 'rm-7-1':
+        contentData = FearGreedOverconfidenceContent.getFearGreedContent();
+        break;
+      case 'rm-7-2':
+        contentData = FearGreedOverconfidenceContent.getOverconfidenceContent();
+        break;
+      case 'rm-8-1':
+        contentData = OvertradingRevengeContent.getOvertradingContent();
+        break;
+      case 'rm-8-2':
+        contentData = OvertradingRevengeContent.getRevengeTradingContent();
+        break;
+      case 'rm-9-1':
+        contentData = DisciplinePatienceContent.getTradingJournalContent();
+        break;
+      case 'rm-9-2':
+        contentData = DisciplinePatienceContent.getBuildingDisciplineContent();
+        break;
+      case 'rm-10-1':
+        contentData = RiskFirstMindsetContent.getChecklistContent();
+        break;
+      case 'rm-10-2':
+        contentData = RiskFirstMindsetContent.getFinalChallengeContent();
+        break;
+
+      // ── Practice & Skill Building Course (Course 9) ──
+      case 'ps-1-1':
+        contentData = NoRealMoneyContent.getCostOfImpatienceContent();
+        break;
+      case 'ps-1-2':
+        contentData = NoRealMoneyContent.getSimulationRuleContent();
+        break;
+      case 'ps-2-1':
+        contentData = PaperTradingContent.getWhatIsPaperTradingContent();
+        break;
+      case 'ps-2-2':
+        contentData = PaperTradingContent.getPaperTradingTrapContent();
+        break;
+      case 'ps-3-1':
+        contentData = TradePlanningContent.getPreTradePlanContent();
+        break;
+      case 'ps-3-2':
+        contentData = TradePlanningContent.getContingencyPlanningContent();
+        break;
+      case 'ps-4-1':
+        contentData = BacktestingBasicsContent.getConceptOfBacktestingContent();
+        break;
+      case 'ps-4-2':
+        contentData = BacktestingBasicsContent.getManualVsAutomatedContent();
+        break;
+      case 'ps-5-1':
+        contentData = MaintainingJournalContent.getSettingUpJournalContent();
+        break;
+      case 'ps-5-2':
+        contentData = MaintainingJournalContent.getJournalingEmotionsContent();
+        break;
+      case 'ps-6-1':
+        contentData = ReviewingTradesContent.getWeeklyReviewContent();
+        break;
+      case 'ps-6-2':
+        contentData = ReviewingTradesContent.getCategorizingMistakesContent();
+        break;
+      case 'ps-7-1':
+        contentData = ImprovingDecisionMakingContent.getFeedbackLoopContent();
+        break;
+      case 'ps-7-2':
+        contentData = ImprovingDecisionMakingContent.getFinalChallengeContent();
+        break;
+
+      // ── Derivatives Market Course (Course 10) ──
+      case 'dm-1-1':
+        contentData = HighRiskInstrumentsContent.getDerivativesWarningContent();
+        break;
+      case 'dm-1-2':
+        contentData = HighRiskInstrumentsContent.getLeverageIllusionContent();
+        break;
+      case 'dm-2-1':
+        contentData = WhatAreDerivativesContent.getConceptContent();
+        break;
+      case 'dm-2-2':
+        contentData = WhatAreDerivativesContent.getTypesContent();
+        break;
+      case 'dm-3-1':
+        contentData = FuturesBasicsContent.getHowFuturesWorkContent();
+        break;
+      case 'dm-3-2':
+        contentData = FuturesBasicsContent.getNiftyFuturesContent();
+        break;
+      case 'dm-4-1':
+        contentData = OptionsBasicsContent.getWhatIsOptionContent();
+        break;
+      case 'dm-4-2':
+        contentData = OptionsBasicsContent.getPremiumStrikeExpiryContent();
+        break;
+      case 'dm-5-1':
+        contentData = CallsPutsContent.getCallOptionsContent();
+        break;
+      case 'dm-5-2':
+        contentData = CallsPutsContent.getPutOptionsContent();
+        break;
+      case 'dm-6-1':
+        contentData = MarginLeverageContent.getUnderstandingMarginContent();
+        break;
+      case 'dm-6-2':
+        contentData = MarginLeverageContent.getMarginCallContent();
+        break;
+      case 'dm-7-1':
+        contentData = WhenNotDerivativesContent.getReadinessChecklistContent();
+        break;
+      case 'dm-7-2':
+        contentData = WhenNotDerivativesContent.getAlternativesContent();
+        break;
+      case 'dm-8-1':
+        contentData = DerivativeMistakesContent.getSevenSinsContent();
+        break;
+      case 'dm-8-2':
+        contentData = DerivativeMistakesContent.getFinalChallengeContent();
+        break;
+
+      // ── Trading Styles & Strategies Course (Course 11) ──
+      case 'ts-1-1':
+        contentData = PersonalityStyleContent.getPersonalityTestContent();
+        break;
+      case 'ts-1-2':
+        contentData = PersonalityStyleContent.getFourStylesContent();
+        break;
+      case 'ts-2-1':
+        contentData = ScalpingOverviewContent.getWhatIsScalpingContent();
+        break;
+      case 'ts-2-2':
+        contentData = ScalpingOverviewContent.getWhyNotBeginnersContent();
+        break;
+      case 'ts-3-1':
+        contentData = IntradayTradingContent.getIntradayLifestyleContent();
+        break;
+      case 'ts-3-2':
+        contentData = IntradayTradingContent.getIntradayRulesContent();
+        break;
+      case 'ts-4-1':
+        contentData = SwingTradingContent.getSweetSpotContent();
+        break;
+      case 'ts-4-2':
+        contentData = SwingTradingContent.getSwingMechanicsContent();
+        break;
+      case 'ts-5-1':
+        contentData = LongTermInvestingContent.getCompoundingContent();
+        break;
+      case 'ts-5-2':
+        contentData = LongTermInvestingContent.getSipIndexContent();
+        break;
+      case 'ts-6-1':
+        contentData = StrategySelectionContent.getTimeCapitalContent();
+        break;
+      case 'ts-6-2':
+        contentData = StrategySelectionContent.getHybridApproachContent();
+        break;
+      case 'ts-7-1':
+        contentData = CopyingStrategiesContent.getGuruIllusionContent();
+        break;
+      case 'ts-7-2':
+        contentData = CopyingStrategiesContent.getFinalChallengeContent();
+        break;
+
+      // ── Real-World Trading Setup Course (Course 12) ──
+      case 'rw-1-1':
+        contentData = PracticalExecutionContent.getBridgingTheoryContent();
+        break;
+      case 'rw-1-2':
+        contentData = PracticalExecutionContent.getInfrastructureContent();
+        break;
+      case 'rw-2-1':
+        contentData = ChoosingBrokerContent.getTypesOfBrokersContent();
+        break;
+      case 'rw-2-2':
+        contentData = ChoosingBrokerContent.getBrokerComparisonContent();
+        break;
+      case 'rw-3-1':
+        contentData = FeesAndCostsContent.getTrueCostContent();
+        break;
+      case 'rw-3-2':
+        contentData = FeesAndCostsContent.getMinimizingCostsContent();
+        break;
+      case 'rw-4-1':
+        contentData = RegulationsComplianceContent.getSebiProtectionContent();
+        break;
+      case 'rw-4-2':
+        contentData = RegulationsComplianceContent.getMarketRulesContent();
+        break;
+      case 'rw-5-1':
+        contentData = TaxationContent.getTradingTaxesContent();
+        break;
+      case 'rw-5-2':
+        contentData = TaxationContent.getTaxEfficientContent();
+        break;
+      case 'rw-6-1':
+        contentData = TradingSafetyContent.getScamsFraudContent();
+        break;
+      case 'rw-6-2':
+        contentData = TradingSafetyContent.getFinalChallengeContent();
+        break;
+
+      // ── Becoming a Consistent Trader Course (Course 13) ──
+      case 'ct-1-1':
+        contentData = FinalMindsetContent.getJourneySoFarContent();
+        break;
+      case 'ct-1-2':
+        contentData = FinalMindsetContent.getMindsetShiftContent();
+        break;
+      case 'ct-2-1':
+        contentData = TradingPlanContent.getCompletePlanContent();
+        break;
+      case 'ct-2-2':
+        contentData = TradingPlanContent.getWritingYourPlanContent();
+        break;
+      case 'ct-3-1':
+        contentData = PerformanceEvalContent.getMetricsContent();
+        break;
+      case 'ct-3-2':
+        contentData = PerformanceEvalContent.getMonthlyReviewContent();
+        break;
+      case 'ct-4-1':
+        contentData = RiskFirstApproachContent.getRiskBudgetContent();
+        break;
+      case 'ct-4-2':
+        contentData = RiskFirstApproachContent.getAntifragileContent();
+        break;
+      case 'ct-5-1':
+        contentData = ContinuousLearningContent.getLearningEcosystemContent();
+        break;
+      case 'ct-5-2':
+        contentData = ContinuousLearningContent.getAdaptingContent();
+        break;
+      case 'ct-6-1':
+        contentData = ConsistencyContent.getTenThousandHoursContent();
+        break;
+      case 'ct-6-2':
+        contentData = ConsistencyContent.getFinalGraduationContent();
+        break;
+
       default:
         // Fallback to placeholder content for lessons not yet implemented
         return _generatePlaceholderContent();
