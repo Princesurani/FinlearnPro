@@ -87,3 +87,63 @@ class Timeframe(str, Enum):
     oneDay = "1D"
     oneWeek = "1W"
     oneMonth = "1M"
+
+class UserProfileResponse(BaseModel):
+    firebase_uid: str
+    display_name: str
+    avatar_url: Optional[str] = None
+    bio: Optional[str] = None
+    total_xp: int
+    weekly_xp: int
+    level: int
+    current_streak: int
+    longest_streak: int
+    total_trades: int
+    total_courses_completed: int
+    total_challenges_completed: int
+    win_rate: float
+    last_activity_date: Optional[str] = None
+
+class UserProfileUpdateRequest(BaseModel):
+    display_name: Optional[str] = None
+    avatar_url: Optional[str] = None
+    bio: Optional[str] = None
+
+class LeaderboardEntry(BaseModel):
+    firebase_uid: str
+    display_name: str
+    avatar_url: Optional[str] = None
+    level: int
+    total_xp: int
+    weekly_xp: int
+    current_streak: int
+    total_trades: int
+    win_rate: float
+    rank: int = 0
+
+class TradeShareRequest(BaseModel):
+    trade_id: Optional[int] = None
+    symbol: str
+    side: str
+    quantity: int
+    price: float
+    pnl_percent: Optional[float] = None
+    caption: Optional[str] = None
+
+class TradeShareResponse(BaseModel):
+    id: int
+    firebase_uid: str
+    author_name: str
+    author_avatar: Optional[str] = None
+    author_level: int
+    trade_id: Optional[int] = None
+    symbol: str
+    side: str
+    quantity: int
+    price: float
+    pnl_percent: Optional[float] = None
+    caption: Optional[str] = None
+    likes_count: int
+    comments_count: int
+    is_liked_by_me: bool = False
+    created_at: datetime

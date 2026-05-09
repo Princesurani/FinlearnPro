@@ -2,6 +2,8 @@ import 'dart:async';
 
 import '../data/learning_models.dart';
 import '../data/learning_mock_data.dart';
+import 'package:http/http.dart' as http;
+import '../../../core/network/api_constants.dart';
 import '../../../core/services/learning_progress_service.dart';
 
 abstract class LearningEvent {}
@@ -249,6 +251,11 @@ class LearningBloc {
 
     // Save to local storage asynchronously
     _progressService.saveProgress(updatedProgress);
+    
+    // Send XP to backend Gamification Profile
+    if (earnedXp > 0) {
+      http.post(Uri.parse('${ApiConstants.baseUrl}/social/xp/award?uid=${prog.userId}&xp=$earnedXp')).catchError((_) => http.Response('', 500));
+    }
   }
 
   void _handleCompleteDailyChallenge(CompleteDailyChallengeEvent event) {

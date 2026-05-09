@@ -146,9 +146,36 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
     )
     db.add(trade)
 
-    # Remove position row if fully sold (keeps the table clean)
-    if position.quantity == 0:
-        await db.delete(position)
+    # 6. Award XP and update profile stats
+    from db.models import DbUserProfile
+    from api.routes.social import calculate_level
+    
+    prof_result = await db.execute(select(DbUserProfile).where(DbUserProfile.firebase_uid == order_req.firebase_uid))
+    profile = prof_result.scalar_one_or_none()
+    
+    xp_awarded = 15
+    if profile:
+        profile.total_xp += xp_awarded
+        profile.weekly_xp += xp_awarded
+        profile.level = calculate_level(profile.total_xp)
+        profile.total_trades += 1
+        
+        # Simple win_rate update if it's a sell (naive approach)
+        if side == "sell" and position.average_cost > 0:
+            is_win = current_price > position.average_cost
+            total_sells = profile.total_trades // 2 # Rough estimate
+            if total_sells == 0: total_sells = 1
+            wins = profile.win_rate * (total_sells - 1) + (1 if is_win else 0)
+            profile.win_rate = wins / total_sells
+    else:
+        new_prof = DbUserProfile(
+            firebase_uid=order_req.firebase_uid,
+            total_xp=xp_awarded,
+            weekly_xp=xp_awarded,
+            level=calculate_level(xp_awarded),
+            total_trades=1
+        )
+        db.add(new_prof)
 
     await db.commit()
 

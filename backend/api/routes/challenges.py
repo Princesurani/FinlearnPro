@@ -127,9 +127,48 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
     )
     db.add(new_progress)
     
-    # 5. We would increment streak here (assuming we had a user gamification profile).
-    # Based on models.py, UserLearningProgress stores hybrid data. We'll mark streak as updated.
-    streak_updated = is_correct
+    # 5. Award XP and update stats in DbUserProfile
+    from db.models import DbUserProfile
+    from api.routes.social import calculate_level
+    
+    prof_stmt = select(DbUserProfile).where(DbUserProfile.firebase_uid == req.firebase_uid)
+    prof_res = await db.execute(prof_stmt)
+    profile = prof_res.scalars().first()
+    
+    streak_updated = False
+    if profile:
+        profile.total_xp += xp_awarded
+        profile.weekly_xp += xp_awarded
+        profile.level = calculate_level(profile.total_xp)
+        profile.total_challenges_completed += 1
+        
+        # Simple streak logic: if correct and last activity wasn't today
+        if is_correct and (not profile.last_activity_date or profile.last_activity_date != now_date):
+            # Check if streak is continuous
+            if profile.last_activity_date and (now_date - profile.last_activity_date).days == 1:
+                profile.current_streak += 1
+            else:
+                profile.current_streak = 1 # Reset or start new streak
+                
+            if profile.current_streak > profile.longest_streak:
+                profile.longest_streak = profile.current_streak
+            streak_updated = True
+            
+        profile.last_activity_date = now_date
+    else:
+        # Auto-create profile if missing
+        new_prof = DbUserProfile(
+            firebase_uid=req.firebase_uid,
+            total_xp=xp_awarded,
+            weekly_xp=xp_awarded,
+            level=calculate_level(xp_awarded),
+            total_challenges_completed=1,
+            current_streak=1 if is_correct else 0,
+            longest_streak=1 if is_correct else 0,
+            last_activity_date=now_date
+        )
+        db.add(new_prof)
+        streak_updated = is_correct
     
     await db.commit()
     

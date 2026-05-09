@@ -9,7 +9,7 @@ import '../../features/learning/presentation/widgets/recommended_section.dart';
 import '../../features/market/bloc/market_bloc.dart';
 import '../../features/market/presentation/pages/market_screen.dart';
 import '../../features/learning/presentation/pages/learning_screen.dart';
-import '../../features/portfolio/presentation/pages/portfolio_screen.dart';
+import '../../features/social/presentation/pages/social_profile_screen.dart';
 import '../../features/home/presentation/widgets/home_overview_card.dart';
 import '../../features/home/presentation/widgets/continue_learning_card.dart';
 import '../../features/home/presentation/widgets/market_news_sentiment_card.dart';
@@ -50,9 +50,9 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       label: 'Markets',
     ),
     _NavScreen(
-      icon: Icons.pie_chart_outline_rounded,
-      activeIcon: Icons.pie_chart_rounded,
-      label: 'Portfolio',
+      icon: Icons.person_outline_rounded,
+      activeIcon: Icons.person_rounded,
+      label: 'Profile',
     ),
   ];
 
@@ -128,7 +128,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                   _HomeScreenWrapper(bloc: _marketBloc),
                   const LearningScreen(),
                   RepaintBoundary(child: MarketScreen(bloc: _marketBloc)),
-                  const PortfolioScreen(),
+                  const SocialProfileScreen(),
                 ],
               ),
               Positioned(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../../social/data/repositories/social_repository.dart';
 
 import '../../../../core/domain/market_data.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -114,6 +116,43 @@ class OrdersTab extends StatelessWidget {
                   ),
                 ),
               ),
+              // Share Button
+              if (order.status.toLowerCase() == 'filled')
+                IconButton(
+                  icon: const Icon(Icons.share, size: 18, color: AppColors.primaryPurple),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () async {
+                    try {
+                      final uid = FirebaseAuth.instance.currentUser?.uid ?? 'unknown';
+                      await SocialRepository().shareTrade(
+                        uid,
+                        symbol: order.symbol,
+                        side: order.side,
+                        quantity: order.quantity,
+                        price: order.price ?? 0.0,
+                        tradeId: order.id,
+                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Trade shared to your feed!'),
+                            backgroundColor: AppColors.profitGreen,
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Failed to share trade.'),
+                            backgroundColor: AppColors.lossRed,
+                          ),
+                        );
+                      }
+                    }
+                  },
+                ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),

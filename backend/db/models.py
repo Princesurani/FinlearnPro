@@ -137,3 +137,66 @@ class DbUserChallengeProgress(Base):
 #   SELECT time_bucket('1 minute', timestamp) AS bucket,
 #          symbol, first(price, timestamp) AS open, max(price) AS high, min(price) AS low, last(price, timestamp) AS close, sum(volume) AS volume
 #   FROM price_ticks GROUP BY bucket, symbol;
+
+# --- Social & Gamification Models ---
+
+class DbUserProfile(Base):
+    __tablename__ = "user_profiles"
+    
+    firebase_uid = Column(String(128), ForeignKey("users.firebase_uid"), primary_key=True, index=True)
+    display_name = Column(String(100), nullable=False, default="Trader")
+    avatar_url = Column(String(500), nullable=True)
+    bio = Column(String(300), nullable=True)
+    
+    # Gamification
+    total_xp = Column(Integer, nullable=False, default=0)
+    weekly_xp = Column(Integer, nullable=False, default=0)
+    level = Column(Integer, nullable=False, default=1)
+    current_streak = Column(Integer, nullable=False, default=0)
+    longest_streak = Column(Integer, nullable=False, default=0)
+    last_activity_date = Column(Date, nullable=True)
+    
+    # Stats (denormalized for fast leaderboard reads)
+    total_trades = Column(Integer, nullable=False, default=0)
+    total_courses_completed = Column(Integer, nullable=False, default=0)
+    total_challenges_completed = Column(Integer, nullable=False, default=0)
+    win_rate = Column(Float, nullable=False, default=0.0)  # % of profitable trades
+    
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+class DbFollower(Base):
+    __tablename__ = "followers"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    follower_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
+    following_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+class DbTradeShare(Base):
+    __tablename__ = "trade_shares"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    firebase_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
+    trade_id = Column(Integer, ForeignKey("trades.id"), nullable=True)
+    
+    # Denormalized for feed rendering
+    symbol = Column(String(50), nullable=False)
+    side = Column(String(10), nullable=False)  # buy/sell
+    quantity = Column(Integer, nullable=False)
+    price = Column(Float, nullable=False)
+    pnl_percent = Column(Float, nullable=True)  # profit/loss %
+    caption = Column(String(500), nullable=True)
+    
+    likes_count = Column(Integer, nullable=False, default=0)
+    comments_count = Column(Integer, nullable=False, default=0)
+    
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+class DbTradeShareLike(Base):
+    __tablename__ = "trade_share_likes"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    share_id = Column(Integer, ForeignKey("trade_shares.id"), index=True, nullable=False)
+    firebase_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
