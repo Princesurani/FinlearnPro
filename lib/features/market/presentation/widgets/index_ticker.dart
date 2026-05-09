@@ -161,11 +161,6 @@ class IndexTicker extends StatelessWidget {
     final intPart = parts[0];
     final decPart = parts[1];
 
-    if (market == MarketRegime.crypto && abs >= 1e9) {
-      final formatter = MarketFormatterFactory.forMarket(market);
-      return '${isNeg ? '-' : ''}${formatter.formatLargeNumber(abs)}';
-    }
-
     final buffer = StringBuffer();
     for (var i = 0; i < intPart.length; i++) {
       if (i > 0 && (intPart.length - i) % 3 == 0) {

@@ -263,8 +263,6 @@ class MarketService {
         return 0.08; // 8% market return
       case InstrumentType.etf:
         return 0.09;
-      case InstrumentType.crypto:
-        return 0.20; // 20% (but much higher vol)
       case InstrumentType.commodity:
         return 0.05;
       case InstrumentType.forex:
@@ -311,12 +309,6 @@ class MarketService {
 
       case InstrumentType.etf:
         return 1000000; // ETFs have moderate volume
-
-      case InstrumentType.crypto:
-        if (basePrice > 10000) return 50000; // BTC
-        if (basePrice > 1000) return 500000; // ETH
-        if (basePrice > 100) return 2000000; // Mid-caps
-        return 50000000; // Altcoins (high count, low value)
 
       default:
         return 1000000;

@@ -6,7 +6,6 @@ enum InstrumentType {
   etf,
   commodity,
   forex,
-  crypto,
   bond,
 }
 

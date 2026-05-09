@@ -887,11 +887,6 @@ enum InterestTopic {
     icon: Icons.show_chart_rounded,
     color: Color(0xFF3B82F6),
   ),
-  crypto(
-    title: 'Crypto',
-    icon: Icons.currency_bitcoin_rounded,
-    color: Color(0xFFFF8A50),
-  ),
   options(
     title: 'Options',
     icon: Icons.swap_horiz_rounded,

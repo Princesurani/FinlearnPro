@@ -63,8 +63,7 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
             email=None, 
             balance_india=STARTING_BALANCE,
             balance_usa=STARTING_BALANCE,
-            balance_uk=STARTING_BALANCE,
-            balance_crypto=STARTING_BALANCE
+            balance_uk=STARTING_BALANCE
         )
         db.add(user)
         await db.flush()

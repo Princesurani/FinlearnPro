@@ -24,7 +24,6 @@ async def sync_progress(firebase_uid: str, progress_data: Dict[Any, Any], db: As
             balance_india=10_000.0,
             balance_usa=10_000.0,
             balance_uk=10_000.0,
-            balance_crypto=10_000.0,
         )
         db.add(user)
         await db.flush()

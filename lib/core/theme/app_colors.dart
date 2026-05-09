@@ -162,7 +162,6 @@ abstract final class AppColors {
   static const Map<String, Color> categoryColors = {
     'stocks': electricBlue,
     'options': coralPink,
-    'crypto': sunsetOrange,
     'forex': oceanTeal,
     'fundamentals': indigo,
     'technical': lavender,

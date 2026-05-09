@@ -223,47 +223,6 @@ class _MarketScreenState extends State<MarketScreen>
       builder: (_, snap) {
         final state = snap.data!;
 
-        if (state.activeMarket == MarketRegime.crypto) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.xl),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.xl),
-                    decoration: BoxDecoration(
-                      color: AppColors.backgroundSecondary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.currency_bitcoin_rounded,
-                      size: 64,
-                      color: AppColors.primaryPurple,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Text(
-                    'Crypto Trading',
-                    style: AppTypography.h3.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    'Crypto capabilities are currently in development. You will soon be able to track and trade your favorite coins here!',
-                    style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
         return TabBarView(
           controller: _tabController,
           children: [

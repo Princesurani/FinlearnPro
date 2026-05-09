@@ -26,10 +26,10 @@ class CommunityInsightsSection extends StatelessWidget {
         const SizedBox(height: 10),
         const CommunityPostCard(
           userName: 'Sarah Jenkins',
-          userTitle: 'Crypto Analyst',
-          title: 'Bitcoin forming a Double Bottom pattern?',
+          userTitle: 'Market Analyst',
+          title: 'NIFTY 50 forming a Double Bottom pattern?',
           content:
-              'Looking at the 4H chart, we are seeing strong rejection at \$28k support level with increasing volume. If this holds, next target is \$32k.',
+              'Looking at the 4H chart, we are seeing strong rejection at 25,000 support level with increasing volume. If this holds, next target is 26,200.',
           timeAgo: '2h ago',
           likes: 45,
           comments: 12,

@@ -18,8 +18,6 @@ class MarketFormatterFactory {
         return IndianMarketFormatter();
       case MarketRegime.uk:
         return WesternMarketFormatter(currencySymbol: '£');
-      case MarketRegime.crypto:
-        return CryptoMarketFormatter();
     }
   }
 }
@@ -172,88 +170,6 @@ class WesternMarketFormatter implements MarketFormatter {
 
   String _formatNumber(double value, int decimals) {
     return value.toStringAsFixed(decimals);
-  }
-}
-
-class CryptoMarketFormatter implements MarketFormatter {
-  @override
-  String formatCurrency(double amount, {int? decimals}) {
-    final absAmount = amount.abs();
-    final sign = amount < 0 ? '-' : '';
-
-    if (absAmount >= 1e9) {
-      return '$sign\$${_formatNumber(absAmount / 1e9, decimals ?? 2)}B';
-    } else if (absAmount >= 1e6) {
-      return '$sign\$${_formatNumber(absAmount / 1e6, decimals ?? 2)}M';
-    } else if (absAmount >= 1e3) {
-      return '$sign\$${_formatNumber(absAmount / 1e3, decimals ?? 1)}K';
-    } else {
-      return '$sign\$${_formatNumber(absAmount, decimals ?? 2)}';
-    }
-  }
-
-  @override
-  String formatLargeNumber(double amount) {
-    final absAmount = amount.abs();
-    final sign = amount < 0 ? '-' : '';
-
-    if (absAmount >= 1e9) return '$sign${_formatNumber(absAmount / 1e9, 2)}B';
-    if (absAmount >= 1e6) return '$sign${_formatNumber(absAmount / 1e6, 2)}M';
-    if (absAmount >= 1e3) return '$sign${_formatNumber(absAmount / 1e3, 1)}K';
-    return '$sign${_formatNumber(absAmount, 0)}';
-  }
-
-  @override
-  String formatPrice(double price, {int? decimals}) {
-    if (decimals != null) {
-      return '\$${_formatNumber(price, decimals)}';
-    }
-
-    final absPrice = price.abs();
-    final sign = price < 0 ? '-' : '';
-
-    if (absPrice < 0.00001) {
-      return '$sign\$${_formatNumber(absPrice, 10)}'; // Ultra-small (e.g., SHIB)
-    } else if (absPrice < 0.001) {
-      return '$sign\$${_formatNumber(absPrice, 8)}'; // Micro tokens
-    } else if (absPrice < 0.1) {
-      return '$sign\$${_formatNumber(absPrice, 6)}'; // Small tokens (DOGE, etc.)
-    } else if (absPrice < 1) {
-      return '$sign\$${_formatNumber(absPrice, 5)}'; // Sub-dollar
-    } else if (absPrice < 100) {
-      return '$sign\$${_formatNumber(absPrice, 4)}'; // Mid-price (1-100)
-    } else {
-      return '$sign\$${_formatNumber(absPrice, 2)}'; // High-price (BTC, ETH)
-    }
-  }
-
-  @override
-  String formatPercentage(
-    double pct, {
-    int decimals = 2,
-    bool showSign = true,
-  }) {
-    final sign = showSign && pct > 0 ? '+' : '';
-    return '$sign${_formatNumber(pct, decimals)}%';
-  }
-
-  @override
-  String formatVolume(double volume) {
-    return formatLargeNumber(volume);
-  }
-
-  @override
-  String formatChange(double change, double changePercent) {
-    final sign = change > 0 ? '+' : (change < 0 ? '-' : '');
-    return '$sign${formatPrice(change.abs())} ($sign${_formatNumber(changePercent.abs(), 2)}%)';
-  }
-
-  String _formatNumber(double value, int decimals) {
-    var str = value.toStringAsFixed(decimals);
-    if (decimals > 2 && str.contains('.')) {
-      str = str.replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '');
-    }
-    return str;
   }
 }
 

@@ -9,7 +9,6 @@ class InstrumentType(str, Enum):
     etf = "etf"
     commodity = "commodity"
     forex = "forex"
-    crypto = "crypto"
     bond = "bond"
 
 class Sector(str, Enum):
@@ -30,7 +29,6 @@ class MarketRegime(str, Enum):
     usa = "usa"
     india = "india"
     uk = "uk"
-    crypto = "crypto"
 
 class Instrument(BaseModel):
     symbol: str

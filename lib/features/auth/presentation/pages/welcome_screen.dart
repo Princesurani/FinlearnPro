@@ -33,7 +33,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     _PageData(
       headline: 'Learn from\nthe Markets',
       body:
-          'Expert-crafted courses on stocks, crypto, forex '
+          'Expert-crafted courses on stocks, forex, derivatives '
           'and real-world investing — no jargon, no fluff.',
       accentColor: AppColors.primaryPurple,
       illustrationType: _IllustType.chart,

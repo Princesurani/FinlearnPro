@@ -50,7 +50,6 @@ class DbUser(Base):
     balance_india = Column(Float, nullable=False, default=10000.0)
     balance_usa = Column(Float, nullable=False, default=10000.0)
     balance_uk = Column(Float, nullable=False, default=10000.0)
-    balance_crypto = Column(Float, nullable=False, default=10000.0)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 class DbUserLearningProgress(Base):

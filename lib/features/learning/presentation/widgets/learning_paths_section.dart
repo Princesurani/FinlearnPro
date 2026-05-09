@@ -462,8 +462,6 @@ class _LearningPathCardState extends State<_LearningPathCard>
         return Icons.analytics_outlined;
       case 'path-options':
         return Icons.call_split_rounded;
-      case 'path-crypto':
-        return Icons.currency_bitcoin;
       default:
         return Icons.route_outlined;
     }

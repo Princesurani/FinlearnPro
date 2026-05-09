@@ -70,17 +70,6 @@ MOCK_INSTRUMENTS = [
     {"symbol": "RIO", "price": 5400.40, "volatility": 0.20, "drift": 0.08},
     {"symbol": "DGE", "price": 2800.50, "volatility": 0.12, "drift": 0.05},
     {"symbol": "GLEN", "price": 460.20, "volatility": 0.22, "drift": 0.09},
-    # Crypto
-    {"symbol": "BTC", "price": 43000.50, "volatility": 0.45, "drift": 0.15},
-    {"symbol": "ETH", "price": 2300.20, "volatility": 0.55, "drift": 0.20},
-    {"symbol": "USDT", "price": 1.00, "volatility": 0.01, "drift": 0.0},
-    {"symbol": "BNB", "price": 310.40, "volatility": 0.50, "drift": 0.15},
-    {"symbol": "SOL", "price": 105.80, "volatility": 0.70, "drift": 0.25},
-    {"symbol": "XRP", "price": 0.55, "volatility": 0.60, "drift": 0.10},
-    {"symbol": "USDC", "price": 1.00, "volatility": 0.01, "drift": 0.0},
-    {"symbol": "ADA", "price": 0.52, "volatility": 0.65, "drift": 0.15},
-    {"symbol": "AVAX", "price": 35.40, "volatility": 0.75, "drift": 0.20},
-    {"symbol": "DOGE", "price": 0.08, "volatility": 0.80, "drift": 0.10},
 ]
 
 
@@ -111,7 +100,7 @@ def simulate_tick_loop():
         news_event = news_engine.generate_news_event(
             context=context,
             active_symbols=[inst["symbol"] for inst in MOCK_INSTRUMENTS],
-            active_sectors=["technology", "crypto"],
+            active_sectors=["technology"],
         )
 
         if news_event:

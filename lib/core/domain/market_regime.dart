@@ -64,28 +64,6 @@ enum MarketRegime {
     marketCloseHour: 16,
     marketCloseMinute: 30,
     workingDays: [1, 2, 3, 4, 5], // Mon-Fri
-  ),
-  crypto(
-    displayName: 'Cryptocurrency',
-    shortName: 'CRYPTO',
-    flag: '🌐',
-    currencyCode: 'USD',
-    currencySymbol: '\$',
-    locale: 'en_US',
-    primaryIndex: 'Total Market Cap',
-    primaryIndexSymbol: 'TOTAL',
-    secondaryIndices: [
-      'BTC Dominance',
-      'DeFi Market Cap',
-      'Alt Season Index',
-    ],
-    regulatoryBody: 'Decentralized',
-    timezone: 'UTC',
-    marketOpenHour: 0,
-    marketOpenMinute: 0,
-    marketCloseHour: 23,
-    marketCloseMinute: 59,
-    workingDays: [1, 2, 3, 4, 5, 6, 7], // 24/7
   );
 
   const MarketRegime({
@@ -126,8 +104,6 @@ enum MarketRegime {
 
   bool get isMarketOpen {
     final now = DateTime.now().toUtc();
-    if (this == MarketRegime.crypto) return true;
-
     if (!workingDays.contains(now.weekday)) return false;
 
     final hourNow = now.hour;
@@ -148,8 +124,6 @@ enum MarketRegime {
         return 'Systematic Investment Plan (SIP)';
       case MarketRegime.uk:
         return 'Regular Savings Plan';
-      case MarketRegime.crypto:
-        return 'Dollar Cost Averaging (DCA)';
     }
   }
 
@@ -161,8 +135,6 @@ enum MarketRegime {
         return 'Demat Account';
       case MarketRegime.uk:
         return 'Share Dealing Account';
-      case MarketRegime.crypto:
-        return 'Exchange Account';
     }
   }
 
@@ -171,10 +143,9 @@ enum MarketRegime {
       case MarketRegime.usa:
         return '401(k) / IRA';
       case MarketRegime.india:
-        return 'PPF / NPS';case MarketRegime.uk:
+        return 'PPF / NPS';
+      case MarketRegime.uk:
         return 'ISA / SIPP';
-      case MarketRegime.crypto:
-        return 'N/A';
     }
   }
 }

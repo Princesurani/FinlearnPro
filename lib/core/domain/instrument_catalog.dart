@@ -733,248 +733,6 @@ class InstrumentCatalog {
     ),
   ];
 
-  static const List<Instrument> cryptoInstruments = [
-    Instrument(
-      symbol: 'BTC/USD',
-      name: 'Bitcoin',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 43280.50,
-      volatility: 0.68,
-      exchange: 'Binance',
-      description:
-          'First and largest cryptocurrency. Digital gold, store of value, decentralized currency.',
-    ),
-    Instrument(
-      symbol: 'ETH/USD',
-      name: 'Ethereum',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 2295.80,
-      volatility: 0.75,
-      exchange: 'Binance',
-      description:
-          'Leading smart contract platform. Powers DeFi, NFTs, and decentralized applications.',
-    ),
-    Instrument(
-      symbol: 'BNB/USD',
-      name: 'BNB (Binance Coin)',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 312.40,
-      volatility: 0.72,
-      exchange: 'Binance',
-      description:
-          'Binance exchange token. Used for trading fee discounts and Binance Smart Chain.',
-    ),
-    Instrument(
-      symbol: 'SOL/USD',
-      name: 'Solana',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 108.60,
-      volatility: 0.95,
-      exchange: 'Binance',
-      description:
-          'High-speed blockchain platform. Ethereum competitor, focused on scalability.',
-    ),
-    Instrument(
-      symbol: 'ADA/USD',
-      name: 'Cardano',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 0.548,
-      volatility: 0.82,
-      exchange: 'Binance',
-      description:
-          'Proof-of-stake blockchain. Academic approach, focus on sustainability and governance.',
-    ),
-    Instrument(
-      symbol: 'XRP/USD',
-      name: 'Ripple',
-      type: InstrumentType.crypto,
-      sector: Sector.financialServices,
-      market: MarketRegime.crypto,
-      basePrice: 0.614,
-      volatility: 0.88,
-      exchange: 'Binance',
-      description:
-          'Digital payment protocol. Targets cross-border payments for banks.',
-    ),
-    Instrument(
-      symbol: 'AVAX/USD',
-      name: 'Avalanche',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 38.20,
-      volatility: 0.92,
-      exchange: 'Binance',
-      description:
-          'Smart contract platform competing with Ethereum. Fast finality, low fees.',
-    ),
-    Instrument(
-      symbol: 'DOT/USD',
-      name: 'Polkadot',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 7.45,
-      volatility: 0.86,
-      exchange: 'Binance',
-      description:
-          'Multi-chain protocol. Enables cross-blockchain communication and interoperability.',
-    ),
-    Instrument(
-      symbol: 'MATIC/USD',
-      name: 'Polygon',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 0.928,
-      volatility: 0.94,
-      exchange: 'Binance',
-      description:
-          'Ethereum scaling solution (Layer 2). Faster and cheaper than Ethereum mainnet.',
-    ),
-    Instrument(
-      symbol: 'USDT/USD',
-      name: 'Tether',
-      type: InstrumentType.crypto,
-      sector: Sector.financialServices,
-      market: MarketRegime.crypto,
-      basePrice: 1.0,
-      volatility: 0.008, // Nearly zero volatility (pegged to USD)
-      exchange: 'Binance',
-      description:
-          'Largest stablecoin pegged to US dollar. Used for trading and as safe haven.',
-    ),
-    Instrument(
-      symbol: 'USDC/USD',
-      name: 'USD Coin',
-      type: InstrumentType.crypto,
-      sector: Sector.financialServices,
-      market: MarketRegime.crypto,
-      basePrice: 1.0,
-      volatility: 0.006,
-      exchange: 'Coinbase',
-      description:
-          'Regulated stablecoin backed 1:1 by USD reserves. Issued by Circle.',
-    ),
-    Instrument(
-      symbol: 'LINK/USD',
-      name: 'Chainlink',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 15.28,
-      volatility: 0.90,
-      exchange: 'Binance',
-      description:
-          'Decentralized oracle network. Connects smart contracts to real-world data.',
-    ),
-    Instrument(
-      symbol: 'UNI/USD',
-      name: 'Uniswap',
-      type: InstrumentType.crypto,
-      sector: Sector.financialServices,
-      market: MarketRegime.crypto,
-      basePrice: 9.62,
-      volatility: 0.96,
-      exchange: 'Binance',
-      description:
-          'Leading decentralized exchange (DEX) protocol. Powers automated market making.',
-    ),
-    Instrument(
-      symbol: 'AAVE/USD',
-      name: 'Aave',
-      type: InstrumentType.crypto,
-      sector: Sector.financialServices,
-      market: MarketRegime.crypto,
-      basePrice: 102.40,
-      volatility: 0.98,
-      exchange: 'Binance',
-      description:
-          'Decentralized lending protocol. Earn interest on deposits, borrow against collateral.',
-    ),
-    Instrument(
-      symbol: 'DOGE/USD',
-      name: 'Dogecoin',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 0.0812,
-      volatility: 1.15,
-      exchange: 'Binance',
-      description:
-          'Original meme coin. Extremely volatile, driven by social media sentiment.',
-    ),
-    Instrument(
-      symbol: 'SHIB/USD',
-      name: 'Shiba Inu',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 0.00001042,
-      volatility: 1.28,
-      exchange: 'Binance',
-      description:
-          'Meme token inspired by Dogecoin. Teaching example of speculative mania.',
-    ),
-    Instrument(
-      symbol: 'ARB/USD',
-      name: 'Arbitrum',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 1.38,
-      volatility: 1.02,
-      exchange: 'Binance',
-      description:
-          'Ethereum Layer 2 scaling solution. Optimistic rollup for faster, cheaper transactions.',
-    ),
-    Instrument(
-      symbol: 'CRO/USD',
-      name: 'Cronos',
-      type: InstrumentType.crypto,
-      sector: Sector.financialServices,
-      market: MarketRegime.crypto,
-      basePrice: 0.132,
-      volatility: 0.94,
-      exchange: 'Crypto.com',
-      description:
-          'Crypto.com exchange token. Used for trading fee discounts and staking rewards.',
-    ),
-    Instrument(
-      symbol: 'XMR/USD',
-      name: 'Monero',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 162.50,
-      volatility: 0.80,
-      exchange: 'Kraken',
-      description:
-          'Privacy-focused cryptocurrency. Untraceable transactions, fungible.',
-    ),
-    Instrument(
-      symbol: 'PEPE/USD',
-      name: 'Pepe Coin',
-      type: InstrumentType.crypto,
-      sector: Sector.technology,
-      market: MarketRegime.crypto,
-      basePrice: 0.00000198,
-      volatility: 1.45, // Extremely volatile
-      exchange: 'Binance',
-      description:
-          'Viral meme coin. Teaching example of extreme volatility and speculation risk.',
-    ),
-  ];
   static const List<Instrument> indiaIndices = [
     Instrument(
       symbol: 'NIFTY 50',
@@ -1070,31 +828,6 @@ class InstrumentCatalog {
     ),
   ];
 
-  static const List<Instrument> cryptoIndices = [
-    Instrument(
-      symbol: 'TOTAL',
-      name: 'Total Crypto Market Cap',
-      type: InstrumentType.marketIndex,
-      sector: Sector.unknown,
-      market: MarketRegime.crypto,
-      basePrice: 1720000000000.0,
-      volatility: 0.55,
-      description: 'Combined market capitalization of all cryptocurrencies.',
-      exchange: 'Aggregate',
-    ),
-    Instrument(
-      symbol: 'BTC.D',
-      name: 'Bitcoin Dominance',
-      type: InstrumentType.marketIndex,
-      sector: Sector.unknown,
-      market: MarketRegime.crypto,
-      basePrice: 52.4,
-      volatility: 0.25,
-      description: 'Bitcoin market cap as percentage of total crypto market cap.',
-      exchange: 'Aggregate',
-    ),
-  ];
-
   static List<Instrument> getInstruments(MarketRegime market) {
     switch (market) {
       case MarketRegime.usa:
@@ -1103,8 +836,6 @@ class InstrumentCatalog {
         return indiaInstruments;
       case MarketRegime.uk:
         return ukInstruments;
-      case MarketRegime.crypto:
-        return cryptoInstruments;
     }
   }
 
@@ -1116,8 +847,6 @@ class InstrumentCatalog {
         return indiaIndices;
       case MarketRegime.uk:
         return ukIndices;
-      case MarketRegime.crypto:
-        return cryptoIndices;
     }
   }
 
@@ -1134,6 +863,5 @@ class InstrumentCatalog {
         ...usaInstruments,
         ...indiaInstruments,
         ...ukInstruments,
-        ...cryptoInstruments,
       ];
 }
