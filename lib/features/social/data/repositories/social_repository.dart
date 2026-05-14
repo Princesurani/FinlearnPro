@@ -10,6 +10,32 @@ class SocialRepository {
 
   SocialRepository({http.Client? client}) : _client = client ?? http.Client();
 
+  Future<List<LeaderboardEntry>> searchUsers(String query) async {
+    final response = await _client.get(
+      Uri.parse('${ApiConstants.baseUrl}/social/search?q=${Uri.encodeComponent(query)}'),
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((json) => LeaderboardEntry.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to search users');
+    }
+  }
+
+  Future<List<LeaderboardEntry>> getFriends(String uid) async {
+    final response = await _client.get(
+      Uri.parse('${ApiConstants.baseUrl}/social/friends/$uid'),
+    );
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((json) => LeaderboardEntry.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load friends');
+    }
+  }
+
   Future<UserProfile> getProfile(String uid) async {
     final response = await _client.get(
       Uri.parse('${ApiConstants.baseUrl}/social/profile/$uid'),

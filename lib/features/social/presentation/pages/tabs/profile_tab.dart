@@ -1,100 +1,373 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_spacing.dart';
+import '../../../../../core/theme/app_typography.dart';
 import '../../../bloc/social_bloc.dart';
+import '../../../data/models/user_profile.dart';
 
-class ProfileTab extends StatelessWidget {
+class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
+
+  @override
+  State<ProfileTab> createState() => _ProfileTabState();
+}
+
+class _ProfileTabState extends State<ProfileTab>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _animController.forward(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SocialBloc, SocialState>(
       builder: (context, state) {
         if (state.status == SocialStatus.loading && state.myProfile == null) {
-          return const Center(child: CircularProgressIndicator(color: AppColors.primaryPurple));
-        }
-        
-        final profile = state.myProfile;
-        if (profile == null) {
-          return const Center(child: Text('Failed to load profile', style: TextStyle(color: AppColors.white)));
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.primaryPurple),
+          );
         }
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: AppColors.primaryPurple.withValues(alpha: 0.2),
-                backgroundImage: profile.avatarUrl != null ? NetworkImage(profile.avatarUrl!) : null,
-                child: profile.avatarUrl == null
-                    ? const Icon(Icons.person, size: 50, color: AppColors.primaryPurple)
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                profile.displayName,
-                style: const TextStyle(color: AppColors.white, fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              if (profile.bio != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  profile.bio!,
-                  style: TextStyle(color: AppColors.white.withValues(alpha: 0.7), fontSize: 14),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-              const SizedBox(height: 24),
-              
-              // Level Badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+        final profile = state.myProfile;
+        if (profile == null) {
+          return Center(
+            child: Text(
+              'Unable to load profile',
+              style: AppTypography.bodySmall,
+            ),
+          );
+        }
+
+        return CustomScrollView(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: [
+            SliverToBoxAdapter(child: const SizedBox(height: 24)),
+
+            // Avatar + Name + Bio
+            SliverToBoxAdapter(
+              child: _buildAnimated(
+                index: 0,
+                child: Column(
                   children: [
-                    const Icon(Icons.star_rounded, color: Colors.amber, size: 24),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Level ${profile.level}',
-                      style: const TextStyle(color: AppColors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    // Avatar with gradient ring
+                    Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: const BoxDecoration(
+                        gradient: AppColors.auroraGradient,
+                        shape: BoxShape.circle,
+                      ),
+                      child: CircleAvatar(
+                        radius: 44,
+                        backgroundColor: AppColors.backgroundPrimary,
+                        backgroundImage: profile.avatarUrl != null
+                            ? NetworkImage(profile.avatarUrl!)
+                            : null,
+                        child: profile.avatarUrl == null
+                            ? const Icon(
+                                Icons.person_rounded,
+                                size: 44,
+                                color: AppColors.primaryPurple,
+                              )
+                            : null,
+                      ),
                     ),
-                    const SizedBox(width: 16),
-                    Text(
-                      '${profile.totalXp} XP',
-                      style: TextStyle(color: AppColors.white.withValues(alpha: 0.9), fontSize: 14),
-                    ),
+                    const SizedBox(height: 14),
+                    Text(profile.displayName, style: AppTypography.h4),
+                    if (profile.bio != null && profile.bio!.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        profile.bio!,
+                        style: AppTypography.bodySmall,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ],
                 ),
               ),
-              
-              const SizedBox(height: 32),
-              
-              // Stats Grid
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            // Level + XP Progress Card
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: AppSpacing.screenPaddingH,
+                child: _buildAnimated(
+                  index: 1,
+                  child: _buildLevelCard(profile),
+                ),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            // Streak Card
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: AppSpacing.screenPaddingH,
+                child: _buildAnimated(
+                  index: 2,
+                  child: _buildStreakCard(profile),
+                ),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            // Stats Grid
+            SliverPadding(
+              padding: AppSpacing.screenPaddingH,
+              sliver: SliverGrid.count(
                 crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 1.5,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 1.6,
                 children: [
-                  _StatCard(title: 'Trades', value: profile.totalTrades.toString(), icon: Icons.compare_arrows),
-                  _StatCard(title: 'Win Rate', value: '${(profile.winRate * 100).toStringAsFixed(1)}%', icon: Icons.trending_up),
-                  _StatCard(title: 'Courses', value: profile.totalCoursesCompleted.toString(), icon: Icons.menu_book),
-                  _StatCard(title: 'Challenges', value: profile.totalChallengesCompleted.toString(), icon: Icons.military_tech),
+                  _buildAnimated(
+                    index: 3,
+                    child: _StatCard(
+                      title: 'Total Trades',
+                      value: profile.totalTrades.toString(),
+                      icon: Icons.compare_arrows_rounded,
+                      color: AppColors.electricBlue,
+                    ),
+                  ),
+                  _buildAnimated(
+                    index: 4,
+                    child: _StatCard(
+                      title: 'Win Rate',
+                      value: '${(profile.winRate * 100).toStringAsFixed(1)}%',
+                      icon: Icons.trending_up_rounded,
+                      color: AppColors.profitGreen,
+                    ),
+                  ),
+                  _buildAnimated(
+                    index: 5,
+                    child: _StatCard(
+                      title: 'Courses Done',
+                      value: profile.totalCoursesCompleted.toString(),
+                      icon: Icons.menu_book_rounded,
+                      color: AppColors.indigo,
+                    ),
+                  ),
+                  _buildAnimated(
+                    index: 6,
+                    child: _StatCard(
+                      title: 'Challenges',
+                      value: profile.totalChallengesCompleted.toString(),
+                      icon: Icons.military_tech_rounded,
+                      color: AppColors.goldenYellow,
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 100), // padding for bottom nav
-            ],
-          ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 120)),
+          ],
         );
       },
+    );
+  }
+
+  Widget _buildLevelCard(UserProfile profile) {
+    final xpForNextLevel = (profile.level * profile.level) * 100;
+    final progress = xpForNextLevel > 0
+        ? (profile.totalXp / xpForNextLevel).clamp(0.0, 1.0)
+        : 0.0;
+
+    return GestureDetector(
+      onTap: () => HapticFeedback.lightImpact(),
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.cardPaddingCompact),
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryGradient,
+          borderRadius: AppSpacing.borderRadiusLG,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primaryPurple.withValues(alpha: 0.3),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.white.withValues(alpha: 0.2),
+                    borderRadius: AppSpacing.borderRadiusSM,
+                  ),
+                  child: const Icon(
+                    Icons.star_rounded,
+                    color: Colors.amber,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Level ${profile.level}',
+                        style: AppTypography.h5.copyWith(
+                          color: AppColors.white,
+                        ),
+                      ),
+                      Text(
+                        '${profile.totalXp} / $xpForNextLevel XP',
+                        style: AppTypography.bodyXS.copyWith(
+                          color: AppColors.white.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.white.withValues(alpha: 0.2),
+                    borderRadius: AppSpacing.borderRadiusFull,
+                  ),
+                  child: Text(
+                    '${profile.weeklyXp} this week',
+                    style: AppTypography.labelSmall.copyWith(
+                      color: AppColors.white,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            // XP Progress Bar
+            ClipRRect(
+              borderRadius: AppSpacing.borderRadiusFull,
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: progress),
+                duration: const Duration(milliseconds: 1200),
+                curve: Curves.easeOutCubic,
+                builder: (context, value, _) {
+                  return LinearProgressIndicator(
+                    value: value,
+                    minHeight: 8,
+                    backgroundColor: AppColors.white.withValues(alpha: 0.15),
+                    valueColor: const AlwaysStoppedAnimation(Colors.amber),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStreakCard(UserProfile profile) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.cardPaddingCompact),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: AppSpacing.borderRadiusLG,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.sunsetOrange.withValues(alpha: 0.1),
+              borderRadius: AppSpacing.borderRadiusMD,
+            ),
+            child: const Icon(
+              Icons.local_fire_department_rounded,
+              color: AppColors.sunsetOrange,
+              size: 28,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Current Streak',
+                  style: AppTypography.labelSmall.copyWith(letterSpacing: 0),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${profile.currentStreak} day${profile.currentStreak != 1 ? "s" : ""}',
+                  style: AppTypography.h5,
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                'Best',
+                style: AppTypography.labelSmall.copyWith(letterSpacing: 0),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${profile.longestStreak} days',
+                style: AppTypography.bodySmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.profitGreen,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAnimated({required int index, required Widget child}) {
+    final begin = (index * 0.08).clamp(0.0, 0.7);
+    final end = (begin + 0.3).clamp(0.0, 1.0);
+    final interval = Interval(begin, end, curve: Curves.easeOutCubic);
+
+    final fade = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _animController, curve: interval));
+    final slide = Tween<Offset>(
+      begin: const Offset(0, 0.08),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _animController, curve: interval));
+
+    return FadeTransition(
+      opacity: fade,
+      child: SlideTransition(position: slide, child: child),
     );
   }
 }
@@ -103,31 +376,43 @@ class _StatCard extends StatelessWidget {
   final String title;
   final String value;
   final IconData icon;
+  final Color color;
 
-  const _StatCard({required this.title, required this.value, required this.icon});
+  const _StatCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.white.withValues(alpha: 0.1)),
+        color: AppColors.surface,
+        borderRadius: AppSpacing.borderRadiusLG,
+        border: Border.all(color: AppColors.border),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: AppColors.primaryPurple, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(color: AppColors.white, fontSize: 20, fontWeight: FontWeight.bold),
+          Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: AppSpacing.borderRadiusSM,
+            ),
+            child: Icon(icon, color: color, size: 16),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
+          Text(value, style: AppTypography.h5),
+          const SizedBox(height: 1),
           Text(
             title,
-            style: TextStyle(color: AppColors.white.withValues(alpha: 0.5), fontSize: 12),
+            style: AppTypography.labelSmall.copyWith(letterSpacing: 0),
           ),
         ],
       ),

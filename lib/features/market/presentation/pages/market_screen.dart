@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../core/domain/market_regime.dart';
 import '../../bloc/market_bloc.dart';
 import '../widgets/market_selector.dart';
 import '../widgets/index_ticker.dart';
@@ -221,8 +220,6 @@ class _MarketScreenState extends State<MarketScreen>
       stream: _bloc.stream,
       initialData: _bloc.state,
       builder: (_, snap) {
-        final state = snap.data!;
-
         return TabBarView(
           controller: _tabController,
           children: [

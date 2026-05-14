@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:convert';
 import '../data/learning_models.dart';
 import '../data/learning_mock_data.dart';
 import 'package:http/http.dart' as http;
@@ -117,7 +117,7 @@ class LearningBloc {
         }
       }
 
-      final verifiedProgress = UserLearningProgress(
+      UserLearningProgress verifiedProgress = UserLearningProgress(
         userId: mergedProgress.userId,
         totalXp: mergedProgress.totalXp,
         currentLevel: mergedProgress.currentLevel,
@@ -132,6 +132,45 @@ class LearningBloc {
         lastActivityDate: mergedProgress.lastActivityDate,
         lastDailyChallengeDate: mergedProgress.lastDailyChallengeDate,
       );
+
+      // --- Backend Sync Logic ---
+      try {
+        final response = await http.get(Uri.parse('${ApiConstants.baseUrl}/social/profile/$userId'));
+        if (response.statusCode == 200) {
+          final profileData = jsonDecode(response.body);
+          final backendXp = profileData['total_xp'] ?? 0;
+          
+          if (verifiedProgress.totalXp > backendXp) {
+            // Local is ahead (likely due to offline progress), push to backend
+            final diff = verifiedProgress.totalXp - backendXp;
+            await http.post(Uri.parse('${ApiConstants.baseUrl}/social/xp/award?uid=$userId&xp=$diff'));
+          } else if (backendXp > verifiedProgress.totalXp) {
+            // Backend is ahead (likely logged in on new device)
+            verifiedProgress = UserLearningProgress(
+              userId: verifiedProgress.userId,
+              totalXp: backendXp,
+              currentLevel: verifiedProgress.currentLevel,
+              coursesStarted: verifiedProgress.coursesStarted,
+              coursesCompleted: verifiedProgress.coursesCompleted,
+              lessonsCompleted: verifiedProgress.lessonsCompleted,
+              totalLearningMinutes: verifiedProgress.totalLearningMinutes,
+              currentStreak: verifiedProgress.currentStreak,
+              longestStreak: verifiedProgress.longestStreak,
+              courseProgress: verifiedProgress.courseProgress,
+              achievements: verifiedProgress.achievements,
+              lastActivityDate: verifiedProgress.lastActivityDate,
+              lastDailyChallengeDate: verifiedProgress.lastDailyChallengeDate,
+            );
+            _progressService.saveProgress(verifiedProgress);
+          }
+        } else if (response.statusCode == 404) {
+          // Profile doesn't exist yet, push our local XP to initialize it
+          await http.post(Uri.parse('${ApiConstants.baseUrl}/social/xp/award?uid=$userId&xp=${verifiedProgress.totalXp}'));
+        }
+      } catch (_) {
+        // Ignore network errors, fallback to local progress
+      }
+      // --------------------------
 
       _state = _state.copyWith(userProgress: verifiedProgress);
       _stateController.add(_state);

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_spacing.dart';
+import '../../../../../core/theme/app_typography.dart';
 import '../../../bloc/social_bloc.dart';
 
 class FeedTab extends StatelessWidget {
@@ -21,16 +23,24 @@ class FeedTab extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.feed_outlined, size: 64, color: AppColors.white.withValues(alpha: 0.2)),
-                const SizedBox(height: 16),
-                Text(
-                  'No trades to show.',
-                  style: TextStyle(color: AppColors.white.withValues(alpha: 0.5), fontSize: 16),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppColors.electricBlue.withValues(alpha: 0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.feed_outlined, size: 48, color: AppColors.electricBlue),
                 ),
+                const SizedBox(height: 20),
+                Text('No trades shared yet', style: AppTypography.h5),
                 const SizedBox(height: 8),
-                Text(
-                  'Follow traders to see their activity!',
-                  style: TextStyle(color: AppColors.white.withValues(alpha: 0.4), fontSize: 14),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Text(
+                    'Follow traders to see their activity, or share your own trades from the Markets tab!',
+                    textAlign: TextAlign.center,
+                    style: AppTypography.bodySmall,
+                  ),
                 ),
               ],
             ),
@@ -38,100 +48,107 @@ class FeedTab extends StatelessWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.screenPaddingHorizontal, 20,
+            AppSpacing.screenPaddingHorizontal, 100,
+          ),
           itemCount: feed.length,
           itemBuilder: (context, index) {
             final post = feed[index];
             final isBuy = post.side.toLowerCase() == 'buy';
-            final sideColor = isBuy ? AppColors.electricBlue : AppColors.sunsetOrange;
+            final sideColor = isBuy ? AppColors.profitGreen : AppColors.lossRed;
 
             return Container(
               margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.cardPaddingCompact),
               decoration: BoxDecoration(
-                color: AppColors.surface.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.white.withValues(alpha: 0.05)),
+                color: AppColors.surface,
+                borderRadius: AppSpacing.borderRadiusLG,
+                border: Border.all(color: AppColors.border),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Author Row
                   Row(
                     children: [
                       CircleAvatar(
                         radius: 16,
-                        backgroundColor: AppColors.primaryPurple.withValues(alpha: 0.2),
+                        backgroundColor: AppColors.primaryPurple.withValues(alpha: 0.12),
                         child: Text(
                           post.authorName[0].toUpperCase(),
-                          style: const TextStyle(color: AppColors.white, fontSize: 12),
+                          style: AppTypography.labelSmall.copyWith(
+                            color: AppColors.primaryPurple,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              post.authorName,
-                              style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.w600),
-                            ),
-                            Text(
-                              'Level ${post.authorLevel}',
-                              style: TextStyle(color: AppColors.white.withValues(alpha: 0.5), fontSize: 12),
-                            ),
+                            Text(post.authorName, style: AppTypography.bodyMedium.copyWith(fontSize: 14)),
+                            Text('Level ${post.authorLevel}', style: AppTypography.bodyXS),
                           ],
                         ),
                       ),
                       Text(
                         _formatTimeAgo(post.createdAt),
-                        style: TextStyle(color: AppColors.white.withValues(alpha: 0.4), fontSize: 12),
+                        style: AppTypography.bodyXS,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
+
+                  // Caption
                   if (post.caption != null && post.caption!.isNotEmpty) ...[
-                    Text(
-                      post.caption!,
-                      style: const TextStyle(color: AppColors.white, fontSize: 14),
-                    ),
+                    Text(post.caption!, style: AppTypography.bodySmall.copyWith(color: AppColors.textPrimary)),
                     const SizedBox(height: 12),
                   ],
+
                   // Trade Card
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.backgroundPrimary.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: sideColor.withValues(alpha: 0.3)),
+                      color: AppColors.backgroundTertiary,
+                      borderRadius: AppSpacing.borderRadiusMD,
+                      border: Border.all(color: sideColor.withValues(alpha: 0.2)),
                     ),
                     child: Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: sideColor.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(4),
+                            color: sideColor.withValues(alpha: 0.12),
+                            borderRadius: AppSpacing.borderRadiusXS,
                           ),
                           child: Text(
                             post.side.toUpperCase(),
-                            style: TextStyle(color: sideColor, fontWeight: FontWeight.bold, fontSize: 12),
+                            style: AppTypography.labelSmall.copyWith(
+                              color: sideColor,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             '${post.quantity} ${post.symbol}',
-                            style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+                            style: AppTypography.bodyMedium.copyWith(fontSize: 14),
                           ),
                         ),
                         Text(
                           '@ ₹${post.price.toStringAsFixed(2)}',
-                          style: TextStyle(color: AppColors.white.withValues(alpha: 0.7)),
+                          style: AppTypography.bodySmall,
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
+
+                  // Like button
                   Row(
                     children: [
                       GestureDetector(
@@ -142,14 +159,16 @@ class FeedTab extends StatelessWidget {
                         child: Row(
                           children: [
                             Icon(
-                              post.isLikedByMe ? Icons.favorite : Icons.favorite_border,
-                              color: post.isLikedByMe ? AppColors.coralPink : AppColors.white.withValues(alpha: 0.5),
+                              post.isLikedByMe ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                              color: post.isLikedByMe ? AppColors.coralPink : AppColors.textTertiary,
                               size: 20,
                             ),
                             const SizedBox(width: 6),
                             Text(
                               post.likesCount.toString(),
-                              style: TextStyle(color: AppColors.white.withValues(alpha: 0.7)),
+                              style: AppTypography.bodySmall.copyWith(
+                                color: post.isLikedByMe ? AppColors.coralPink : AppColors.textSecondary,
+                              ),
                             ),
                           ],
                         ),
