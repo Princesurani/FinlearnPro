@@ -13,7 +13,7 @@ class FeedTab extends StatelessWidget {
     return BlocBuilder<SocialBloc, SocialState>(
       builder: (context, state) {
         if (state.status == SocialStatus.loading && state.feed.isEmpty) {
-          return const Center(child: CircularProgressIndicator(color: AppColors.primaryPurple));
+          return const Center(child: CircularProgressIndicator(color: AppColors.primary));
         }
 
         final feed = state.feed;
@@ -74,11 +74,11 @@ class FeedTab extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 16,
-                        backgroundColor: AppColors.primaryPurple.withValues(alpha: 0.12),
+                        backgroundColor: AppColors.primary.withValues(alpha: 0.12),
                         child: Text(
                           post.authorName[0].toUpperCase(),
                           style: AppTypography.labelSmall.copyWith(
-                            color: AppColors.primaryPurple,
+                            color: AppColors.primary,
                             letterSpacing: 0,
                           ),
                         ),

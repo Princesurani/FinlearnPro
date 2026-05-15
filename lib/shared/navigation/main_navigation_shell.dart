@@ -188,7 +188,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                                       borderRadius: BorderRadius.circular(36),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: AppColors.primaryPurple
+                                          color: AppColors.primary
                                               .withValues(alpha: 0.4),
                                           blurRadius: 8,
                                           offset: const Offset(0, 2),

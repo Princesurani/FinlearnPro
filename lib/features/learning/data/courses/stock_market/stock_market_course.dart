@@ -34,7 +34,7 @@ class StockMarketCourse {
       rating: 4.8,
       ratingsCount: 9840,
       enrolledCount: 38500,
-      accentColor: const Color(0xFF2563EB), // Royal Blue
+      accentColor: const Color(0xFF2962FF), // Royal Blue
       isPremium: false,
       learningOutcomes: [
         'Understand what a stock/share truly represents',

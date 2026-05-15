@@ -24,7 +24,7 @@ class TipDialog extends StatelessWidget {
               color: AppColors.backgroundSecondary,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: AppColors.primaryPurple.withValues(alpha: 0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 width: 1.5,
               ),
               boxShadow: [
@@ -34,7 +34,7 @@ class TipDialog extends StatelessWidget {
                   offset: const Offset(0, 10),
                 ),
                 BoxShadow(
-                  color: AppColors.primaryPurple.withValues(alpha: 0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   blurRadius: 30,
                   spreadRadius: -5,
                 ),
@@ -47,7 +47,7 @@ class TipDialog extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryPurple.withValues(alpha: 0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Text('💡', style: TextStyle(fontSize: 32)),
@@ -113,7 +113,7 @@ class TipDialog extends StatelessWidget {
                       Navigator.of(context).pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryPurple,
+                      backgroundColor: AppColors.primary,
                       foregroundColor: AppColors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(

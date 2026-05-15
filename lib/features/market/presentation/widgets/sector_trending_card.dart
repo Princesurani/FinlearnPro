@@ -41,7 +41,7 @@ class SectorTrendingCard extends StatelessWidget {
               Text(
                 'See all sectors',
                 style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.primaryPurple,
+                  color: AppColors.primary,
                   fontWeight: AppTypography.medium,
                 ),
               ),
@@ -49,7 +49,7 @@ class SectorTrendingCard extends StatelessWidget {
               const Icon(
                 Icons.chevron_right_rounded,
                 size: 16,
-                color: AppColors.primaryPurple,
+                color: AppColors.primary,
               ),
             ],
           ),

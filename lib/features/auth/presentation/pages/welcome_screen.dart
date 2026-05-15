@@ -35,7 +35,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       body:
           'Expert-crafted courses on stocks, forex, derivatives '
           'and real-world investing — no jargon, no fluff.',
-      accentColor: AppColors.primaryPurple,
+      accentColor: AppColors.primary,
       illustrationType: _IllustType.chart,
     ),
     _PageData(

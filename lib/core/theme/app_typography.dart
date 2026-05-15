@@ -305,9 +305,9 @@ abstract final class AppTypography {
     fontWeight: medium,
     height: lineHeightNormal,
     letterSpacing: letterSpacingNormal,
-    color: AppColors.primaryPurple,
+    color: AppColors.primary,
     decoration: TextDecoration.underline,
-    decorationColor: AppColors.primaryPurple,
+    decorationColor: AppColors.primary,
   );
 
   static const TextStyle code = TextStyle(
@@ -358,7 +358,7 @@ abstract final class AppTypography {
   );
 
   static TextStyle withPrimary(TextStyle style) =>
-      style.copyWith(color: AppColors.primaryPurple);
+      style.copyWith(color: AppColors.primary);
 
   static TextStyle withSecondary(TextStyle style) =>
       style.copyWith(color: AppColors.textSecondary);
@@ -391,7 +391,7 @@ extension TextStyleExtensions on TextStyle {
 
   TextStyle get tertiary => copyWith(color: AppColors.textTertiary);
 
-  TextStyle get accent => copyWith(color: AppColors.primaryPurple);
+  TextStyle get accent => copyWith(color: AppColors.primary);
 
   TextStyle get success => copyWith(color: AppColors.success);
 

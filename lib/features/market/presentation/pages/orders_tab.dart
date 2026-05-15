@@ -119,7 +119,7 @@ class OrdersTab extends StatelessWidget {
               // Share Button
               if (order.status.toLowerCase() == 'filled')
                 IconButton(
-                  icon: const Icon(Icons.share, size: 18, color: AppColors.primaryPurple),
+                  icon: const Icon(Icons.share, size: 18, color: AppColors.primary),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () async {
@@ -265,7 +265,7 @@ class OrdersTab extends StatelessWidget {
             ElevatedButton(
               onPressed: onExplore,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryPurple,
+                backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.xl,
@@ -290,7 +290,7 @@ class OrdersTab extends StatelessWidget {
       case 'filled':
         return AppColors.profitGreen;
       case 'pending':
-        return AppColors.primaryPurple;
+        return AppColors.primary;
       case 'rejected':
         return AppColors.lossRed;
       default:

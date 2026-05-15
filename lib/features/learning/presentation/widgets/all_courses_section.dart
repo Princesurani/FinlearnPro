@@ -27,7 +27,7 @@ class AllCoursesSection extends StatelessWidget {
               Text(
                 'See All',
                 style: AppTypography.button.copyWith(
-                  color: AppColors.primaryPurple,
+                  color: AppColors.primary,
                 ),
               ),
             ],

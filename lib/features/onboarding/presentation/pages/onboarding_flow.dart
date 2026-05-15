@@ -246,7 +246,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
               Text(
                 '${((_currentStep + 1) / _totalSteps * 100).round()}%',
                 style: AppTypography.label.copyWith(
-                  color: AppColors.primaryPurple,
+                  color: AppColors.primary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -687,11 +687,11 @@ class _ChipSelection extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primaryPurple.withAlpha((0.1 * 255).round())
+              ? AppColors.primary.withAlpha((0.1 * 255).round())
               : AppColors.surface,
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
           border: Border.all(
-            color: isSelected ? AppColors.primaryPurple : AppColors.border,
+            color: isSelected ? AppColors.primary : AppColors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -702,7 +702,7 @@ class _ChipSelection extends StatelessWidget {
               icon,
               size: 20,
               color: isSelected
-                  ? AppColors.primaryPurple
+                  ? AppColors.primary
                   : AppColors.textSecondary,
             ),
             AppSpacing.gapSM,
@@ -710,7 +710,7 @@ class _ChipSelection extends StatelessWidget {
               label,
               style: AppTypography.button.copyWith(
                 color: isSelected
-                    ? AppColors.primaryPurple
+                    ? AppColors.primary
                     : AppColors.textPrimary,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),

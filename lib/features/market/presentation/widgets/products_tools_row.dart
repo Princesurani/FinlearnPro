@@ -67,7 +67,7 @@ class ProductsToolsRow extends StatelessWidget {
 }
 
 const List<_ProductDef> _products = [
-  _ProductDef('MTF', Icons.trending_up_rounded, AppColors.primaryPurple),
+  _ProductDef('MTF', Icons.trending_up_rounded, AppColors.primary),
   _ProductDef('Stock SIP', Icons.repeat_rounded, AppColors.oceanTeal),
   _ProductDef('ETF', Icons.auto_graph_rounded, AppColors.electricBlue),
   _ProductDef('IPO', Icons.rocket_launch_rounded, AppColors.sunsetOrange),

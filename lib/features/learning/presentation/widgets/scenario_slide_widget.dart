@@ -64,7 +64,7 @@ class _ScenarioSlideWidgetState extends State<ScenarioSlideWidget> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppColors.primaryPurple.withValues(alpha: 0.15), // Darker
+                  AppColors.primary.withValues(alpha: 0.15), // Darker
                   AppColors.oceanTeal.withValues(alpha: 0.15), // Darker
                 ],
               ),

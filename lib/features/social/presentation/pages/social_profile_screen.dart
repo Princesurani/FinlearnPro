@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -12,7 +11,6 @@ import 'tabs/leaderboard_tab.dart';
 import 'tabs/feed_tab.dart';
 import 'tabs/friends_tab.dart';
 import 'tabs/profile_tab.dart';
-import '../../../auth/presentation/pages/profile_screen.dart';
 
 class SocialProfileScreen extends StatelessWidget {
   const SocialProfileScreen({super.key});
@@ -112,15 +110,6 @@ class _SocialProfileViewState extends State<_SocialProfileView>
           ),
         ],
       ),
-      actions: [
-        TopBarButton(
-          icon: Icons.settings_outlined,
-          onTap: () {
-            HapticFeedback.lightImpact();
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
-          },
-        ),
-      ],
     );
   }
 
@@ -143,7 +132,7 @@ class _SocialProfileViewState extends State<_SocialProfileView>
         controller: _tabController,
         isScrollable: false, // Fill available width
         indicator: BoxDecoration(
-          color: AppColors.primaryPurple,
+          color: AppColors.primary,
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
         ),
         indicatorSize: TabBarIndicatorSize.tab,

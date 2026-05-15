@@ -40,7 +40,7 @@ class ContinueLearningSection extends StatelessWidget {
                   SizedBox(width: 8),
                   Icon(
                     Icons.play_circle_fill_rounded,
-                    color: AppColors.primaryPurple,
+                    color: AppColors.primary,
                     size: 20,
                   ),
                 ],
@@ -54,7 +54,7 @@ class ContinueLearningSection extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.primaryPurple,
+                    color: AppColors.primary,
                   ),
                 ),
               ),

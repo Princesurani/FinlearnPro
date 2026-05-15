@@ -229,19 +229,19 @@ class _AppTextFieldState extends State<AppTextField>
 
   Color get _borderColor {
     if (_hasError) return AppColors.error;
-    if (_isFocused) return widget.focusedBorderColor ?? AppColors.primaryPurple;
+    if (_isFocused) return widget.focusedBorderColor ?? AppColors.primary;
     return widget.borderColor ?? AppColors.border;
   }
 
   Color get _labelColor {
     if (_hasError) return AppColors.error;
-    if (_isFocused) return AppColors.primaryPurple;
+    if (_isFocused) return AppColors.primary;
     return AppColors.textTertiary;
   }
 
   Color get _iconColor {
     if (_hasError) return AppColors.error;
-    if (_isFocused) return AppColors.primaryPurple;
+    if (_isFocused) return AppColors.primary;
     return AppColors.textTertiary;
   }
 
@@ -265,7 +265,7 @@ class _AppTextFieldState extends State<AppTextField>
             boxShadow: _isFocused
                 ? [
                     BoxShadow(
-                      color: AppColors.primaryPurple.withAlpha(
+                      color: AppColors.primary.withAlpha(
                         (0.1 * 255).round(),
                       ),
                       blurRadius: 8,
@@ -322,7 +322,7 @@ class _AppTextFieldState extends State<AppTextField>
                 enableSuggestions: widget.enableSuggestions,
                 textCapitalization: widget.textCapitalization,
                 autofillHints: widget.autofillHints,
-                cursorColor: widget.cursorColor ?? AppColors.primaryPurple,
+                cursorColor: widget.cursorColor ?? AppColors.primary,
                 style:
                     widget.style ??
                     AppTypography.body.copyWith(color: AppColors.textPrimary),

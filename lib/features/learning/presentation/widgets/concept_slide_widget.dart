@@ -87,7 +87,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                             borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primaryPurple.withValues(
+                                color: AppColors.primary.withValues(
                                   alpha: 0.3,
                                 ),
                                 blurRadius: 12,
@@ -370,7 +370,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Icon(
                   Icons.auto_awesome,
-                  color: AppColors.primaryPurple.withValues(alpha: 0.4),
+                  color: AppColors.primary.withValues(alpha: 0.4),
                   size: 18,
                 ),
               ),
@@ -400,7 +400,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: AppColors.primaryPurple.withValues(alpha: 0.3),
+              color: AppColors.primary.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -413,14 +413,14 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primaryPurple.withValues(alpha: 0.15),
+                      color: AppColors.primary.withValues(alpha: 0.15),
                       blurRadius: 8,
                     ),
                   ],
                 ),
                 child: const Icon(
                   Icons.lightbulb_outline_rounded,
-                  color: AppColors.primaryPurple,
+                  color: AppColors.primary,
                   size: 22,
                 ),
               ),
@@ -432,7 +432,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                     Text(
                       title,
                       style: const TextStyle(
-                        color: AppColors.primaryPurple,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                         letterSpacing: 1.2,
@@ -495,17 +495,17 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryPurple.withValues(alpha: 0.08),
+                    color: AppColors.primary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: AppColors.primaryPurple.withValues(alpha: 0.25),
+                      color: AppColors.primary.withValues(alpha: 0.25),
                       width: 1.5,
                     ),
                   ),
                   child: Text(
                     title,
                     style: const TextStyle(
-                      color: AppColors.primaryPurple,
+                      color: AppColors.primary,
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                       letterSpacing: 0.5,
@@ -525,7 +525,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primaryPurple.withValues(alpha: 0.03),
+                    color: AppColors.primary.withValues(alpha: 0.03),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -546,7 +546,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                             margin: const EdgeInsets.only(top: 2),
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryPurple.withValues(
+                              color: AppColors.primary.withValues(
                                 alpha: 0.1,
                               ),
                               shape: BoxShape.circle,
@@ -554,7 +554,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                             child: const Icon(
                               Icons.push_pin_rounded,
                               size: 14,
-                              color: AppColors.primaryPurple,
+                              color: AppColors.primary,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -565,7 +565,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                                 Text(
                                   title,
                                   style: const TextStyle(
-                                    color: AppColors.primaryPurple,
+                                    color: AppColors.primary,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),
@@ -620,7 +620,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
           style: const TextStyle(
             fontSize: 16,
             height: 1.7,
-            color: AppColors.primaryPurple,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.3,
           ),

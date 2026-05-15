@@ -144,7 +144,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                       Navigator.pop(context); // Close screen
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6B4EF5),
+                      backgroundColor: const Color(0xFF2962FF),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -247,7 +247,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
         builder: (context, state) {
           if (state is ChallengeLoading || state is ChallengeInitial) {
             return const Center(
-              child: CircularProgressIndicator(color: Color(0xFF6B4EF5)),
+              child: CircularProgressIndicator(color: Color(0xFF2962FF)),
             );
           }
 
@@ -387,7 +387,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF6B4EF5),
+                          color: Color(0xFF2962FF),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -422,7 +422,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                       index: choice.id,
                       title: choice.text,
                       icon: Icons.analytics_outlined, // Generic icon
-                      color: const Color(0xFF6B4EF5),
+                      color: const Color(0xFF2962FF),
                       isSubmitted: isSubmitted,
                       correctOptionIndex: submissionResult != null
                           ? (submissionResult.isCorrect
@@ -452,18 +452,18 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                           },
                           icon: const Icon(
                             Icons.remove_red_eye,
-                            color: AppColors.primaryPurple,
+                            color: AppColors.primary,
                           ),
                           label: const Text(
                             "Reveal Correct Answer & Explanation",
                             style: TextStyle(
-                              color: AppColors.primaryPurple,
+                              color: AppColors.primary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(
-                              color: AppColors.primaryPurple,
+                              color: AppColors.primary,
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
@@ -479,7 +479,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryPurple.withValues(alpha: 0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
@@ -489,7 +489,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                               "Explanation",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.primaryPurple,
+                                color: AppColors.primary,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -523,7 +523,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                           ? _submitAnswer
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6B4EF5),
+                        backgroundColor: const Color(0xFF2962FF),
                         disabledBackgroundColor: AppColors.textDisabled,
                         padding: const EdgeInsets.symmetric(vertical: 18),
                         shape: RoundedRectangleBorder(
@@ -587,7 +587,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
       backgroundColor = AppColors.backgroundTertiary;
     } else if (!isSubmitted) {
       if (isSelected) {
-        borderColor = const Color(0xFF6B4EF5);
+        borderColor = const Color(0xFF2962FF);
         backgroundColor = const Color(0xFFF0EDFF);
       }
     }
@@ -642,7 +642,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                 index != correctOptionIndex)
               const Icon(Icons.cancel, color: AppColors.error),
             if (!isSubmitted && isSelected)
-              const Icon(Icons.radio_button_checked, color: Color(0xFF6B4EF5)),
+              const Icon(Icons.radio_button_checked, color: Color(0xFF2962FF)),
             if (!isSubmitted && !isSelected)
               Icon(Icons.radio_button_unchecked, color: AppColors.textTertiary),
           ],

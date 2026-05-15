@@ -23,11 +23,11 @@ class SummarySlideWidget extends StatelessWidget {
             title: 'Key Takeaways'.toUpperCase(),
             subtitle: 'Let\'s Recap',
             gradientColors: [
-              AppColors.primaryPurple.withValues(alpha: 0.25),
+              AppColors.primary.withValues(alpha: 0.25),
               AppColors.indigo.withValues(alpha: 0.20),
             ],
-            borderColor: AppColors.primaryPurple.withValues(alpha: 0.4),
-            titleColor: AppColors.primaryPurple,
+            borderColor: AppColors.primary.withValues(alpha: 0.4),
+            titleColor: AppColors.primary,
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -35,7 +35,7 @@ class SummarySlideWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primaryPurple.withValues(alpha: 0.3),
+                    color: AppColors.primary.withValues(alpha: 0.3),
                     blurRadius: 12,
                     spreadRadius: 2,
                   ),
@@ -67,7 +67,7 @@ class SummarySlideWidget extends StatelessWidget {
                       height: 28,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryPurple,
+                        color: AppColors.primary,
                         shape: BoxShape.circle,
                       ),
                       child: Text(

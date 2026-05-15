@@ -61,7 +61,7 @@ class NotificationsScreen extends StatelessWidget {
                 'Congratulations! You\'ve earned the "Chart Master" badge for 7 correct predictions.',
             time: '1d ago',
             icon: Icons.emoji_events_outlined,
-            iconColor: AppColors.primaryPurple,
+            iconColor: AppColors.primary,
             isUnread: false,
           ),
           const SizedBox(height: 12),

@@ -89,7 +89,7 @@ class _UnifiedOverviewCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryPurple.withValues(alpha: 0.4),
+            color: AppColors.primary.withValues(alpha: 0.4),
             blurRadius: 24,
             offset: const Offset(0, 12),
             spreadRadius: 0,
@@ -100,7 +100,7 @@ class _UnifiedOverviewCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF6B4EF5), Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+            colors: [Color(0xFF2962FF), Color(0xFF2962FF), Color(0xFF023E8A)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

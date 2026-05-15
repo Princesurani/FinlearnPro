@@ -124,7 +124,7 @@ class _MarketSelectorSheet extends StatelessWidget {
                 const Icon(
                   Icons.public_rounded,
                   size: 22,
-                  color: AppColors.primaryPurple,
+                  color: AppColors.primary,
                 ),
                 AppSpacing.gapHSM,
                 Text('Select Market', style: AppTypography.h5),
@@ -147,7 +147,7 @@ class _MarketSelectorSheet extends StatelessWidget {
 
     return Material(
       color: isActive
-          ? AppColors.primaryPurple.withAlpha(15)
+          ? AppColors.primary.withAlpha(15)
           : AppColors.transparent,
       child: InkWell(
         onTap: () => onMarketChanged(market),
@@ -159,7 +159,7 @@ class _MarketSelectorSheet extends StatelessWidget {
           decoration: BoxDecoration(
             border: isActive
                 ? const Border(
-                    left: BorderSide(color: AppColors.primaryPurple, width: 3),
+                    left: BorderSide(color: AppColors.primary, width: 3),
                   )
                 : null,
           ),
@@ -189,7 +189,7 @@ class _MarketSelectorSheet extends StatelessWidget {
                       market.displayName,
                       style: AppTypography.bodyMedium.copyWith(
                         color: isActive
-                            ? AppColors.primaryPurple
+                            ? AppColors.primary
                             : AppColors.textPrimary,
                         fontWeight: AppTypography.semiBold,
                       ),
@@ -208,7 +208,7 @@ class _MarketSelectorSheet extends StatelessWidget {
               if (isActive)
                 const Icon(
                   Icons.check_circle_rounded,
-                  color: AppColors.primaryPurple,
+                  color: AppColors.primary,
                   size: 22,
                 ),
             ],

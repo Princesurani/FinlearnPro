@@ -58,7 +58,7 @@ class BlogsSection extends StatelessWidget {
           readTime: '6 min read',
           likes: '2.4k',
           category: 'Macro',
-          categoryColor: AppColors.primaryPurple,
+          categoryColor: AppColors.primary,
         ),
       ],
     );

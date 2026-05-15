@@ -1428,7 +1428,7 @@ class _LessonScreenState extends State<LessonScreen>
                 '${(progress * 100).toInt()}%',
                 style: const TextStyle(
                   fontSize: 12,
-                  color: AppColors.primaryPurple,
+                  color: AppColors.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1440,7 +1440,7 @@ class _LessonScreenState extends State<LessonScreen>
             child: LinearProgressIndicator(
               value: progress,
               backgroundColor: AppColors.backgroundTertiary,
-              valueColor: const AlwaysStoppedAnimation(AppColors.primaryPurple),
+              valueColor: const AlwaysStoppedAnimation(AppColors.primary),
               minHeight: 8,
             ),
           ),
@@ -1493,7 +1493,7 @@ class _LessonScreenState extends State<LessonScreen>
                 borderRadius: BorderRadius.circular(25),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primaryPurple.withValues(alpha: 0.3),
+                    color: AppColors.primary.withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -1502,7 +1502,7 @@ class _LessonScreenState extends State<LessonScreen>
               child: ElevatedButton(
                 onPressed: _nextPage,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryPurple,
+                  backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.white,
                   padding: EdgeInsets.zero, // Use Container height
                   shape: RoundedRectangleBorder(
@@ -1787,7 +1787,7 @@ class _CompletionDialog extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: onContinue,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryPurple,
+                  backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(

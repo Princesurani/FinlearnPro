@@ -88,7 +88,7 @@ class WatchlistTab extends StatelessWidget {
             ElevatedButton(
               onPressed: onExplore,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryPurple,
+                backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.xl,
@@ -260,7 +260,7 @@ class _WatchlistTile extends StatelessWidget {
       case Sector.healthcare:
         return AppColors.oceanTeal;
       case Sector.consumerCyclical:
-        return AppColors.primaryPurple;
+        return AppColors.primary;
       case Sector.consumerDefensive:
         return AppColors.lavender;
       case Sector.industrials:

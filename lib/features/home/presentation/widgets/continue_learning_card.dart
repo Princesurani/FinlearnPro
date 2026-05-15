@@ -45,7 +45,7 @@ class ContinueLearningCard extends StatelessWidget {
                   height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.primaryPurple.withValues(alpha: 0.05),
+                    color: AppColors.primary.withValues(alpha: 0.05),
                   ),
                 ),
               ),
@@ -98,11 +98,11 @@ class ContinueLearningCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryPurple,
+                            color: AppColors.primary,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primaryPurple.withValues(
+                                color: AppColors.primary.withValues(
                                   alpha: 0.4,
                                 ),
                                 blurRadius: 8,
@@ -149,7 +149,7 @@ class ContinueLearningCard extends StatelessWidget {
                           alpha: 0.2,
                         ),
                         valueColor: const AlwaysStoppedAnimation<Color>(
-                          AppColors.primaryPurple,
+                          AppColors.primary,
                         ),
                       ),
                     ),

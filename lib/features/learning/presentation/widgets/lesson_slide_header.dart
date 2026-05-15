@@ -16,7 +16,7 @@ class LessonSlideHeader extends StatelessWidget {
     required this.icon,
     required this.gradientColors,
     required this.borderColor,
-    this.titleColor = AppColors.primaryPurple,
+    this.titleColor = AppColors.primary,
   });
 
   @override

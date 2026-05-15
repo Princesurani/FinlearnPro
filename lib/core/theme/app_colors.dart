@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  static const Color primaryPurple = Color(0xFF6B4EF5);
+  // Primary Theme Colors (Medium Light Blue)
+  static const Color primary = Color(0xFF2962FF); 
 
-  static const Color primaryPurpleLight = Color(0xFF907AF8);
+  static const Color primaryLight = Color(0xFF00B4D8);
 
-  static const Color primaryPurpleDark = Color(0xFF5038D4);
+  static const Color primaryDark = Color(0xFF023E8A);
 
-  static const Color primaryPurpleSubtle = Color(0xFFF3F0FF);
+  static const Color primarySubtle = Color(0xFFF0F4F8);
 
   static const Color electricBlue = Color(0xFF4E8BF5);
   static const Color primaryBlue = Color(0xFF4E8BF5); // Alias for consistency
@@ -36,7 +37,7 @@ abstract final class AppColors {
 
   static const Color emerald = Color(0xFF10B981);
 
-  static const Color auroraPurple = Color(0xFF7C3AED);
+  static const Color auroraPurple = Color(0xFF023E8A);
 
   static const Color auroraBlue = Color(0xFF3B82F6);
 
@@ -130,7 +131,7 @@ abstract final class AppColors {
   static const Color transparent = Color(0x00000000);
 
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [primaryPurple, primaryPurpleLight],
+    colors: [primary, primaryLight],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

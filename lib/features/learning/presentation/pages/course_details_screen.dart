@@ -130,9 +130,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                   delegate: _StickyTabBarDelegate(
                     tabBar: TabBar(
                       controller: _tabController,
-                      labelColor: AppColors.primaryPurple,
+                      labelColor: AppColors.primary,
                       unselectedLabelColor: AppColors.textSecondary,
-                      indicatorColor: AppColors.primaryPurple,
+                      indicatorColor: AppColors.primary,
                       indicatorWeight: 3,
                       labelStyle: const TextStyle(
                         fontWeight: FontWeight.bold,
@@ -229,7 +229,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      widget.course.accentColor ?? AppColors.primaryPurple,
+                      widget.course.accentColor ?? AppColors.primary,
                       AppColors.darkBackground,
                     ],
                     begin: Alignment.topLeft,
@@ -274,7 +274,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                     children: [
                       _buildGlassBadge(
                         widget.course.categoryId.toUpperCase(),
-                        AppColors.primaryPurple,
+                        AppColors.primary,
                       ),
                       const SizedBox(width: 8),
                       _buildGlassBadge(
@@ -443,12 +443,12 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryPurple.withValues(alpha: 0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.auto_awesome,
-                  color: AppColors.primaryPurple,
+                  color: AppColors.primary,
                   size: 20,
                 ),
               ),
@@ -515,7 +515,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
               const CircleAvatar(
                 radius: 28,
                 backgroundColor: AppColors.backgroundTertiary,
-                child: Icon(Icons.person, color: AppColors.primaryPurple),
+                child: Icon(Icons.person, color: AppColors.primary),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -686,14 +686,14 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                     color: AppColors.white,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppColors.primaryPurple,
+                      color: AppColors.primary,
                       width: 2,
                     ),
                   ),
                   child: Icon(
                     lesson.contentType.icon,
                     size: 12,
-                    color: AppColors.primaryPurple,
+                    color: AppColors.primary,
                   ),
                 ),
                 if (!isLast)
@@ -738,7 +738,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
               isCompleted
                   ? Icons.check_circle_rounded
                   : Icons.play_circle_fill_rounded,
-              color: isCompleted ? AppColors.success : AppColors.primaryPurple,
+              color: isCompleted ? AppColors.success : AppColors.primary,
               size: 28,
             ),
           ],
@@ -781,7 +781,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
               borderRadius: BorderRadius.circular(30),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primaryPurple.withValues(alpha: 0.4),
+                  color: AppColors.primary.withValues(alpha: 0.4),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -790,7 +790,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
             child: ElevatedButton(
               onPressed: _startCourse,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryPurple,
+                backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 elevation: 0,

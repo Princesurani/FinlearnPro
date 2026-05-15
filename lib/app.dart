@@ -99,9 +99,9 @@ class _FinLearnAppState extends State<FinLearnApp> {
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primaryPurple,
+        seedColor: AppColors.primary,
         brightness: Brightness.light,
-        primary: AppColors.primaryPurple,
+        primary: AppColors.primary,
         onPrimary: AppColors.white,
         secondary: AppColors.oceanTeal,
         onSecondary: AppColors.white,
@@ -123,14 +123,14 @@ class _FinLearnAppState extends State<FinLearnApp> {
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.white,
-        selectedItemColor: AppColors.primaryPurple,
+        selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textTertiary,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryPurple,
+          backgroundColor: AppColors.primary,
           foregroundColor: AppColors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -153,7 +153,7 @@ class _FinLearnAppState extends State<FinLearnApp> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(
-            color: AppColors.primaryPurple,
+            color: AppColors.primary,
             width: 2,
           ),
         ),

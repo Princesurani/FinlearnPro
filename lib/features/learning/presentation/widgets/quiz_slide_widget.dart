@@ -92,10 +92,10 @@ class _QuizSlideWidgetState extends State<QuizSlideWidget> {
                 borderColor = AppColors.error;
               }
             } else if (isSelected) {
-              backgroundColor = AppColors.primaryPurple.withValues(
+              backgroundColor = AppColors.primary.withValues(
                 alpha: 0.15,
               ); // Slightly darker
-              borderColor = AppColors.primaryPurple;
+              borderColor = AppColors.primary;
             }
 
             return Padding(
@@ -174,7 +174,7 @@ class _QuizSlideWidgetState extends State<QuizSlideWidget> {
                 children: [
                   const Icon(
                     Icons.lightbulb_outline,
-                    color: AppColors.primaryPurple,
+                    color: AppColors.primary,
                   ),
                   const SizedBox(width: 12),
                   Expanded(

@@ -67,7 +67,7 @@ class _CategoryPillsState extends State<CategoryPills> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryPurple.withValues(alpha: 0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Row(
@@ -76,7 +76,7 @@ class _CategoryPillsState extends State<CategoryPills> {
                         Icon(
                           Icons.close_rounded,
                           size: 16,
-                          color: AppColors.primaryPurple,
+                          color: AppColors.primary,
                         ),
                         SizedBox(width: 4),
                         Text(
@@ -84,7 +84,7 @@ class _CategoryPillsState extends State<CategoryPills> {
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.primaryPurple,
+                            color: AppColors.primary,
                           ),
                         ),
                       ],

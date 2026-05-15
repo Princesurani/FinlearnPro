@@ -59,14 +59,14 @@ class _FriendsTabState extends State<FriendsTab> {
                   borderRadius: AppSpacing.borderRadiusXL,
                   border: Border.all(
                     color: _isFocused
-                        ? AppColors.primaryPurple.withValues(alpha: 0.5)
+                        ? AppColors.primary.withValues(alpha: 0.5)
                         : AppColors.border,
                     width: _isFocused ? 1.5 : 1,
                   ),
                   boxShadow: _isFocused
                       ? [
                           BoxShadow(
-                            color: AppColors.primaryPurple.withValues(alpha: 0.08),
+                            color: AppColors.primary.withValues(alpha: 0.08),
                             blurRadius: 16,
                             offset: const Offset(0, 4),
                           ),
@@ -86,13 +86,13 @@ class _FriendsTabState extends State<FriendsTab> {
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: _isFocused
-                            ? AppColors.primaryPurple.withValues(alpha: 0.1)
+                            ? AppColors.primary.withValues(alpha: 0.1)
                             : AppColors.backgroundTertiary,
                         borderRadius: AppSpacing.borderRadiusSM,
                       ),
                       child: Icon(
                         Icons.search_rounded,
-                        color: _isFocused ? AppColors.primaryPurple : AppColors.textTertiary,
+                        color: _isFocused ? AppColors.primary : AppColors.textTertiary,
                         size: 18,
                       ),
                     ),
@@ -150,7 +150,7 @@ class _FriendsTabState extends State<FriendsTab> {
 
   Widget _buildContent(SocialState state, String myUid) {
     if (state.isSearching) {
-      return const Center(child: CircularProgressIndicator(color: AppColors.primaryPurple));
+      return const Center(child: CircularProgressIndicator(color: AppColors.primary));
     }
 
     if (_searchController.text.isNotEmpty && state.searchResults.isNotEmpty) {
@@ -186,16 +186,16 @@ class _FriendsTabState extends State<FriendsTab> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryPurple.withValues(alpha: 0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: AppSpacing.borderRadiusFull,
                     border: Border.all(
-                      color: AppColors.primaryPurple.withValues(alpha: 0.2),
+                      color: AppColors.primary.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Text(
                     '${state.friendsList.length} ${state.friendsList.length == 1 ? 'Friend' : 'Friends'}',
                     style: AppTypography.labelSmall.copyWith(
-                      color: AppColors.primaryPurple,
+                      color: AppColors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -218,10 +218,10 @@ class _FriendsTabState extends State<FriendsTab> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: AppColors.primaryPurple.withValues(alpha: 0.08),
+              color: AppColors.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.people_outline_rounded, size: 48, color: AppColors.primaryPurple),
+            child: const Icon(Icons.people_outline_rounded, size: 48, color: AppColors.primary),
           ),
           const SizedBox(height: 20),
           Text('Connect with Traders', style: AppTypography.h5),
@@ -263,10 +263,10 @@ class _FriendsTabState extends State<FriendsTab> {
             children: [
               CircleAvatar(
                 radius: 22,
-                backgroundColor: AppColors.primaryPurple.withValues(alpha: 0.12),
+                backgroundColor: AppColors.primary.withValues(alpha: 0.12),
                 child: Text(
                   user.displayName[0].toUpperCase(),
-                  style: AppTypography.labelLarge.copyWith(color: AppColors.primaryPurple),
+                  style: AppTypography.labelLarge.copyWith(color: AppColors.primary),
                 ),
               ),
               const SizedBox(width: 14),
@@ -279,7 +279,7 @@ class _FriendsTabState extends State<FriendsTab> {
                       children: [
                         Text('Lvl ${user.level}', style: AppTypography.bodyXS),
                         const SizedBox(width: 8),
-                        Text('${user.totalXp} XP', style: AppTypography.bodyXS.copyWith(color: AppColors.primaryPurple)),
+                        Text('${user.totalXp} XP', style: AppTypography.bodyXS.copyWith(color: AppColors.primary)),
                       ],
                     ),
                   ],
@@ -299,12 +299,12 @@ class _FriendsTabState extends State<FriendsTab> {
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isFollowing ? AppColors.surface : AppColors.primaryPurple,
+                      color: isFollowing ? AppColors.surface : AppColors.primary,
                       borderRadius: AppSpacing.borderRadiusFull,
                       border: Border.all(
                         color: isFollowing
                             ? AppColors.textTertiary.withValues(alpha: 0.4)
-                            : AppColors.primaryPurple,
+                            : AppColors.primary,
                       ),
                     ),
                     child: Text(

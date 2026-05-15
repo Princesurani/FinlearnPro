@@ -110,7 +110,7 @@ class MarketNewsSentimentCard extends StatelessWidget {
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              color: AppColors.primaryPurple.withValues(alpha: 0.05),
+              color: AppColors.primary.withValues(alpha: 0.05),
               child: Row(
                 children: [
                   const Text('🤖', style: TextStyle(fontSize: 18)),
@@ -119,7 +119,7 @@ class MarketNewsSentimentCard extends StatelessWidget {
                     child: Text(
                       'This could temporarily boost your heavy tech allocation. Watch out for potential corrections next week.',
                       style: AppTypography.labelMedium.copyWith(
-                        color: AppColors.primaryPurple,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.w600,
                         height: 1.4,
                       ),
@@ -127,7 +127,7 @@ class MarketNewsSentimentCard extends StatelessWidget {
                   ),
                   const Icon(
                     Icons.chevron_right_rounded,
-                    color: AppColors.primaryPurple,
+                    color: AppColors.primary,
                   ),
                 ],
               ),

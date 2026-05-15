@@ -383,7 +383,7 @@ class _SignInScreenState extends State<SignInScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Apple Sign In coming soon'),
-        backgroundColor: AppColors.primaryPurple,
+        backgroundColor: AppColors.primary,
       ),
     );
   }

@@ -6,6 +6,7 @@ import '../../../../../core/theme/app_spacing.dart';
 import '../../../../../core/theme/app_typography.dart';
 import '../../../bloc/social_bloc.dart';
 import '../../../data/models/user_profile.dart';
+import '../../../../portfolio/presentation/pages/trading_journal_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -42,7 +43,7 @@ class _ProfileTabState extends State<ProfileTab>
       builder: (context, state) {
         if (state.status == SocialStatus.loading && state.myProfile == null) {
           return const Center(
-            child: CircularProgressIndicator(color: AppColors.primaryPurple),
+            child: CircularProgressIndicator(color: AppColors.primary),
           );
         }
 
@@ -86,7 +87,7 @@ class _ProfileTabState extends State<ProfileTab>
                             ? const Icon(
                                 Icons.person_rounded,
                                 size: 44,
-                                color: AppColors.primaryPurple,
+                                color: AppColors.primary,
                               )
                             : null,
                       ),
@@ -183,6 +184,61 @@ class _ProfileTabState extends State<ProfileTab>
               ),
             ),
 
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+            // Trading Journal Access
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: AppSpacing.screenPaddingH,
+                child: _buildAnimated(
+                  index: 7,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TradingJournalScreen(),
+                        ),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: AppColors.backgroundSecondary,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.white.withValues(alpha: 0.05)),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.menu_book_rounded, color: AppColors.primary),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Trading Journal', style: AppTypography.h5.copyWith(color: AppColors.textPrimary)),
+                                const SizedBox(height: 2),
+                                Text('Review your trades and psychology', style: AppTypography.bodySmall),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
             const SliverToBoxAdapter(child: SizedBox(height: 120)),
           ],
         );
@@ -205,7 +261,7 @@ class _ProfileTabState extends State<ProfileTab>
           borderRadius: AppSpacing.borderRadiusLG,
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryPurple.withValues(alpha: 0.3),
+              color: AppColors.primary.withValues(alpha: 0.3),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),

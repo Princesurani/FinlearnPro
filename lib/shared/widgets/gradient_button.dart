@@ -180,8 +180,8 @@ class _GradientButtonState extends State<GradientButton>
           end: Alignment.bottomRight,
           colors: [
             Color(0xFF7C5CFF),
-            Color(0xFF6B4EF5),
-            Color(0xFF5038D4),
+            Color(0xFF2962FF),
+            Color(0xFF023E8A),
           ],
         ),
       GradientButtonVariant.secondary => const LinearGradient(
@@ -205,7 +205,7 @@ class _GradientButtonState extends State<GradientButton>
   Color get _contentColor {
     if (widget.textColor != null) return widget.textColor!;
     if (widget.variant == GradientButtonVariant.outline) {
-      return AppColors.primaryPurple;
+      return AppColors.primary;
     }
     if (widget.variant == GradientButtonVariant.ghost) {
       return AppColors.textPrimary;
@@ -289,7 +289,7 @@ class _GradientButtonState extends State<GradientButton>
                 borderRadius: _borderRadius,
                 border: widget.variant == GradientButtonVariant.outline
                     ? Border.all(
-                        color: AppColors.primaryPurple,
+                        color: AppColors.primary,
                         width: 2,
                       )
                     : null,
@@ -610,7 +610,7 @@ class _IconActionButtonState extends State<IconActionButton>
             height: widget.size,
             decoration: BoxDecoration(
               color: widget.backgroundColor ??
-                  AppColors.primaryPurple.withAlpha((0.1 * 255).round()),
+                  AppColors.primary.withAlpha((0.1 * 255).round()),
               borderRadius: BorderRadius.circular(widget.size / 2),
             ),
             child: Center(
@@ -621,14 +621,14 @@ class _IconActionButtonState extends State<IconActionButton>
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          widget.color ?? AppColors.primaryPurple,
+                          widget.color ?? AppColors.primary,
                         ),
                       ),
                     )
                   : Icon(
                       widget.icon,
                       size: widget.iconSize,
-                      color: widget.color ?? AppColors.primaryPurple,
+                      color: widget.color ?? AppColors.primary,
                     ),
             ),
           ),

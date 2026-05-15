@@ -160,13 +160,13 @@ class HoldingsTab extends StatelessWidget {
                   Icon(
                     Icons.visibility_outlined,
                     size: 20,
-                    color: AppColors.primaryPurple,
+                    color: AppColors.primary,
                   ),
                   const SizedBox(width: 16),
                   Icon(
                     Icons.analytics_outlined,
                     size: 20,
-                    color: AppColors.primaryPurple,
+                    color: AppColors.primary,
                   ),
                   const SizedBox(width: 16),
                   Icon(
@@ -287,14 +287,14 @@ class HoldingsTab extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryPurple.withValues(alpha: 0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
                     child: Text(
                       pos.symbol[0],
                       style: const TextStyle(
-                        color: AppColors.primaryPurple,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -434,7 +434,7 @@ class HoldingsTab extends StatelessWidget {
             ElevatedButton(
               onPressed: onExplore,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryPurple,
+                backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.xl,

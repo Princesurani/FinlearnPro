@@ -226,7 +226,7 @@ class _StockLogo extends StatelessWidget {
       case Sector.healthcare:
         return AppColors.oceanTeal;
       case Sector.consumerCyclical:
-        return AppColors.primaryPurple;
+        return AppColors.primary;
       case Sector.consumerDefensive:
         return AppColors.lavender;
       case Sector.industrials:
@@ -304,20 +304,20 @@ class _SeeMoreCell extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryPurple.withAlpha(20),
+                  color: AppColors.primary.withAlpha(20),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.grid_view_rounded,
                   size: 22,
-                  color: AppColors.primaryPurple,
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 'See more',
                 style: AppTypography.label.copyWith(
-                  color: AppColors.primaryPurple,
+                  color: AppColors.primary,
                   fontWeight: AppTypography.medium,
                 ),
               ),

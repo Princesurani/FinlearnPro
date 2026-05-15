@@ -6,7 +6,7 @@ abstract final class AppShadows {
 
   static const Color shadowColorLight = Color(0xFF64748B);
 
-  static const Color shadowColorPrimary = Color(0xFF6B4EF5);
+  static const Color shadowColorPrimary = Color(0xFF2962FF);
 
   static const Color shadowColorSuccess = Color(0xFF00BFA5);
 

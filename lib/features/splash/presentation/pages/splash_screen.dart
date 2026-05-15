@@ -173,7 +173,7 @@ class _SplashScreenState extends State<SplashScreen>
                   painter: _ChartLinePainter(
                     drawProgress: _actIIILine.transform(t),
                     fadeOut: _actIVLogo.transform(t),
-                    accentColor: AppColors.primaryPurple,
+                    accentColor: AppColors.primary,
                     glowColor: AppColors.cyan,
                   ),
                   size: Size.infinite,
@@ -186,7 +186,7 @@ class _SplashScreenState extends State<SplashScreen>
                 child: CustomPaint(
                   painter: _RadialPulsePainter(
                     progress: _actIVPulse.transform(t),
-                    color: AppColors.primaryPurple,
+                    color: AppColors.primary,
                   ),
                   size: Size.infinite,
                 ),
@@ -218,7 +218,7 @@ class _SplashScreenState extends State<SplashScreen>
           center: Alignment.center,
           radius: 1.4,
           colors: [
-            AppColors.primaryPurple.withValues(alpha: auroraOpacity),
+            AppColors.primary.withValues(alpha: auroraOpacity),
             const Color(0xFF050510),
           ],
         ),
@@ -329,7 +329,7 @@ class _BrandIcon extends StatelessWidget {
         borderRadius: BorderRadius.circular(size * 0.24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryPurple.withValues(alpha: 0.4),
+            color: AppColors.primary.withValues(alpha: 0.4),
             blurRadius: 32,
             spreadRadius: 4,
           ),

@@ -70,13 +70,13 @@ class _StorySlideWidgetState extends State<StorySlideWidget>
                   title: 'Real-World Story',
                   subtitle: 'Learn from real experiences',
                   gradientColors: [
-                    AppColors.primaryPurple.withValues(alpha: 0.25), // Darker
+                    AppColors.primary.withValues(alpha: 0.25), // Darker
                     AppColors.electricBlue.withValues(alpha: 0.20), // Darker
                   ],
-                  borderColor: AppColors.primaryPurple.withValues(
+                  borderColor: AppColors.primary.withValues(
                     alpha: 0.4,
                   ), // Darker border
-                  titleColor: AppColors.primaryPurple,
+                  titleColor: AppColors.primary,
                   icon: TweenAnimationBuilder<double>(
                     duration: const Duration(milliseconds: 600),
                     tween: Tween(begin: 0.0, end: 1.0),
@@ -198,7 +198,7 @@ class _StorySlideWidgetState extends State<StorySlideWidget>
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primaryPurple.withValues(alpha: 0.3),
+                      color: AppColors.primary.withValues(alpha: 0.3),
                       blurRadius: 4,
                       spreadRadius: 1,
                     ),

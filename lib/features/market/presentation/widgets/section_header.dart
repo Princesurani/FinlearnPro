@@ -58,7 +58,7 @@ class SectionHeader extends StatelessWidget {
                         Text(
                           actionText!,
                           style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.primaryPurple,
+                            color: AppColors.primary,
                             fontWeight: AppTypography.medium,
                           ),
                         ),
@@ -66,7 +66,7 @@ class SectionHeader extends StatelessWidget {
                         const Icon(
                           Icons.chevron_right_rounded,
                           size: 18,
-                          color: AppColors.primaryPurple,
+                          color: AppColors.primary,
                         ),
                       ],
                     ),

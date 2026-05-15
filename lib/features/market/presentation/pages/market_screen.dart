@@ -149,7 +149,7 @@ class _MarketScreenState extends State<MarketScreen>
         controller: _tabController,
         isScrollable: false, // Fill available width
         indicator: BoxDecoration(
-          color: AppColors.primaryPurple,
+          color: AppColors.primary,
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
         ),
         indicatorSize: TabBarIndicatorSize.tab,
@@ -317,7 +317,7 @@ class _ExploreStreamWrapper extends StatelessWidget {
                   height: 36,
                   child: CircularProgressIndicator(
                     strokeWidth: 3,
-                    color: AppColors.primaryPurple,
+                    color: AppColors.primary,
                   ),
                 ),
                 SizedBox(height: AppSpacing.lg),
@@ -359,7 +359,7 @@ class _ExploreStreamWrapper extends StatelessWidget {
                     icon: const Icon(Icons.refresh_rounded, size: 18),
                     label: const Text('Retry'),
                     style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primaryPurple,
+                      backgroundColor: AppColors.primary,
                       foregroundColor: AppColors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.xl,

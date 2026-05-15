@@ -1,41 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
-import '../widgets/app_drawer/app_drawer.dart';
-import '../../features/auth/data/auth_service.dart';
-import '../../features/auth/presentation/pages/profile_screen.dart';
+import '../../features/auth/presentation/pages/settings_screen.dart';
 
 class TopNavigationShell extends StatelessWidget {
   final Widget title;
   final List<Widget> actions;
   final bool showMenu;
-  final bool showProfile;
+  final bool showSettings;
 
   const TopNavigationShell({
     super.key,
     required this.title,
     this.actions = const [],
     this.showMenu = true,
-    this.showProfile = true,
+    this.showSettings = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    final user = AuthService().currentUser;
-    final displayName = user?.displayName ?? 'User';
-    final initials = displayName.isNotEmpty
-        ? displayName[0].toUpperCase()
-        : 'U';
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1),
       child: Row(
         children: [
           // Leading Menu Button
           if (showMenu) ...[
-            TopBarButton(
-              icon: Icons.grid_view_rounded,
-              onTap: () => AppDrawer.show(context),
+            Container(
+              height: 44,
+              width: 44,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.candlestick_chart_rounded,
+                  color: AppColors.primary,
+                  size: 24,
+                ),
+              ),
             ),
             const SizedBox(width: 16),
           ],
@@ -43,55 +46,23 @@ class TopNavigationShell extends StatelessWidget {
           // Title / Content Area
           Expanded(child: title),
 
-          // Actions + Profile
+          // Actions + Settings
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               ...actions,
-              if (showProfile) ...[
+              if (showSettings) ...[
                 const SizedBox(width: 12),
-                GestureDetector(
+                TopBarButton(
+                  icon: Icons.tune_rounded,
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ProfileScreen(),
+                        builder: (context) => const SettingsScreen(),
                       ),
                     );
                   },
-                  child: Container(
-                    height: 44, // Reduced from 48 for better mobile fit
-                    width: 44, // Reduced from 48 for better mobile fit
-                    padding: const EdgeInsets.all(1),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primaryPurple.withValues(alpha: 0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: AppColors.primaryGradient,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          initials,
-                          style: const TextStyle(
-                            color: AppColors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize:
-                                15, // Reduced from 16 for smaller container
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ],

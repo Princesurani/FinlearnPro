@@ -55,7 +55,7 @@ class StockDetailScreen extends StatelessWidget {
                         ? Icons.bookmark_rounded
                         : Icons.bookmark_border_rounded,
                     color: isInWatchlist
-                        ? AppColors.primaryPurple
+                        ? AppColors.primary
                         : AppColors.textPrimary,
                   ),
                   onPressed: () {
@@ -233,7 +233,7 @@ class StockDetailScreen extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                               unselectedLabelStyle: AppTypography.label,
-                              indicatorColor: AppColors.primaryPurple,
+                              indicatorColor: AppColors.primary,
                               indicatorWeight: 3,
                               indicatorSize: TabBarIndicatorSize.label,
                               tabs: const [
@@ -527,7 +527,7 @@ Color _getSectorColor(Sector sector) {
     case Sector.healthcare:
       return AppColors.oceanTeal;
     case Sector.consumerCyclical:
-      return AppColors.primaryPurple;
+      return AppColors.primary;
     case Sector.consumerDefensive:
       return AppColors.lavender;
     case Sector.industrials:
