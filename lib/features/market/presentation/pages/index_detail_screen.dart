@@ -43,11 +43,7 @@ class IndexDetailScreen extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.search_rounded),
-              onPressed: () {},
-              color: AppColors.textPrimary,
-            ),
+
             const SizedBox(width: AppSpacing.sm),
           ],
         ),
@@ -192,6 +188,8 @@ class IndexDetailScreen extends StatelessWidget {
                           delegate: _SliverAppBarDelegate(
                             TabBar(
                               isScrollable: true,
+                              tabAlignment: TabAlignment.start,
+                              padding: EdgeInsets.zero,
                               labelColor: AppColors.textPrimary,
                               unselectedLabelColor: AppColors.textSecondary,
                               labelStyle: AppTypography.label.copyWith(

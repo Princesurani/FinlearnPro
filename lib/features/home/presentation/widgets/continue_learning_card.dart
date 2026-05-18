@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../learning/data/learning_models.dart';
+import '../../../learning/bloc/learning_bloc.dart';
+import '../../../learning/bloc/learning_bloc_provider.dart';
 
 class ContinueLearningCard extends StatelessWidget {
   const ContinueLearningCard({
@@ -139,19 +141,33 @@ class ContinueLearningCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value:
-                            0.35, // Mock value, in real app fetch from LearningBloc
-                        minHeight: 8,
-                        backgroundColor: AppColors.borderHint.withValues(
-                          alpha: 0.2,
-                        ),
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          AppColors.primary,
-                        ),
-                      ),
+                    StreamBuilder<LearningState>(
+                      stream: LearningBlocProvider.of(context).stream,
+                      initialData: LearningBlocProvider.of(context).state,
+                      builder: (context, snapshot) {
+                        double progressPercentage = 0.0;
+                        if (snapshot.hasData) {
+                          final state = snapshot.data!;
+                          final courseProgress = state.userProgress.courseProgress[course.id];
+                          if (courseProgress != null) {
+                            progressPercentage = courseProgress.completionPercentage;
+                          }
+                        }
+
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: progressPercentage > 0 ? progressPercentage : 0.05, // Show at least 5% so it's visible if started
+                            minHeight: 8,
+                            backgroundColor: AppColors.borderHint.withValues(
+                              alpha: 0.2,
+                            ),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              AppColors.primary,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

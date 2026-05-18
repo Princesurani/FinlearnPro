@@ -80,11 +80,7 @@ class StockDetailScreen extends StatelessWidget {
                 );
               },
             ),
-            IconButton(
-              icon: const Icon(Icons.search_rounded),
-              onPressed: () {},
-              color: AppColors.textPrimary,
-            ),
+
             const SizedBox(width: AppSpacing.sm),
           ],
         ),
@@ -227,6 +223,8 @@ class StockDetailScreen extends StatelessWidget {
                           delegate: _SliverAppBarDelegate(
                             TabBar(
                               isScrollable: true,
+                              tabAlignment: TabAlignment.start,
+                              padding: EdgeInsets.zero,
                               labelColor: AppColors.textPrimary,
                               unselectedLabelColor: AppColors.textSecondary,
                               labelStyle: AppTypography.label.copyWith(
@@ -446,7 +444,7 @@ class _BottomActionButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       decoration: BoxDecoration(
         color: AppColors.surface,
         boxShadow: [
@@ -460,20 +458,7 @@ class _BottomActionButtons extends StatelessWidget {
       child: SafeArea(
         child: Row(
           children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.border),
-                borderRadius: BorderRadius.circular(AppSpacing.radiusMD),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.calendar_month_outlined, size: 20),
-                color: AppColors.textPrimary,
-                onPressed: () {},
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
+
             Expanded(
               child: ElevatedButton(
                 onPressed: () => _showOrderBottomSheet(context, 'sell'),
