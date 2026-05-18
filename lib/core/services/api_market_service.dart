@@ -1,7 +1,4 @@
 import 'dart:convert';
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
-
 import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -9,12 +6,8 @@ import '../domain/instrument.dart';
 import '../domain/market_data.dart';
 
 String _getHost() {
-  try {
-    if (!kIsWeb && Platform.isAndroid) {
-      return '10.0.2.2';
-    }
-  } catch (_) {}
-  return 'localhost';
+  // Using Mac's local IP so physical devices can reach the backend
+  return '192.168.1.4';
 }
 
 class ApiMarketService {

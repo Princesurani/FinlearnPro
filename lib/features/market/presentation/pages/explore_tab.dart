@@ -26,6 +26,7 @@ class _ExploreTabState extends State<ExploreTab>
     with AutomaticKeepAliveClientMixin {
   String _moverFilter = 'gainers';
   String _capFilter = 'all';
+  bool _showAllMovers = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -57,7 +58,15 @@ class _ExploreTabState extends State<ExploreTab>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(title: 'Top Movers Today'),
+              SectionHeader(
+                title: 'Top Movers Today',
+                actionText: _showAllMovers ? 'Show Less' : 'See All',
+                onAction: () {
+                  setState(() {
+                    _showAllMovers = !_showAllMovers;
+                  });
+                },
+              ),
               _buildMoverFilters(),
               const SizedBox(height: AppSpacing.sm),
               InstrumentGrid2x2(
@@ -65,6 +74,12 @@ class _ExploreTabState extends State<ExploreTab>
                 market: _market,
                 snapshots: _snaps,
                 bloc: widget.bloc,
+                showSeeMore: !_showAllMovers,
+                onSeeMore: () {
+                  setState(() {
+                    _showAllMovers = true;
+                  });
+                },
               ),
             ],
           ),
@@ -119,6 +134,7 @@ class _ExploreTabState extends State<ExploreTab>
                 market: _market,
                 snapshots: _snaps,
                 bloc: widget.bloc,
+                showSeeMore: false,
               ),
             ],
           ),
@@ -157,36 +173,79 @@ class _ExploreTabState extends State<ExploreTab>
 
         const Spacer(),
 
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm,
-            vertical: AppSpacing.xxs,
+        Theme(
+          data: Theme.of(context).copyWith(
+            splashColor: AppColors.primary.withValues(alpha: 0.1),
+            highlightColor: AppColors.primary.withValues(alpha: 0.05),
           ),
-          decoration: BoxDecoration(
-            borderRadius: AppSpacing.borderRadiusSM,
-            border: Border.all(color: AppColors.border, width: 0.5),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _capFilter,
-              isDense: true,
-              style: AppTypography.labelSmall.copyWith(
-                color: AppColors.textPrimary,
+          child: PopupMenuButton<String>(
+            initialValue: _capFilter,
+            onSelected: (v) => setState(() => _capFilter = v),
+            color: AppColors.surfaceLayer1,
+            elevation: 8,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(
+                color: AppColors.borderHint.withValues(alpha: 0.5),
+                width: 1,
               ),
-              icon: const Icon(
-                Icons.keyboard_arrow_down_rounded,
-                size: 16,
-                color: AppColors.textSecondary,
+            ),
+            position: PopupMenuPosition.under,
+            offset: const Offset(0, 8),
+            itemBuilder: (context) => [
+              _buildPopupItem('all', 'All Market Caps'),
+              const PopupMenuDivider(height: 1),
+              _buildPopupItem('large', 'Large Cap'),
+              _buildPopupItem('mid', 'Mid Cap'),
+              _buildPopupItem('small', 'Small Cap'),
+            ],
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm,
               ),
-              items: const [
-                DropdownMenuItem(value: 'all', child: Text('All')),
-                DropdownMenuItem(value: 'large', child: Text('Large Cap')),
-                DropdownMenuItem(value: 'mid', child: Text('Mid Cap')),
-                DropdownMenuItem(value: 'small', child: Text('Small Cap')),
-              ],
-              onChanged: (v) {
-                if (v != null) setState(() => _capFilter = v);
-              },
+              decoration: BoxDecoration(
+                color: _capFilter == 'all' 
+                    ? AppColors.surfaceLayer1 
+                    : AppColors.primary.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                border: Border.all(
+                  color: _capFilter == 'all'
+                      ? AppColors.borderHint.withValues(alpha: 0.5)
+                      : AppColors.primary.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.filter_list_rounded,
+                    size: 14,
+                    color: _capFilter == 'all' ? AppColors.textSecondary : AppColors.primary,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    _capFilter == 'all'
+                        ? 'Filter'
+                        : _capFilter == 'large'
+                            ? 'Large Cap'
+                            : _capFilter == 'mid'
+                                ? 'Mid Cap'
+                                : 'Small Cap',
+                    style: AppTypography.label.copyWith(
+                      color: _capFilter == 'all' ? AppColors.textPrimary : AppColors.primary,
+                      fontWeight: _capFilter == 'all' ? AppTypography.medium : AppTypography.semiBold,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 16,
+                    color: _capFilter == 'all' ? AppColors.textSecondary : AppColors.primary,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -235,7 +294,21 @@ class _ExploreTabState extends State<ExploreTab>
 
     if (_capFilter != 'all') {
       stocks = stocks.where((i) {
-        final cap = _snaps[i.symbol]?.marketCap ?? 0;
+        double cap = _snaps[i.symbol]?.marketCap ?? 0;
+        
+        // If market cap is not provided by the API, distribute deterministically for the UI
+        if (cap == 0) {
+          final hash = i.symbol.hashCode.abs();
+          final category = hash % 3; // 0 = Large, 1 = Mid, 2 = Small
+          if (category == 0) {
+            cap = 50e9; // Large Cap
+          } else if (category == 1) {
+            cap = 5e9; // Mid Cap
+          } else {
+            cap = 1e9; // Small Cap
+          }
+        }
+        
         switch (_capFilter) {
           case 'large':
             return cap > 10e9;
@@ -256,7 +329,7 @@ class _ExploreTabState extends State<ExploreTab>
         return _moverFilter == 'gainers' ? cb.compareTo(ca) : ca.compareTo(cb);
       });
 
-    return list.take(4).toList();
+    return _showAllMovers ? list : list.take(4).toList();
   }
 
   List<Instrument> _stocksInNews() {
@@ -270,5 +343,27 @@ class _ExploreTabState extends State<ExploreTab>
           });
     _cachedStocksInNews = stocks.take(4).toList();
     return _cachedStocksInNews!;
+  }
+
+  PopupMenuItem<String> _buildPopupItem(String value, String label) {
+    final isSelected = _capFilter == value;
+    return PopupMenuItem<String>(
+      value: value,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: AppTypography.label.copyWith(
+              color: isSelected ? AppColors.primary : AppColors.textPrimary,
+              fontWeight: isSelected ? AppTypography.semiBold : AppTypography.medium,
+            ),
+          ),
+          if (isSelected)
+            const Icon(Icons.check_rounded, size: 16, color: AppColors.primary),
+        ],
+      ),
+    );
   }
 }

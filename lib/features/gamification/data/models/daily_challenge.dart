@@ -21,6 +21,7 @@ class DailyChallenge {
   final bool isCompleted;
   final bool? wasCorrect;
   final String? explanation;
+  final int? correctChoiceId;
 
   DailyChallenge({
     required this.id,
@@ -32,6 +33,7 @@ class DailyChallenge {
     required this.isCompleted,
     this.wasCorrect,
     this.explanation,
+    this.correctChoiceId,
   });
 
   factory DailyChallenge.fromJson(Map<String, dynamic> json) {
@@ -47,6 +49,7 @@ class DailyChallenge {
       isCompleted: json['is_completed'] as bool? ?? false,
       wasCorrect: json['was_correct'] as bool?,
       explanation: json['explanation'] as String?,
+      correctChoiceId: json['correct_choice_id'] as int?,
     );
   }
 }
@@ -56,12 +59,14 @@ class ChallengeSubmissionResult {
   final String explanation;
   final int xpAwarded;
   final bool streakUpdated;
+  final int correctChoiceId;
 
   ChallengeSubmissionResult({
     required this.isCorrect,
     required this.explanation,
     required this.xpAwarded,
     required this.streakUpdated,
+    required this.correctChoiceId,
   });
 
   factory ChallengeSubmissionResult.fromJson(Map<String, dynamic> json) {
@@ -70,6 +75,7 @@ class ChallengeSubmissionResult {
       explanation: json['explanation'] as String,
       xpAwarded: json['xp_awarded'] as int,
       streakUpdated: json['streak_updated'] as bool,
+      correctChoiceId: json['correct_choice_id'] as int,
     );
   }
 }

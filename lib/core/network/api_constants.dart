@@ -1,4 +1,3 @@
-import 'dart:io';
 
 class ApiConstants {
   static String get baseUrl {
@@ -6,11 +5,7 @@ class ApiConstants {
   }
 
   static String _getHost() {
-    try {
-      if (Platform.isAndroid) {
-        return '10.0.2.2'; // Android emulator localhost
-      }
-    } catch (_) {}
-    return 'localhost'; // iOS simulator or web
+    // Using Mac's local IP so physical devices can reach the backend
+    return '192.168.1.4';
   }
 }

@@ -29,7 +29,6 @@ MOCK_INSTRUMENTS = [
     {"symbol": "BANKNIFTY", "price": 47854.20, "volatility": 0.12, "drift": 0.10},
     {"symbol": "SENSEX", "price": 71350.50, "volatility": 0.07, "drift": 0.08},
     {"symbol": "NIFTY IT", "price": 35240.10, "volatility": 0.10, "drift": 0.12},
-    # Stocks
     {"symbol": "RELIANCE", "price": 2580.40, "volatility": 0.18, "drift": 0.10},
     {"symbol": "TCS", "price": 3820.10, "volatility": 0.15, "drift": 0.09},
     {"symbol": "HDFCBANK", "price": 1680.90, "volatility": 0.18, "drift": 0.11},

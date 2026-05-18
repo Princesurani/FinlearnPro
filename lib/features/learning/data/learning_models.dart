@@ -401,13 +401,18 @@ class UserLearningProgress {
 
   final DateTime? lastDailyChallengeDate;
 
-  int get xpToNextLevel => currentLevel * 1000 - totalXp;
+  int get xpToNextLevel {
+    final nextLevelXp = currentLevel * currentLevel * 100;
+    final diff = nextLevelXp - totalXp;
+    return diff > 0 ? diff : 0;
+  }
 
   double get levelProgress {
-    final currentLevelBaseXp = (currentLevel - 1) * 1000;
-    final nextLevelXp = currentLevel * 1000;
-    if (nextLevelXp - currentLevelBaseXp == 0) return 1.0;
-    return (totalXp - currentLevelBaseXp) / (nextLevelXp - currentLevelBaseXp);
+    final currentLevelBaseXp = (currentLevel - 1) * (currentLevel - 1) * 100;
+    final nextLevelXp = currentLevel * currentLevel * 100;
+    if (nextLevelXp - currentLevelBaseXp <= 0) return 1.0;
+    final progress = (totalXp - currentLevelBaseXp) / (nextLevelXp - currentLevelBaseXp);
+    return progress.clamp(0.0, 1.0);
   }
 
   String get formattedLearningTime {

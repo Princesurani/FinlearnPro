@@ -306,7 +306,7 @@ class MarketBloc {
         );
 
         if (_emitTimer == null || !_emitTimer!.isActive) {
-          _emitTimer = Timer(const Duration(milliseconds: 500), () {
+          _emitTimer = Timer(const Duration(seconds: 3), () {
             if (_pendingUpdates != null && _pendingUpdates!.isNotEmpty) {
               final newMap = Map<String, MarketSnapshot>.of(_state.snapshots);
               newMap.addAll(_pendingUpdates!);

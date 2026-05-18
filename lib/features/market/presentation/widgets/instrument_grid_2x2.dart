@@ -31,7 +31,7 @@ class InstrumentGrid2x2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxVisible = showSeeMore && instruments.length > 3 ? 3 : 4;
+    final maxVisible = showSeeMore && instruments.length > 3 ? 3 : instruments.length;
     final visible = instruments.take(maxVisible).toList();
     final hasMore = showSeeMore && instruments.length > 3;
     final cellCount = hasMore ? 4 : visible.length;

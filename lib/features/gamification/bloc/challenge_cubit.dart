@@ -47,6 +47,7 @@ class ChallengeCubit extends Cubit<ChallengeState> {
             explanation: challenge.explanation ?? '',
             xpAwarded: 0,
             streakUpdated: false,
+            correctChoiceId: challenge.correctChoiceId ?? -1,
           );
           emit(ChallengeSubmitted(challenge: challenge, result: dummyResult));
         } else {

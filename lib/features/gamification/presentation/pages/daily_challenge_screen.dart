@@ -17,7 +17,6 @@ class DailyChallengeScreen extends StatefulWidget {
 
 class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
   int? _selectedOptionIndex;
-  bool _explanationRevealed = false;
 
   @override
   void initState() {
@@ -424,93 +423,69 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                       icon: Icons.analytics_outlined, // Generic icon
                       color: const Color(0xFF2962FF),
                       isSubmitted: isSubmitted,
-                      correctOptionIndex: submissionResult != null
-                          ? (submissionResult.isCorrect
-                                ? _selectedOptionIndex
-                                : null)
-                          : (challenge?.isCompleted == true
-                                ? (challenge!.wasCorrect == true ? null : null)
-                                : null),
+                      correctOptionIndex: isSubmitted
+                          ? (submissionResult?.correctChoiceId ??
+                              challenge?.correctChoiceId)
+                          : null,
                       externalWasCorrect: challenge?.wasCorrect,
                     ),
                   );
                 }),
 
                 if (isSubmitted)
-                  if (!submissionResult!.isCorrect &&
-                      !_explanationRevealed &&
-                      !challenge.isCompleted)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              _explanationRevealed = true;
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.remove_red_eye,
-                            color: AppColors.primary,
-                          ),
-                          label: const Text(
-                            "Reveal Correct Answer & Explanation",
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                              color: AppColors.primary,
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.05),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.2),
                         ),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                    )
-                  else
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Explanation",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.lightbulb_outline,
                                 color: AppColors.primary,
+                                size: 20,
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            MarkdownBody(
-                              data: submissionResult.explanation,
-                              styleSheet: MarkdownStyleSheet(
-                                p: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.black87,
-                                  height: 1.5,
-                                ),
-                                listBullet: const TextStyle(
-                                  color: AppColors.black87,
-                                  fontSize: 14,
+                              const SizedBox(width: 8),
+                              const Text(
+                                "Explanation",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: AppColors.primary,
                                 ),
                               ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          MarkdownBody(
+                            data: submissionResult?.explanation ??
+                                challenge.explanation ??
+                                "No explanation provided.",
+                            styleSheet: MarkdownStyleSheet(
+                              p: const TextStyle(
+                                fontSize: 15,
+                                color: AppColors.black87,
+                                height: 1.5,
+                              ),
+                              listBullet: const TextStyle(
+                                color: AppColors.black87,
+                                fontSize: 15,
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
+                  ),
 
                 const SizedBox(height: 40),
 
@@ -565,25 +540,16 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
     Color borderColor = AppColors.transparent;
     Color backgroundColor = AppColors.white;
 
-    // Only show correct styling if the explanation is revealed OR they got it right in the first place
-    final bool shouldShowCorrect =
-        _explanationRevealed ||
-        (correctOptionIndex != null &&
-            _selectedOptionIndex == correctOptionIndex);
-
-    // If already submitted and we know the exact result (for local submission UI)
     if (isSubmitted && correctOptionIndex != null) {
       if (index == correctOptionIndex) {
-        if (shouldShowCorrect) {
-          borderColor = AppColors.success;
-          backgroundColor = AppColors.success.withValues(alpha: 0.1);
-        }
+        borderColor = AppColors.success;
+        backgroundColor = AppColors.success.withValues(alpha: 0.1);
       } else if (isSelected && index != correctOptionIndex) {
         borderColor = AppColors.error;
         backgroundColor = AppColors.error.withValues(alpha: 0.1);
       }
     } else if (isSubmitted && externalWasCorrect != null) {
-      // If loaded from backend as already completed but we don't know which one user originally picked
+      // Fallback if we don't have the exact choice id (older challenges)
       backgroundColor = AppColors.backgroundTertiary;
     } else if (!isSubmitted) {
       if (isSelected) {
@@ -633,8 +599,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
             ),
             if (isSubmitted &&
                 correctOptionIndex != null &&
-                index == correctOptionIndex &&
-                shouldShowCorrect)
+                index == correctOptionIndex)
               const Icon(Icons.check_circle, color: AppColors.success),
             if (isSubmitted &&
                 correctOptionIndex != null &&

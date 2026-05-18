@@ -27,6 +27,7 @@ class DailyChallengeResponse(BaseModel):
     is_completed: bool = False
     was_correct: Optional[bool] = None
     explanation: Optional[str] = None
+    correct_choice_id: Optional[int] = None
 
 class SubmitChallengeRequest(BaseModel):
     firebase_uid: str
@@ -37,6 +38,7 @@ class SubmitChallengeResponse(BaseModel):
     explanation: str
     xp_awarded: int
     streak_updated: bool
+    correct_choice_id: int
 
 @router.get("/daily", response_model=DailyChallengeResponse)
 async def get_daily_challenge(firebase_uid: str, db: AsyncSession = Depends(get_db)):
@@ -73,7 +75,8 @@ async def get_daily_challenge(firebase_uid: str, db: AsyncSession = Depends(get_
         "choices": challenge.choices,
         "is_completed": False,
         "was_correct": None,
-        "explanation": None
+        "explanation": None,
+        "correct_choice_id": None
     }
     
     # Check if user already submitted
@@ -87,7 +90,11 @@ async def get_daily_challenge(firebase_uid: str, db: AsyncSession = Depends(get_
     if progress:
         response_data["is_completed"] = True
         response_data["was_correct"] = progress.was_correct
-        response_data["explanation"] = challenge.explanation_correct if progress.was_correct else challenge.explanation_incorrect
+        if progress.was_correct:
+            response_data["explanation"] = challenge.explanation_correct
+        else:
+            response_data["explanation"] = f"{challenge.explanation_incorrect}\n\n**Correct Answer Rationale:** {challenge.explanation_correct}"
+        response_data["correct_choice_id"] = challenge.correct_choice_index
         
     return response_data
 
@@ -116,7 +123,10 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
         
     # 3. Validate answer
     is_correct = (req.choice_id == challenge.correct_choice_index)
-    explanation = challenge.explanation_correct if is_correct else challenge.explanation_incorrect
+    if is_correct:
+        explanation = challenge.explanation_correct
+    else:
+        explanation = f"{challenge.explanation_incorrect}\n\n**Correct Answer Rationale:** {challenge.explanation_correct}"
     xp_awarded = 50 if is_correct else 10
     
     # 4. Record progress
@@ -143,17 +153,19 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
         profile.total_challenges_completed += 1
         
         # Simple streak logic: if correct and last activity wasn't today
-        if is_correct and (not profile.last_activity_date or profile.last_activity_date != now_date):
-            # Check if streak is continuous
-            if profile.last_activity_date and (now_date - profile.last_activity_date).days == 1:
-                profile.current_streak += 1
+        if not profile.last_activity_date or profile.last_activity_date != now_date:
+            if is_correct:
+                if profile.last_activity_date and (now_date - profile.last_activity_date).days == 1:
+                    profile.current_streak += 1
+                else:
+                    profile.current_streak = 1 # Reset or start new streak
+                    
+                if profile.current_streak > profile.longest_streak:
+                    profile.longest_streak = profile.current_streak
+                streak_updated = True
             else:
-                profile.current_streak = 1 # Reset or start new streak
+                profile.current_streak = 0 # Break streak if wrong
                 
-            if profile.current_streak > profile.longest_streak:
-                profile.longest_streak = profile.current_streak
-            streak_updated = True
-            
         profile.last_activity_date = now_date
     else:
         # Auto-create profile if missing
@@ -176,5 +188,6 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
         is_correct=is_correct,
         explanation=explanation,
         xp_awarded=xp_awarded,
-        streak_updated=streak_updated
+        streak_updated=streak_updated,
+        correct_choice_id=challenge.correct_choice_index
     )
