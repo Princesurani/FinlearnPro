@@ -16,6 +16,7 @@ import 'topic_detail_screen.dart';
 import '../widgets/all_courses_section.dart';
 import 'course_details_screen.dart';
 import '../../bloc/learning_bloc_provider.dart';
+import '../../bloc/learning_bloc.dart';
 
 class LearningScreen extends StatefulWidget {
   const LearningScreen({super.key});
@@ -107,79 +108,131 @@ class _LearningScreenState extends State<LearningScreen>
   }
 
   Widget _buildMainContent() {
-    return CustomScrollView(
-      controller: _scrollController,
-      physics: const BouncingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
-      slivers: [
-        SliverToBoxAdapter(
-          child: SizedBox(height: MediaQuery.of(context).padding.top + 12),
-        ),
+    final bloc = LearningBlocProvider.of(context);
+    
+    return StreamBuilder<LearningState>(
+      stream: bloc.stream,
+      initialData: bloc.state,
+      builder: (context, snapshot) {
+        final state = snapshot.data;
+        if (state == null) return const SizedBox.shrink();
+        
+        // Calculate real continue learning courses
+        final continueLearningCourses = <Map<String, dynamic>>[];
+        final progresses = state.userProgress.courseProgress.values
+            .where((p) => p.status == ProgressStatus.inProgress)
+            .toList();
+            
+        for (final p in progresses) {
+          final course = LearningMockData.allCourses.firstWhere(
+            (c) => c.id == p.courseId,
+            orElse: () => LearningMockData.allCourses.first, // fallback
+          );
+          
+          if (course.id != p.courseId) continue;
+          
+          double progressValue = 0;
+          if (p.totalLessons > 0) {
+            progressValue = p.completedLessons / p.totalLessons;
+          }
+          
+          // Find next lesson title
+          String nextLessonTitle = 'Next Lesson';
+          for (final chapter in course.modules) {
+            bool found = false;
+            for (final lesson in chapter.lessons) {
+              if (!p.completedLessonIds.contains(lesson.id)) {
+                nextLessonTitle = lesson.title;
+                found = true;
+                break;
+              }
+            }
+            if (found) break;
+          }
+          
+          continueLearningCourses.add({
+            'course': course,
+            'progress': progressValue,
+            'nextLesson': nextLessonTitle,
+            'minutesLeft': (p.totalLessons - p.completedLessons) * 10, // 10 mins per lesson
+          });
+        }
 
-        SliverToBoxAdapter(
-          child: _buildAnimatedSection(
-            index: 0,
-            child: const Padding(
-              padding: AppSpacing.screenPaddingH,
-              child: LearningHeader(),
-            ),
+        return CustomScrollView(
+          controller: _scrollController,
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
           ),
-        ),
-
-        const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-        SliverToBoxAdapter(
-          child: _buildAnimatedSection(
-            index: 1,
-            child: AllCoursesSection(
-              courses: LearningMockData.allCourses,
-              onCourseTap: _onCourseTap,
+          slivers: [
+            SliverToBoxAdapter(
+              child: SizedBox(height: MediaQuery.of(context).padding.top + 12),
             ),
-          ),
-        ),
-
-        const SliverToBoxAdapter(child: SizedBox(height: 28)),
-
-        SliverToBoxAdapter(
-          child: _buildAnimatedSection(
-            index: 2,
-            child: CategoryPills(
-              categories: LearningMockData.categories,
-              selectedId: null,
-              onSelected: _onCategorySelected,
-            ),
-          ),
-        ),
-
-        const SliverToBoxAdapter(child: SizedBox(height: 28)),
-
-        if (LearningMockData.continueLearning.isNotEmpty)
-          SliverToBoxAdapter(
-            child: _buildAnimatedSection(
-              index: 3,
-              child: ContinueLearningSection(
-                courses: LearningMockData.continueLearning,
-                onCourseTap: _onCourseTap,
+    
+            SliverToBoxAdapter(
+              child: _buildAnimatedSection(
+                index: 0,
+                child: const Padding(
+                  padding: AppSpacing.screenPaddingH,
+                  child: LearningHeader(),
+                ),
               ),
             ),
-          ),
-
-        if (LearningMockData.continueLearning.isNotEmpty)
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-        SliverToBoxAdapter(
-          child: _buildAnimatedSection(
-            index: 3,
-            child: LearningPathsSection(
-              paths: LearningMockData.learningPaths,
-              onPathTap: _onLearningPathTap,
+    
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+    
+            if (continueLearningCourses.isNotEmpty)
+              SliverToBoxAdapter(
+                child: _buildAnimatedSection(
+                  index: 1,
+                  child: ContinueLearningSection(
+                    courses: continueLearningCourses,
+                    onCourseTap: _onCourseTap,
+                  ),
+                ),
+              ),
+    
+            if (continueLearningCourses.isNotEmpty)
+              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+    
+            SliverToBoxAdapter(
+              child: _buildAnimatedSection(
+                index: continueLearningCourses.isNotEmpty ? 2 : 1,
+                child: CategoryPills(
+                  categories: LearningMockData.categories,
+                  selectedId: null,
+                  onSelected: _onCategorySelected,
+                ),
+              ),
             ),
-          ),
-        ),
-
-        const SliverToBoxAdapter(child: SizedBox(height: 120)),
-      ],
+    
+            const SliverToBoxAdapter(child: SizedBox(height: 28)),
+    
+            SliverToBoxAdapter(
+              child: _buildAnimatedSection(
+                index: continueLearningCourses.isNotEmpty ? 3 : 2,
+                child: AllCoursesSection(
+                  courses: LearningMockData.allCourses,
+                  onCourseTap: _onCourseTap,
+                ),
+              ),
+            ),
+    
+            const SliverToBoxAdapter(child: SizedBox(height: 28)),
+    
+            SliverToBoxAdapter(
+              child: _buildAnimatedSection(
+                index: continueLearningCourses.isNotEmpty ? 4 : 3,
+                child: LearningPathsSection(
+                  paths: LearningMockData.learningPaths,
+                  onPathTap: _onLearningPathTap,
+                ),
+              ),
+            ),
+    
+            const SliverToBoxAdapter(child: SizedBox(height: 120)),
+          ],
+        );
+      }
     );
   }
 
