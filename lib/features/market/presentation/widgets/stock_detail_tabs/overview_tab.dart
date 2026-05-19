@@ -1,0 +1,309 @@
+import 'package:flutter/material.dart';
+import '../../../../../core/domain/market_data.dart';
+import '../../../../../core/utils/market_formatters.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_spacing.dart';
+import '../../../../../core/theme/app_typography.dart';
+
+class OverviewTab extends StatelessWidget {
+  const OverviewTab({
+    super.key,
+    required this.snapshot,
+    required this.formatter,
+    required this.currencySymbol,
+  });
+
+  final MarketSnapshot? snapshot;
+  final MarketFormatter formatter;
+  final String currencySymbol;
+
+  @override
+  Widget build(BuildContext context) {
+    final high52 = snapshot?.fiftyTwoWeekHigh ?? 0;
+    final low52 = snapshot?.fiftyTwoWeekLow ?? 0;
+    final price = snapshot?.price ?? 0;
+    final prevClose = snapshot?.previousClose ?? 0;
+    final open = snapshot?.open ?? 0;
+    final volume = snapshot?.volume ?? 0;
+    final marketCap = snapshot?.marketCap ?? 0;
+
+    // Mock Fundamentals
+    final mktCapStr = formatter.formatLargeNumber(marketCap);
+    final pe = (20 + (price % 50)).toStringAsFixed(2); // Random mock
+    final pb = (1.2 + (price % 5)).toStringAsFixed(2);
+    final roe = (12.5 + (price % 10)).toStringAsFixed(2);
+    final divYield = (0.5 + (price % 2)).toStringAsFixed(2);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Performance Header
+          Row(
+            children: [
+              Text('Performance', style: AppTypography.h5),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.info_outline_rounded,
+                size: 16,
+                color: AppColors.textTertiary,
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+
+          // Today's Low/High
+          if (snapshot != null)
+            _RangeSlider(
+              label: "Today's",
+              low: snapshot!.low,
+              high: snapshot!.high,
+              current: price,
+              showCurrent: true,
+            ),
+
+          const SizedBox(height: AppSpacing.xl),
+
+          // 52 Week Low/High
+          if (snapshot != null)
+            _RangeSlider(
+              label: "52 Week",
+              low: low52,
+              high: high52,
+              current: price,
+              showCurrent: true,
+            ),
+
+          const SizedBox(height: AppSpacing.xl * 1.5),
+
+          // Stats Grid
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            childAspectRatio: 3.5, // Wide rows
+            crossAxisSpacing: AppSpacing.md,
+            mainAxisSpacing: AppSpacing.sm,
+            children: [
+              _StatItem(label: 'Open', value: formatter.formatPrice(open)),
+              _StatItem(
+                label: 'Prev. Close',
+                value: formatter.formatPrice(prevClose),
+              ),
+              _StatItem(
+                label: 'Volume',
+                value: formatter.formatLargeNumber(volume),
+              ),
+              _StatItem(
+                label: 'Value',
+                value: formatter.formatLargeNumber(volume * price),
+              ),
+              _StatItem(
+                label: 'Upper Circuit',
+                value: formatter.formatPrice(prevClose * 1.1),
+              ), // Mock
+              _StatItem(
+                label: 'Lower Circuit',
+                value: formatter.formatPrice(prevClose * 0.9),
+              ), // Mock
+            ],
+          ),
+
+          const SizedBox(height: AppSpacing.xl * 2),
+
+          // Fundamentals Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text('Fundamentals', style: AppTypography.h5),
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.info_outline_rounded,
+                    size: 16,
+                    color: AppColors.textTertiary,
+                  ),
+                ],
+              ),
+              Icon(
+                Icons.keyboard_arrow_up_rounded,
+                color: AppColors.textSecondary,
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+
+          // Fundamentals Grid
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            childAspectRatio: 3.5,
+            crossAxisSpacing: AppSpacing.md,
+            mainAxisSpacing: AppSpacing.sm,
+            children: [
+              _StatItem(label: 'Mkt Cap', value: '$currencySymbol$mktCapStr'),
+              _StatItem(label: 'ROE', value: '$roe%'),
+              _StatItem(label: 'P/E Ratio(TTM)', value: pe),
+              _StatItem(label: 'EPS(TTM)', value: '12.45'), // Mock
+              _StatItem(label: 'P/B Ratio', value: pb),
+              _StatItem(label: 'Div Yield', value: '$divYield%'),
+              _StatItem(label: 'Industry P/E', value: '25.60'), // Mock
+              _StatItem(label: 'Book Value', value: '212.08'), // Mock
+              _StatItem(label: 'Debt to Equity', value: '0.08'), // Mock
+              _StatItem(label: 'Face Value', value: '10'), // Mock
+            ],
+          ),
+
+          const SizedBox(height: 100), // Space for bottom bar
+        ],
+      ),
+    );
+  }
+}
+
+class _StatItem extends StatelessWidget {
+  const _StatItem({required this.label, required this.value});
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          label,
+          style: AppTypography.labelSmall.copyWith(
+            color: AppColors.textTertiary,
+            fontSize: 11,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w600),
+        ),
+      ],
+    );
+  }
+}
+
+class _RangeSlider extends StatelessWidget {
+  const _RangeSlider({
+    required this.label,
+    required this.low,
+    required this.high,
+    required this.current,
+    this.showCurrent = false,
+  });
+
+  final String label;
+  final double low;
+  final double high;
+  final double current;
+  final bool showCurrent;
+
+  @override
+  Widget build(BuildContext context) {
+    final range = high - low;
+    final position = range == 0 ? 0.5 : (current - low) / range;
+    final clampedPos = position.clamp(0.0, 1.0);
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '$label Low',
+              style: AppTypography.labelSmall.copyWith(
+                color: AppColors.textTertiary,
+              ),
+            ),
+            Text(
+              '$label High',
+              style: AppTypography.labelSmall.copyWith(
+                color: AppColors.textTertiary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              low.toStringAsFixed(2),
+              style: AppTypography.bodySmall.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              high.toStringAsFixed(2),
+              style: AppTypography.bodySmall.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            return Container(
+              height: 4,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  FractionallySizedBox(
+                    widthFactor: 1.0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.textPrimary, // Simple black bar
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  if (showCurrent)
+                    Positioned(
+                      left: (width * clampedPos) - 6,
+                      top: -4,
+                      child: Container(
+                        width: 0,
+                        height: 0,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: AppColors.textPrimary,
+                              width: 6,
+                            ), // Triangle up
+                            left: BorderSide(
+                              color: AppColors.transparent,
+                              width: 6,
+                            ),
+                            right: BorderSide(
+                              color: AppColors.transparent,
+                              width: 6,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
