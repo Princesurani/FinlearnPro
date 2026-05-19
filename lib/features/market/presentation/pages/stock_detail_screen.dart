@@ -10,6 +10,10 @@ import 'package:intl/intl.dart';
 import '../../../../core/utils/market_formatters.dart';
 import '../../../../core/services/api_market_service.dart';
 import '../../bloc/market_bloc.dart';
+import '../widgets/stock_detail_tabs/technicals_tab.dart';
+import '../widgets/stock_detail_tabs/fno_tab.dart';
+import '../widgets/stock_detail_tabs/news_tab.dart';
+import '../widgets/stock_detail_tabs/events_tab.dart';
 
 class StockDetailScreen extends StatelessWidget {
   const StockDetailScreen({
@@ -254,10 +258,10 @@ class StockDetailScreen extends StatelessWidget {
                           formatter: formatter,
                           currencySymbol: instrument.currencySymbol,
                         ),
-                        const _PlaceholderTab(title: 'Technicals'),
-                        const _PlaceholderTab(title: 'F&O'),
-                        const _PlaceholderTab(title: 'News'),
-                        const _PlaceholderTab(title: 'Events'),
+                        TechnicalsTab(instrument: instrument),
+                        FnoTab(instrument: instrument),
+                        NewsTab(instrument: instrument),
+                        EventsTab(instrument: instrument),
                       ],
                     ),
                   ),
@@ -837,14 +841,7 @@ class _RangeSlider extends StatelessWidget {
   }
 }
 
-class _PlaceholderTab extends StatelessWidget {
-  final String title;
-  const _PlaceholderTab({required this.title});
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('$title Coming Soon', style: AppTypography.body));
-  }
-}
+
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar);
