@@ -97,7 +97,7 @@ class _CategoryPillsState extends State<CategoryPills> {
         const SizedBox(height: 16),
 
         SizedBox(
-          height: 110,
+          height: 90,
           child: ListView.builder(
             controller: _scrollController,
             scrollDirection: Axis.horizontal,

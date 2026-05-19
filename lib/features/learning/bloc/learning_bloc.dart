@@ -25,9 +25,11 @@ class CompleteDailyChallengeEvent extends LearningEvent {
   CompleteDailyChallengeEvent({
     required this.xpReward,
     required this.isCorrect,
+    required this.currentStreak,
   });
   final int xpReward;
   final bool isCorrect;
+  final int currentStreak;
 }
 
 class LearningState {
@@ -300,44 +302,9 @@ class LearningBloc {
   void _handleCompleteDailyChallenge(CompleteDailyChallengeEvent event) {
     final prog = _state.userProgress;
 
-    int newStreak = prog.currentStreak;
+    int newStreak = event.currentStreak;
     int longestStreak = prog.longestStreak;
     final now = DateTime.now();
-    bool streakUpdated = false;
-
-    if (event.isCorrect) {
-      if (prog.lastDailyChallengeDate == null) {
-        newStreak = 1;
-        streakUpdated = true;
-      } else {
-        final last = prog.lastDailyChallengeDate!;
-        final diff = DateTime(
-          now.year,
-          now.month,
-          now.day,
-        ).difference(DateTime(last.year, last.month, last.day)).inDays;
-
-        if (diff == 1) {
-          newStreak += 1;
-          streakUpdated = true;
-        } else if (diff > 1) {
-          // Missed yesterday, streak breaks and restarts at 1
-          newStreak = 1;
-          streakUpdated = true;
-        } else {
-          // diff == 0, already completed today.
-          // If the DB was cleared and they re-did it correctly today but their streak is 0, bump it to 1.
-          if (prog.currentStreak == 0) {
-            newStreak = 1;
-          }
-          streakUpdated = true;
-        }
-      }
-    } else {
-      // Answered wrong. We just record they did it for XP, but we don't increase streak.
-      streakUpdated = true;
-      // Optionally break streak, but standard is just no change for wrong answer.
-    }
 
     if (newStreak > longestStreak) {
       longestStreak = newStreak;
@@ -356,7 +323,7 @@ class LearningBloc {
       courseProgress: prog.courseProgress,
       achievements: prog.achievements,
       lastActivityDate: now,
-      lastDailyChallengeDate: streakUpdated ? now : prog.lastDailyChallengeDate,
+      lastDailyChallengeDate: now,
     );
 
     _state = _state.copyWith(userProgress: updatedProgress);

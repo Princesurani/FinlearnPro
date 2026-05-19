@@ -72,8 +72,15 @@ class _LearningScreenState extends State<LearningScreen>
       orElse: () => LearningMockData.categories.first,
     );
 
+    final bloc = LearningBlocProvider.of(context);
+
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => TopicDetailScreen(category: category)),
+      MaterialPageRoute(
+        builder: (_) => LearningBlocProvider(
+          bloc: bloc,
+          child: TopicDetailScreen(category: category),
+        ),
+      ),
     );
   }
 

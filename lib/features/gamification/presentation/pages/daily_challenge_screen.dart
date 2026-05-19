@@ -203,17 +203,20 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
       body: BlocConsumer<ChallengeCubit, ChallengeState>(
         listener: (context, state) {
           if (state is ChallengeSubmitted) {
-            // Give XP to global learning bloc
-            try {
-              final bloc = LearningBlocProvider.of(context);
-              bloc.dispatch(
-                CompleteDailyChallengeEvent(
-                  xpReward: state.result.xpAwarded,
-                  isCorrect: state.result.isCorrect,
-                ),
-              );
-            } catch (e) {
-              debugPrint('No learning bloc found: \$e');
+            // Give XP and update streak to global learning bloc ONLY if it wasn't already completed
+            if (!state.challenge.isCompleted) {
+              try {
+                final bloc = LearningBlocProvider.of(context);
+                bloc.dispatch(
+                  CompleteDailyChallengeEvent(
+                    xpReward: state.result.xpAwarded,
+                    isCorrect: state.result.isCorrect,
+                    currentStreak: state.result.currentStreak,
+                  ),
+                );
+              } catch (e) {
+                debugPrint('No learning bloc found: \$e');
+              }
             }
 
             // Also check if we should auto-select based on their previous completion

@@ -38,6 +38,7 @@ class SubmitChallengeResponse(BaseModel):
     explanation: str
     xp_awarded: int
     streak_updated: bool
+    current_streak: int
     correct_choice_id: int
 
 @router.get("/daily", response_model=DailyChallengeResponse)
@@ -152,19 +153,16 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
         profile.level = calculate_level(profile.total_xp)
         profile.total_challenges_completed += 1
         
-        # Simple streak logic: if correct and last activity wasn't today
+        # Simple streak logic: participation counts (correct or incorrect)
         if not profile.last_activity_date or profile.last_activity_date != now_date:
-            if is_correct:
-                if profile.last_activity_date and (now_date - profile.last_activity_date).days == 1:
-                    profile.current_streak += 1
-                else:
-                    profile.current_streak = 1 # Reset or start new streak
-                    
-                if profile.current_streak > profile.longest_streak:
-                    profile.longest_streak = profile.current_streak
-                streak_updated = True
+            if profile.last_activity_date and (now_date - profile.last_activity_date).days == 1:
+                profile.current_streak += 1
             else:
-                profile.current_streak = 0 # Break streak if wrong
+                profile.current_streak = 1 # Reset or start new streak
+                
+            if profile.current_streak > profile.longest_streak:
+                profile.longest_streak = profile.current_streak
+            streak_updated = True
                 
         profile.last_activity_date = now_date
     else:
@@ -189,5 +187,6 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
         explanation=explanation,
         xp_awarded=xp_awarded,
         streak_updated=streak_updated,
+        current_streak=profile.current_streak if profile else new_prof.current_streak,
         correct_choice_id=challenge.correct_choice_index
     )

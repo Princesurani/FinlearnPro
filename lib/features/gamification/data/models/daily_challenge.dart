@@ -59,6 +59,7 @@ class ChallengeSubmissionResult {
   final String explanation;
   final int xpAwarded;
   final bool streakUpdated;
+  final int currentStreak;
   final int correctChoiceId;
 
   ChallengeSubmissionResult({
@@ -66,6 +67,7 @@ class ChallengeSubmissionResult {
     required this.explanation,
     required this.xpAwarded,
     required this.streakUpdated,
+    required this.currentStreak,
     required this.correctChoiceId,
   });
 
@@ -75,6 +77,7 @@ class ChallengeSubmissionResult {
       explanation: json['explanation'] as String,
       xpAwarded: json['xp_awarded'] as int,
       streakUpdated: json['streak_updated'] as bool,
+      currentStreak: json['current_streak'] as int,
       correctChoiceId: json['correct_choice_id'] as int,
     );
   }
