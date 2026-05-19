@@ -10,6 +10,11 @@ import 'package:intl/intl.dart';
 import '../../../../core/utils/market_formatters.dart';
 import '../../../../core/services/api_market_service.dart';
 import '../../bloc/market_bloc.dart';
+import '../widgets/stock_detail_tabs/overview_tab.dart';
+import '../widgets/stock_detail_tabs/technicals_tab.dart';
+import '../widgets/stock_detail_tabs/fno_tab.dart';
+import '../widgets/stock_detail_tabs/news_tab.dart';
+import '../widgets/stock_detail_tabs/events_tab.dart';
 
 class IndexDetailScreen extends StatelessWidget {
   const IndexDetailScreen({
@@ -42,10 +47,7 @@ class IndexDetailScreen extends StatelessWidget {
             color: AppColors.textPrimary,
             onPressed: () => Navigator.of(context).pop(),
           ),
-          actions: [
-
-            const SizedBox(width: AppSpacing.sm),
-          ],
+          actions: [const SizedBox(width: AppSpacing.sm)],
         ),
         body: StreamBuilder<MarketState>(
           stream: effectiveBloc.stream,
@@ -214,14 +216,15 @@ class IndexDetailScreen extends StatelessWidget {
                     },
                     body: TabBarView(
                       children: [
-                        _OverviewTab(
+                        OverviewTab(
                           snapshot: currentSnapshot,
                           formatter: formatter,
+                          currencySymbol: instrument.currencySymbol,
                         ),
-                        const _PlaceholderTab(title: 'Technicals'),
-                        const _PlaceholderTab(title: 'F&O'),
-                        const _PlaceholderTab(title: 'News'),
-                        const _PlaceholderTab(title: 'Events'),
+                        TechnicalsTab(instrument: instrument),
+                        FnoTab(instrument: instrument),
+                        NewsTab(instrument: instrument),
+                        EventsTab(instrument: instrument),
                       ],
                     ),
                   ),
@@ -261,258 +264,6 @@ Color _getSectorColor(Sector sector) {
       return AppColors.cyan;
     case Sector.unknown:
       return AppColors.neutralGray;
-  }
-}
-
-class _OverviewTab extends StatelessWidget {
-  const _OverviewTab({required this.snapshot, required this.formatter});
-
-  final MarketSnapshot? snapshot;
-  final MarketFormatter formatter;
-
-  @override
-  Widget build(BuildContext context) {
-    final high52 = snapshot?.fiftyTwoWeekHigh ?? 0;
-    final low52 = snapshot?.fiftyTwoWeekLow ?? 0;
-    final price = snapshot?.price ?? 0;
-    final prevClose = snapshot?.previousClose ?? 0;
-    final open = snapshot?.open ?? 0;
-    final volume = snapshot?.volume ?? 0;
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Performance Header
-          Row(
-            children: [
-              Text('Performance', style: AppTypography.h5),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.info_outline_rounded,
-                size: 16,
-                color: AppColors.textTertiary,
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-
-          // Today's Low/High
-          if (snapshot != null)
-            _RangeSlider(
-              label: "Today's",
-              low: snapshot!.low,
-              high: snapshot!.high,
-              current: price,
-              showCurrent: true,
-            ),
-
-          const SizedBox(height: AppSpacing.xl),
-
-          // 52 Week Low/High
-          if (snapshot != null)
-            _RangeSlider(
-              label: "52 Week",
-              low: low52,
-              high: high52,
-              current: price,
-              showCurrent: true,
-            ),
-
-          const SizedBox(height: AppSpacing.xl * 1.5),
-
-          // Stats Grid
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            childAspectRatio: 3.5, // Wide rows
-            crossAxisSpacing: AppSpacing.md,
-            mainAxisSpacing: AppSpacing.sm,
-            children: [
-              _StatItem(label: 'Open', value: formatter.formatPrice(open)),
-              _StatItem(
-                label: 'Prev. Close',
-                value: formatter.formatPrice(prevClose),
-              ),
-              _StatItem(
-                label: 'Volume',
-                value: formatter.formatLargeNumber(volume),
-              ),
-              _StatItem(
-                label: 'Value',
-                value: formatter.formatLargeNumber(volume * price),
-              ),
-              _StatItem(
-                label: 'Upper Circuit',
-                value: formatter.formatPrice(prevClose * 1.1),
-              ), // Mock
-              _StatItem(
-                label: 'Lower Circuit',
-                value: formatter.formatPrice(prevClose * 0.9),
-              ), // Mock
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatItem extends StatelessWidget {
-  const _StatItem({required this.label, required this.value});
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          label,
-          style: AppTypography.labelSmall.copyWith(
-            color: AppColors.textTertiary,
-            fontSize: 11,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.w600),
-        ),
-      ],
-    );
-  }
-}
-
-class _RangeSlider extends StatelessWidget {
-  const _RangeSlider({
-    required this.label,
-    required this.low,
-    required this.high,
-    required this.current,
-    this.showCurrent = false,
-  });
-
-  final String label;
-  final double low;
-  final double high;
-  final double current;
-  final bool showCurrent;
-
-  @override
-  Widget build(BuildContext context) {
-    final range = high - low;
-    final position = range == 0 ? 0.5 : (current - low) / range;
-    final clampedPos = position.clamp(0.0, 1.0);
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '$label Low',
-              style: AppTypography.labelSmall.copyWith(
-                color: AppColors.textTertiary,
-              ),
-            ),
-            Text(
-              '$label High',
-              style: AppTypography.labelSmall.copyWith(
-                color: AppColors.textTertiary,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              low.toStringAsFixed(2),
-              style: AppTypography.bodySmall.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Text(
-              high.toStringAsFixed(2),
-              style: AppTypography.bodySmall.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final width = constraints.maxWidth;
-            return Container(
-              height: 4,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.border,
-                borderRadius: BorderRadius.circular(2),
-              ),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  FractionallySizedBox(
-                    widthFactor: 1.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.textPrimary, // Simple black bar
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  if (showCurrent)
-                    Positioned(
-                      left: (width * clampedPos) - 6,
-                      top: -4,
-                      child: Container(
-                        width: 0,
-                        height: 0,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: AppColors.textPrimary,
-                              width: 6,
-                            ), // Triangle up
-                            left: BorderSide(
-                              color: AppColors.transparent,
-                              width: 6,
-                            ),
-                            right: BorderSide(
-                              color: AppColors.transparent,
-                              width: 6,
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Triangle or Arrow logic: "Today's High/Low" usually has triangle strictly at current price.
-                      // The reference image has triangle pointing UP from below the line.
-                      // My previous implementation had a circle. Reference has a triangle.
-                    ),
-                ],
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class _PlaceholderTab extends StatelessWidget {
-  final String title;
-  const _PlaceholderTab({required this.title});
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('$title Coming Soon', style: AppTypography.body));
   }
 }
 

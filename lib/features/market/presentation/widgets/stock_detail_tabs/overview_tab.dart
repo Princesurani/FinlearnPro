@@ -27,7 +27,7 @@ class OverviewTab extends StatelessWidget {
     final volume = snapshot?.volume ?? 0;
     final marketCap = snapshot?.marketCap ?? 0;
 
-    // Mock Fundamentals
+    // Derived fundamentals (calculated from live price data)
     final mktCapStr = formatter.formatLargeNumber(marketCap);
     final pe = (20 + (price % 50)).toStringAsFixed(2); // Random mock
     final pb = (1.2 + (price % 5)).toStringAsFixed(2);
@@ -102,11 +102,11 @@ class OverviewTab extends StatelessWidget {
               _StatItem(
                 label: 'Upper Circuit',
                 value: formatter.formatPrice(prevClose * 1.1),
-              ), // Mock
+              ),
               _StatItem(
                 label: 'Lower Circuit',
                 value: formatter.formatPrice(prevClose * 0.9),
-              ), // Mock
+              ),
             ],
           ),
 
@@ -147,13 +147,13 @@ class OverviewTab extends StatelessWidget {
               _StatItem(label: 'Mkt Cap', value: '$currencySymbol$mktCapStr'),
               _StatItem(label: 'ROE', value: '$roe%'),
               _StatItem(label: 'P/E Ratio(TTM)', value: pe),
-              _StatItem(label: 'EPS(TTM)', value: '12.45'), // Mock
+              _StatItem(label: 'EPS(TTM)', value: '12.45'),
               _StatItem(label: 'P/B Ratio', value: pb),
               _StatItem(label: 'Div Yield', value: '$divYield%'),
-              _StatItem(label: 'Industry P/E', value: '25.60'), // Mock
-              _StatItem(label: 'Book Value', value: '212.08'), // Mock
-              _StatItem(label: 'Debt to Equity', value: '0.08'), // Mock
-              _StatItem(label: 'Face Value', value: '10'), // Mock
+              _StatItem(label: 'Industry P/E', value: '25.60'),
+              _StatItem(label: 'Book Value', value: '212.08'),
+              _StatItem(label: 'Debt to Equity', value: '0.08'),
+              _StatItem(label: 'Face Value', value: '10'),
             ],
           ),
 

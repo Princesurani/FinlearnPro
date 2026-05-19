@@ -41,16 +41,16 @@ class ChallengeCubit extends Cubit<ChallengeState> {
 
       if (challenge != null) {
         if (challenge.isCompleted) {
-          // If the challenge was already completed, it comes with `wasCorrect` and `explanation`
-          final dummyResult = ChallengeSubmissionResult(
+          // Challenge already completed — reconstruct result from existing data
+          final previousResult = ChallengeSubmissionResult(
             isCorrect: challenge.wasCorrect ?? false,
             explanation: challenge.explanation ?? '',
             xpAwarded: 0,
             streakUpdated: false,
-            currentStreak: 0, // Frontend will ignore this for already completed
+            currentStreak: 0, // Already-completed: streak is not re-updated
             correctChoiceId: challenge.correctChoiceId ?? -1,
           );
-          emit(ChallengeSubmitted(challenge: challenge, result: dummyResult));
+          emit(ChallengeSubmitted(challenge: challenge, result: previousResult));
         } else {
           emit(ChallengeLoaded(challenge: challenge));
         }
