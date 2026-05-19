@@ -49,22 +49,22 @@ class EventsTab extends StatelessWidget {
     switch (type) {
       case 'Earnings':
         icon = Icons.attach_money_rounded;
-        iconBg = AppColors.profitGreen.withOpacity(0.1);
+        iconBg = AppColors.profitGreen.withValues(alpha: 0.1);
         iconColor = AppColors.profitGreen;
         break;
       case 'Dividend':
         icon = Icons.pie_chart_rounded;
-        iconBg = AppColors.electricBlue.withOpacity(0.1);
+        iconBg = AppColors.electricBlue.withValues(alpha: 0.1);
         iconColor = AppColors.electricBlue;
         break;
       case 'Meeting':
         icon = Icons.people_alt_rounded;
-        iconBg = AppColors.amber.withOpacity(0.1);
+        iconBg = AppColors.amber.withValues(alpha: 0.1);
         iconColor = AppColors.amber;
         break;
       default:
         icon = Icons.event_note_rounded;
-        iconBg = AppColors.neutralGray.withOpacity(0.2);
+        iconBg = AppColors.neutralGray.withValues(alpha: 0.2);
         iconColor = AppColors.textSecondary;
     }
 

@@ -43,15 +43,15 @@ class NewsTab extends StatelessWidget {
     switch (impact) {
       case 'Positive':
         impactColor = AppColors.profitGreen;
-        impactBg = AppColors.profitGreen.withOpacity(0.1);
+        impactBg = AppColors.profitGreen.withValues(alpha: 0.1);
         break;
       case 'Negative':
         impactColor = AppColors.lossRed;
-        impactBg = AppColors.lossRed.withOpacity(0.1);
+        impactBg = AppColors.lossRed.withValues(alpha: 0.1);
         break;
       default:
         impactColor = AppColors.textSecondary;
-        impactBg = AppColors.neutralGray.withOpacity(0.2);
+        impactBg = AppColors.neutralGray.withValues(alpha: 0.2);
     }
 
     return Column(

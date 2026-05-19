@@ -194,7 +194,7 @@ class TechnicalsTab extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         border: isLast ? null : const Border(bottom: BorderSide(color: AppColors.border)),
-        color: isHeader ? AppColors.backgroundPrimary.withOpacity(0.5) : null,
+        color: isHeader ? AppColors.backgroundPrimary.withValues(alpha: 0.5) : null,
       ),
       child: Row(
         children: [
@@ -272,14 +272,6 @@ class _GaugePainter extends CustomPainter {
       ..color = AppColors.textPrimary
       ..style = PaintingStyle.fill;
       
-    // Angle for 80% is pi + (pi * 0.8)
-    final angle = 3.14159 + (3.14159 * 0.8);
-    final needleLength = radius - 8;
-    
-    final needleEnd = Offset(
-      center.dx + needleLength * 1.0 * (angle == 0 ? 1 : angle == 3.14159 ? -1 : angle > 3.14159 && angle < 6.28 ? -0.8 : 0.8), // Simplistic math for mock
-      center.dy - needleLength * 0.6,
-    );
 
     // Simplistic needle drawing just to look like a gauge
     canvas.drawLine(

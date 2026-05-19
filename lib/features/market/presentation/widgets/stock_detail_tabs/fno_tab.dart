@@ -160,7 +160,7 @@ class FnoTab extends StatelessWidget {
           // Center Spot price line
           Container(
             padding: const EdgeInsets.symmetric(vertical: 4),
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -189,7 +189,7 @@ class FnoTab extends StatelessWidget {
           ),
           Expanded(
             child: Container(
-              color: isITMCall ? AppColors.lossRed.withOpacity(0.05) : Colors.transparent,
+              color: isITMCall ? AppColors.lossRed.withValues(alpha: 0.05) : Colors.transparent,
               child: Text(callLTP, textAlign: TextAlign.right, style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold)),
             ),
           ),
@@ -207,7 +207,7 @@ class FnoTab extends StatelessWidget {
           ),
           Expanded(
             child: Container(
-              color: isITMPut ? AppColors.profitGreen.withOpacity(0.05) : Colors.transparent,
+              color: isITMPut ? AppColors.profitGreen.withValues(alpha: 0.05) : Colors.transparent,
               child: Text(putLTP, style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold)),
             ),
           ),

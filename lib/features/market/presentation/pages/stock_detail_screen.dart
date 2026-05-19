@@ -536,17 +536,6 @@ Color _getSectorColor(Sector sector) {
       return AppColors.neutralGray;
   }
 }
-
-            );
-          },
-        ),
-      ],
-    );
-  }
-}
-
-
-
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate(this._tabBar);
   final TabBar _tabBar;
