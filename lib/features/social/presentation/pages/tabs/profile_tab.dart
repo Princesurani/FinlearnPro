@@ -247,9 +247,10 @@ class _ProfileTabState extends State<ProfileTab>
   }
 
   Widget _buildLevelCard(UserProfile profile) {
-    final xpForNextLevel = (profile.level * profile.level) * 100;
-    final progress = xpForNextLevel > 0
-        ? (profile.totalXp / xpForNextLevel).clamp(0.0, 1.0)
+    final currentLevelBaseXp = (profile.level - 1) * (profile.level - 1) * 100;
+    final nextLevelXp = profile.level * profile.level * 100;
+    final progress = (nextLevelXp - currentLevelBaseXp) > 0
+        ? ((profile.totalXp - currentLevelBaseXp) / (nextLevelXp - currentLevelBaseXp)).clamp(0.0, 1.0)
         : 0.0;
 
     return GestureDetector(
@@ -295,7 +296,7 @@ class _ProfileTabState extends State<ProfileTab>
                         ),
                       ),
                       Text(
-                        '${profile.totalXp} / $xpForNextLevel XP',
+                        '${profile.totalXp} / $nextLevelXp XP (${(progress * 100).toInt()}%)',
                         style: AppTypography.bodyXS.copyWith(
                           color: AppColors.white.withValues(alpha: 0.8),
                         ),

@@ -272,10 +272,11 @@ class LearningBloc {
       newCourseProgressMap[event.courseId] = updatedCourseProg;
     }
 
+    final nextTotalXp = prog.totalXp + earnedXp;
     final updatedProgress = UserLearningProgress(
       userId: prog.userId,
-      totalXp: prog.totalXp + earnedXp,
-      currentLevel: prog.currentLevel,
+      totalXp: nextTotalXp,
+      currentLevel: UserLearningProgress.calculateLevel(nextTotalXp),
       coursesStarted: newCoursesStarted,
       coursesCompleted: newCoursesCompleted,
       lessonsCompleted: prog.lessonsCompleted + additionalCompletedLesson,
@@ -310,10 +311,11 @@ class LearningBloc {
       longestStreak = newStreak;
     }
 
+    final nextTotalXp = prog.totalXp + event.xpReward;
     final updatedProgress = UserLearningProgress(
       userId: prog.userId,
-      totalXp: prog.totalXp + event.xpReward,
-      currentLevel: prog.currentLevel, // Advanced level calc could go here
+      totalXp: nextTotalXp,
+      currentLevel: UserLearningProgress.calculateLevel(nextTotalXp),
       coursesStarted: prog.coursesStarted,
       coursesCompleted: prog.coursesCompleted,
       lessonsCompleted: prog.lessonsCompleted,

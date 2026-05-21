@@ -362,7 +362,7 @@ class UserLearningProgress {
   const UserLearningProgress({
     required this.userId,
     required this.totalXp,
-    required this.currentLevel,
+    required int currentLevel,
     required this.coursesStarted,
     required this.coursesCompleted,
     required this.lessonsCompleted,
@@ -373,13 +373,27 @@ class UserLearningProgress {
     required this.achievements,
     required this.lastActivityDate,
     this.lastDailyChallengeDate,
-  });
+  }) : _level = currentLevel;
 
   final String userId;
 
   final int totalXp;
 
-  final int currentLevel;
+  final int _level;
+
+  int get currentLevel {
+    final calculated = calculateLevel(totalXp);
+    return calculated > _level ? calculated : _level;
+  }
+
+  static int calculateLevel(int xp) {
+    if (xp < 0) return 1;
+    int level = 1;
+    while (level * level * 100 <= xp) {
+      level++;
+    }
+    return level;
+  }
 
   final int coursesStarted;
 
