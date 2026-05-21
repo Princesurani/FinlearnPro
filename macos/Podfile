@@ -1,5 +1,8 @@
 platform :osx, '10.15'
 
+# Suppress warnings from third-party pods (e.g. FirebaseAuth Swift warnings)
+inhibit_all_warnings!
+
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
