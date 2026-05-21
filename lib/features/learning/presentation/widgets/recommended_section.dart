@@ -15,13 +15,16 @@ class RecommendedSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Recommended Courses',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1E1E2C),
-                letterSpacing: -0.5,
+            const Flexible(
+              child: Text(
+                'Recommended Courses',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E1E2C),
+                  letterSpacing: -0.5,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             TextButton(onPressed: () {}, child: const Text('View All')),

@@ -1148,7 +1148,6 @@ class _LessonScreenState extends State<LessonScreen>
   }
 
   void _navigateToNextLesson() {
-    // Find the next lesson in the course
     final allLessons = <Lesson>[];
     for (final module in widget.course.modules) {
       allLessons.addAll(module.lessons);
@@ -1156,15 +1155,18 @@ class _LessonScreenState extends State<LessonScreen>
 
     if (widget.lessonIndex + 1 < allLessons.length) {
       final nextLesson = allLessons[widget.lessonIndex + 1];
-
-      // Replace current lesson screen with next lesson
+      // Preserve the LearningBlocProvider when pushing to next lesson
+      final bloc = LearningBlocProvider.of(context);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => LessonScreen(
-            lesson: nextLesson,
-            course: widget.course,
-            lessonIndex: widget.lessonIndex + 1,
-            totalLessons: widget.totalLessons,
+          builder: (context) => LearningBlocProvider(
+            bloc: bloc,
+            child: LessonScreen(
+              lesson: nextLesson,
+              course: widget.course,
+              lessonIndex: widget.lessonIndex + 1,
+              totalLessons: widget.totalLessons,
+            ),
           ),
         ),
       );

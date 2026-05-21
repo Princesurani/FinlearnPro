@@ -27,23 +27,26 @@ class ContinueLearningSection extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Row(
-                children: [
-                  Text(
-                    'Continue Learning',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+              const Flexible(
+                child: Row(
+                  children: [
+                    Text(
+                      'Continue Learning',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  SizedBox(width: 8),
-                  Icon(
-                    Icons.play_circle_fill_rounded,
-                    color: AppColors.primary,
-                    size: 20,
-                  ),
-                ],
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.play_circle_fill_rounded,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
+                  ],
+                ),
               ),
               TextButton(
                 onPressed: () {
