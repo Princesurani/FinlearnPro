@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_animations.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../data/learning_models.dart';
-import '../../data/learning_mock_data.dart';
+import '../../data/learning_data.dart';
 import '../widgets/learning_header.dart';
 
 import '../widgets/category_pills.dart';
@@ -67,9 +67,9 @@ class _LearningScreenState extends State<LearningScreen>
     HapticFeedback.lightImpact();
     if (categoryId == null) return;
 
-    final category = LearningMockData.categories.firstWhere(
+    final category = LearningData.categories.firstWhere(
       (c) => c.id == categoryId,
-      orElse: () => LearningMockData.categories.first,
+      orElse: () => LearningData.categories.first,
     );
 
     final bloc = LearningBlocProvider.of(context);
@@ -131,9 +131,9 @@ class _LearningScreenState extends State<LearningScreen>
             .toList();
             
         for (final p in progresses) {
-          final course = LearningMockData.allCourses.firstWhere(
+          final course = LearningData.allCourses.firstWhere(
             (c) => c.id == p.courseId,
-            orElse: () => LearningMockData.allCourses.first, // fallback
+            orElse: () => LearningData.allCourses.first, // fallback
           );
           
           if (course.id != p.courseId) continue;
@@ -205,7 +205,7 @@ class _LearningScreenState extends State<LearningScreen>
               child: _buildAnimatedSection(
                 index: continueLearningCourses.isNotEmpty ? 2 : 1,
                 child: CategoryPills(
-                  categories: LearningMockData.categories,
+                  categories: LearningData.categories,
                   selectedId: null,
                   onSelected: _onCategorySelected,
                 ),
@@ -218,7 +218,7 @@ class _LearningScreenState extends State<LearningScreen>
               child: _buildAnimatedSection(
                 index: continueLearningCourses.isNotEmpty ? 3 : 2,
                 child: AllCoursesSection(
-                  courses: LearningMockData.allCourses,
+                  courses: LearningData.allCourses,
                   onCourseTap: _onCourseTap,
                 ),
               ),
@@ -230,7 +230,7 @@ class _LearningScreenState extends State<LearningScreen>
               child: _buildAnimatedSection(
                 index: continueLearningCourses.isNotEmpty ? 4 : 3,
                 child: LearningPathsSection(
-                  paths: LearningMockData.learningPaths,
+                  paths: LearningData.learningPaths,
                   onPathTap: _onLearningPathTap,
                 ),
               ),

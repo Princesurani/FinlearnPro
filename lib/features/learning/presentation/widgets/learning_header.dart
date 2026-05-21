@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/navigation/top_navigation_shell.dart';
 import '../../../../features/gamification/presentation/widgets/streak_badge.dart';
-import '../../data/learning_mock_data.dart';
+import '../../data/learning_data.dart';
 import 'tip_dialog.dart';
 
 class LearningHeader extends StatelessWidget {
@@ -59,7 +59,7 @@ class LearningHeader extends StatelessWidget {
           child: IconButton(
             padding: EdgeInsets.zero,
             onPressed: () {
-              final dailyTip = LearningMockData.dailyTips.first;
+              final dailyTip = LearningData.dailyTips.first;
               showDialog(
                 context: context,
                 builder: (context) => TipDialog(

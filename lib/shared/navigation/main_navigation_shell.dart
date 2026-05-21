@@ -13,7 +13,7 @@ import '../../features/social/presentation/pages/social_profile_screen.dart';
 import '../../features/home/presentation/widgets/home_overview_card.dart';
 import '../../features/home/presentation/widgets/continue_learning_card.dart';
 import '../../features/home/presentation/widgets/market_news_sentiment_card.dart';
-import '../../features/learning/data/learning_mock_data.dart';
+import '../../features/learning/data/learning_data.dart';
 import '../../features/learning/presentation/pages/course_details_screen.dart';
 import '../../features/learning/bloc/learning_bloc_provider.dart';
 import '../widgets/aurora_background.dart';
@@ -297,7 +297,7 @@ class _HomeScreenWrapper extends StatelessWidget {
           HomeOverviewCard(marketBloc: bloc),
           const SizedBox(height: 30),
           ContinueLearningCard(
-            course: LearningMockData.allCourses.first,
+            course: LearningData.allCourses.first,
             onTap: () {
               final bloc = LearningBlocProvider.of(context);
               Navigator.of(context).push(
@@ -305,7 +305,7 @@ class _HomeScreenWrapper extends StatelessWidget {
                   builder: (_) => LearningBlocProvider(
                     bloc: bloc,
                     child: CourseDetailsScreen(
-                      course: LearningMockData.allCourses.first,
+                      course: LearningData.allCourses.first,
                     ),
                   ),
                 ),

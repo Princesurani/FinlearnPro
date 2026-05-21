@@ -15,7 +15,7 @@ import 'courses/trading_styles/trading_styles_course.dart';
 import 'courses/real_world_setup/real_world_setup_course.dart';
 import 'courses/consistent_trader/consistent_trader_course.dart';
 
-abstract final class LearningMockData {
+abstract final class LearningData {
   // ── Categories that reflect the actual 13-course curriculum ──
   static const List<LearningCategory> categories = [
     LearningCategory(

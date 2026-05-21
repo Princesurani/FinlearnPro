@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import '../data/learning_models.dart';
-import '../data/learning_mock_data.dart';
+import '../data/learning_data.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/network/api_constants.dart';
 import '../../../core/services/learning_progress_service.dart';
@@ -96,7 +96,7 @@ class LearningBloc {
         currentStreak: savedProgress.currentStreak,
         longestStreak: savedProgress.longestStreak,
         courseProgress: savedProgress.courseProgress,
-        achievements: LearningMockData
+        achievements: LearningData
             .currentUserProgress
             .achievements, // Using mock achievements for now
         lastActivityDate: savedProgress.lastActivityDate,

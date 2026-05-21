@@ -3,7 +3,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 
 import '../../data/learning_models.dart';
-import '../../data/learning_mock_data.dart';
+import '../../data/learning_data.dart';
 import 'course_details_screen.dart';
 import '../../bloc/learning_bloc_provider.dart';
 
@@ -19,7 +19,7 @@ class TopicDetailScreen extends StatelessWidget {
   final LearningCategory category;
 
   List<Course> _getCoursesForCategory(String categoryId) {
-    final all = LearningMockData.allCourses;
+    final all = LearningData.allCourses;
     switch (categoryId) {
       case 'foundations':
         return all.where((c) => ['trading', 'stocks', 'crypto', 'forex', 'commodities'].contains(c.categoryId)).toList();

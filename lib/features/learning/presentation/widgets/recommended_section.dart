@@ -1,6 +1,6 @@
 import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-import '../../data/learning_mock_data.dart';
+import '../../data/learning_data.dart';
 import '../pages/course_details_screen.dart';
 import '../../bloc/learning_bloc_provider.dart';
 
@@ -34,7 +34,7 @@ class RecommendedSection extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             clipBehavior: Clip.none,
-            children: LearningMockData.allCourses.take(5).map((course) {
+            children: LearningData.allCourses.take(5).map((course) {
               return Padding(
                 padding: const EdgeInsets.only(right: 20),
                 child: GestureDetector(
