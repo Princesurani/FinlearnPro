@@ -1,7 +1,11 @@
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import market, portfolio, orders, learning, challenges, social
 from api.websockets import stream
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="FinLearn Pro - Market Service",
@@ -39,19 +43,19 @@ async def startup_event():
     try:
         start_cron()
     except Exception as e:
-        print(f"Failed to start challenge cron: {e}")
+        logger.error(f"Failed to start challenge cron: {e}")
 
     # Trigger background simulation loop
-    print("Market Service Starting Up... Triggering Simulation Engine.")
+    logger.info("Market Service Starting Up... Triggering Simulation Engine.")
     try:
         simulate_tick_loop.delay()
     except Exception as e:
-        print(f"Failed to start celery loop: {e}")
+        logger.error(f"Failed to start celery loop: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_event():
     # Cleanup connections
-    print("Market Service Shutting Down...")
+    logger.info("Market Service Shutting Down...")
 
 @app.get("/health")
 async def health_check():

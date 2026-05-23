@@ -5,7 +5,43 @@ from sqlalchemy import select, desc
 from db.database import get_db
 from db.models import DbPortfolioPosition, DbUser, DbOrder, DbTrade, DbWatchlist
 
+import os
+import json
+import logging
+import redis.asyncio as redis
+from google import genai
+from google.genai import types
+
+logger = logging.getLogger(__name__)
+
 router = APIRouter()
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+api_key = os.getenv("GEMINI_API_KEY")
+client = genai.Client(api_key=api_key) if api_key else genai.Client()
+
+generation_config = types.GenerateContentConfig(
+    temperature=0.7,
+    top_p=0.95,
+    top_k=40,
+)
+
+SYSTEM_PROMPT = """
+You are an expert AI financial advisor and portfolio manager. Your job is to review the user's current portfolio holdings and provide a deep, actionable review.
+You will be given the user's balances and their current stock positions.
+
+CRITICAL CONSTRAINTS:
+1. You MUST output ONLY valid JSON matching this schema exactly:
+{
+    "overall_score": Integer (0 to 100),
+    "summary": "String (1-2 sentences summarizing the portfolio's health, e.g., 'A highly concentrated tech portfolio with strong growth potential but significant sector risk.')",
+    "strengths": ["String (positive aspect 1)", "String (positive aspect 2)"],
+    "weaknesses": ["String (risk factor 1)", "String (risk factor 2)"],
+    "recommendations": ["String (actionable advice 1)", "String (actionable advice 2)"]
+}
+2. Be objective, highlighting actual risks (like lack of diversification or over-leverage) and real strengths.
+3. Limit strengths, weaknesses, and recommendations to 2-4 items each. Keep them concise (1 sentence max per item).
+"""
 
 STARTING_BALANCE = 10_000.0  # ₹10,000 paper trading balance
 
@@ -144,3 +180,100 @@ async def remove_from_watchlist(firebase_uid: str, symbol: str, db: AsyncSession
         await db.delete(row)
         await db.commit()
     return {"status": "removed", "symbol": symbol}
+
+
+# ---------------------------------------------------------------------------
+# AI Portfolio Reviewer
+# ---------------------------------------------------------------------------
+
+@router.get("/review/{firebase_uid}")
+async def get_portfolio_review(firebase_uid: str, db: AsyncSession = Depends(get_db)):
+    """
+    Generates an AI review of the user's portfolio using Gemini.
+    Caches the result in Redis for 24 hours.
+    """
+    redis_client = await redis.from_url(REDIS_URL)
+    cache_key = f"portfolio:review:{firebase_uid}"
+    
+    # 1. Check Cache
+    try:
+        cached = await redis_client.get(cache_key)
+        if cached:
+            return json.loads(cached)
+    except Exception as e:
+        logger.error(f"Redis cache error: {e}")
+        
+    # 2. Fetch Portfolio Data
+    result = await db.execute(select(DbUser).where(DbUser.firebase_uid == firebase_uid))
+    user = result.scalar_one_or_none()
+    if not user:
+        return {"error": "User not found."}
+        
+    pos_result = await db.execute(
+        select(DbPortfolioPosition).where(DbPortfolioPosition.firebase_uid == firebase_uid)
+    )
+    positions = pos_result.scalars().all()
+    
+    if not positions:
+        return {
+            "overall_score": 0,
+            "summary": "Your portfolio is currently empty. Start investing to get a personalized review!",
+            "strengths": [],
+            "weaknesses": ["No market exposure."],
+            "recommendations": ["Fund your account and make your first trade."]
+        }
+        
+    portfolio_data = {
+        "balances": {
+            "india": user.balance_india,
+            "usa": user.balance_usa,
+            "uk": user.balance_uk,
+        },
+        "holdings": [
+            {
+                "symbol": p.symbol,
+                "quantity": p.quantity,
+                "average_cost": p.average_cost,
+                "invested_value": p.quantity * p.average_cost
+            } for p in positions
+        ]
+    }
+    
+    prompt = f"Please review the following portfolio:\n{json.dumps(portfolio_data, indent=2)}"
+    
+    # 3. Call LLM
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[SYSTEM_PROMPT, prompt],
+            config=generation_config,
+        )
+        content = response.text.strip()
+        if content.startswith("```json"):
+            content = content[7:]
+        elif content.startswith("```"):
+            content = content[3:]
+        if content.endswith("```"):
+            content = content[:-3]
+        content = content.strip()
+        
+        parsed_data = json.loads(content)
+        
+        # 4. Save to Cache (24 hours = 86400 seconds)
+        try:
+            await redis_client.setex(cache_key, 86400, json.dumps(parsed_data))
+        except Exception as e:
+            logger.error(f"Failed to cache review: {e}")
+            
+        return parsed_data
+        
+    except Exception as e:
+        logger.error(f"Error generating AI review: {e}")
+        # Return fallback error format matching the schema
+        return {
+            "overall_score": 0,
+            "summary": "Failed to generate AI review at this time. Please try again later.",
+            "strengths": [],
+            "weaknesses": [],
+            "recommendations": ["Contact support if the issue persists."]
+        }

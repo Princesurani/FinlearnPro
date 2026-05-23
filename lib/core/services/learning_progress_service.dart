@@ -1,12 +1,14 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/learning/data/learning_models.dart';
 
 String _getHost() {
-  // Using Mac's local IP so physical devices can reach the backend
-  return '192.168.1.4';
+  if (kIsWeb) return '127.0.0.1';
+  if (Platform.isAndroid) return '10.0.2.2';
+  return '127.0.0.1';
 }
 
 class LearningProgressService {

@@ -1,12 +1,15 @@
 import asyncio
+import logging
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from services.llm_challenge_generator import generate_and_save_challenge
 from datetime import datetime, timezone, timedelta
 
+logger = logging.getLogger(__name__)
+
 async def run_daily_generation():
     # Schedule generation for the next day
     tomorrow = datetime.now(timezone.utc).date() + timedelta(days=1)
-    print(f"Running scheduled LLM generation for {tomorrow}...")
+    logger.info(f"Running scheduled LLM generation for {tomorrow}...")
     await generate_and_save_challenge(tomorrow)
 
 def start_cron():
@@ -14,7 +17,7 @@ def start_cron():
     # Run every day at 00:00 UTC (or immediately for demo purposes)
     scheduler.add_job(run_daily_generation, 'cron', hour=0, minute=0)
     scheduler.start()
-    print("Background cron started for daily challenges.")
+    logger.info("Background cron started for daily challenges.")
 
 if __name__ == "__main__":
     start_cron()

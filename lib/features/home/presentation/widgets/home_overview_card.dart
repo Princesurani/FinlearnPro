@@ -56,7 +56,7 @@ class _UnifiedOverviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Calculate the real portfolio value exactly like HoldingsTab does
+    // 1. Calculate the real portfolio value exactly like PortfolioTab does
     final currency = marketState.activeMarket.currencySymbol;
     final positions = marketState.portfolioPositions.values.where((pos) {
       return marketState.instruments.any((i) => i.symbol == pos.symbol);

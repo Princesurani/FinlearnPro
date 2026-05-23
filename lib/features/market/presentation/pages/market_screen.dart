@@ -8,7 +8,7 @@ import '../../bloc/market_bloc.dart';
 import '../widgets/market_selector.dart';
 import '../widgets/index_ticker.dart';
 import 'explore_tab.dart';
-import 'holdings_tab.dart';
+import 'portfolio_tab.dart';
 import 'orders_tab.dart';
 import 'watchlist_tab.dart';
 import '../../../../shared/navigation/top_navigation_shell.dart';
@@ -27,7 +27,7 @@ class _MarketScreenState extends State<MarketScreen>
   late final MarketBloc _bloc;
   late final TabController _tabController;
 
-  static const _tabLabels = ['Explore', 'Holdings', 'Orders', 'Watchlist'];
+  static const _tabLabels = ['Explore', 'Portfolio', 'Orders', 'Watchlist'];
 
   @override
   void initState() {
@@ -224,7 +224,7 @@ class _MarketScreenState extends State<MarketScreen>
           controller: _tabController,
           children: [
             _ExploreStreamWrapper(bloc: _bloc),
-            _HoldingsStreamWrapper(
+            _PortfolioStreamWrapper(
               bloc: _bloc,
               onExplore: () => _tabController.animateTo(0),
             ),
@@ -243,8 +243,8 @@ class _MarketScreenState extends State<MarketScreen>
   }
 }
 
-class _HoldingsStreamWrapper extends StatelessWidget {
-  const _HoldingsStreamWrapper({required this.bloc, required this.onExplore});
+class _PortfolioStreamWrapper extends StatelessWidget {
+  const _PortfolioStreamWrapper({required this.bloc, required this.onExplore});
   final MarketBloc bloc;
   final VoidCallback onExplore;
 
@@ -254,7 +254,7 @@ class _HoldingsStreamWrapper extends StatelessWidget {
       stream: bloc.stream,
       initialData: bloc.state,
       builder: (_, snap) {
-        return HoldingsTab(state: snap.data!, onExplore: onExplore, bloc: bloc);
+        return PortfolioTab(state: snap.data!, onExplore: onExplore, bloc: bloc);
       },
     );
   }

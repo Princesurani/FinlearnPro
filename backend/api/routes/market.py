@@ -1,8 +1,11 @@
 from fastapi import APIRouter, HTTPException, Query, Depends
 import os
 import json
+import logging
 from datetime import datetime, timezone, timedelta
 import redis.asyncio as redis
+
+logger = logging.getLogger(__name__)
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
@@ -189,7 +192,7 @@ async def get_history(
                 })
             return list(reversed(candles)) # Return chronological
     except Exception as e:
-        print(f"Error reading from TimescaleDB: {e}")
+        logger.error(f"Error reading from TimescaleDB: {e}")
         pass
 
     # Quick mock instrument fetching to get the base price

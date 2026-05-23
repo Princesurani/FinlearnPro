@@ -155,7 +155,7 @@ class StockDetailScreen extends StatelessWidget {
                                           child: Material(
                                             color: AppColors.transparent,
                                             child: Text(
-                                              '${instrument.symbol} • ${instrument.market.name.toUpperCase()}',
+                                              '${instrument.symbol} • ${instrument.market.name.toUpperCase()} • ${instrument.sector.name.toUpperCase()}',
                                               style: AppTypography.labelSmall
                                                   .copyWith(
                                                     color:

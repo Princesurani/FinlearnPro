@@ -1,8 +1,11 @@
 import asyncio
+import logging
 from datetime import datetime, timezone
 from db.database import AsyncSessionLocal
 from sqlalchemy import delete
 from db.models import DbDailyChallenge, DbUserChallengeProgress, DbUserLearningProgress
+
+logger = logging.getLogger(__name__)
 
 
 async def run():
@@ -35,9 +38,9 @@ async def run():
                 delete(DbDailyChallenge).where(DbDailyChallenge.id == challenge.id)
             )
             await db.commit()
-            print("Deleted challenge")
+            logger.info("Deleted challenge")
         else:
-            print("None found")
+            logger.info("None found")
 
 
 asyncio.run(run())

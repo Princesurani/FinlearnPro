@@ -1,13 +1,22 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../domain/instrument.dart';
 import '../domain/market_data.dart';
 
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 String _getHost() {
-  // Using Mac's local IP so physical devices can reach the backend
-  return '192.168.1.4';
+  if (kIsWeb) return '127.0.0.1';
+  // 10.0.2.2 is the localhost alias for Android Emulator
+  if (Platform.isAndroid) return '10.0.2.2';
+  
+  // 127.0.0.1 works for iOS Simulator and desktop
+  return '127.0.0.1';
 }
 
 class ApiMarketService {
@@ -22,7 +31,9 @@ class ApiMarketService {
   final http.Client _client = http.Client();
 
   WebSocketChannel? _channel;
-  Stream<PriceTick>? _tickStream;
+  StreamController<PriceTick>? _tickController;
+  int _retryAttempt = 0;
+  bool _isDisposed = false;
 
   Future<List<Instrument>> getInstruments() async {
     try {
@@ -86,29 +97,54 @@ class ApiMarketService {
     }
   }
 
-  Stream<PriceTick> streamTicks() {
-    if (_channel == null || _tickStream == null) {
-      _channel ??= WebSocketChannel.connect(Uri.parse(wsUrl));
-
-      _tickStream = _channel!.stream
-          .map((event) {
-            try {
-              final Map<String, dynamic> data = jsonDecode(event);
-              if (data.containsKey('type') && data['type'] == 'system') {
-                return null;
-              }
-              if (data.containsKey('headline')) return null;
-              return PriceTick.fromJson(data);
-            } catch (e) {
-              return null;
+  void _connectWebSocket() {
+    if (_isDisposed) return;
+    
+    try {
+      _channel?.sink.close();
+      _channel = WebSocketChannel.connect(Uri.parse(wsUrl));
+      _channel!.stream.listen(
+        (event) {
+          _retryAttempt = 0; // Reset on successful connection/message
+          try {
+            final Map<String, dynamic> data = jsonDecode(event);
+            if (data.containsKey('type') && data['type'] == 'system') return;
+            if (data.containsKey('headline')) return;
+            final tick = PriceTick.fromJson(data);
+            if (_tickController != null && !_tickController!.isClosed) {
+              _tickController!.add(tick);
             }
-          })
-          .where((tick) => tick != null)
-          .cast<PriceTick>()
-          .asBroadcastStream();
+          } catch (_) {}
+        },
+        onDone: () => _scheduleReconnect(),
+        onError: (error) => _scheduleReconnect(),
+      );
+    } catch (e) {
+      _scheduleReconnect();
     }
+  }
 
-    return _tickStream!;
+  void _scheduleReconnect() {
+    if (_isDisposed) return;
+    // Exponential backoff: 1s, 2s, 4s, 8s, up to max 30s
+    final delay = math.min(30, math.pow(2, _retryAttempt)).toInt();
+    _retryAttempt++;
+    Future.delayed(Duration(seconds: delay), () {
+      _connectWebSocket();
+    });
+  }
+
+  Stream<PriceTick> streamTicks() {
+    _tickController ??= StreamController<PriceTick>.broadcast(
+      onListen: () {
+        _retryAttempt = 0;
+        _connectWebSocket();
+      },
+      onCancel: () {
+        // Optional: close websocket when no listeners
+      }
+    );
+    return _tickController!.stream;
   }
 
   // NEW: Orders and Portfolio API
@@ -159,6 +195,21 @@ class ApiMarketService {
     }
   }
 
+  Future<Map<String, dynamic>> getPortfolioReview(String firebaseUid) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$baseApiUrl/portfolio/review/$firebaseUid'),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Failed to get portfolio review: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Network error getting portfolio review: $e');
+    }
+  }
+
   Future<List<dynamic>> getOrders(String firebaseUid) async {
     try {
       final response = await _client.get(
@@ -204,9 +255,11 @@ class ApiMarketService {
   }
 
   void dispose() {
+    _isDisposed = true;
     _channel?.sink.close();
     _channel = null;
-    _tickStream = null;
+    _tickController?.close();
+    _tickController = null;
     _client.close();
   }
 }

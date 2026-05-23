@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ApiConstants {
   static String get baseUrl {
@@ -5,7 +7,8 @@ class ApiConstants {
   }
 
   static String _getHost() {
-    // Using Mac's local IP so physical devices can reach the backend
-    return '192.168.1.4';
+    if (kIsWeb) return '127.0.0.1';
+    if (Platform.isAndroid) return '10.0.2.2';
+    return '127.0.0.1';
   }
 }

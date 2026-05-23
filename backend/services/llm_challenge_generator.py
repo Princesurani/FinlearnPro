@@ -2,8 +2,11 @@ import os
 import json
 import random
 import asyncio
+import logging
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 from google import genai
 from google.genai import types
@@ -64,7 +67,7 @@ async def generate_and_save_challenge(target_date: datetime.date):
         )
         res = await db.execute(stmt)
         if res.scalars().first():
-            print(
+            logger.info(
                 f"Challenge for {target_date} already exists. Skipping LLM generation."
             )
             return
@@ -82,7 +85,7 @@ async def generate_and_save_challenge(target_date: datetime.date):
 
     prompt = f"Generate a challenge focusing on: {selected_topic}."
 
-    print(f"Generating challenge for {target_date} on topic: {selected_topic}...")
+    logger.info(f"Generating challenge for {target_date} on topic: {selected_topic}...")
 
     try:
         response = client.models.generate_content(
@@ -100,7 +103,7 @@ async def generate_and_save_challenge(target_date: datetime.date):
         content = content.strip()
 
         # Parse JSON
-        print(f"DEBUG raw LLM output: {repr(content)}")
+        logger.debug(f"DEBUG raw LLM output: {repr(content)}")
         data = json.loads(content)
 
         async with AsyncSessionLocal() as db:
@@ -116,10 +119,10 @@ async def generate_and_save_challenge(target_date: datetime.date):
             )
             db.add(challenge)
             await db.commit()
-            print(f"Successfully saved challenge for {target_date}.")
+            logger.info(f"Successfully saved challenge for {target_date}.")
 
     except Exception as e:
-        print(f"Error generating challenge: {e}")
+        logger.error(f"Error generating challenge: {e}")
 
 
 if __name__ == "__main__":
