@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:finnn/core/theme/app_colors.dart';
 
 import '../../../learning/bloc/learning_bloc.dart';
@@ -350,37 +351,69 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      // Mock Chart Area
+                      // Chart Area
                       Container(
                         height: 180,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF8F9FE),
+                          color: AppColors.surface,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: AppColors.backgroundTertiary,
+                            color: AppColors.border,
                           ),
                         ),
-                        child: Stack(
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: List.generate(
-                                5,
-                                (index) => Divider(
-                                  height: 1,
-                                  color: AppColors.textDisabled,
+                        padding: const EdgeInsets.only(top: 24, bottom: 8, left: 8, right: 8),
+                        child: LineChart(
+                          LineChartData(
+                            gridData: FlGridData(
+                              show: true,
+                              drawVerticalLine: false,
+                              horizontalInterval: 1,
+                              getDrawingHorizontalLine: (value) {
+                                return FlLine(
+                                  color: AppColors.border,
+                                  strokeWidth: 1,
+                                  dashArray: [5, 5],
+                                );
+                              },
+                            ),
+                            titlesData: const FlTitlesData(show: false),
+                            borderData: FlBorderData(show: false),
+                            minX: 0,
+                            maxX: 6,
+                            minY: 1,
+                            maxY: 6,
+                            lineBarsData: [
+                              LineChartBarData(
+                                spots: const [
+                                  FlSpot(0, 3),
+                                  FlSpot(1, 3.5),
+                                  FlSpot(2, 2.5),
+                                  FlSpot(3, 4.2),
+                                  FlSpot(4, 3.8),
+                                  FlSpot(5, 5.1),
+                                  FlSpot(6, 4.8),
+                                ],
+                                isCurved: true,
+                                curveSmoothness: 0.35,
+                                color: AppColors.primary,
+                                barWidth: 3,
+                                isStrokeCapRound: true,
+                                dotData: const FlDotData(show: false),
+                                belowBarData: BarAreaData(
+                                  show: true,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppColors.primary.withValues(alpha: 0.2),
+                                      AppColors.primary.withValues(alpha: 0.0),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const Center(
-                              child: Icon(
-                                Icons.show_chart_rounded,
-                                size: 100,
-                                color: AppColors.textTertiary,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -594,9 +627,10 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
               child: Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.black87,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimary,
+                  height: 1.4,
                 ),
               ),
             ),

@@ -59,7 +59,11 @@ class LearningHeader extends StatelessWidget {
           child: IconButton(
             padding: EdgeInsets.zero,
             onPressed: () {
-              final dailyTip = LearningData.dailyTips.first;
+              final tips = LearningData.dailyTips;
+              final dayOfYear = DateTime.now().difference(DateTime(DateTime.now().year, 1, 1)).inDays;
+              final tipIndex = dayOfYear % tips.length;
+              final dailyTip = tips[tipIndex];
+              
               showDialog(
                 context: context,
                 builder: (context) => TipDialog(

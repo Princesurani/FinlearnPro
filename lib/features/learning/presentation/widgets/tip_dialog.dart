@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TipDialog extends StatelessWidget {
   final String tip;
@@ -95,11 +96,11 @@ class TipDialog extends StatelessWidget {
                 Text(
                   '"$tip"',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: GoogleFonts.lora(
                     fontSize: 16,
                     height: 1.5,
                     color: AppColors.textPrimary,
-                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 32),

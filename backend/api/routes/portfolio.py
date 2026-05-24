@@ -259,9 +259,9 @@ async def get_portfolio_review(firebase_uid: str, db: AsyncSession = Depends(get
         
         parsed_data = json.loads(content)
         
-        # 4. Save to Cache (24 hours = 86400 seconds)
+        # 4. Save to Cache indefinitely (until invalidated by a trade)
         try:
-            await redis_client.setex(cache_key, 86400, json.dumps(parsed_data))
+            await redis_client.set(cache_key, json.dumps(parsed_data))
         except Exception as e:
             logger.error(f"Failed to cache review: {e}")
             

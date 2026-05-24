@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -245,9 +246,11 @@ class _AiReviewSheetState extends State<AiReviewSheet> {
                                     const SizedBox(height: AppSpacing.sm),
                                     Text(
                                       _reviewData!['summary'] ?? '',
-                                      style: AppTypography.body.copyWith(
+                                      style: GoogleFonts.lora(
                                         color: AppColors.textPrimary,
                                         height: 1.5,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),

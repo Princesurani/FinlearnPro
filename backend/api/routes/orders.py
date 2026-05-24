@@ -179,6 +179,13 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
 
     await db.commit()
 
+    # 7. Invalidate AI Portfolio Review cache because portfolio changed
+    r_cache = aioredis.from_url(REDIS_URL)
+    try:
+        await r_cache.delete(f"portfolio:review:{order_req.firebase_uid}")
+    finally:
+        await r_cache.aclose()
+
     return {
         "status": "success",
         "message": f"Successfully {side} {order_req.quantity} shares of {order_req.symbol}",
