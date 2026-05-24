@@ -38,7 +38,7 @@ async def websocket_endpoint(websocket: WebSocket):
     Clients connect and receive the global feed from Redis.
     """
     await manager.connect(websocket)
-    redis_client = await redis.from_url(REDIS_URL)
+    redis_client = await redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     pubsub = redis_client.pubsub()
     
     # Subscribe to the global market ticks channel

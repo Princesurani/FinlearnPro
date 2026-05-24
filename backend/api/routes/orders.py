@@ -35,7 +35,7 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
         raise HTTPException(status_code=400, detail="Quantity must be greater than 0")
 
     # 1. Fetch live price from Redis (key written by simulation/tasks.py)
-    r = aioredis.from_url(REDIS_URL)
+    r = aioredis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     try:
         raw_data = await r.get(f"market:quote:{order_req.symbol}")
     finally:
@@ -180,7 +180,7 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
     await db.commit()
 
     # 7. Invalidate AI Portfolio Review cache because portfolio changed
-    r_cache = aioredis.from_url(REDIS_URL)
+    r_cache = aioredis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     try:
         await r_cache.delete(f"portfolio:review:{order_req.firebase_uid}")
     finally:

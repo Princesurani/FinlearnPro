@@ -89,7 +89,7 @@ def simulate_tick_loop():
             volatility=inst["volatility"],
         )
 
-    r = redis.from_url(REDIS_URL)
+    r = redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     news_engine = NewsEngine()
     context = MarketContext(sentiment="neutral")
 

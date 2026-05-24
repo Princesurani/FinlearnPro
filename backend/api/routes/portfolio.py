@@ -192,7 +192,7 @@ async def get_portfolio_review(firebase_uid: str, db: AsyncSession = Depends(get
     Generates an AI review of the user's portfolio using Gemini.
     Caches the result in Redis for 24 hours.
     """
-    redis_client = await redis.from_url(REDIS_URL)
+    redis_client = await redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     cache_key = f"portfolio:review:{firebase_uid}"
     
     # 1. Check Cache

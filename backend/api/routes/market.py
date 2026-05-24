@@ -92,7 +92,7 @@ async def get_quote(symbol: str):
     """
     Returns the current market snapshot (quote) for a given symbol.
     """
-    redis_client = await redis.from_url(REDIS_URL)
+    redis_client = await redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     try:
         raw = await redis_client.get(f"market:quote:{symbol}")
         if raw:
@@ -109,7 +109,7 @@ async def get_all_quotes(symbols: str = Query(None)):
     Returns bulk quotes. If symbols is provided (comma-separated), returns only those.
     Otherwise returns all available quotes.
     """
-    redis_client = await redis.from_url(REDIS_URL)
+    redis_client = await redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     try:
         keys = []
         if symbols:
@@ -206,7 +206,7 @@ async def get_history(
             
     # Try to grab the latest actual price from redis if available
     try:
-        redis_client = await redis.from_url(REDIS_URL)
+        redis_client = await redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
         raw = await redis_client.get(f"market:quote:{symbol}")
         if raw:
             snap = json.loads(raw)
