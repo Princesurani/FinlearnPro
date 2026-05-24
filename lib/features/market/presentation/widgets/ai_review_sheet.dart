@@ -22,15 +22,26 @@ class AiReviewSheet extends StatefulWidget {
   State<AiReviewSheet> createState() => _AiReviewSheetState();
 }
 
-class _AiReviewSheetState extends State<AiReviewSheet> {
+class _AiReviewSheetState extends State<AiReviewSheet> with SingleTickerProviderStateMixin {
   bool _isLoading = true;
   String? _error;
   Map<String, dynamic>? _reviewData;
+  late AnimationController _glowController;
 
   @override
   void initState() {
     super.initState();
+    _glowController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
     _fetchReview();
+  }
+
+  @override
+  void dispose() {
+    _glowController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchReview() async {
@@ -192,18 +203,45 @@ class _AiReviewSheetState extends State<AiReviewSheet> {
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 child: Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.auto_awesome, color: AppColors.primary),
+                    AnimatedBuilder(
+                      animation: _glowController,
+                      builder: (context, child) {
+                        return Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [AppColors.primary, AppColors.electricBlue],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(alpha: 0.2 + (_glowController.value * 0.4)),
+                                blurRadius: 10 + (_glowController.value * 15),
+                                spreadRadius: 2 + (_glowController.value * 5),
+                              )
+                            ]
+                          ),
+                          child: const Icon(Icons.auto_awesome, color: AppColors.white, size: 22),
+                        );
+                      }
                     ),
-                    const SizedBox(width: AppSpacing.md),
-                    Text(
-                      'AI Portfolio Review',
-                      style: AppTypography.h3.copyWith(fontWeight: FontWeight.bold),
+                    const SizedBox(width: AppSpacing.lg),
+                    ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [AppColors.primary, AppColors.electricBlue],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ).createShader(bounds),
+                      child: Text(
+                        'AI Portfolio Review',
+                        style: AppTypography.h2.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.white,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
                     ),
                   ],
                 ),
