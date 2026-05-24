@@ -10,20 +10,13 @@ import '../domain/market_data.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-String _getHost() {
-  if (kIsWeb) return '127.0.0.1';
-  // 10.0.2.2 is the localhost alias for Android Emulator
-  if (Platform.isAndroid) return '10.0.2.2';
-  
-  // 127.0.0.1 works for iOS Simulator and desktop
-  return '127.0.0.1';
-}
+import '../network/api_constants.dart';
 
 class ApiMarketService {
   ApiMarketService({String? baseUrl, String? wsUrl, String? baseApiUrl})
-    : baseUrl = baseUrl ?? 'http://${_getHost()}:8000/api/v1/market',
-      baseApiUrl = baseApiUrl ?? 'http://${_getHost()}:8000/api/v1',
-      wsUrl = wsUrl ?? 'ws://${_getHost()}:8000/ws/market/stream';
+    : baseUrl = baseUrl ?? '${ApiConstants.baseUrl}/market',
+      baseApiUrl = baseApiUrl ?? ApiConstants.baseUrl,
+      wsUrl = wsUrl ?? '${ApiConstants.wsUrl}/stream';
 
   final String baseUrl;
   final String baseApiUrl;

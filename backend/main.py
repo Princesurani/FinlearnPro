@@ -48,9 +48,13 @@ async def startup_event():
     # Trigger background simulation loop
     logger.info("Market Service Starting Up... Triggering Simulation Engine.")
     try:
-        simulate_tick_loop.delay()
+        import threading
+        # Run in a background thread so we don't need a separate Celery worker!
+        t = threading.Thread(target=simulate_tick_loop, daemon=True)
+        t.start()
+        logger.info("Started simulate_tick_loop in a background thread!")
     except Exception as e:
-        logger.error(f"Failed to start celery loop: {e}")
+        logger.error(f"Failed to start simulation thread: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_event():

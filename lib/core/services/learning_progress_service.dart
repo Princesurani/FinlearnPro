@@ -5,16 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/learning/data/learning_models.dart';
 
-String _getHost() {
-  if (kIsWeb) return '127.0.0.1';
-  if (Platform.isAndroid) return '10.0.2.2';
-  return '127.0.0.1';
-}
+import '../network/api_constants.dart';
 
 class LearningProgressService {
   static const String _progressKeyPrefix = 'user_learning_progress_';
-  final String _baseApiUrl =
-      'http://${_getHost()}:8000/api/v1/learning/progress';
+  final String _baseApiUrl = '${ApiConstants.baseUrl}/learning/progress';
 
   // Saves the entire user learning progress to local storage
   Future<void> saveProgress(UserLearningProgress progress) async {

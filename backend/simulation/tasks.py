@@ -72,7 +72,6 @@ MOCK_INSTRUMENTS = [
 ]
 
 
-@celery_app.task
 def simulate_tick_loop():
     """
     Background job meant to run continuously, generating new price ticks
