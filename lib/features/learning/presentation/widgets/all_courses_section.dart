@@ -22,18 +22,16 @@ class AllCoursesSection extends StatelessWidget {
             children: [
               Text(
                 'All Courses',
-                style: AppTypography.h4.copyWith(color: AppColors.textPrimary),
-              ),
-              Text(
-                'See All',
-                style: AppTypography.button.copyWith(
-                  color: AppColors.primary,
+                style: AppTypography.bodyLarge.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
                 ),
               ),
+
             ],
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: 8),
         SizedBox(
           height: 240,
           child: ListView.separated(

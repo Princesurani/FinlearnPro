@@ -7,8 +7,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../domain/instrument.dart';
 import '../domain/market_data.dart';
 
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
+
 
 import '../network/api_constants.dart';
 

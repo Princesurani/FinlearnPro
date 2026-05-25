@@ -3,7 +3,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 
 class MarketNewsSentimentCard extends StatelessWidget {
-  const MarketNewsSentimentCard({super.key});
+  const MarketNewsSentimentCard({super.key, this.onTradeTap});
+
+  final VoidCallback? onTradeTap;
 
   @override
   Widget build(BuildContext context) {
@@ -53,15 +55,15 @@ class MarketNewsSentimentCard extends StatelessWidget {
                               'Market Sentiment',
                               style: AppTypography.labelSmall.copyWith(
                                 color: AppColors.textSecondary,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 0.5,
                               ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               'Tech Stocks Rally',
-                              style: AppTypography.h3.copyWith(
-                                fontWeight: FontWeight.bold,
+                              style: AppTypography.bodyLarge.copyWith(
+                                fontWeight: FontWeight.w600,
                                 color: AppColors.textPrimary,
                               ),
                             ),
@@ -89,7 +91,7 @@ class MarketNewsSentimentCard extends StatelessWidget {
                               'Bullish',
                               style: AppTypography.labelSmall.copyWith(
                                 color: AppColors.successGreen,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
@@ -109,12 +111,12 @@ class MarketNewsSentimentCard extends StatelessWidget {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               color: AppColors.primary.withValues(alpha: 0.05),
               child: Row(
                 children: [
-                  const Text('🤖', style: TextStyle(fontSize: 18)),
-                  const SizedBox(width: 12),
+                  const Text('🤖', style: TextStyle(fontSize: 16)),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'This could temporarily boost your heavy tech allocation. Watch out for potential corrections next week.',
@@ -125,9 +127,48 @@ class MarketNewsSentimentCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Icon(
-                    Icons.chevron_right_rounded,
-                    color: AppColors.primary,
+                  const SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: onTradeTap,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [AppColors.primary, AppColors.electricBlue],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.show_chart_rounded,
+                            color: AppColors.white,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            'Trade',
+                            style: AppTypography.labelSmall.copyWith(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),

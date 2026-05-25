@@ -45,21 +45,12 @@ class MarketSelector extends StatelessWidget {
             Text(
               activeMarket.flag,
               style: const TextStyle(fontSize: 16),
-            ), // Reduced from 18
-            const SizedBox(width: 4), // Reduced gap
-            Text(
-              activeMarket.shortName,
-              style: AppTypography.label.copyWith(
-                color: AppColors.textPrimary, // Darker for better contrast
-                fontWeight: AppTypography.bold, // Bolder for visibility
-                fontSize: 12, // Explicit smaller size
-              ),
             ),
             const SizedBox(width: 2),
             const Icon(
               Icons.keyboard_arrow_down_rounded,
-              size: 18, // Reduced from 20
-              color: AppColors.textPrimary, // Darker for visibility
+              size: 18,
+              color: AppColors.textPrimary,
             ),
           ],
         ),

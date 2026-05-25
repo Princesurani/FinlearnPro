@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_animations.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../data/learning_models.dart';
+import '../../bloc/learning_bloc.dart';
+import '../../bloc/learning_bloc_provider.dart';
 
 class LearningPathsSection extends StatefulWidget {
   const LearningPathsSection({super.key, required this.paths, this.onPathTap});
@@ -32,12 +35,11 @@ class _LearningPathsSectionState extends State<LearningPathsSection> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Flexible(
+                    Flexible(
                       child: Text(
                         'Learning Paths',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                        style: AppTypography.bodyLarge.copyWith(
+                          fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -69,23 +71,11 @@ class _LearningPathsSectionState extends State<LearningPathsSection> {
                   ],
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  HapticFeedback.selectionClick();
-                },
-                child: const Text(
-                  'Explore All',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ),
+
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
 
         SizedBox(
           height: 240,
@@ -172,18 +162,32 @@ class _LearningPathCardState extends State<_LearningPathCard>
   Widget build(BuildContext context) {
     final path = widget.path;
     final totalCourses = path.courseIds.length;
-    final completedCourses = (totalCourses * 0.3).floor();
 
-    return GestureDetector(
-      onTapDown: _handleTapDown,
-      onTapUp: _handleTapUp,
-      onTapCancel: _handleTapCancel,
-      child: AnimatedBuilder(
-        animation: _scaleController,
-        builder: (context, child) {
-          return Transform.scale(scale: _scaleAnimation.value, child: child);
-        },
-        child: Container(
+    return StreamBuilder<LearningState>(
+      stream: LearningBlocProvider.of(context).stream,
+      initialData: LearningBlocProvider.of(context).state,
+      builder: (context, snapshot) {
+        final state = snapshot.data;
+        if (state == null) return const SizedBox.shrink();
+
+        int completedCourses = 0;
+        for (final courseId in path.courseIds) {
+          final prog = state.userProgress.courseProgress[courseId];
+          if (prog != null && prog.status == ProgressStatus.completed) {
+            completedCourses++;
+          }
+        }
+
+        return GestureDetector(
+          onTapDown: _handleTapDown,
+          onTapUp: _handleTapUp,
+          onTapCancel: _handleTapCancel,
+          child: AnimatedBuilder(
+            animation: _scaleController,
+            builder: (context, child) {
+              return Transform.scale(scale: _scaleAnimation.value, child: child);
+            },
+            child: Container(
           width: 280,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -456,7 +460,9 @@ class _LearningPathCardState extends State<_LearningPathCard>
             ],
           ),
         ),
-      ),
+          ),
+        );
+      },
     );
   }
 

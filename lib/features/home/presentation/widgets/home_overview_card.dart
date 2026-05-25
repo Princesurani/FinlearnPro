@@ -117,63 +117,57 @@ class _UnifiedOverviewCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             '${progress.totalXp}',
                             style: const TextStyle(
-                              fontSize: 28,
+                              fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                               height: 1.0,
                             ),
                           ),
                           const SizedBox(width: 4),
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 2),
-                            child: Text(
-                              'XP',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white70,
-                              ),
+                          const Text(
+                            'XP',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white70,
                             ),
                           ),
                           const SizedBox(width: 12),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 2),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.3),
                               ),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.3),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.stars_rounded,
+                                  color: AppColors.goldenYellow,
+                                  size: 12,
                                 ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.stars_rounded,
-                                    color: AppColors.goldenYellow,
-                                    size: 14,
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Level ${progress.currentLevel}',
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    'Level ${progress.currentLevel}',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -281,10 +275,10 @@ class _UnifiedOverviewCard extends StatelessWidget {
                     children: [
                       Text(
                         '$currency${totalPortfolioValue.toStringAsFixed(2)}',
-                        style: AppTypography.h3.copyWith(
+                        style: AppTypography.bodyLarge.copyWith(
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.5,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.3,
                         ),
                       ),
                       if (totalPnl != 0.0) ...[
@@ -379,8 +373,8 @@ class _UnifiedOverviewCard extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
               color: valueColor ?? Colors.white,
             ),
           ),

@@ -79,15 +79,15 @@ class ContinueLearningCard extends StatelessWidget {
                                 'Jump Back In',
                                 style: AppTypography.labelSmall.copyWith(
                                   color: AppColors.primaryBlue,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   letterSpacing: 0.5,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 course.title,
-                                style: AppTypography.h3.copyWith(
-                                  fontWeight: FontWeight.bold,
+                                style: AppTypography.bodyLarge.copyWith(
+                                  fontWeight: FontWeight.w600,
                                   color: AppColors.textPrimary,
                                 ),
                                 maxLines: 1,

@@ -8,6 +8,45 @@ import '../../data/auth_service.dart';
 class HomeTopBar extends StatelessWidget {
   const HomeTopBar({super.key});
 
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 6) {
+      // Late night / pre-market
+      return 'Pre-market grind,';
+    } else if (hour < 9) {
+      // Early morning before market opens
+      return 'Markets open soon,';
+    } else if (hour < 12) {
+      // Morning session
+      final greetings = [
+        'Chart the course,',
+        'Opening bell,',
+        'Position ready,',
+      ];
+      return greetings[DateTime.now().day % greetings.length];
+    } else if (hour < 15) {
+      // Midday
+      final greetings = [
+        'Mid-session,',
+        'Stay disciplined,',
+        'Watch the charts,',
+      ];
+      return greetings[DateTime.now().day % greetings.length];
+    } else if (hour < 18) {
+      // Afternoon / closing bell
+      return 'Closing bell,';
+    } else {
+      // Evening / after-hours
+      final greetings = [
+        'After-hours review,',
+        'Analyse & grow,',
+        'Plan tomorrow\'s trades,',
+      ];
+      return greetings[DateTime.now().day % greetings.length];
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final user = AuthService().currentUser;
@@ -21,7 +60,7 @@ class HomeTopBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Welcome back,',
+            _getGreeting(),
             style: TextStyle(
               fontSize: 11, // Standardized across all pages
               color: AppColors.textSecondary,
@@ -31,12 +70,12 @@ class HomeTopBar extends StatelessWidget {
           ),
           const SizedBox(height: 1),
           Text(
-            firstName, // Use first name only
+            firstName.toUpperCase(),
             style: const TextStyle(
-              fontSize: 16, // Standardized across all pages
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
-              letterSpacing: -0.3,
+              letterSpacing: 0.8,
             ),
             overflow: TextOverflow.ellipsis,
           ),

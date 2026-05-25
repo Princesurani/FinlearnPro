@@ -15,6 +15,7 @@ import '../widgets/learning_paths_section.dart';
 import 'topic_detail_screen.dart';
 import '../widgets/all_courses_section.dart';
 import 'course_details_screen.dart';
+import 'learning_path_details_screen.dart';
 import '../../bloc/learning_bloc_provider.dart';
 import '../../bloc/learning_bloc.dart';
 
@@ -99,6 +100,15 @@ class _LearningScreenState extends State<LearningScreen>
 
   void _onLearningPathTap(LearningPath path) {
     HapticFeedback.lightImpact();
+    final bloc = LearningBlocProvider.of(context);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => LearningBlocProvider(
+          bloc: bloc,
+          child: LearningPathDetailsScreen(path: path),
+        ),
+      ),
+    );
   }
 
   @override
@@ -199,7 +209,7 @@ class _LearningScreenState extends State<LearningScreen>
               ),
     
             if (continueLearningCourses.isNotEmpty)
-              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
     
             SliverToBoxAdapter(
               child: _buildAnimatedSection(
@@ -212,7 +222,7 @@ class _LearningScreenState extends State<LearningScreen>
               ),
             ),
     
-            const SliverToBoxAdapter(child: SizedBox(height: 28)),
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
     
             SliverToBoxAdapter(
               child: _buildAnimatedSection(
@@ -224,7 +234,7 @@ class _LearningScreenState extends State<LearningScreen>
               ),
             ),
     
-            const SliverToBoxAdapter(child: SizedBox(height: 28)),
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
     
             SliverToBoxAdapter(
               child: _buildAnimatedSection(

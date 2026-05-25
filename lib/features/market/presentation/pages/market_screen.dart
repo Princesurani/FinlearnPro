@@ -80,17 +80,16 @@ class _MarketScreenState extends State<MarketScreen>
               Text(
                 'Market insights,',
                 style: TextStyle(
-                  fontSize: 11, // Further reduced for mobile fit
+                  fontSize: 11,
                   color: AppColors.textSecondary,
                   fontWeight: FontWeight.w500,
-                  letterSpacing: 0,
                 ),
               ),
               const SizedBox(height: 1),
               const Text(
                 'Global Markets',
                 style: TextStyle(
-                  fontSize: 16, // Further reduced for mobile fit
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                   letterSpacing: -0.3,
@@ -184,17 +183,15 @@ class _MarketScreenState extends State<MarketScreen>
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? Colors
-                              .transparent // Selected uses indicator
-                        : Colors
-                              .transparent, // Unselected: no background, just border
+                        ? Colors.transparent
+                        : AppColors.textSecondary.withValues(alpha: 0.05),
                     border: isSelected
                         ? null
                         : Border.all(
                             color: AppColors.textSecondary.withValues(
-                              alpha: 0.5,
-                            ), // Darker, more visible
-                            width: 1.5, // Thicker border
+                              alpha: 0.15,
+                            ),
+                            width: 1.0,
                           ),
                     borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
                   ),

@@ -331,6 +331,11 @@ class LearningBloc {
     _state = _state.copyWith(userProgress: updatedProgress);
     _stateController.add(_state);
     _progressService.saveProgress(updatedProgress);
+
+    // Send XP to backend Gamification Profile
+    if (event.xpReward > 0) {
+      http.post(Uri.parse('${ApiConstants.baseUrl}/social/xp/award?uid=${prog.userId}&xp=${event.xpReward}')).catchError((_) => http.Response('', 500));
+    }
   }
 
   void dispose() {

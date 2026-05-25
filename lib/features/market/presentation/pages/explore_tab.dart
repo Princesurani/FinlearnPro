@@ -93,7 +93,6 @@ class _ExploreTabState extends State<ExploreTab>
             children: [
               const SectionHeader(
                 title: 'Products & Tools',
-                actionText: 'See more',
               ),
               const ProductsToolsRow(),
             ],
@@ -201,17 +200,17 @@ class _ExploreTabState extends State<ExploreTab>
             ],
             child: Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.sm,
+                horizontal: 12,
+                vertical: 6,
               ),
               decoration: BoxDecoration(
                 color: _capFilter == 'all' 
-                    ? AppColors.surfaceLayer1 
+                    ? AppColors.textSecondary.withValues(alpha: 0.05)
                     : AppColors.primary.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
                 border: Border.all(
                   color: _capFilter == 'all'
-                      ? AppColors.borderHint.withValues(alpha: 0.5)
+                      ? AppColors.textSecondary.withValues(alpha: 0.15)
                       : AppColors.primary.withValues(alpha: 0.3),
                 ),
               ),
@@ -264,15 +263,15 @@ class _ExploreTabState extends State<ExploreTab>
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.xs,
+          horizontal: 12,
+          vertical: 6,
         ),
         decoration: BoxDecoration(
-          color: isActive ? activeColor.withAlpha(20) : AppColors.transparent,
+          color: isActive ? activeColor.withAlpha(20) : AppColors.textSecondary.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
           border: Border.all(
-            color: isActive ? activeColor : AppColors.border,
-            width: isActive ? 1.5 : 0.5,
+            color: isActive ? activeColor.withValues(alpha: 0.15) : AppColors.textSecondary.withValues(alpha: 0.15),
+            width: 1.0,
           ),
         ),
         child: Text(

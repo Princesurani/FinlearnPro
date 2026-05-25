@@ -1,11 +1,18 @@
 import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-import '../../data/learning_data.dart';
+import '../../data/learning_models.dart';
 import '../pages/course_details_screen.dart';
 import '../../bloc/learning_bloc_provider.dart';
 
 class RecommendedSection extends StatelessWidget {
-  const RecommendedSection({super.key});
+  const RecommendedSection({
+    super.key,
+    required this.courses,
+    required this.onViewAll,
+  });
+
+  final List<Course> courses;
+  final VoidCallback onViewAll;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +34,10 @@ class RecommendedSection extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            TextButton(onPressed: () {}, child: const Text('View All')),
+            TextButton(
+              onPressed: onViewAll,
+              child: const Text('View All'),
+            ),
           ],
         ),
         const SizedBox(height: 16),
@@ -37,7 +47,7 @@ class RecommendedSection extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             clipBehavior: Clip.none,
-            children: LearningData.allCourses.take(5).map((course) {
+            children: courses.map((course) {
               return Padding(
                 padding: const EdgeInsets.only(right: 20),
                 child: GestureDetector(

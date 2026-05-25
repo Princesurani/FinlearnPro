@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../features/auth/presentation/widgets/home_top_bar.dart';
-import '../../features/learning/presentation/widgets/recommended_section.dart';
+
 import '../../features/market/bloc/market_bloc.dart';
 import '../../features/market/presentation/pages/market_screen.dart';
 import '../../features/learning/presentation/pages/learning_screen.dart';
@@ -14,6 +14,7 @@ import '../../features/home/presentation/widgets/home_overview_card.dart';
 import '../../features/home/presentation/widgets/continue_learning_card.dart';
 import '../../features/home/presentation/widgets/market_news_sentiment_card.dart';
 import '../../features/learning/data/learning_data.dart';
+import '../../features/learning/data/learning_models.dart';
 import '../../features/learning/presentation/pages/course_details_screen.dart';
 import '../../features/learning/bloc/learning_bloc_provider.dart';
 import '../widgets/aurora_background.dart';
@@ -125,7 +126,11 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                 onPageChanged: _onPageChanged,
                 physics: const ClampingScrollPhysics(),
                 children: [
-                  _HomeScreenWrapper(bloc: _marketBloc),
+                  _HomeScreenWrapper(
+                    bloc: _marketBloc,
+                    onNavigateToLearn: () => _onNavTap(1),
+                    onNavigateToMarket: () => _onNavTap(2),
+                  ),
                   const LearningScreen(),
                   RepaintBoundary(child: MarketScreen(bloc: _marketBloc)),
                   const SocialProfileScreen(),
@@ -275,49 +280,101 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 }
 
 class _HomeScreenWrapper extends StatelessWidget {
-  const _HomeScreenWrapper({required this.bloc});
+  const _HomeScreenWrapper({
+    required this.bloc,
+    required this.onNavigateToLearn,
+    required this.onNavigateToMarket,
+  });
 
   final MarketBloc bloc;
+  final VoidCallback onNavigateToLearn;
+  final VoidCallback onNavigateToMarket;
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(
-        20,
-        MediaQuery.of(context).padding.top + 12,
-        20,
-        100,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const HomeTopBar(),
-          const SizedBox(height: 30),
-          HomeOverviewCard(marketBloc: bloc),
-          const SizedBox(height: 30),
-          ContinueLearningCard(
-            course: LearningData.allCourses.first,
-            onTap: () {
-              final bloc = LearningBlocProvider.of(context);
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => LearningBlocProvider(
-                    bloc: bloc,
-                    child: CourseDetailsScreen(
-                      course: LearningData.allCourses.first,
-                    ),
-                  ),
-                ),
-              );
-            },
+    final learningBloc = LearningBlocProvider.of(context);
+
+    return StreamBuilder<LearningState>(
+      stream: learningBloc.stream,
+      initialData: learningBloc.state,
+      builder: (context, snapshot) {
+        final learningState = snapshot.data;
+        
+        Course? continueCourse;
+
+        if (learningState != null) {
+          final progress = learningState.userProgress;
+          
+          // 1. Find Continue Learning Course
+          final inProgressCourses = progress.courseProgress.values
+              .where((p) => p.status == ProgressStatus.inProgress)
+              .toList();
+          
+          if (inProgressCourses.isNotEmpty) {
+            inProgressCourses.sort((a, b) => b.lastAccessedDate.compareTo(a.lastAccessedDate));
+            continueCourse = LearningData.allCourses.firstWhere(
+              (c) => c.id == inProgressCourses.first.courseId,
+              orElse: () => LearningData.allCourses.first,
+            );
+          } else {
+            // Find first not started course
+            continueCourse = LearningData.allCourses.firstWhere(
+              (c) {
+                final p = progress.courseProgress[c.id];
+                return p == null || p.status == ProgressStatus.notStarted;
+              },
+              orElse: () => LearningData.allCourses.first,
+            );
+            
+            // Hide continue course if all courses are completed
+            final allCompleted = LearningData.allCourses.every((c) {
+              final p = progress.courseProgress[c.id];
+              return p != null && p.status == ProgressStatus.completed;
+            });
+            if (allCompleted) {
+              continueCourse = null;
+            }
+          }
+        }
+
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(
+            20,
+            MediaQuery.of(context).padding.top + 12,
+            20,
+            100,
           ),
-          const SizedBox(height: 30),
-          const RecommendedSection(),
-          const SizedBox(height: 30),
-          const MarketNewsSentimentCard(),
-        ],
-      ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const HomeTopBar(),
+              const SizedBox(height: 30),
+              HomeOverviewCard(marketBloc: bloc),
+              if (continueCourse != null) ...[
+                const SizedBox(height: 30),
+                ContinueLearningCard(
+                  course: continueCourse,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => LearningBlocProvider(
+                          bloc: learningBloc,
+                          child: CourseDetailsScreen(
+                            course: continueCourse!,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+              const SizedBox(height: 30),
+              MarketNewsSentimentCard(onTradeTap: onNavigateToMarket),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -98,14 +98,14 @@ class _StockCell extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.sm),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.white.withValues(alpha: 0.6),
           borderRadius: AppSpacing.borderRadiusMD,
-          border: Border.all(color: AppColors.border, width: 0.5),
+          border: Border.all(color: AppColors.white.withValues(alpha: 0.3), width: 1),
           boxShadow: const [
             BoxShadow(
               color: Color(0x08000000),
-              blurRadius: 8,
-              offset: Offset(0, 2),
+              blurRadius: 12,
+              offset: Offset(0, 4),
             ),
           ],
         ),
@@ -292,9 +292,16 @@ class _SeeMoreCell extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surfaceVariant,
+          color: AppColors.white.withValues(alpha: 0.6),
           borderRadius: AppSpacing.borderRadiusMD,
-          border: Border.all(color: AppColors.border, width: 0.5),
+          border: Border.all(color: AppColors.white.withValues(alpha: 0.3), width: 1),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x08000000),
+              blurRadius: 12,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
         child: Center(
           child: Column(

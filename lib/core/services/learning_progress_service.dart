@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/learning/data/learning_models.dart';
@@ -51,6 +50,29 @@ class LearningProgressService {
         final data = json.decode(response.body);
         if (data['data'] != null) {
           final cloudMap = data['data'] as Map<String, dynamic>;
+
+          // Compare with local before overwriting
+          final localJsonString = prefs.getString('$_progressKeyPrefix$userId');
+          if (localJsonString != null) {
+            try {
+              final localMap = json.decode(localJsonString) as Map<String, dynamic>;
+              final localDateStr = localMap['lastActivityDate'] as String?;
+              final cloudDateStr = cloudMap['lastActivityDate'] as String?;
+              
+              if (localDateStr != null && cloudDateStr != null) {
+                final localDate = DateTime.tryParse(localDateStr);
+                final cloudDate = DateTime.tryParse(cloudDateStr);
+                
+                if (localDate != null && cloudDate != null && localDate.isAfter(cloudDate)) {
+                  // Local is newer, so push local to cloud instead of overwriting
+                  _syncToCloud(userId, localMap);
+                  return _mapToProgress(localMap, userId);
+                }
+              }
+            } catch (e) {
+              debugPrint('Failed to compare local and cloud progress: $e');
+            }
+          }
 
           // Save cloud data locally
           await prefs.setString(

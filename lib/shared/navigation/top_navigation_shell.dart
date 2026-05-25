@@ -29,8 +29,26 @@ class TopNavigationShell extends StatelessWidget {
               height: 44,
               width: 44,
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primary.withValues(alpha: 0.25),
+                    AppColors.primary.withValues(alpha: 0.05),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                  width: 1.5,
+                ),
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.15),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: const Center(
                 child: Icon(

@@ -97,9 +97,16 @@ class IndexTicker extends StatelessWidget {
         width: 160,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.white.withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.borderLight, width: 1),
+          border: Border.all(color: AppColors.white.withValues(alpha: 0.3), width: 1),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x08000000),
+              blurRadius: 12,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

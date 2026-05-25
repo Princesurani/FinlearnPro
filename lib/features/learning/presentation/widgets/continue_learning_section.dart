@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_animations.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../data/learning_models.dart';
 
 class ContinueLearningSection extends StatelessWidget {
@@ -27,20 +28,19 @@ class ContinueLearningSection extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Flexible(
+              Flexible(
                 child: Row(
                   children: [
                     Text(
                       'Continue Learning',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                      style: AppTypography.bodyLarge.copyWith(
+                        fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(width: 8),
-                    Icon(
+                    const SizedBox(width: 8),
+                    const Icon(
                       Icons.play_circle_fill_rounded,
                       color: AppColors.primary,
                       size: 20,
@@ -48,23 +48,11 @@ class ContinueLearningSection extends StatelessWidget {
                   ],
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  HapticFeedback.selectionClick();
-                },
-                child: const Text(
-                  'See All',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ),
+
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
 
         SizedBox(
           height: 200,
@@ -165,6 +153,14 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
     _controller.reverse();
   }
 
+  String _formatTimeLeft(int minutes) {
+    if (minutes < 60) return '${minutes}m left';
+    final hours = minutes ~/ 60;
+    final mins = minutes % 60;
+    if (mins == 0) return '${hours}h left';
+    return '${hours}h ${mins}m left';
+  }
+
   @override
   Widget build(BuildContext context) {
     final course = widget.course;
@@ -211,7 +207,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
-                      _getCourseIcon(course.categoryId),
+                      course.difficulty.icon,
                       color: course.displayColor,
                       size: 22,
                     ),
@@ -226,7 +222,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                           course.title,
                           style: const TextStyle(
                             fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
                           ),
                           maxLines: 1,
@@ -234,7 +230,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '${widget.minutesLeft}m left',
+                          _formatTimeLeft(widget.minutesLeft),
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -282,7 +278,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                 widget.nextLesson,
                 style: const TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   color: AppColors.textPrimary,
                 ),
                 maxLines: 1,
@@ -359,7 +355,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                       'Resume',
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.white,
                       ),
                     ),
@@ -371,22 +367,5 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
         ),
       ),
     );
-  }
-
-  IconData _getCourseIcon(String categoryId) {
-    switch (categoryId) {
-      case 'stock-basics':
-        return Icons.candlestick_chart_outlined;
-      case 'technical-analysis':
-        return Icons.show_chart_rounded;
-      case 'options-trading':
-        return Icons.call_split_rounded;
-      case 'crypto':
-        return Icons.currency_bitcoin;
-      case 'psychology':
-        return Icons.psychology_outlined;
-      default:
-        return Icons.book_outlined;
-    }
   }
 }

@@ -123,55 +123,88 @@ abstract final class LearningData {
   // ── Learning Paths (references real course IDs) ──
   static List<LearningPath> get learningPaths => [
     const LearningPath(
-      id: 'path-001',
-      title: 'Complete Beginner to Trader',
+      id: 'path-beginner',
+      title: 'Zero to Hero: Complete Foundation',
       description:
-          'Master the foundations, learn analysis, and build risk management skills',
+          'Master the foundations, learn analysis, and build risk management skills to place your first trade safely.',
       courses: [
-        'c0-foundations',
-        'c1-stocks',
-        'c5-technical',
-        'c7-risk',
-        'c8-practice',
+        'c0-foundations', // Foundations of Trading
+        'c1-stocks',      // Stock Market
+        'c6-technical',   // Technical Analysis
+        'c8-risk',        // Risk Management
+        'c9-practice',    // Practice & Skill Building
       ],
-      estimatedWeeks: 10,
+      estimatedWeeks: 8,
       difficulty: DifficultyLevel.beginner,
       skills: [
-        'Market Fundamentals',
-        'Technical Analysis',
+        'Market Basics',
+        'Chart Reading',
         'Risk Management',
         'Paper Trading',
       ],
+      accentColor: AppColors.electricBlue,
     ),
     const LearningPath(
-      id: 'path-002',
-      title: 'Advanced Trader',
+      id: 'path-analytical',
+      title: 'The Analytical Edge',
       description:
-          'Derivatives, trading styles, and building long-term consistency',
-      courses: ['c10-derivatives', 'c11-styles', 'c12-setup', 'c13-consistent'],
-      estimatedWeeks: 8,
+          'Deep dive into charts, financials, and the mathematics of risk to find high-probability setups.',
+      courses: [
+        'c6-technical',    // Technical Analysis
+        'c7-fundamental',  // Fundamental Analysis
+        'c8-risk',         // Risk Management
+      ],
+      estimatedWeeks: 6,
+      difficulty: DifficultyLevel.intermediate,
+      skills: [
+        'Technical Indicators',
+        'Financial Statements',
+        'Valuation Models',
+        'Risk/Reward Ratios',
+      ],
+      accentColor: AppColors.auroraPurple,
+    ),
+    const LearningPath(
+      id: 'path-multimarket',
+      title: 'Multi-Asset Mastery',
+      description:
+          'Diversify your knowledge by understanding how stocks, crypto, forex, and commodities interlink.',
+      courses: [
+        'c1-stocks',       // Stock Market
+        'c3-crypto',       // Crypto Market
+        'c4-forex',        // Forex Market
+        'c5-commodities',  // Commodities Market
+      ],
+      estimatedWeeks: 10,
+      difficulty: DifficultyLevel.intermediate,
+      skills: [
+        'Stock Trading',
+        'Crypto Ecosystem',
+        'Currency Pairs',
+        'Commodity Cycles',
+      ],
+      accentColor: AppColors.oceanTeal,
+    ),
+    const LearningPath(
+      id: 'path-pro',
+      title: 'The Pro Trader\'s Playbook',
+      description:
+          'Derivatives, advanced trading styles, and the psychological framework for long-term consistency.',
+      courses: [
+        'c10-derivatives', // Derivatives Market
+        'c11-styles',      // Trading Styles
+        'c12-setup',       // Real World Setup
+        'c13-consistent',  // Consistent Trader
+      ],
+      estimatedWeeks: 12,
       difficulty: DifficultyLevel.advanced,
       skills: [
         'Options & Futures',
         'Strategy Selection',
-        'Tax & Compliance',
-        'Performance Evaluation',
+        'Trading Setup',
+        'Trading Psychology',
       ],
-    ),
-    const LearningPath(
-      id: 'path-003',
-      title: 'Multi-Market Explorer',
-      description:
-          'Stocks, crypto, forex, and commodities — understand all markets',
-      courses: ['c1-stocks', 'c2-crypto', 'c3-forex', 'c4-commodities'],
-      estimatedWeeks: 6,
-      difficulty: DifficultyLevel.intermediate,
-      skills: [
-        'Stock Trading',
-        'Crypto & Blockchain',
-        'Forex Pairs',
-        'Commodity Markets',
-      ],
+      accentColor: AppColors.coralPink,
     ),
   ];
 

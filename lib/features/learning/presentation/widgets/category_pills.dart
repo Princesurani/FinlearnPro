@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_animations.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../data/learning_models.dart';
 
 class CategoryPills extends StatefulWidget {
@@ -47,11 +48,10 @@ class _CategoryPillsState extends State<CategoryPills> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Explore Topics',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                style: AppTypography.bodyLarge.copyWith(
+                  fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -94,7 +94,7 @@ class _CategoryPillsState extends State<CategoryPills> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
 
         SizedBox(
           height: 90,
