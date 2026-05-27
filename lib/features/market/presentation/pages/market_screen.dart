@@ -148,7 +148,7 @@ class _MarketScreenState extends State<MarketScreen>
         controller: _tabController,
         isScrollable: false, // Fill available width
         indicator: BoxDecoration(
-          color: AppColors.primary,
+          color: AppColors.primaryButton,
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
         ),
         indicatorSize: TabBarIndicatorSize.tab,
@@ -184,12 +184,12 @@ class _MarketScreenState extends State<MarketScreen>
                   decoration: BoxDecoration(
                     color: isSelected
                         ? Colors.transparent
-                        : AppColors.textSecondary.withValues(alpha: 0.05),
+                        : AppColors.textSecondary.withValues(alpha: 0.02),
                     border: isSelected
                         ? null
                         : Border.all(
                             color: AppColors.textSecondary.withValues(
-                              alpha: 0.15,
+                              alpha: 0.08,
                             ),
                             width: 1.0,
                           ),
@@ -251,7 +251,11 @@ class _PortfolioStreamWrapper extends StatelessWidget {
       stream: bloc.stream,
       initialData: bloc.state,
       builder: (_, snap) {
-        return PortfolioTab(state: snap.data!, onExplore: onExplore, bloc: bloc);
+        return PortfolioTab(
+          state: snap.data!,
+          onExplore: onExplore,
+          bloc: bloc,
+        );
       },
     );
   }
@@ -356,7 +360,7 @@ class _ExploreStreamWrapper extends StatelessWidget {
                     icon: const Icon(Icons.refresh_rounded, size: 18),
                     label: const Text('Retry'),
                     style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: AppColors.primaryButton,
                       foregroundColor: AppColors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.xl,

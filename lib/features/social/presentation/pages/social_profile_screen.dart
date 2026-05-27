@@ -132,7 +132,7 @@ class _SocialProfileViewState extends State<_SocialProfileView>
         controller: _tabController,
         isScrollable: false, // Fill available width
         indicator: BoxDecoration(
-          color: AppColors.primary,
+          color: AppColors.primaryButton,
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
         ),
         indicatorSize: TabBarIndicatorSize.tab,
@@ -168,14 +168,14 @@ class _SocialProfileViewState extends State<_SocialProfileView>
                   decoration: BoxDecoration(
                     color: isSelected
                         ? Colors.transparent
-                        : Colors.transparent,
+                        : AppColors.textSecondary.withValues(alpha: 0.02),
                     border: isSelected
                         ? null
                         : Border.all(
                             color: AppColors.textSecondary.withValues(
-                              alpha: 0.5,
+                              alpha: 0.08,
                             ),
-                            width: 1.5,
+                            width: 1.0,
                           ),
                     borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
                   ),

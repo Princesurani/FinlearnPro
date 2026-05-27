@@ -26,35 +26,97 @@ class TopNavigationShell extends StatelessWidget {
           // Leading Menu Button
           if (showMenu) ...[
             Container(
-              height: 44,
-              width: 44,
+              height: 42,
+              width: 42,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.primary.withValues(alpha: 0.25),
-                    AppColors.primary.withValues(alpha: 0.05),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.3),
-                  width: 1.5,
+                gradient: const LinearGradient(
+                  colors: [AppColors.primary, AppColors.primaryLight],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.15),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
                 ],
+                border: Border.all(
+                  color: AppColors.white.withValues(alpha: 0.2),
+                  width: 1,
+                ),
               ),
-              child: const Center(
-                child: Icon(
-                  Icons.candlestick_chart_rounded,
-                  color: AppColors.primary,
-                  size: 24,
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // Candle 1 (Lower)
+                    SizedBox(
+                      width: 7,
+                      height: 16,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Wick (High/Low)
+                          Container(
+                            width: 2,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: AppColors.white.withValues(alpha: 0.9),
+                              borderRadius: BorderRadius.circular(1),
+                            ),
+                          ),
+                          // Body (Open/Close)
+                          Positioned(
+                            bottom: 3,
+                            child: Container(
+                              width: 7,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: AppColors.white.withValues(alpha: 0.9),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    // Candle 2 (Higher/Uptrend)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 4),
+                      width: 7,
+                      height: 22,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Wick (High/Low)
+                          Container(
+                            width: 2,
+                            height: 22,
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(1),
+                            ),
+                          ),
+                          // Body (Open/Close)
+                          Positioned(
+                            bottom: 6,
+                            child: Container(
+                              width: 7,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

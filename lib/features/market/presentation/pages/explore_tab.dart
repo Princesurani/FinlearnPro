@@ -205,12 +205,12 @@ class _ExploreTabState extends State<ExploreTab>
               ),
               decoration: BoxDecoration(
                 color: _capFilter == 'all' 
-                    ? AppColors.textSecondary.withValues(alpha: 0.05)
+                    ? AppColors.textSecondary.withValues(alpha: 0.02)
                     : AppColors.primary.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
                 border: Border.all(
                   color: _capFilter == 'all'
-                      ? AppColors.textSecondary.withValues(alpha: 0.15)
+                      ? AppColors.textSecondary.withValues(alpha: 0.08)
                       : AppColors.primary.withValues(alpha: 0.3),
                 ),
               ),
@@ -267,10 +267,10 @@ class _ExploreTabState extends State<ExploreTab>
           vertical: 6,
         ),
         decoration: BoxDecoration(
-          color: isActive ? activeColor.withAlpha(20) : AppColors.textSecondary.withValues(alpha: 0.05),
+          color: isActive ? activeColor.withAlpha(20) : AppColors.textSecondary.withValues(alpha: 0.02),
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
           border: Border.all(
-            color: isActive ? activeColor.withValues(alpha: 0.15) : AppColors.textSecondary.withValues(alpha: 0.15),
+            color: isActive ? activeColor.withValues(alpha: 0.15) : AppColors.textSecondary.withValues(alpha: 0.08),
             width: 1.0,
           ),
         ),

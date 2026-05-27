@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 abstract final class AppColors {
   // Primary Theme Colors (Medium Light Blue)
-  static const Color primary = Color(0xFF2962FF); 
+  static const Color primary = Color(0xFF2962FF);
+  static const Color primaryButton = Color.fromARGB(255, 20, 119, 255);
 
   static const Color primaryLight = Color(0xFF00B4D8);
 

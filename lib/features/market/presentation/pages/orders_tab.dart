@@ -265,7 +265,7 @@ class OrdersTab extends StatelessWidget {
             ElevatedButton(
               onPressed: onExplore,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.primaryButton,
                 foregroundColor: AppColors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.xl,
