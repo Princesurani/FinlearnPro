@@ -18,6 +18,7 @@ class ProfileTab extends StatefulWidget {
 class _ProfileTabState extends State<ProfileTab>
     with SingleTickerProviderStateMixin {
   late AnimationController _animController;
+  bool _timedOut = false;
 
   @override
   void initState() {
@@ -29,6 +30,13 @@ class _ProfileTabState extends State<ProfileTab>
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => _animController.forward(),
     );
+
+    // Start a 10-second timeout — only show error if profile is still null.
+    Future.delayed(const Duration(seconds: 10), () {
+      if (mounted && context.read<SocialBloc>().state.myProfile == null) {
+        setState(() => _timedOut = true);
+      }
+    });
   }
 
   @override
@@ -41,19 +49,20 @@ class _ProfileTabState extends State<ProfileTab>
   Widget build(BuildContext context) {
     return BlocBuilder<SocialBloc, SocialState>(
       builder: (context, state) {
-        if (state.status == SocialStatus.loading && state.myProfile == null) {
+        final profile = state.myProfile;
+
+        // Show spinner while profile hasn't arrived yet (and no timeout).
+        if (profile == null) {
+          if (_timedOut) {
+            return Center(
+              child: Text(
+                'Unable to load profile',
+                style: AppTypography.bodySmall,
+              ),
+            );
+          }
           return const Center(
             child: CircularProgressIndicator(color: AppColors.primary),
-          );
-        }
-
-        final profile = state.myProfile;
-        if (profile == null) {
-          return Center(
-            child: Text(
-              'Unable to load profile',
-              style: AppTypography.bodySmall,
-            ),
           );
         }
 
@@ -93,7 +102,7 @@ class _ProfileTabState extends State<ProfileTab>
                       ),
                     ),
                     const SizedBox(height: 14),
-                    Text(profile.displayName, style: AppTypography.h4),
+                    Text(profile.username, style: AppTypography.h4),
                     if (profile.bio != null && profile.bio!.isNotEmpty) ...[
                       const SizedBox(height: 6),
                       Text(
@@ -107,7 +116,7 @@ class _ProfileTabState extends State<ProfileTab>
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: 12)),
 
             // Level + XP Progress Card
             SliverToBoxAdapter(
@@ -120,7 +129,7 @@ class _ProfileTabState extends State<ProfileTab>
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: 12)),
 
             // Streak Card
             SliverToBoxAdapter(
@@ -133,16 +142,16 @@ class _ProfileTabState extends State<ProfileTab>
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: 12)),
 
             // Stats Grid
             SliverPadding(
               padding: AppSpacing.screenPaddingH,
               sliver: SliverGrid.count(
                 crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 1.6,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 2.8,
                 children: [
                   _buildAnimated(
                     index: 3,
@@ -349,7 +358,7 @@ class _ProfileTabState extends State<ProfileTab>
 
   Widget _buildStreakCard(UserProfile profile) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.cardPaddingCompact),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: AppSpacing.borderRadiusLG,
@@ -450,26 +459,35 @@ class _StatCard extends StatelessWidget {
         borderRadius: AppSpacing.borderRadiusLG,
         border: Border.all(color: AppColors.border),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
               borderRadius: AppSpacing.borderRadiusSM,
             ),
-            child: Icon(icon, color: color, size: 15),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 6),
-          Text(value, style: AppTypography.h5),
-          Text(
-            title,
-            style: AppTypography.labelSmall.copyWith(letterSpacing: 0),
-            overflow: TextOverflow.ellipsis,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: AppTypography.labelSmall.copyWith(letterSpacing: 0, fontSize: 10),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  value, 
+                  style: AppTypography.h5.copyWith(fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),

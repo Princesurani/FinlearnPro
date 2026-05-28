@@ -51,17 +51,24 @@ class UnfollowUser extends SocialEvent {
 
 class UpdateProfile extends SocialEvent {
   final String uid;
-  final String? displayName;
+  final String? username;
   final String? bio;
-  UpdateProfile(this.uid, {this.displayName, this.bio});
+  UpdateProfile(this.uid, {this.username, this.bio});
 }
 
 // ─── State ──────────────────────────────────────────────────────────────────
 
+/// Keep the old enum for backward compatibility with existing BlocBuilder checks.
 enum SocialStatus { initial, loading, loaded, error }
 
 class SocialState {
   final SocialStatus status;
+
+  /// Independent loading flags — prevents races between profile/leaderboard/feed.
+  final bool isProfileLoading;
+  final bool isLeaderboardLoading;
+  final bool isFeedLoading;
+
   final UserProfile? myProfile;
   final List<LeaderboardEntry> leaderboard;
   final List<TradeSharePost> feed;
@@ -77,6 +84,9 @@ class SocialState {
 
   SocialState({
     this.status = SocialStatus.initial,
+    this.isProfileLoading = false,
+    this.isLeaderboardLoading = false,
+    this.isFeedLoading = false,
     this.myProfile,
     this.leaderboard = const [],
     this.feed = const [],
@@ -93,6 +103,9 @@ class SocialState {
 
   SocialState copyWith({
     SocialStatus? status,
+    bool? isProfileLoading,
+    bool? isLeaderboardLoading,
+    bool? isFeedLoading,
     UserProfile? myProfile,
     List<LeaderboardEntry>? leaderboard,
     List<TradeSharePost>? feed,
@@ -108,6 +121,9 @@ class SocialState {
   }) {
     return SocialState(
       status: status ?? this.status,
+      isProfileLoading: isProfileLoading ?? this.isProfileLoading,
+      isLeaderboardLoading: isLeaderboardLoading ?? this.isLeaderboardLoading,
+      isFeedLoading: isFeedLoading ?? this.isFeedLoading,
       myProfile: myProfile ?? this.myProfile,
       leaderboard: leaderboard ?? this.leaderboard,
       feed: feed ?? this.feed,
@@ -123,6 +139,27 @@ class SocialState {
     );
   }
 }
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+/// Returns the best available username for the current Firebase user.
+/// Falls back in order: Firebase displayName → email prefix → 'Trader'.
+String _resolveUsername() {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return 'Trader';
+
+  final dn = user.displayName;
+  if (dn != null && dn.isNotEmpty && !_isDummyName(dn)) return dn;
+
+  final email = user.email;
+  if (email != null && email.contains('@')) return email.split('@').first;
+
+  return 'Trader';
+}
+
+/// Whether the name is an auto-generated placeholder.
+bool _isDummyName(String name) =>
+    name == 'Trader' || name.startsWith('Trader_');
 
 // ─── Bloc ───────────────────────────────────────────────────────────────────
 
@@ -140,31 +177,26 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
     on<UpdateProfile>(_onUpdateProfile);
   }
 
-  /// Build a fallback profile from Firebase Auth when the backend is unreachable.
-  UserProfile _buildLocalProfile(String uid) {
-    final firebaseUser = FirebaseAuth.instance.currentUser;
-    return UserProfile(
-      firebaseUid: uid,
-      displayName: firebaseUser?.displayName ?? 'Trader',
-      avatarUrl: firebaseUser?.photoURL,
-      bio: null,
-      totalXp: 0,
-      weeklyXp: 0,
-      level: 1,
-      currentStreak: 0,
-      longestStreak: 0,
-      totalTrades: 0,
-      totalCoursesCompleted: 0,
-      totalChallengesCompleted: 0,
-      winRate: 0.0,
-      lastActivityDate: null,
-    );
-  }
+  // ── Profile ─────────────────────────────────────────────────────────────
 
   Future<void> _onLoadProfile(LoadProfile event, Emitter<SocialState> emit) async {
-    emit(state.copyWith(status: SocialStatus.loading));
+    emit(state.copyWith(isProfileLoading: true, status: SocialStatus.loading));
     try {
       final profile = await repository.getProfile(event.uid);
+
+      // If the backend has a dummy name, sync a real name from Firebase Auth.
+      UserProfile finalProfile = profile;
+      if (_isDummyName(profile.username)) {
+        final realName = _resolveUsername();
+        if (!_isDummyName(realName)) {
+          // Fire-and-forget: push to backend + update Firebase Auth
+          repository.updateProfile(event.uid, username: realName).catchError((_) => profile);
+          FirebaseAuth.instance.currentUser?.updateDisplayName(realName).catchError((_) {});
+          finalProfile = profile.copyWith(username: realName);
+        }
+      }
+
+      // Fetch social graph (non-critical — silently ignore errors)
       Set<String> followingSet = {};
       int followersCount = 0;
       int followingCount = 0;
@@ -176,27 +208,46 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         followingCount = followingSet.length;
         friends = await repository.getFriends(event.uid);
       } catch (_) {}
-      
+
       emit(state.copyWith(
         status: SocialStatus.loaded,
-        myProfile: profile,
+        isProfileLoading: false,
+        myProfile: finalProfile,
         following: followingSet,
         followersCount: followersCount,
         followingCount: followingCount,
         friendsList: friends,
       ));
-    } catch (e) {
-      // Fallback to local Firebase Auth profile so the screen is always usable
+    } catch (_) {
+      // Backend unreachable — build a local profile from Firebase Auth
       emit(state.copyWith(
         status: SocialStatus.loaded,
-        myProfile: _buildLocalProfile(event.uid),
+        isProfileLoading: false,
+        myProfile: UserProfile(
+          firebaseUid: event.uid,
+          username: _resolveUsername(),
+          avatarUrl: FirebaseAuth.instance.currentUser?.photoURL,
+          bio: null,
+          totalXp: 0,
+          weeklyXp: 0,
+          level: 1,
+          currentStreak: 0,
+          longestStreak: 0,
+          totalTrades: 0,
+          totalCoursesCompleted: 0,
+          totalChallengesCompleted: 0,
+          winRate: 0.0,
+          lastActivityDate: null,
+        ),
       ));
     }
   }
 
+  // ── Leaderboard ─────────────────────────────────────────────────────────
+
   Future<void> _onLoadLeaderboard(LoadLeaderboard event, Emitter<SocialState> emit) async {
     emit(state.copyWith(
-      status: SocialStatus.loading,
+      isLeaderboardLoading: true,
       leaderboardType: event.type,
       leaderboardPeriod: event.period,
     ));
@@ -205,21 +256,56 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         type: event.type,
         period: event.period,
       );
-      emit(state.copyWith(status: SocialStatus.loaded, leaderboard: leaderboard));
+
+      // Fix the current user's name in the leaderboard if the backend still
+      // has a dummy Trader_xxx. We already know the correct name locally.
+      final myUid = FirebaseAuth.instance.currentUser?.uid;
+      final correctedName = _resolveUsername();
+      final correctedLeaderboard = leaderboard.map((entry) {
+        if (entry.firebaseUid == myUid && _isDummyName(entry.username) && !_isDummyName(correctedName)) {
+          return LeaderboardEntry(
+            firebaseUid: entry.firebaseUid,
+            username: correctedName,
+            avatarUrl: entry.avatarUrl,
+            level: entry.level,
+            totalXp: entry.totalXp,
+            weeklyXp: entry.weeklyXp,
+            currentStreak: entry.currentStreak,
+            totalTrades: entry.totalTrades,
+            winRate: entry.winRate,
+            rank: entry.rank,
+          );
+        }
+        return entry;
+      }).toList();
+
+      emit(state.copyWith(
+        status: SocialStatus.loaded,
+        isLeaderboardLoading: false,
+        leaderboard: correctedLeaderboard,
+      ));
     } catch (e) {
-      emit(state.copyWith(status: SocialStatus.loaded, leaderboard: []));
+      emit(state.copyWith(
+        status: SocialStatus.loaded,
+        isLeaderboardLoading: false,
+        leaderboard: [],
+      ));
     }
   }
 
+  // ── Feed ─────────────────────────────────────────────────────────────────
+
   Future<void> _onLoadFeed(LoadFeed event, Emitter<SocialState> emit) async {
-    emit(state.copyWith(status: SocialStatus.loading));
+    emit(state.copyWith(isFeedLoading: true));
     try {
       final feed = await repository.getFeed(event.uid);
-      emit(state.copyWith(status: SocialStatus.loaded, feed: feed));
+      emit(state.copyWith(status: SocialStatus.loaded, isFeedLoading: false, feed: feed));
     } catch (e) {
-      emit(state.copyWith(status: SocialStatus.loaded, feed: []));
+      emit(state.copyWith(status: SocialStatus.loaded, isFeedLoading: false, feed: []));
     }
   }
+
+  // ── Search ───────────────────────────────────────────────────────────────
 
   Future<void> _onSearchUsers(SearchUsers event, Emitter<SocialState> emit) async {
     if (event.query.trim().isEmpty) {
@@ -234,6 +320,8 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
       emit(state.copyWith(searchResults: [], isSearching: false));
     }
   }
+
+  // ── Follow / Unfollow ────────────────────────────────────────────────────
 
   Future<void> _onFollowUser(FollowUser event, Emitter<SocialState> emit) async {
     final newFollowing = Set<String>.from(state.following)..add(event.targetUid);
@@ -281,16 +369,20 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
     }
   }
 
+  // ── Update Profile ───────────────────────────────────────────────────────
+
   Future<void> _onUpdateProfile(UpdateProfile event, Emitter<SocialState> emit) async {
     try {
       final updated = await repository.updateProfile(
         event.uid,
-        displayName: event.displayName,
+        username: event.username,
         bio: event.bio,
       );
       emit(state.copyWith(myProfile: updated));
     } catch (_) {}
   }
+
+  // ── Like / Unlike ────────────────────────────────────────────────────────
 
   Future<void> _onLikePost(LikePost event, Emitter<SocialState> emit) async {
     // Optimistic UI update

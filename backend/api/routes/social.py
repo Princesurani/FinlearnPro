@@ -16,14 +16,14 @@ router = APIRouter()
 
 @router.get("/search", response_model=List[LeaderboardEntry])
 async def search_users(
-    q: str = Query(..., min_length=1, description="Search query for display name"),
+    q: str = Query(..., min_length=1, description="Search query for username"),
     limit: int = Query(20, le=50),
     db: AsyncSession = Depends(get_db)
 ):
-    """Search users by display name (case-insensitive partial match)"""
+    """Search users by username (case-insensitive partial match)"""
     stmt = (
         select(DbUserProfile)
-        .where(DbUserProfile.display_name.ilike(f"%{q}%"))
+        .where(DbUserProfile.username.ilike(f"%{q}%"))
         .order_by(desc(DbUserProfile.total_xp))
         .limit(limit)
     )
@@ -33,7 +33,7 @@ async def search_users(
     return [
         LeaderboardEntry(
             firebase_uid=p.firebase_uid,
-            display_name=p.display_name,
+            username=p.username,
             avatar_url=p.avatar_url,
             level=p.level,
             total_xp=p.total_xp,
@@ -61,7 +61,7 @@ async def get_profile(uid: str, db: AsyncSession = Depends(get_db)):
         # Auto-create if doesn't exist
         profile = DbUserProfile(
             firebase_uid=uid,
-            display_name=f"Trader_{uid[:6]}",
+            username=f"Trader_{uid[:6]}",
             total_xp=0,
             weekly_xp=0,
             level=1
@@ -72,7 +72,7 @@ async def get_profile(uid: str, db: AsyncSession = Depends(get_db)):
         
     return UserProfileResponse(
         firebase_uid=profile.firebase_uid,
-        display_name=profile.display_name,
+        username=profile.username,
         avatar_url=profile.avatar_url,
         bio=profile.bio,
         total_xp=profile.total_xp,
@@ -96,8 +96,8 @@ async def update_profile(uid: str, req: UserProfileUpdateRequest, db: AsyncSessi
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found")
         
-    if req.display_name is not None:
-        profile.display_name = req.display_name
+    if req.username is not None:
+        profile.username = req.username
     if req.avatar_url is not None:
         profile.avatar_url = req.avatar_url
     if req.bio is not None:
@@ -108,7 +108,7 @@ async def update_profile(uid: str, req: UserProfileUpdateRequest, db: AsyncSessi
     
     return UserProfileResponse(
         firebase_uid=profile.firebase_uid,
-        display_name=profile.display_name,
+        username=profile.username,
         avatar_url=profile.avatar_url,
         bio=profile.bio,
         total_xp=profile.total_xp,
@@ -154,7 +154,7 @@ async def get_leaderboard(
     for idx, p in enumerate(profiles):
         leaderboard.append(LeaderboardEntry(
             firebase_uid=p.firebase_uid,
-            display_name=p.display_name,
+            username=p.username,
             avatar_url=p.avatar_url,
             level=p.level,
             total_xp=p.total_xp,
@@ -255,7 +255,7 @@ async def get_friends(uid: str, db: AsyncSession = Depends(get_db)):
     for p in profiles:
         friends.append(LeaderboardEntry(
             firebase_uid=p.firebase_uid,
-            display_name=p.display_name,
+            username=p.username,
             avatar_url=p.avatar_url,
             level=p.level,
             total_xp=p.total_xp,
@@ -305,7 +305,7 @@ async def share_trade(req: TradeShareRequest, uid: str = Query(...), db: AsyncSe
     return TradeShareResponse(
         id=share.id,
         firebase_uid=uid,
-        author_name=profile.display_name,
+        author_name=profile.username,
         author_avatar=profile.avatar_url,
         author_level=profile.level,
         trade_id=share.trade_id,
@@ -362,7 +362,7 @@ async def get_feed(uid: str, page: int = 1, limit: int = 20, db: AsyncSession = 
         response.append(TradeShareResponse(
             id=share.id,
             firebase_uid=share.firebase_uid,
-            author_name=profile.display_name,
+            author_name=profile.username,
             author_avatar=profile.avatar_url,
             author_level=profile.level,
             trade_id=share.trade_id,
@@ -438,7 +438,7 @@ async def award_xp(uid: str = Query(...), xp: int = Query(...), db: AsyncSession
     if not profile:
         profile = DbUserProfile(
             firebase_uid=uid,
-            display_name=f"Trader_{uid[:6]}",
+            username=f"Trader_{uid[:6]}",
             total_xp=xp,
             weekly_xp=xp,
             level=calculate_level(xp)

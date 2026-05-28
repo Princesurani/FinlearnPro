@@ -31,7 +31,9 @@ class InstrumentGrid2x2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxVisible = showSeeMore && instruments.length > 3 ? 3 : instruments.length;
+    final maxVisible = showSeeMore && instruments.length > 3
+        ? 3
+        : instruments.length;
     final visible = instruments.take(maxVisible).toList();
     final hasMore = showSeeMore && instruments.length > 3;
     final cellCount = hasMore ? 4 : visible.length;
@@ -98,9 +100,12 @@ class _StockCell extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.sm),
         decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.6),
+          color: AppColors.white.withValues(alpha: 0.75),
           borderRadius: AppSpacing.borderRadiusMD,
-          border: Border.all(color: AppColors.white.withValues(alpha: 0.3), width: 1),
+          border: Border.all(
+            color: AppColors.white.withValues(alpha: 0.4),
+            width: 1,
+          ),
           boxShadow: const [
             BoxShadow(
               color: Color(0x08000000),
@@ -292,9 +297,12 @@ class _SeeMoreCell extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.6),
+          color: AppColors.white.withValues(alpha: 0.75),
           borderRadius: AppSpacing.borderRadiusMD,
-          border: Border.all(color: AppColors.white.withValues(alpha: 0.3), width: 1),
+          border: Border.all(
+            color: AppColors.white.withValues(alpha: 0.4),
+            width: 1,
+          ),
           boxShadow: const [
             BoxShadow(
               color: Color(0x08000000),

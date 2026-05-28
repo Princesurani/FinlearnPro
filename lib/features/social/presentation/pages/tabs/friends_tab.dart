@@ -265,7 +265,7 @@ class _FriendsTabState extends State<FriendsTab> {
                 radius: 22,
                 backgroundColor: AppColors.primary.withValues(alpha: 0.12),
                 child: Text(
-                  user.displayName[0].toUpperCase(),
+                  user.username[0].toUpperCase(),
                   style: AppTypography.labelLarge.copyWith(color: AppColors.primary),
                 ),
               ),
@@ -274,7 +274,7 @@ class _FriendsTabState extends State<FriendsTab> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(user.displayName, style: AppTypography.bodyMedium),
+                    Text(user.username, style: AppTypography.bodyMedium),
                     Row(
                       children: [
                         Text('Lvl ${user.level}', style: AppTypography.bodyXS),

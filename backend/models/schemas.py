@@ -90,7 +90,7 @@ class Timeframe(str, Enum):
 
 class UserProfileResponse(BaseModel):
     firebase_uid: str
-    display_name: str
+    username: str
     avatar_url: Optional[str] = None
     bio: Optional[str] = None
     total_xp: int
@@ -105,13 +105,13 @@ class UserProfileResponse(BaseModel):
     last_activity_date: Optional[str] = None
 
 class UserProfileUpdateRequest(BaseModel):
-    display_name: Optional[str] = None
+    username: Optional[str] = None
     avatar_url: Optional[str] = None
     bio: Optional[str] = None
 
 class LeaderboardEntry(BaseModel):
     firebase_uid: str
-    display_name: str
+    username: str
     avatar_url: Optional[str] = None
     level: int
     total_xp: int

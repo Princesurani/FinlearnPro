@@ -37,10 +37,13 @@ class _SocialProfileView extends StatefulWidget {
 }
 
 class _SocialProfileViewState extends State<_SocialProfileView>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late TabController _tabController;
 
   static const _tabLabels = ['Profile', 'Leaderboard', 'Feed', 'Friends'];
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -56,6 +59,7 @@ class _SocialProfileViewState extends State<_SocialProfileView>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     return Scaffold(
       backgroundColor: AppColors.transparent,
       body: Column(
@@ -123,7 +127,7 @@ class _SocialProfileViewState extends State<_SocialProfileView>
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: AppColors.white.withValues(alpha: 0.5),
+            color: AppColors.textSecondary.withValues(alpha: 0.08),
             width: 1,
           ),
         ),

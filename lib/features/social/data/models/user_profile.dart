@@ -1,6 +1,6 @@
 class UserProfile {
   final String firebaseUid;
-  final String displayName;
+  final String username;
   final String? avatarUrl;
   final String? bio;
   final int totalXp;
@@ -16,7 +16,7 @@ class UserProfile {
 
   UserProfile({
     required this.firebaseUid,
-    required this.displayName,
+    required this.username,
     this.avatarUrl,
     this.bio,
     required this.totalXp,
@@ -34,7 +34,7 @@ class UserProfile {
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
       firebaseUid: json['firebase_uid'] ?? '',
-      displayName: json['display_name'] ?? 'Trader',
+      username: json['username'] ?? 'Trader',
       avatarUrl: json['avatar_url'],
       bio: json['bio'],
       totalXp: json['total_xp'] ?? 0,
@@ -47,6 +47,25 @@ class UserProfile {
       totalChallengesCompleted: json['total_challenges_completed'] ?? 0,
       winRate: (json['win_rate'] ?? 0.0).toDouble(),
       lastActivityDate: json['last_activity_date'],
+    );
+  }
+
+  UserProfile copyWith({String? username, String? avatarUrl, String? bio}) {
+    return UserProfile(
+      firebaseUid: firebaseUid,
+      username: username ?? this.username,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      bio: bio ?? this.bio,
+      totalXp: totalXp,
+      weeklyXp: weeklyXp,
+      level: level,
+      currentStreak: currentStreak,
+      longestStreak: longestStreak,
+      totalTrades: totalTrades,
+      totalCoursesCompleted: totalCoursesCompleted,
+      totalChallengesCompleted: totalChallengesCompleted,
+      winRate: winRate,
+      lastActivityDate: lastActivityDate,
     );
   }
 }

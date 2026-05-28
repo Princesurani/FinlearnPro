@@ -144,7 +144,7 @@ class DbUserProfile(Base):
     __tablename__ = "user_profiles"
     
     firebase_uid = Column(String(128), ForeignKey("users.firebase_uid"), primary_key=True, index=True)
-    display_name = Column(String(100), nullable=False, default="Trader")
+    username = Column(String(100), nullable=False, default="Trader")
     avatar_url = Column(String(500), nullable=True)
     bio = Column(String(300), nullable=True)
     

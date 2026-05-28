@@ -1,9 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/domain/market_data.dart';
 import '../../../../shared/navigation/top_navigation_shell.dart';
+import '../../../market/bloc/market_bloc.dart';
 
-class TradingJournalScreen extends StatelessWidget {
+class TradingJournalScreen extends StatefulWidget {
   const TradingJournalScreen({super.key});
+
+  @override
+  State<TradingJournalScreen> createState() => _TradingJournalScreenState();
+}
+
+class _TradingJournalScreenState extends State<TradingJournalScreen> {
+  late final MarketBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    _bloc = MarketBloc(firebaseUid: uid);
+    // MarketBloc's LoadInstruments event (dispatched on init) triggers LoadOrders
+    // We can explicitly request LoadOrders just in case
+    _bloc.add(LoadOrders());
+  }
+
+  @override
+  void dispose() {
+    _bloc.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,63 +75,109 @@ class TradingJournalScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildInsightsCard(),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Recent Trade Reviews',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+              child: StreamBuilder<MarketState>(
+                stream: _bloc.stream,
+                initialData: _bloc.state,
+                builder: (context, snapshot) {
+                  final state = snapshot.data!;
+                  final filledOrders = state.orders.where((o) => o.status == 'filled').toList();
+
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildInsightsCard(),
+                        const SizedBox(height: 24),
+                        const Text(
+                          'Recent Trade Reviews',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        if (state.status == MarketStatus.loading && filledOrders.isEmpty)
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 40),
+                              child: CircularProgressIndicator(color: AppColors.primary),
+                            ),
+                          )
+                        else if (filledOrders.isEmpty)
+                          _buildEmptyState()
+                        else
+                          ...filledOrders.map((o) => _buildDynamicEntry(o, state)),
+                        const SizedBox(height: 40),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    _buildJournalEntry(
-                      symbol: 'AAPL',
-                      type: 'BUY',
-                      profit: '+\$145.20',
-                      isWin: true,
-                      date: 'Today, 10:30 AM',
-                      emotion: 'Confident',
-                      emotionIcon: Icons.emoji_emotions_rounded,
-                      emotionColor: AppColors.success,
-                      lesson: 'Followed my moving average crossover strategy perfectly.',
-                    ),
-                    _buildJournalEntry(
-                      symbol: 'TSLA',
-                      type: 'SELL',
-                      profit: '-\$85.50',
-                      isWin: false,
-                      date: 'Yesterday, 2:15 PM',
-                      emotion: 'FOMO',
-                      emotionIcon: Icons.warning_rounded,
-                      emotionColor: AppColors.error,
-                      lesson: 'Chased a breakout without waiting for confirmation. Hit stop-loss.',
-                    ),
-                    _buildJournalEntry(
-                      symbol: 'RELIANCE',
-                      type: 'BUY',
-                      profit: '+\$210.00',
-                      isWin: true,
-                      date: 'Oct 12, 11:00 AM',
-                      emotion: 'Patient',
-                      emotionIcon: Icons.self_improvement_rounded,
-                      emotionColor: AppColors.oceanTeal,
-                      lesson: 'Waited for the pullback to support level before entering.',
-                    ),
-                    const SizedBox(height: 40),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40),
+        child: Column(
+          children: [
+            const Icon(Icons.menu_book_rounded, size: 48, color: AppColors.textTertiary),
+            const SizedBox(height: 16),
+            const Text(
+              'No trades reviewed yet',
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDynamicEntry(Order order, MarketState state) {
+    // Deterministic mock based on order ID
+    final hash = order.id.hashCode.abs();
+    
+    final isWin = hash % 3 != 0; // 66% win rate
+    final profitAmt = (hash % 500) + 10.0;
+    final currency = state.activeMarket.currencySymbol;
+    final profitStr = isWin ? '+$currency${profitAmt.toStringAsFixed(2)}' : '-$currency${profitAmt.toStringAsFixed(2)}';
+    
+    final emotions = [
+      {'name': 'Patient', 'icon': Icons.self_improvement_rounded, 'color': AppColors.oceanTeal},
+      {'name': 'Confident', 'icon': Icons.emoji_emotions_rounded, 'color': AppColors.success},
+      {'name': 'FOMO', 'icon': Icons.warning_rounded, 'color': AppColors.error},
+      {'name': 'Anxious', 'icon': Icons.sentiment_dissatisfied_rounded, 'color': AppColors.amber},
+    ];
+    final emotion = emotions[hash % emotions.length];
+
+    final lessons = [
+      'Waited for the pullback to support level before entering.',
+      'Followed my moving average crossover strategy perfectly.',
+      'Chased a breakout without waiting for confirmation. Hit stop-loss.',
+      'Sized too large and panicked during a normal drawdown.',
+    ];
+    final lesson = lessons[hash % lessons.length];
+
+    final dt = order.filledAt ?? order.createdAt;
+    final dateStr = '${dt.day}/${dt.month}/${dt.year} ${dt.hour}:${dt.minute.toString().padLeft(2, '0')}';
+
+    return _buildJournalEntry(
+      symbol: order.symbol,
+      type: order.side.toUpperCase(),
+      profit: profitStr,
+      isWin: isWin,
+      date: dateStr,
+      emotion: emotion['name'] as String,
+      emotionIcon: emotion['icon'] as IconData,
+      emotionColor: emotion['color'] as Color,
+      lesson: lesson,
     );
   }
 

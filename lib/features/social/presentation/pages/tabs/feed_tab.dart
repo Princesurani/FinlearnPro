@@ -12,7 +12,7 @@ class FeedTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SocialBloc, SocialState>(
       builder: (context, state) {
-        if (state.status == SocialStatus.loading && state.feed.isEmpty) {
+        if (state.isFeedLoading && state.feed.isEmpty) {
           return const Center(child: CircularProgressIndicator(color: AppColors.primary));
         }
 

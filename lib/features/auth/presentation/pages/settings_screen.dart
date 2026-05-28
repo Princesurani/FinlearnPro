@@ -1,7 +1,8 @@
-import 'package:finnn/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../data/auth_service.dart';
+import '../../../social/data/repositories/social_repository.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -111,7 +112,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   _buildMenuOption(
-                    title: 'Edit Profile',
+                    title: 'Edit Username',
                     icon: Icons.person_outline_rounded,
                     color: AppColors.primary,
                     onTap: () => _showEditProfileDialog(context, user),
@@ -251,11 +252,11 @@ class SettingsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Edit Profile'),
+        title: const Text('Edit Username'),
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(
-            labelText: 'Display Name',
+            labelText: 'Username',
             border: OutlineInputBorder(),
           ),
         ),
@@ -269,6 +270,9 @@ class SettingsScreen extends StatelessWidget {
             onPressed: () async {
               if (controller.text.trim().isNotEmpty && user != null) {
                 await user.updateDisplayName(controller.text.trim());
+                try {
+                  await SocialRepository().updateProfile(user.uid, username: controller.text.trim());
+                } catch (_) {}
                 if (ctx.mounted) {
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(

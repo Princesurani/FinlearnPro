@@ -139,7 +139,7 @@ class _MarketScreenState extends State<MarketScreen>
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: AppColors.white.withValues(alpha: 0.5),
+            color: AppColors.textSecondary.withValues(alpha: 0.08),
             width: 1,
           ),
         ),

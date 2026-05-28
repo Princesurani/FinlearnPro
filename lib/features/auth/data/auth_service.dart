@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../social/data/repositories/social_repository.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -43,6 +44,12 @@ class AuthService {
       // Update display name
       if (credential.user != null) {
         await credential.user!.updateDisplayName(name);
+        try {
+          // Sync with the backend immediately
+          await SocialRepository().updateProfile(credential.user!.uid, username: name);
+        } catch (_) {
+          // If backend fails here, the fallback logic in SocialBloc will fix it later
+        }
       }
 
       return credential;
@@ -75,7 +82,21 @@ class AuthService {
       );
 
       // Sign in to Firebase with the Google [UserCredential]
-      return await _auth.signInWithCredential(credential);
+      final userCredential = await _auth.signInWithCredential(credential);
+      
+      if (userCredential.user != null && userCredential.user!.displayName != null) {
+        try {
+          // Sync with the backend immediately
+          await SocialRepository().updateProfile(
+            userCredential.user!.uid, 
+            username: userCredential.user!.displayName,
+          );
+        } catch (_) {
+          // If backend fails here, the fallback logic in SocialBloc will fix it later
+        }
+      }
+
+      return userCredential;
     } on FirebaseAuthException catch (e) {
       throw _handleFirebaseAuthError(e);
     } catch (e) {

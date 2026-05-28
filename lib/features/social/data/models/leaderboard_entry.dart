@@ -1,6 +1,6 @@
 class LeaderboardEntry {
   final String firebaseUid;
-  final String displayName;
+  final String username;
   final String? avatarUrl;
   final int level;
   final int totalXp;
@@ -12,7 +12,7 @@ class LeaderboardEntry {
 
   LeaderboardEntry({
     required this.firebaseUid,
-    required this.displayName,
+    required this.username,
     this.avatarUrl,
     required this.level,
     required this.totalXp,
@@ -26,7 +26,7 @@ class LeaderboardEntry {
   factory LeaderboardEntry.fromJson(Map<String, dynamic> json) {
     return LeaderboardEntry(
       firebaseUid: json['firebase_uid'] ?? '',
-      displayName: json['display_name'] ?? 'Trader',
+      username: json['username'] ?? 'Trader',
       avatarUrl: json['avatar_url'],
       level: json['level'] ?? 1,
       totalXp: json['total_xp'] ?? 0,

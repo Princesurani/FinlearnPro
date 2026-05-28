@@ -50,9 +50,9 @@ class HomeTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = AuthService().currentUser;
-    final displayName = user?.displayName ?? 'User';
+    final username = user?.displayName ?? 'User';
     // Extract first name only
-    final firstName = displayName.split(' ').first;
+    final firstName = username.split(' ').first;
 
     return TopNavigationShell(
       title: Column(

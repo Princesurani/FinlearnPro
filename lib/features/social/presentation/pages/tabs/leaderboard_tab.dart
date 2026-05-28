@@ -14,7 +14,7 @@ class LeaderboardTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SocialBloc, SocialState>(
       builder: (context, state) {
-        if (state.status == SocialStatus.loading && state.leaderboard.isEmpty) {
+        if (state.isLeaderboardLoading && state.leaderboard.isEmpty) {
           return const Center(child: CircularProgressIndicator(color: AppColors.primary));
         }
 
@@ -145,7 +145,7 @@ class LeaderboardTab extends StatelessWidget {
                                       ? AppColors.backgroundPrimary 
                                       : AppColors.primary.withValues(alpha: 0.12),
                                   child: Text(
-                                    entry.displayName[0].toUpperCase(),
+                                    entry.username[0].toUpperCase(),
                                     style: AppTypography.labelLarge.copyWith(color: AppColors.primary),
                                   ),
                                 ),
@@ -160,7 +160,7 @@ class LeaderboardTab extends StatelessWidget {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            entry.displayName,
+                                            entry.username,
                                             style: AppTypography.labelLarge,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
