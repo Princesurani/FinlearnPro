@@ -6,7 +6,6 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/navigation/top_navigation_shell.dart';
 import '../../bloc/social_bloc.dart';
-import '../../data/repositories/social_repository.dart';
 import 'tabs/leaderboard_tab.dart';
 import 'tabs/feed_tab.dart';
 import 'tabs/friends_tab.dart';
@@ -17,15 +16,7 @@ class SocialProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uid = FirebaseAuth.instance.currentUser?.uid ?? 'unknown';
-
-    return BlocProvider(
-      create: (context) => SocialBloc(repository: SocialRepository())
-        ..add(LoadProfile(uid))
-        ..add(LoadLeaderboard())
-        ..add(LoadFeed(uid)),
-      child: const _SocialProfileView(),
-    );
+    return const _SocialProfileView();
   }
 }
 
@@ -49,6 +40,16 @@ class _SocialProfileViewState extends State<_SocialProfileView>
   void initState() {
     super.initState();
     _tabController = TabController(length: _tabLabels.length, vsync: this);
+    
+    // Only load heavy social features when the user visits the social section
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      if (uid.isNotEmpty && mounted) {
+        final bloc = context.read<SocialBloc>();
+        if (bloc.state.leaderboard.isEmpty) bloc.add(LoadLeaderboard());
+        if (bloc.state.feed.isEmpty) bloc.add(LoadFeed(uid));
+      }
+    });
   }
 
   @override

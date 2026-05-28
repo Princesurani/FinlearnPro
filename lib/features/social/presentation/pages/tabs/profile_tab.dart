@@ -66,10 +66,17 @@ class _ProfileTabState extends State<ProfileTab>
           );
         }
 
-        return CustomScrollView(
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
+        return RefreshIndicator(
+          color: AppColors.primary,
+          onRefresh: () async {
+            if (profile.firebaseUid.isNotEmpty) {
+              context.read<SocialBloc>().add(LoadProfile(profile.firebaseUid));
+            }
+          },
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
           slivers: [
             SliverToBoxAdapter(child: const SizedBox(height: 24)),
 
@@ -250,8 +257,9 @@ class _ProfileTabState extends State<ProfileTab>
 
             const SliverToBoxAdapter(child: SizedBox(height: 120)),
           ],
-        );
-      },
+        ),
+      );
+    },
     );
   }
 

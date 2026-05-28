@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -19,6 +20,9 @@ import '../../features/learning/presentation/pages/course_details_screen.dart';
 import '../../features/learning/bloc/learning_bloc_provider.dart';
 import '../widgets/aurora_background.dart';
 import '../../features/learning/bloc/learning_bloc.dart';
+import '../../features/social/bloc/social_bloc.dart';
+import '../../features/social/data/repositories/social_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainNavigationShell extends StatefulWidget {
   const MainNavigationShell({super.key, required this.firebaseUid});
@@ -57,6 +61,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     ),
   ];
 
+  late MarketBloc _marketBloc;
+  late LearningBloc _learningBloc;
+  late SocialBloc _socialBloc;
+  StreamSubscription<LearningState>? _learningSub;
+  int? _lastLocalXp;
+
   @override
   void initState() {
     super.initState();
@@ -68,16 +78,33 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     _marketBloc = MarketBloc(firebaseUid: widget.firebaseUid);
     _marketBloc.resume();
     _learningBloc = LearningBloc(userId: widget.firebaseUid);
+    
+    _socialBloc = SocialBloc(repository: SocialRepository())
+      ..add(LoadProfile(widget.firebaseUid));
+      
+    // Listen to local XP changes and sync Social profile automatically
+    _learningSub = _learningBloc.stream.listen((state) {
+      final currentXp = state.userProgress.totalXp;
+      if (_lastLocalXp != null && currentXp > _lastLocalXp!) {
+        // Add a delay to allow the backend HTTP request to complete saving the XP 
+        // before we fetch the updated profile back from Postgres.
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          if (mounted) {
+            _socialBloc.add(LoadProfile(widget.firebaseUid));
+          }
+        });
+      }
+      _lastLocalXp = currentXp;
+    });
   }
-
-  late MarketBloc _marketBloc;
-  late LearningBloc _learningBloc;
 
   @override
   void dispose() {
     _pageController.dispose();
     _marketBloc.pause();
     _learningBloc.dispose();
+    _socialBloc.close();
+    _learningSub?.cancel();
     super.dispose();
   }
 
@@ -113,9 +140,11 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       value: SystemUiOverlayStyle.light.copyWith(
         statusBarColor: AppColors.transparent,
       ),
-      child: LearningBlocProvider(
-        bloc: _learningBloc,
-        child: Scaffold(
+      child: BlocProvider.value(
+        value: _socialBloc,
+        child: LearningBlocProvider(
+          bloc: _learningBloc,
+          child: Scaffold(
           backgroundColor: AppColors.backgroundPrimary,
           extendBody: true,
           body: Stack(
@@ -274,6 +303,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

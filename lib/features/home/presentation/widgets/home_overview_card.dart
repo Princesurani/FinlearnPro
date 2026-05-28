@@ -6,6 +6,8 @@ import '../../../learning/data/learning_models.dart';
 import '../../../learning/bloc/learning_bloc.dart';
 import '../../../market/bloc/market_bloc.dart';
 import '../../../learning/bloc/learning_bloc_provider.dart';
+import '../../../social/bloc/social_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeOverviewCard extends StatelessWidget {
   const HomeOverviewCard({super.key, required this.marketBloc});
@@ -96,48 +98,62 @@ class _UnifiedOverviewCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF2962FF), Color(0xFF2962FF), Color(0xFF023E8A)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Column(
-          children: [
-            // Top Section: Level, XP, Progress Ring
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: BlocBuilder<SocialBloc, SocialState>(
+        builder: (context, socialState) {
+          final profile = socialState.myProfile;
+          final displayXp = profile?.totalXp ?? progress.totalXp;
+          final displayLevel = profile?.level ?? progress.currentLevel;
+          final displayStreak = profile?.currentStreak ?? progress.currentStreak;
+          
+          final nextLevelXp = displayLevel * displayLevel * 100;
+          final currentLevelBaseXp = (displayLevel - 1) * (displayLevel - 1) * 100;
+          final xpToNextLevel = nextLevelXp - displayXp;
+          final levelProgress = (nextLevelXp - currentLevelBaseXp) > 0 
+              ? ((displayXp - currentLevelBaseXp) / (nextLevelXp - currentLevelBaseXp)).clamp(0.0, 1.0) 
+              : 0.0;
+
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF2962FF), Color(0xFF2962FF), Color(0xFF023E8A)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Column(
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                // Top Section: Level, XP, Progress Ring
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '${progress.totalXp}',
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              height: 1.0,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          const Text(
-                            'XP',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white70,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                '$displayXp',
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  height: 1.0,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Text(
+                                'XP',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -160,7 +176,7 @@ class _UnifiedOverviewCard extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Level ${progress.currentLevel}',
+                                  'Level $displayLevel',
                                   style: const TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -174,7 +190,7 @@ class _UnifiedOverviewCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '${progress.xpToNextLevel} XP to Level ${progress.currentLevel + 1}',
+                        '$xpToNextLevel XP to Level ${displayLevel + 1}',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -207,7 +223,7 @@ class _UnifiedOverviewCard extends StatelessWidget {
                       CustomPaint(
                         size: const Size(56, 56),
                         painter: _ProgressRingPainter(
-                          progress: progress.levelProgress,
+                          progress: levelProgress,
                           backgroundColor: Colors.white.withValues(alpha: 0.2),
                           foregroundColor: Colors.white,
                           strokeWidth: 5,
@@ -217,7 +233,7 @@ class _UnifiedOverviewCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            '${(progress.levelProgress * 100).toInt()}%',
+                            '${(levelProgress * 100).toInt()}%',
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -347,7 +363,7 @@ class _UnifiedOverviewCard extends StatelessWidget {
                   _buildStatItem(
                     icon: Icons.local_fire_department_rounded,
                     label: 'Streak',
-                    value: '${progress.currentStreak}d',
+                    value: '${displayStreak}d',
                     valueColor: AppColors.goldenYellow,
                   ),
                 ],
@@ -355,8 +371,10 @@ class _UnifiedOverviewCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
+    },
+    ),
+  );
   }
 
   Widget _buildStatItem({
