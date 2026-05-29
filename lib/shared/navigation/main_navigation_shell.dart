@@ -88,7 +88,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       if (_lastLocalXp != null && currentXp > _lastLocalXp!) {
         // Add a delay to allow the backend HTTP request to complete saving the XP 
         // before we fetch the updated profile back from Postgres.
-        Future.delayed(const Duration(milliseconds: 1500), () {
+        Future.delayed(const Duration(milliseconds: 3000), () {
           if (mounted) {
             _socialBloc.add(LoadProfile(widget.firebaseUid));
           }

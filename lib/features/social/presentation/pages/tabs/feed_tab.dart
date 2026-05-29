@@ -18,45 +18,58 @@ class FeedTab extends StatelessWidget {
 
         final feed = state.feed;
 
-        if (feed.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppColors.electricBlue.withValues(alpha: 0.08),
-                    shape: BoxShape.circle,
+        return RefreshIndicator(
+          onRefresh: () async {
+            final uid = context.read<SocialBloc>().state.myProfile?.firebaseUid ?? '';
+            if (uid.isNotEmpty) {
+              context.read<SocialBloc>().add(LoadFeed(uid));
+              await Future.delayed(const Duration(milliseconds: 500));
+            }
+          },
+          color: AppColors.primary,
+          child: CustomScrollView(
+            slivers: [
+              if (feed.isEmpty)
+                SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppColors.electricBlue.withValues(alpha: 0.08),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.feed_outlined, size: 48, color: AppColors.electricBlue),
+                        ),
+                        const SizedBox(height: 20),
+                        Text('No trades shared yet', style: AppTypography.h5),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Text(
+                            'Follow traders to see their activity, or share your own trades from the Markets tab!',
+                            textAlign: TextAlign.center,
+                            style: AppTypography.bodySmall,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: const Icon(Icons.feed_outlined, size: 48, color: AppColors.electricBlue),
-                ),
-                const SizedBox(height: 20),
-                Text('No trades shared yet', style: AppTypography.h5),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Text(
-                    'Follow traders to see their activity, or share your own trades from the Markets tab!',
-                    textAlign: TextAlign.center,
-                    style: AppTypography.bodySmall,
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.screenPaddingHorizontal, 20,
+                    AppSpacing.screenPaddingHorizontal, 100,
                   ),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.screenPaddingHorizontal, 20,
-            AppSpacing.screenPaddingHorizontal, 100,
-          ),
-          itemCount: feed.length,
-          itemBuilder: (context, index) {
-            final post = feed[index];
-            final isBuy = post.side.toLowerCase() == 'buy';
-            final sideColor = isBuy ? AppColors.profitGreen : AppColors.lossRed;
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final post = feed[index];
+                        final isBuy = post.side.toLowerCase() == 'buy';
+                        final sideColor = isBuy ? AppColors.profitGreen : AppColors.lossRed;
 
             return Container(
               margin: const EdgeInsets.only(bottom: 16),
@@ -178,7 +191,13 @@ class FeedTab extends StatelessWidget {
                 ],
               ),
             );
-          },
+                      },
+                      childCount: feed.length,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );

@@ -20,62 +20,73 @@ class LeaderboardTab extends StatelessWidget {
 
         final leaderboard = state.leaderboard;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 24),
-            Padding(
-              padding: AppSpacing.screenPaddingH,
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppColors.goldenYellow.withValues(alpha: 0.15),
-                      borderRadius: AppSpacing.borderRadiusLG,
-                    ),
-                    child: const Icon(Icons.leaderboard_rounded, color: AppColors.goldenYellow),
-                  ),
-                  const SizedBox(width: 14),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<SocialBloc>().add(LoadLeaderboard());
+            // Wait a moment for UX
+            await Future.delayed(const Duration(milliseconds: 500));
+          },
+          color: AppColors.primary,
+          child: CustomScrollView(
+            slivers: [
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: AppSpacing.screenPaddingH,
+                  child: Row(
                     children: [
-                      Text('Global Leaderboard', style: AppTypography.h4),
-                      Text('Ranked by all-time XP', style: AppTypography.bodyXS.copyWith(color: AppColors.textSecondary)),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: leaderboard.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppColors.goldenYellow.withValues(alpha: 0.15),
+                          borderRadius: AppSpacing.borderRadiusLG,
+                        ),
+                        child: const Icon(Icons.leaderboard_rounded, color: AppColors.goldenYellow),
+                      ),
+                      const SizedBox(width: 14),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: AppColors.goldenYellow.withValues(alpha: 0.08),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(Icons.emoji_events_outlined, size: 48, color: AppColors.goldenYellow),
-                          ),
-                          const SizedBox(height: 16),
-                          Text('No leaderboard data yet', style: AppTypography.bodySmall),
-                          const SizedBox(height: 4),
-                          Text('Start trading to earn XP!', style: AppTypography.bodyXS),
+                          Text('Global Leaderboard', style: AppTypography.h4),
+                          Text('Ranked by all-time XP', style: AppTypography.bodyXS.copyWith(color: AppColors.textSecondary)),
                         ],
                       ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppSpacing.screenPaddingHorizontal, 0,
-                        AppSpacing.screenPaddingHorizontal, 100,
-                      ),
-                      itemCount: leaderboard.length,
-                      itemBuilder: (context, index) {
+                    ],
+                  ),
+                ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 20)),
+              if (leaderboard.isEmpty)
+                SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppColors.goldenYellow.withValues(alpha: 0.08),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.emoji_events_outlined, size: 48, color: AppColors.goldenYellow),
+                        ),
+                        const SizedBox(height: 16),
+                        Text('No leaderboard data yet', style: AppTypography.bodySmall),
+                        const SizedBox(height: 4),
+                        Text('Start trading to earn XP!', style: AppTypography.bodyXS),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.screenPaddingHorizontal, 0,
+                    AppSpacing.screenPaddingHorizontal, 100,
+                  ),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
                         final entry = leaderboard[index];
                         final isTop3 = index < 3;
                         final medalColors = [
@@ -202,9 +213,12 @@ class LeaderboardTab extends StatelessWidget {
                           ),
                         );
                       },
+                      childCount: leaderboard.length,
                     ),
-            ),
-          ],
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );

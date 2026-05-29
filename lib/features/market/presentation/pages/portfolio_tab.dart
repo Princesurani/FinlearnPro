@@ -47,9 +47,17 @@ class PortfolioTab extends StatelessWidget {
         ? 0.0
         : (totalPnl / totalInvested) * 100;
 
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 120), // Padding for floating navbar
-      children: [
+    return RefreshIndicator(
+      onRefresh: () async {
+        bloc.add(RefreshMarketData());
+        bloc.add(LoadPortfolio());
+        await Future.delayed(const Duration(milliseconds: 500));
+      },
+      color: AppColors.primary,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.only(bottom: 120), // Padding for floating navbar
+        children: [
         Padding(
           padding: const EdgeInsets.all(AppSpacing.md),
           child: _buildSummaryCard(
@@ -118,6 +126,7 @@ class PortfolioTab extends StatelessWidget {
           },
         ),
       ],
+    ),
     );
   }
 
@@ -442,9 +451,19 @@ class PortfolioTab extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+    return RefreshIndicator(
+      onRefresh: () async {
+        bloc.add(RefreshMarketData());
+        bloc.add(LoadPortfolio());
+        await Future.delayed(const Duration(milliseconds: 500));
+      },
+      color: AppColors.primary,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -504,6 +523,7 @@ class PortfolioTab extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }
