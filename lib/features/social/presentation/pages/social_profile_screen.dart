@@ -5,23 +5,28 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/navigation/top_navigation_shell.dart';
+import '../../../market/bloc/market_bloc.dart';
+import 'tabs/portfolio_tab.dart';
 import '../../bloc/social_bloc.dart';
 import 'tabs/leaderboard_tab.dart';
 import 'tabs/feed_tab.dart';
-import 'tabs/friends_tab.dart';
 import 'tabs/profile_tab.dart';
 
 class SocialProfileScreen extends StatelessWidget {
-  const SocialProfileScreen({super.key});
+  const SocialProfileScreen({super.key, required this.marketBloc});
+
+  final MarketBloc marketBloc;
 
   @override
   Widget build(BuildContext context) {
-    return const _SocialProfileView();
+    return _SocialProfileView(marketBloc: marketBloc);
   }
 }
 
 class _SocialProfileView extends StatefulWidget {
-  const _SocialProfileView();
+  const _SocialProfileView({required this.marketBloc});
+
+  final MarketBloc marketBloc;
 
   @override
   State<_SocialProfileView> createState() => _SocialProfileViewState();
@@ -31,7 +36,7 @@ class _SocialProfileViewState extends State<_SocialProfileView>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late TabController _tabController;
 
-  static const _tabLabels = ['Profile', 'Leaderboard', 'Feed', 'Friends'];
+  static const _tabLabels = ['Profile', 'Portfolio', 'Leaderboard', 'Feed'];
 
   @override
   bool get wantKeepAlive => true;
@@ -75,11 +80,19 @@ class _SocialProfileViewState extends State<_SocialProfileView>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [
-                ProfileTab(),
-                LeaderboardTab(),
-                FeedTab(),
-                FriendsTab(),
+              children: [
+                const ProfileTab(),
+                StreamBuilder<MarketState>(
+                  stream: widget.marketBloc.stream,
+                  initialData: widget.marketBloc.state,
+                  builder: (context, snapshot) => PortfolioTab(
+                    state: snapshot.data ?? MarketState.initial(),
+                    bloc: widget.marketBloc,
+                    onExplore: () {},
+                  ),
+                ),
+                const LeaderboardTab(),
+                const FeedTab(),
               ],
             ),
           ),

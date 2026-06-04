@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import desc, update, delete, func
 from db.database import get_db
-from db.models import DbUserProfile, DbFollower, DbTradeShare, DbTradeShareLike
+from db.models import DbUserProfile, DbTradeShare, DbTradeShareLike
 from models.schemas import (
     UserProfileResponse, UserProfileUpdateRequest, LeaderboardEntry, 
     TradeShareRequest, TradeShareResponse
@@ -167,107 +167,6 @@ async def get_leaderboard(
         
     return leaderboard
 
-@router.post("/follow/{follower_uid}/{target_uid}")
-async def follow_user(follower_uid: str, target_uid: str, db: AsyncSession = Depends(get_db)):
-    if follower_uid == target_uid:
-        raise HTTPException(status_code=400, detail="Cannot friend yourself")
-        
-    # Check existing A -> B
-    stmt = select(DbFollower).where(
-        DbFollower.follower_uid == follower_uid, 
-        DbFollower.following_uid == target_uid
-    )
-    res = await db.execute(stmt)
-    if not res.scalars().first():
-        new_follow_1 = DbFollower(follower_uid=follower_uid, following_uid=target_uid)
-        db.add(new_follow_1)
-
-    # Check existing B -> A
-    stmt2 = select(DbFollower).where(
-        DbFollower.follower_uid == target_uid, 
-        DbFollower.following_uid == follower_uid
-    )
-    res2 = await db.execute(stmt2)
-    if not res2.scalars().first():
-        new_follow_2 = DbFollower(follower_uid=target_uid, following_uid=follower_uid)
-        db.add(new_follow_2)
-        
-    await db.commit()
-    return {"status": "ok", "message": "Friends added successfully"}
-
-@router.delete("/follow/{follower_uid}/{target_uid}")
-async def unfollow_user(follower_uid: str, target_uid: str, db: AsyncSession = Depends(get_db)):
-    # Delete A -> B
-    stmt = select(DbFollower).where(
-        DbFollower.follower_uid == follower_uid, 
-        DbFollower.following_uid == target_uid
-    )
-    res = await db.execute(stmt)
-    follow_1 = res.scalars().first()
-    if follow_1:
-        await db.delete(follow_1)
-
-    # Delete B -> A
-    stmt2 = select(DbFollower).where(
-        DbFollower.follower_uid == target_uid, 
-        DbFollower.following_uid == follower_uid
-    )
-    res2 = await db.execute(stmt2)
-    follow_2 = res2.scalars().first()
-    if follow_2:
-        await db.delete(follow_2)
-        
-    await db.commit()
-    return {"status": "ok", "message": "Unfriended successfully"}
-
-@router.get("/followers/{uid}")
-async def get_followers(uid: str, db: AsyncSession = Depends(get_db)):
-    # People who follow me
-    stmt1 = select(DbFollower.follower_uid).where(DbFollower.following_uid == uid)
-    res1 = await db.execute(stmt1)
-    followers = res1.scalars().all()
-    
-    # People I follow
-    stmt2 = select(DbFollower.following_uid).where(DbFollower.follower_uid == uid)
-    res2 = await db.execute(stmt2)
-    following = res2.scalars().all()
-    
-    return {
-        "followers": list(followers),
-        "following": list(following)
-    }
-
-@router.get("/friends/{uid}", response_model=List[LeaderboardEntry])
-async def get_friends(uid: str, db: AsyncSession = Depends(get_db)):
-    # People I follow
-    stmt = select(DbFollower.following_uid).where(DbFollower.follower_uid == uid)
-    res = await db.execute(stmt)
-    following_uids = res.scalars().all()
-    
-    if not following_uids:
-        return []
-        
-    stmt2 = select(DbUserProfile).where(DbUserProfile.firebase_uid.in_(following_uids))
-    res2 = await db.execute(stmt2)
-    profiles = res2.scalars().all()
-    
-    friends = []
-    for p in profiles:
-        friends.append(LeaderboardEntry(
-            firebase_uid=p.firebase_uid,
-            username=p.username,
-            avatar_url=p.avatar_url,
-            level=p.level,
-            total_xp=p.total_xp,
-            weekly_xp=p.weekly_xp,
-            current_streak=p.current_streak,
-            total_trades=p.total_trades,
-            win_rate=p.win_rate,
-            rank=0
-        ))
-    # Sort friends by XP
-    friends.sort(key=lambda x: x.total_xp, reverse=True)
-    return friends
 
 
 @router.post("/share", response_model=TradeShareResponse)
@@ -323,19 +222,10 @@ async def share_trade(req: TradeShareRequest, uid: str = Query(...), db: AsyncSe
 
 @router.get("/feed/{uid}", response_model=List[TradeShareResponse])
 async def get_feed(uid: str, page: int = 1, limit: int = 20, db: AsyncSession = Depends(get_db)):
-    # Get people I follow
-    stmt_following = select(DbFollower.following_uid).where(DbFollower.follower_uid == uid)
-    res_following = await db.execute(stmt_following)
-    following_uids = res_following.scalars().all()
-    
-    # Include myself in feed
-    uids_to_fetch = list(following_uids) + [uid]
-    
-    # Fetch trade shares
+    # Fetch all trade shares (global feed)
     stmt_shares = (
         select(DbTradeShare, DbUserProfile)
         .join(DbUserProfile, DbTradeShare.firebase_uid == DbUserProfile.firebase_uid)
-        .where(DbTradeShare.firebase_uid.in_(uids_to_fetch))
         .order_by(desc(DbTradeShare.created_at))
         .offset((page - 1) * limit)
         .limit(limit)

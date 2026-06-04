@@ -162,7 +162,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                   ),
                   const LearningScreen(),
                   RepaintBoundary(child: MarketScreen(bloc: _marketBloc)),
-                  const SocialProfileScreen(),
+                  SocialProfileScreen(marketBloc: _marketBloc),
                 ],
               ),
               Positioned(

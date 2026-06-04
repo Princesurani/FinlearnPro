@@ -1127,9 +1127,7 @@ class _LessonScreenState extends State<LessonScreen>
       context: context,
       barrierDismissible: false,
       builder: (context) => _CompletionDialog(
-        score: widget
-            .lesson
-            .xpReward, // Used to be _score, but we want to show standard lesson XP reward
+        score: widget.lesson.xpReward,
         lessonTitle: widget.lesson.title,
         hasNextLesson: hasNextLesson,
         onContinue: () {

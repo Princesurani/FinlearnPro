@@ -165,14 +165,6 @@ class DbUserProfile(Base):
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-class DbFollower(Base):
-    __tablename__ = "followers"
-    
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    follower_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
-    following_uid = Column(String(128), ForeignKey("users.firebase_uid"), index=True, nullable=False)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-
 class DbTradeShare(Base):
     __tablename__ = "trade_shares"
     

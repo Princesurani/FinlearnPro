@@ -8,7 +8,7 @@ import '../../bloc/market_bloc.dart';
 import '../widgets/market_selector.dart';
 import '../widgets/index_ticker.dart';
 import 'explore_tab.dart';
-import 'portfolio_tab.dart';
+import 'holdings_tab.dart';
 import 'orders_tab.dart';
 import 'watchlist_tab.dart';
 import '../../../../shared/navigation/top_navigation_shell.dart';
@@ -27,7 +27,7 @@ class _MarketScreenState extends State<MarketScreen>
   late final MarketBloc _bloc;
   late final TabController _tabController;
 
-  static const _tabLabels = ['Explore', 'Portfolio', 'Orders', 'Watchlist'];
+  static const _tabLabels = ['Explore', 'Holdings', 'Orders', 'Watchlist'];
 
   @override
   void initState() {
@@ -251,7 +251,7 @@ class _PortfolioStreamWrapper extends StatelessWidget {
       stream: bloc.stream,
       initialData: bloc.state,
       builder: (_, snap) {
-        return PortfolioTab(
+        return HoldingsTab(
           state: snap.data!,
           onExplore: onExplore,
           bloc: bloc,

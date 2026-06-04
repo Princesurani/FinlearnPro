@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_typography.dart';
-import '../../../../core/domain/market_data.dart';
-import '../../bloc/market_bloc.dart';
-import 'stock_detail_screen.dart';
-import '../widgets/ai_review_sheet.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_spacing.dart';
+import '../../../../../core/theme/app_typography.dart';
+import '../../../../../core/domain/market_data.dart';
+import '../../../../market/bloc/market_bloc.dart';
+import '../../../../market/presentation/pages/stock_detail_screen.dart';
+import '../../../../market/presentation/widgets/ai_review_sheet.dart';
 
 class PortfolioTab extends StatelessWidget {
   const PortfolioTab({
