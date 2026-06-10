@@ -89,45 +89,32 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
             physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             slivers: [
               _gap(16),
-
-              // ── Hero header (compact)
               SliverToBoxAdapter(child: _anim(0, _buildHeader(context, profile))),
               _gap(14),
-
-              // ── Level progress
               SliverToBoxAdapter(
                 child: Padding(padding: AppSpacing.screenPaddingH,
                   child: _anim(1, _buildLevelSection(profile, xpProgress, nextLevelXp))),
               ),
               _gap(10),
-
-              // ── Streak
               SliverToBoxAdapter(
                 child: Padding(padding: AppSpacing.screenPaddingH,
                   child: _anim(2, _buildStreakSection(profile))),
               ),
               _gap(10),
-
-              // ── Performance
               SliverToBoxAdapter(
                 child: Padding(padding: AppSpacing.screenPaddingH,
                   child: _anim(3, _buildPerformanceSection(profile, wins, losses))),
               ),
               _gap(10),
-
-              // ── Achievements
               SliverToBoxAdapter(
                 child: Padding(padding: AppSpacing.screenPaddingH,
                   child: _anim(4, _buildAchievementsSection(profile))),
               ),
               _gap(10),
-
-              // ── Courses
               SliverToBoxAdapter(
                 child: Padding(padding: AppSpacing.screenPaddingH,
                   child: _anim(5, _buildCoursesSection(profile))),
               ),
-
               _gap(100),
             ],
           ),
@@ -143,21 +130,21 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          // Avatar with edit badge
+          // Avatar (tappable → edit sheet)
           GestureDetector(
             onTap: () { HapticFeedback.lightImpact(); _showEditProfileSheet(context, profile); },
             child: Stack(
               alignment: Alignment.bottomRight,
               children: [
-                _buildAvatar(profile, radius: 36),
+                _buildAvatar(profile, radius: 40),
                 Container(
-                  padding: const EdgeInsets.all(3),
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: AppColors.primary,
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.backgroundPrimary, width: 1.5),
+                    border: Border.all(color: AppColors.backgroundPrimary, width: 2),
                   ),
-                  child: const Icon(Icons.edit_rounded, color: AppColors.white, size: 10),
+                  child: const Icon(Icons.edit_rounded, color: AppColors.white, size: 12),
                 ),
               ],
             ),
@@ -168,20 +155,21 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(profile.username, style: AppTypography.h5.copyWith(fontWeight: FontWeight.bold)),
+                Text(profile.username, style: AppTypography.h4.copyWith(fontWeight: FontWeight.bold)),
                 if (profile.bio != null && profile.bio!.isNotEmpty)
-                  Text(profile.bio!, style: AppTypography.bodyXS.copyWith(color: AppColors.textSecondary), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  Text(profile.bio!, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary), maxLines: 2, overflow: TextOverflow.ellipsis),
               ],
             ),
           ),
-          // XP badge
+          const SizedBox(width: 10),
+          // Level badge
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(gradient: AppColors.primaryGradient, borderRadius: BorderRadius.circular(20)),
             child: Column(
               children: [
-                Text('Lv.${profile.level}', style: AppTypography.bodyXS.copyWith(color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 11)),
-                Text('${profile.totalXp} XP', style: AppTypography.bodyXS.copyWith(color: AppColors.white.withValues(alpha: 0.85), fontSize: 9)),
+                Text('Lv.${profile.level}', style: AppTypography.bodySmall.copyWith(color: AppColors.white, fontWeight: FontWeight.bold)),
+                Text('${profile.totalXp} XP', style: AppTypography.bodyXS.copyWith(color: AppColors.white.withValues(alpha: 0.85))),
               ],
             ),
           ),
@@ -196,9 +184,9 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
     final levels = [
       {'lvl': 1, 'title': 'Beginner'},
       {'lvl': 2, 'title': 'Novice'},
-      {'lvl': 3, 'title': 'Intermediate'},
+      {'lvl': 3, 'title': 'Interm.'},
       {'lvl': 4, 'title': 'Strategist'},
-      {'lvl': 5, 'title': 'Market Master'},
+      {'lvl': 5, 'title': 'Master'},
     ];
 
     return _Card(
@@ -207,35 +195,35 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
         children: [
           Row(
             children: [
-              const Icon(Icons.star_rounded, color: Colors.amber, size: 16),
+              const Icon(Icons.star_rounded, color: Colors.amber, size: 18),
               const SizedBox(width: 6),
-              Text('XP Progress', style: _labelStyle),
+              Text('XP Progress', style: _label),
               const Spacer(),
-              Text('${profile.totalXp} / $nextLevelXp XP', style: AppTypography.bodyXS.copyWith(color: AppColors.textSecondary)),
+              Text('${profile.totalXp} / $nextLevelXp XP', style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(6),
             child: TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: xpProgress),
               duration: const Duration(milliseconds: 1100),
               curve: Curves.easeOutCubic,
               builder: (_, v, ss) => LinearProgressIndicator(
-                value: v, minHeight: 8,
+                value: v, minHeight: 10,
                 backgroundColor: AppColors.backgroundTertiary,
                 valueColor: AlwaysStoppedAnimation(AppColors.primary),
               ),
             ),
           ),
-          const SizedBox(height: 12),
-          // Compact milestone strip
+          const SizedBox(height: 14),
+          // Level strip
           Row(
             children: levels.map((lvl) {
-              final n       = lvl['lvl'] as int;
-              final isCur   = profile.level == n;
-              final isDone  = profile.level > n;
-              final isLast  = n == levels.length;
+              final n      = lvl['lvl'] as int;
+              final isCur  = profile.level == n;
+              final isDone = profile.level > n;
+              final isLast = n == levels.length;
               return Expanded(
                 child: Row(
                   children: [
@@ -243,26 +231,28 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
                       child: Column(
                         children: [
                           Container(
-                            width: 28, height: 28,
+                            width: 34, height: 34,
                             decoration: BoxDecoration(
                               color: isCur ? AppColors.primary : isDone ? AppColors.profitGreen.withValues(alpha: 0.15) : AppColors.backgroundTertiary,
                               shape: BoxShape.circle,
-                              border: isDone && !isCur ? Border.all(color: AppColors.profitGreen, width: 1) : null,
+                              border: isDone && !isCur ? Border.all(color: AppColors.profitGreen, width: 1.5) : null,
                             ),
                             child: Center(
                               child: isDone && !isCur
-                                  ? const Icon(Icons.check_rounded, color: AppColors.profitGreen, size: 12)
-                                  : Text('$n', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isCur ? AppColors.white : AppColors.textTertiary)),
+                                  ? const Icon(Icons.check_rounded, color: AppColors.profitGreen, size: 16)
+                                  : Text('$n', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: isCur ? AppColors.white : AppColors.textTertiary)),
                             ),
                           ),
-                          const SizedBox(height: 3),
-                          Text(lvl['title'] as String, style: AppTypography.bodyXS.copyWith(fontSize: 8, color: isCur ? AppColors.primary : AppColors.textTertiary), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
+                          const SizedBox(height: 4),
+                          Text(lvl['title'] as String,
+                            style: AppTypography.bodyXS.copyWith(color: isCur ? AppColors.primary : AppColors.textTertiary, fontWeight: isCur ? FontWeight.bold : FontWeight.normal),
+                            textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
                         ],
                       ),
                     ),
                     if (!isLast)
                       Expanded(
-                        child: Container(height: 1, color: isDone ? AppColors.profitGreen.withValues(alpha: 0.4) : AppColors.border),
+                        child: Container(height: 1.5, color: isDone ? AppColors.profitGreen.withValues(alpha: 0.4) : AppColors.border),
                       ),
                   ],
                 ),
@@ -286,22 +276,20 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
         children: [
           Row(
             children: [
-              const Icon(Icons.local_fire_department_rounded, color: AppColors.sunsetOrange, size: 16),
+              const Icon(Icons.local_fire_department_rounded, color: AppColors.sunsetOrange, size: 18),
               const SizedBox(width: 6),
-              Text('Daily Streak', style: _labelStyle),
+              Text('Daily Streak', style: _label),
               const Spacer(),
               RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(text: '${profile.currentStreak}', style: AppTypography.h5.copyWith(color: AppColors.sunsetOrange, fontWeight: FontWeight.bold)),
-                    TextSpan(text: ' days  ', style: AppTypography.bodyXS.copyWith(color: AppColors.textSecondary)),
-                    TextSpan(text: '🏆 ${profile.longestStreak}', style: AppTypography.bodyXS.copyWith(color: AppColors.textTertiary)),
-                  ],
-                ),
+                text: TextSpan(children: [
+                  TextSpan(text: '${profile.currentStreak}', style: AppTypography.h5.copyWith(color: AppColors.sunsetOrange, fontWeight: FontWeight.bold)),
+                  TextSpan(text: ' days  ', style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
+                  TextSpan(text: '🏆 ${profile.longestStreak}', style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiary)),
+                ]),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(7, (i) {
@@ -313,21 +301,20 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
                 children: [
                   AnimatedContainer(
                     duration: Duration(milliseconds: 180 + i * 50),
-                    width: 34, height: 34,
+                    width: 38, height: 38,
                     decoration: BoxDecoration(
-                      gradient: isActive
-                          ? const LinearGradient(colors: [AppColors.sunsetOrange, AppColors.deepOrange], begin: Alignment.topLeft, end: Alignment.bottomRight)
-                          : null,
+                      gradient: isActive ? const LinearGradient(colors: [AppColors.sunsetOrange, AppColors.deepOrange], begin: Alignment.topLeft, end: Alignment.bottomRight) : null,
                       color: isActive ? null : AppColors.backgroundTertiary,
                       shape: BoxShape.circle,
                       border: isToday && !isActive ? Border.all(color: AppColors.sunsetOrange, width: 1.5) : null,
-                      boxShadow: isActive ? [BoxShadow(color: AppColors.sunsetOrange.withValues(alpha: 0.3), blurRadius: 6)] : null,
+                      boxShadow: isActive ? [BoxShadow(color: AppColors.sunsetOrange.withValues(alpha: 0.35), blurRadius: 8)] : null,
                     ),
                     alignment: Alignment.center,
-                    child: Icon(isActive ? Icons.local_fire_department_rounded : Icons.circle_outlined, color: isActive ? AppColors.white : AppColors.textTertiary, size: 16),
+                    child: Icon(isActive ? Icons.local_fire_department_rounded : Icons.circle_outlined,
+                      color: isActive ? AppColors.white : AppColors.textTertiary, size: 18),
                   ),
-                  const SizedBox(height: 3),
-                  Text(dayName, style: AppTypography.bodyXS.copyWith(fontSize: 9, color: isActive ? AppColors.sunsetOrange : AppColors.textTertiary, fontWeight: isToday ? FontWeight.bold : FontWeight.normal)),
+                  const SizedBox(height: 4),
+                  Text(dayName, style: AppTypography.bodySmall.copyWith(color: isActive ? AppColors.sunsetOrange : AppColors.textTertiary, fontWeight: isToday ? FontWeight.bold : FontWeight.normal)),
                 ],
               );
             }),
@@ -348,38 +335,34 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
         children: [
           Row(
             children: [
-              const Icon(Icons.analytics_outlined, color: AppColors.electricBlue, size: 16),
+              const Icon(Icons.analytics_outlined, color: AppColors.electricBlue, size: 18),
               const SizedBox(width: 6),
-              Text('Performance', style: _labelStyle),
+              Text('Performance', style: _label),
             ],
           ),
-          const SizedBox(height: 12),
-
-          // Gauge + stats side by side
+          const SizedBox(height: 14),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _WinRateGauge(rate: profile.winRate),
-              const SizedBox(width: 16),
+              const SizedBox(width: 20),
               Expanded(
                 child: Column(
                   children: [
                     _StatRow(label: 'Wins',    value: '$wins',   color: AppColors.profitGreen),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     _StatRow(label: 'Losses',  value: '$losses', color: AppColors.lossRed),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     _StatRow(label: 'Total',   value: '${profile.totalTrades}', color: AppColors.electricBlue),
                   ],
                 ),
               ),
             ],
           ),
-
           if (profile.totalTrades > 0) ...[
-            const SizedBox(height: 12),
-            // Long vs Short bar
+            const SizedBox(height: 14),
             ClipRRect(
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(8),
               child: TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0, end: winPct),
                 duration: const Duration(milliseconds: 800),
@@ -388,13 +371,13 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
                   children: [
                     Flexible(
                       flex: (v * 100).toInt().clamp(1, 99),
-                      child: Container(height: 22, color: AppColors.profitGreen, alignment: Alignment.center,
-                        child: Text('${(v * 100).toInt()}% W', style: AppTypography.bodyXS.copyWith(color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 9))),
+                      child: Container(height: 28, color: AppColors.profitGreen, alignment: Alignment.center,
+                        child: Text('${(v * 100).toInt()}% W', style: AppTypography.bodySmall.copyWith(color: AppColors.white, fontWeight: FontWeight.bold))),
                     ),
                     Flexible(
                       flex: ((1 - v) * 100).toInt().clamp(1, 99),
-                      child: Container(height: 22, color: AppColors.lossRed, alignment: Alignment.center,
-                        child: Text('${((1 - v) * 100).toInt()}% L', style: AppTypography.bodyXS.copyWith(color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 9))),
+                      child: Container(height: 28, color: AppColors.lossRed, alignment: Alignment.center,
+                        child: Text('${((1 - v) * 100).toInt()}% L', style: AppTypography.bodySmall.copyWith(color: AppColors.white, fontWeight: FontWeight.bold))),
                     ),
                   ],
                 ),
@@ -410,12 +393,12 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
 
   Widget _buildAchievementsSection(UserProfile profile) {
     final badges = [
-      {'icon': Icons.rocket_launch_rounded,        'label': 'First Trade',    'color': AppColors.electricBlue,  'unlocked': profile.totalTrades >= 1},
-      {'icon': Icons.local_fire_department_rounded, 'label': 'Streak Starter','color': AppColors.sunsetOrange,  'unlocked': profile.currentStreak >= 3},
-      {'icon': Icons.school_rounded,               'label': 'Scholar',        'color': AppColors.indigo,        'unlocked': profile.totalCoursesCompleted >= 3},
-      {'icon': Icons.shield_rounded,               'label': 'Risk Manager',   'color': AppColors.profitGreen,   'unlocked': profile.winRate >= 0.5},
-      {'icon': Icons.military_tech_rounded,        'label': 'Challenge Pro',  'color': AppColors.goldenYellow,  'unlocked': profile.totalChallengesCompleted >= 5},
-      {'icon': Icons.auto_graph_rounded,           'label': 'Market Master',  'color': AppColors.lavender,      'unlocked': profile.level >= 5},
+      {'icon': Icons.rocket_launch_rounded,        'label': 'First Trade',    'desc': 'Placed your first trade',  'color': AppColors.electricBlue,  'unlocked': profile.totalTrades >= 1},
+      {'icon': Icons.local_fire_department_rounded, 'label': 'Streak Start',  'desc': '3-day streak',             'color': AppColors.sunsetOrange,  'unlocked': profile.currentStreak >= 3},
+      {'icon': Icons.school_rounded,               'label': 'Scholar',        'desc': '3+ courses done',          'color': AppColors.indigo,        'unlocked': profile.totalCoursesCompleted >= 3},
+      {'icon': Icons.shield_rounded,               'label': 'Risk Manager',   'desc': 'Win rate >50%',            'color': AppColors.profitGreen,   'unlocked': profile.winRate >= 0.5},
+      {'icon': Icons.military_tech_rounded,        'label': 'Chall. Pro',     'desc': '5 challenges done',        'color': AppColors.goldenYellow,  'unlocked': profile.totalChallengesCompleted >= 5},
+      {'icon': Icons.auto_graph_rounded,           'label': 'Mkt Master',     'desc': 'Reached level 5',          'color': AppColors.lavender,      'unlocked': profile.level >= 5},
     ];
     final unlockedCount = badges.where((b) => b['unlocked'] == true).length;
 
@@ -425,47 +408,62 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
         children: [
           Row(
             children: [
-              const Icon(Icons.military_tech_rounded, color: AppColors.goldenYellow, size: 16),
+              const Icon(Icons.military_tech_rounded, color: AppColors.goldenYellow, size: 18),
               const SizedBox(width: 6),
-              Text('Achievements', style: _labelStyle),
+              Text('Achievements', style: _label),
               const Spacer(),
-              Text('$unlockedCount/${badges.length}', style: AppTypography.bodyXS.copyWith(color: AppColors.textSecondary)),
+              Text('$unlockedCount / ${badges.length} unlocked', style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
             ],
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: badges.map((b) {
+          const SizedBox(height: 12),
+          GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 0.92,
+            ),
+            itemCount: badges.length,
+            itemBuilder: (_, i) {
+              final b        = badges[i];
               final unlocked = b['unlocked'] as bool;
               final color    = b['color'] as Color;
-              return Expanded(
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 300),
-                  opacity: unlocked ? 1.0 : 0.35,
+              return AnimatedOpacity(
+                duration: Duration(milliseconds: 300 + i * 70),
+                opacity: unlocked ? 1.0 : 0.4,
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: unlocked ? color.withValues(alpha: 0.08) : AppColors.backgroundTertiary,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: unlocked ? color.withValues(alpha: 0.25) : AppColors.border),
+                    boxShadow: unlocked ? [BoxShadow(color: color.withValues(alpha: 0.12), blurRadius: 8, offset: const Offset(0, 3))] : null,
+                  ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 40, height: 40,
-                        decoration: BoxDecoration(
-                          color: unlocked ? color.withValues(alpha: 0.12) : AppColors.backgroundTertiary,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: unlocked ? color.withValues(alpha: 0.3) : AppColors.border),
-                          boxShadow: unlocked ? [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 6)] : null,
-                        ),
-                        child: Stack(
-                          alignment: Alignment.topRight,
-                          children: [
-                            Center(child: Icon(b['icon'] as IconData, color: unlocked ? color : AppColors.textTertiary, size: 18)),
-                            if (unlocked) Container(width: 10, height: 10, decoration: const BoxDecoration(color: AppColors.profitGreen, shape: BoxShape.circle), child: const Icon(Icons.check, color: AppColors.white, size: 7)),
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          Icon(b['icon'] as IconData, color: unlocked ? color : AppColors.textTertiary, size: 20),
+                          const Spacer(),
+                          if (unlocked) const Icon(Icons.verified_rounded, color: AppColors.profitGreen, size: 14),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(b['label'] as String, style: AppTypography.bodyXS.copyWith(fontSize: 8, color: unlocked ? AppColors.textPrimary : AppColors.textTertiary, fontWeight: unlocked ? FontWeight.bold : FontWeight.normal), textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis),
+                      const Spacer(),
+                      Text(b['label'] as String,
+                        style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: unlocked ? AppColors.textPrimary : AppColors.textTertiary),
+                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 2),
+                      Text(b['desc'] as String,
+                        style: AppTypography.bodyXS.copyWith(color: AppColors.textTertiary),
+                        maxLines: 2, overflow: TextOverflow.ellipsis),
                     ],
                   ),
                 ),
               );
-            }).toList(),
+            },
           ),
         ],
       ),
@@ -491,56 +489,56 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
         children: [
           Row(
             children: [
-              const Icon(Icons.menu_book_rounded, color: AppColors.indigo, size: 16),
+              const Icon(Icons.menu_book_rounded, color: AppColors.indigo, size: 18),
               const SizedBox(width: 6),
-              Text('Courses', style: _labelStyle),
+              Text('Courses', style: _label),
               const Spacer(),
-              Text('$completed / ${courses.length}', style: AppTypography.bodyXS.copyWith(color: AppColors.textSecondary)),
+              Text('$completed / ${courses.length}', style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           ClipRRect(
-            borderRadius: BorderRadius.circular(3),
+            borderRadius: BorderRadius.circular(4),
             child: TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: completed / courses.length),
               duration: const Duration(milliseconds: 900),
               builder: (_, v, ss) => LinearProgressIndicator(
-                value: v, minHeight: 5,
+                value: v, minHeight: 7,
                 backgroundColor: AppColors.backgroundTertiary,
                 valueColor: AlwaysStoppedAnimation(AppColors.indigo),
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           ...List.generate(courses.length, (i) {
             final isDone = i < completed;
             final isNext = i == completed;
             return Padding(
-              padding: const EdgeInsets.only(bottom: 6),
+              padding: const EdgeInsets.only(bottom: 8),
               child: Row(
                 children: [
                   Container(
-                    width: 22, height: 22,
+                    width: 28, height: 28,
                     decoration: BoxDecoration(
                       color: isDone ? AppColors.indigo : isNext ? AppColors.indigo.withValues(alpha: 0.1) : AppColors.backgroundTertiary,
                       shape: BoxShape.circle,
-                      border: isNext ? Border.all(color: AppColors.indigo) : null,
+                      border: isNext ? Border.all(color: AppColors.indigo, width: 1.5) : null,
                     ),
                     child: Center(
                       child: isDone
-                          ? const Icon(Icons.check_rounded, color: AppColors.white, size: 12)
+                          ? const Icon(Icons.check_rounded, color: AppColors.white, size: 14)
                           : Icon(isNext ? Icons.play_arrow_rounded : Icons.lock_rounded,
-                              color: isNext ? AppColors.indigo : AppColors.textTertiary, size: 11),
+                              color: isNext ? AppColors.indigo : AppColors.textTertiary, size: 14),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   Expanded(
-                    child: Text(courses[i], style: AppTypography.bodyXS.copyWith(
+                    child: Text(courses[i], style: AppTypography.bodySmall.copyWith(
                       color: isDone ? AppColors.textPrimary : isNext ? AppColors.indigo : AppColors.textTertiary,
                       fontWeight: isNext ? FontWeight.bold : FontWeight.normal,
                     )),
                   ),
-                  if (isDone) const Icon(Icons.check_circle_rounded, color: AppColors.indigo, size: 13),
+                  if (isDone) const Icon(Icons.check_circle_rounded, color: AppColors.indigo, size: 16),
                 ],
               ),
             );
@@ -581,19 +579,18 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Edit Profile', style: AppTypography.h5),
-                      IconButton(icon: const Icon(Icons.close_rounded, size: 20), onPressed: () => Navigator.pop(ctx)),
+                      IconButton(icon: const Icon(Icons.close_rounded), onPressed: () => Navigator.pop(ctx)),
                     ],
                   ),
-                  // Persona picker
                   const SizedBox(height: 4),
                   Text('Persona', style: AppTypography.labelSmall.copyWith(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
                   SizedBox(
-                    height: 80,
+                    height: 88,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: _kPersonas.length,
-                      separatorBuilder: (_, ss) => const SizedBox(width: 10),
+                      separatorBuilder: (_, ss) => const SizedBox(width: 12),
                       itemBuilder: (_, i) {
                         final p = _kPersonas[i];
                         final isSelected = selectedAvatarUrl == 'emoji:${p.id}';
@@ -603,32 +600,32 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
                             children: [
                               AnimatedContainer(
                                 duration: const Duration(milliseconds: 180),
-                                width: 48, height: 48,
+                                width: 54, height: 54,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle, gradient: p.gradient,
                                   border: Border.all(color: isSelected ? AppColors.primary : Colors.transparent, width: 2.5),
                                   boxShadow: isSelected ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.3), blurRadius: 8)] : null,
                                 ),
                                 alignment: Alignment.center,
-                                child: Text(p.emoji, style: const TextStyle(fontSize: 20)),
+                                child: Text(p.emoji, style: const TextStyle(fontSize: 24)),
                               ),
-                              const SizedBox(height: 3),
-                              Text(p.name, style: AppTypography.bodyXS.copyWith(fontSize: 9, color: isSelected ? AppColors.primary : AppColors.textSecondary, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                              const SizedBox(height: 4),
+                              Text(p.name, style: AppTypography.bodyXS.copyWith(color: isSelected ? AppColors.primary : AppColors.textSecondary, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
                             ],
                           ),
                         );
                       },
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 16),
                   Text('Username', style: AppTypography.labelSmall.copyWith(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   TextField(controller: nameCtrl, decoration: _inputDeco('Enter username'), style: AppTypography.bodySmall),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   Text('Bio', style: AppTypography.labelSmall.copyWith(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   TextField(controller: bioCtrl, maxLines: 2, decoration: _inputDeco('Your trading style...'), style: AppTypography.bodySmall),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -640,8 +637,14 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated!'), backgroundColor: AppColors.profitGreen));
                         }
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryButton, foregroundColor: AppColors.white, padding: const EdgeInsets.symmetric(vertical: 13), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), elevation: 0),
-                      child: Text('Save', style: AppTypography.buttonSmall),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryButton,
+                        foregroundColor: AppColors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        elevation: 0,
+                      ),
+                      child: Text('Save Changes', style: AppTypography.buttonSmall),
                     ),
                   ),
                 ],
@@ -655,7 +658,7 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
 
   // ─── Avatar ───────────────────────────────────────────────────────────────
 
-  Widget _buildAvatar(UserProfile profile, {double radius = 36}) {
+  Widget _buildAvatar(UserProfile profile, {double radius = 40}) {
     final persona = _personaForUrl(profile.avatarUrl);
     Widget inner;
     if (persona != null) {
@@ -663,7 +666,7 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
         width: radius * 2, height: radius * 2,
         decoration: BoxDecoration(shape: BoxShape.circle, gradient: persona.gradient),
         alignment: Alignment.center,
-        child: Text(persona.emoji, style: TextStyle(fontSize: radius * 0.7)),
+        child: Text(persona.emoji, style: TextStyle(fontSize: radius * 0.75)),
       );
     } else if (profile.avatarUrl != null) {
       inner = CircleAvatar(radius: radius, backgroundColor: AppColors.backgroundPrimary, backgroundImage: NetworkImage(profile.avatarUrl!));
@@ -671,7 +674,7 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
       inner = CircleAvatar(radius: radius, backgroundColor: AppColors.backgroundPrimary, child: Icon(Icons.person_rounded, size: radius * 0.9, color: AppColors.primary));
     }
     return Container(
-      padding: const EdgeInsets.all(2),
+      padding: const EdgeInsets.all(3),
       decoration: const BoxDecoration(gradient: AppColors.auroraGradient, shape: BoxShape.circle),
       child: inner,
     );
@@ -690,11 +693,12 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
 
   SliverToBoxAdapter _gap(double h) => SliverToBoxAdapter(child: SizedBox(height: h));
 
-  TextStyle get _labelStyle => AppTypography.labelSmall.copyWith(fontWeight: FontWeight.bold, letterSpacing: 0.2);
+  // Section header style — readable 13sp bold
+  TextStyle get _label => AppTypography.labelSmall.copyWith(fontWeight: FontWeight.bold, letterSpacing: 0.2, fontSize: 13);
 
   InputDecoration _inputDeco(String hint) => InputDecoration(
     hintText: hint, filled: true, fillColor: AppColors.surface, isDense: true,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.border)),
     enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.border)),
   );
@@ -707,7 +711,7 @@ class _Card extends StatelessWidget {
   const _Card({required this.child});
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(14),
+    padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
       color: AppColors.surface,
       borderRadius: AppSpacing.borderRadiusMD,
@@ -729,15 +733,15 @@ class _WinRateGauge extends StatelessWidget {
       duration: const Duration(milliseconds: 1000),
       curve: Curves.easeOutCubic,
       builder: (_, v, ss) => SizedBox(
-        width: 90, height: 90,
+        width: 110, height: 110,
         child: CustomPaint(
           painter: _GaugePainter(progress: v),
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('${(v * 100).toStringAsFixed(0)}%', style: AppTypography.h5.copyWith(fontWeight: FontWeight.bold, color: AppColors.profitGreen, fontSize: 16)),
-                Text('Win', style: AppTypography.bodyXS.copyWith(color: AppColors.textSecondary, fontSize: 9)),
+                Text('${(v * 100).toStringAsFixed(1)}%', style: AppTypography.h5.copyWith(fontWeight: FontWeight.bold, color: AppColors.profitGreen)),
+                Text('Win Rate', style: AppTypography.bodyXS.copyWith(color: AppColors.textSecondary)),
               ],
             ),
           ),
@@ -753,14 +757,14 @@ class _GaugePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final c = Offset(size.width / 2, size.height / 2);
-    final r = math.min(c.dx, c.dy) - 8;
+    final r = math.min(c.dx, c.dy) - 10;
     const start = math.pi * 0.75;
     const sweep = math.pi * 1.5;
-    final bg = Paint()..color = AppColors.backgroundTertiary..style = PaintingStyle.stroke..strokeWidth = 9..strokeCap = StrokeCap.round;
+    final bg = Paint()..color = AppColors.backgroundTertiary..style = PaintingStyle.stroke..strokeWidth = 11..strokeCap = StrokeCap.round;
     canvas.drawArc(Rect.fromCircle(center: c, radius: r), start, sweep, false, bg);
     final fg = Paint()
       ..shader = const LinearGradient(colors: [AppColors.profitGreen, AppColors.oceanTeal]).createShader(Rect.fromCircle(center: c, radius: r))
-      ..style = PaintingStyle.stroke..strokeWidth = 9..strokeCap = StrokeCap.round;
+      ..style = PaintingStyle.stroke..strokeWidth = 11..strokeCap = StrokeCap.round;
     canvas.drawArc(Rect.fromCircle(center: c, radius: r), start, sweep * progress, false, fg);
   }
   @override
@@ -777,10 +781,10 @@ class _StatRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      Container(width: 7, height: 7, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-      const SizedBox(width: 6),
-      Expanded(child: Text(label, style: AppTypography.bodyXS.copyWith(color: AppColors.textSecondary))),
-      Text(value, style: AppTypography.bodyXS.copyWith(fontWeight: FontWeight.bold, color: color)),
+      Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+      const SizedBox(width: 8),
+      Expanded(child: Text(label, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary))),
+      Text(value, style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: color)),
     ],
   );
 }

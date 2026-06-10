@@ -273,7 +273,7 @@ class PortfolioTab extends StatelessWidget {
                         ),
                         Text(
                           'Get deep insights & risk analysis',
-                          style: AppTypography.labelSmall.copyWith(color: AppColors.textSecondary, fontSize: 10),
+                          style: AppTypography.bodyXS.copyWith(color: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -411,7 +411,6 @@ class PortfolioTab extends StatelessWidget {
                     'LTP',
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textTertiary,
-                      fontSize: 10,
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -429,7 +428,6 @@ class PortfolioTab extends StatelessWidget {
                 style: AppTypography.labelSmall.copyWith(
                   color: isProfit ? AppColors.profitGreen : AppColors.lossRed,
                   fontWeight: AppTypography.semiBold,
-                  fontSize: 10,
                 ),
               ),
             ],
@@ -547,8 +545,8 @@ class PortfolioTab extends StatelessWidget {
         children: [
           Text(
             'AVAILABLE FUNDS',
-            style: AppTypography.labelSmall.copyWith(
-              color: AppColors.white.withValues(alpha: 0.7),
+            style: AppTypography.labelMedium.copyWith(
+              color: AppColors.white.withValues(alpha: 0.8),
               fontWeight: FontWeight.bold,
               letterSpacing: 1.0,
             ),
@@ -566,7 +564,7 @@ class PortfolioTab extends StatelessWidget {
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     color: AppColors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
@@ -575,8 +573,8 @@ class PortfolioTab extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.add_rounded, color: AppColors.white, size: 16),
-                        const SizedBox(width: 4),
+                        const Icon(Icons.add_rounded, color: AppColors.white, size: 18),
+                        const SizedBox(width: 6),
                         Text(
                           'Deposit',
                           style: AppTypography.bodySmall.copyWith(
@@ -592,7 +590,7 @@ class PortfolioTab extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     color: AppColors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
@@ -601,8 +599,8 @@ class PortfolioTab extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.arrow_upward_rounded, color: AppColors.white, size: 16),
-                        const SizedBox(width: 4),
+                        const Icon(Icons.arrow_upward_rounded, color: AppColors.white, size: 18),
+                        const SizedBox(width: 6),
                         Text(
                           'Withdraw',
                           style: AppTypography.bodySmall.copyWith(
@@ -671,7 +669,7 @@ class PortfolioTab extends StatelessWidget {
         Icon(
           done ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
           color: done ? AppColors.profitGreen : AppColors.textTertiary,
-          size: 20,
+          size: 22,
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -687,7 +685,9 @@ class PortfolioTab extends StatelessWidget {
               ),
               Text(
                 desc,
-                style: AppTypography.bodyXS,
+                style: AppTypography.bodySmall.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
@@ -764,7 +764,9 @@ class PortfolioTab extends StatelessWidget {
                       ),
                       Text(
                         inst.name,
-                        style: AppTypography.bodyXS,
+                        style: AppTypography.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -787,11 +789,11 @@ class PortfolioTab extends StatelessWidget {
                         Icon(
                           isUp ? Icons.arrow_drop_up : Icons.arrow_drop_down,
                           color: changeColor,
-                          size: 16,
+                          size: 20,
                         ),
                         Text(
                           '${isUp ? '+' : ''}${changePct.toStringAsFixed(2)}%',
-                          style: AppTypography.bodyXS.copyWith(
+                          style: AppTypography.bodySmall.copyWith(
                             color: changeColor,
                             fontWeight: FontWeight.bold,
                           ),
@@ -830,7 +832,7 @@ class PortfolioTab extends StatelessWidget {
                 color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.menu_book_rounded, color: AppColors.primary, size: 20),
+              child: const Icon(Icons.menu_book_rounded, color: AppColors.primary, size: 22),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -838,11 +840,11 @@ class PortfolioTab extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Trading Journal', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-                  Text('Review trades & psychology notes', style: AppTypography.bodyXS),
+                  Text('Review trades & psychology notes', style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary, size: 20),
+            const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary, size: 22),
           ],
         ),
       ),
