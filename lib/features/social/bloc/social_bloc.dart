@@ -36,7 +36,8 @@ class UpdateProfile extends SocialEvent {
   final String uid;
   final String? username;
   final String? bio;
-  UpdateProfile(this.uid, {this.username, this.bio});
+  final String? avatarUrl;
+  UpdateProfile(this.uid, {this.username, this.bio, this.avatarUrl});
 }
 
 // ─── State ──────────────────────────────────────────────────────────────────
@@ -252,6 +253,7 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         event.uid,
         username: event.username,
         bio: event.bio,
+        avatarUrl: event.avatarUrl,
       );
       emit(state.copyWith(myProfile: updated));
     } catch (_) {}
