@@ -169,6 +169,7 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
         # Auto-create profile if missing
         new_prof = DbUserProfile(
             firebase_uid=req.firebase_uid,
+            username=f"Trader_{req.firebase_uid[:6]}",
             total_xp=xp_awarded,
             weekly_xp=xp_awarded,
             level=calculate_level(xp_awarded),
@@ -179,7 +180,7 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
         )
         db.add(new_prof)
         streak_updated = is_correct
-    
+        
     await db.commit()
     
     return SubmitChallengeResponse(

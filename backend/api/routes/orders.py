@@ -152,7 +152,6 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
     
     prof_result = await db.execute(select(DbUserProfile).where(DbUserProfile.firebase_uid == order_req.firebase_uid))
     profile = prof_result.scalar_one_or_none()
-    
     xp_awarded = 15
     if profile:
         profile.total_xp += xp_awarded
@@ -170,6 +169,7 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
     else:
         new_prof = DbUserProfile(
             firebase_uid=order_req.firebase_uid,
+            username=f"Trader_{order_req.firebase_uid[:6]}",
             total_xp=xp_awarded,
             weekly_xp=xp_awarded,
             level=calculate_level(xp_awarded),
@@ -179,7 +179,6 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
 
     await db.commit()
 
-    # 7. Invalidate AI Portfolio Review cache because portfolio changed
     r_cache = aioredis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     try:
         await r_cache.delete(f"portfolio:review:{order_req.firebase_uid}")

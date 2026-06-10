@@ -319,18 +319,18 @@ class LeagueTab extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Expanded(
-                child: leaderboard.length <= 3
+                child: leaderboard.isEmpty
                     ? Center(
                         child: Text(
-                          'No more rankings yet',
+                          'No rankings yet',
                           style: AppTypography.bodySmall,
                         ),
                       )
                     : ListView.builder(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
-                        itemCount: leaderboard.length - 3,
+                        itemCount: leaderboard.length,
                         itemBuilder: (context, index) {
-                          final entry = leaderboard[index + 3];
+                          final entry = leaderboard[index];
                           return Container(
                             margin: const EdgeInsets.only(bottom: 12),
                             padding: const EdgeInsets.all(16),

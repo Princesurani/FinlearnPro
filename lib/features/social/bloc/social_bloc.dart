@@ -159,27 +159,34 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         myProfile: finalProfile,
       ));
     } catch (_) {
-      // Backend unreachable — build a local profile from Firebase Auth
-      emit(state.copyWith(
-        status: SocialStatus.loaded,
-        isProfileLoading: false,
-        myProfile: UserProfile(
-          firebaseUid: event.uid,
-          username: _resolveUsername(),
-          avatarUrl: FirebaseAuth.instance.currentUser?.photoURL,
-          bio: null,
-          totalXp: 0,
-          weeklyXp: 0,
-          level: 1,
-          currentStreak: 0,
-          longestStreak: 0,
-          totalTrades: 0,
-          totalCoursesCompleted: 0,
-          totalChallengesCompleted: 0,
-          winRate: 0.0,
-          lastActivityDate: null,
-        ),
-      ));
+      // Backend unreachable — keep existing profile if we have one, otherwise build a local fallback profile
+      if (state.myProfile != null) {
+        emit(state.copyWith(
+          status: SocialStatus.loaded,
+          isProfileLoading: false,
+        ));
+      } else {
+        emit(state.copyWith(
+          status: SocialStatus.loaded,
+          isProfileLoading: false,
+          myProfile: UserProfile(
+            firebaseUid: event.uid,
+            username: _resolveUsername(),
+            avatarUrl: FirebaseAuth.instance.currentUser?.photoURL,
+            bio: null,
+            totalXp: 0,
+            weeklyXp: 0,
+            level: 1,
+            currentStreak: 0,
+            longestStreak: 0,
+            totalTrades: 0,
+            totalCoursesCompleted: 0,
+            totalChallengesCompleted: 0,
+            winRate: 0.0,
+            lastActivityDate: null,
+          ),
+        ));
+      }
     }
   }
 
@@ -197,26 +204,30 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         period: event.period,
       );
 
-      // Fix the current user's name in the leaderboard if the backend still
-      // has a dummy Trader_xxx. We already know the correct name locally.
+      // Fix current user's name in the leaderboard, resolving dummy names dynamically.
       final myUid = FirebaseAuth.instance.currentUser?.uid;
-      final correctedName = _resolveUsername();
+      final myProfileName = state.myProfile?.username;
+      final correctedName = (myProfileName != null && !_isDummyName(myProfileName))
+          ? myProfileName
+          : _resolveUsername();
+
       final correctedLeaderboard = leaderboard.map((entry) {
-        if (entry.firebaseUid == myUid && _isDummyName(entry.username) && !_isDummyName(correctedName)) {
-          return LeaderboardEntry(
-            firebaseUid: entry.firebaseUid,
-            username: correctedName,
-            avatarUrl: entry.avatarUrl,
-            level: entry.level,
-            totalXp: entry.totalXp,
-            weeklyXp: entry.weeklyXp,
-            currentStreak: entry.currentStreak,
-            totalTrades: entry.totalTrades,
-            winRate: entry.winRate,
-            rank: entry.rank,
-          );
-        }
-        return entry;
+        final dbName = (entry.firebaseUid == myUid && correctedName.isNotEmpty && !_isDummyName(correctedName))
+            ? correctedName
+            : entry.username;
+
+        return LeaderboardEntry(
+          firebaseUid: entry.firebaseUid,
+          username: dbName,
+          avatarUrl: entry.firebaseUid == myUid ? (state.myProfile?.avatarUrl ?? entry.avatarUrl) : entry.avatarUrl,
+          level: entry.level,
+          totalXp: entry.totalXp,
+          weeklyXp: entry.weeklyXp,
+          currentStreak: entry.currentStreak,
+          totalTrades: entry.totalTrades,
+          winRate: entry.winRate,
+          rank: entry.rank,
+        );
       }).toList();
 
       emit(state.copyWith(
@@ -239,7 +250,40 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
     emit(state.copyWith(isFeedLoading: true));
     try {
       final feed = await repository.getFeed(event.uid);
-      emit(state.copyWith(status: SocialStatus.loaded, isFeedLoading: false, feed: feed));
+
+      final myUid = FirebaseAuth.instance.currentUser?.uid;
+      final myProfileName = state.myProfile?.username;
+      final correctedName = (myProfileName != null && !_isDummyName(myProfileName))
+          ? myProfileName
+          : _resolveUsername();
+      final correctedAvatar = state.myProfile?.avatarUrl ?? FirebaseAuth.instance.currentUser?.photoURL;
+
+      final correctedFeed = feed.map((post) {
+        final dbName = (post.firebaseUid == myUid && correctedName.isNotEmpty && !_isDummyName(correctedName))
+            ? correctedName
+            : post.authorName;
+
+        return TradeSharePost(
+          id: post.id,
+          firebaseUid: post.firebaseUid,
+          authorName: dbName,
+          authorAvatar: post.firebaseUid == myUid ? (correctedAvatar ?? post.authorAvatar) : post.authorAvatar,
+          authorLevel: post.authorLevel,
+          tradeId: post.tradeId,
+          symbol: post.symbol,
+          side: post.side,
+          quantity: post.quantity,
+          price: post.price,
+          pnlPercent: post.pnlPercent,
+          caption: post.caption,
+          likesCount: post.likesCount,
+          commentsCount: post.commentsCount,
+          isLikedByMe: post.isLikedByMe,
+          createdAt: post.createdAt,
+        );
+      }).toList();
+
+      emit(state.copyWith(status: SocialStatus.loaded, isFeedLoading: false, feed: correctedFeed));
     } catch (e) {
       emit(state.copyWith(status: SocialStatus.loaded, isFeedLoading: false, feed: []));
     }
@@ -249,14 +293,123 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
 
   Future<void> _onUpdateProfile(UpdateProfile event, Emitter<SocialState> emit) async {
     try {
+      if (event.username != null) {
+        await FirebaseAuth.instance.currentUser?.updateDisplayName(event.username);
+        await FirebaseAuth.instance.currentUser?.reload();
+      }
       final updated = await repository.updateProfile(
         event.uid,
         username: event.username,
         bio: event.bio,
         avatarUrl: event.avatarUrl,
       );
-      emit(state.copyWith(myProfile: updated));
-    } catch (_) {}
+
+      // Instantly propagate username/avatar updates to current user's local leaderboard & feed lists
+      final updatedLeaderboard = state.leaderboard.map((entry) {
+        if (entry.firebaseUid == event.uid) {
+          return LeaderboardEntry(
+            firebaseUid: entry.firebaseUid,
+            username: event.username ?? entry.username,
+            avatarUrl: event.avatarUrl ?? entry.avatarUrl,
+            level: entry.level,
+            totalXp: entry.totalXp,
+            weeklyXp: entry.weeklyXp,
+            currentStreak: entry.currentStreak,
+            totalTrades: entry.totalTrades,
+            winRate: entry.winRate,
+            rank: entry.rank,
+          );
+        }
+        return entry;
+      }).toList();
+
+      final updatedFeed = state.feed.map((post) {
+        if (post.firebaseUid == event.uid) {
+          return TradeSharePost(
+            id: post.id,
+            firebaseUid: post.firebaseUid,
+            authorName: event.username ?? post.authorName,
+            authorAvatar: event.avatarUrl ?? post.authorAvatar,
+            authorLevel: post.authorLevel,
+            tradeId: post.tradeId,
+            symbol: post.symbol,
+            side: post.side,
+            quantity: post.quantity,
+            price: post.price,
+            pnlPercent: post.pnlPercent,
+            caption: post.caption,
+            likesCount: post.likesCount,
+            commentsCount: post.commentsCount,
+            isLikedByMe: post.isLikedByMe,
+            createdAt: post.createdAt,
+          );
+        }
+        return post;
+      }).toList();
+
+      emit(state.copyWith(
+        myProfile: updated,
+        leaderboard: updatedLeaderboard,
+        feed: updatedFeed,
+      ));
+    } catch (_) {
+      // Fallback: update local state if backend is temporarily unreachable
+      if (state.myProfile != null) {
+        final localProfile = state.myProfile!.copyWith(
+          username: event.username,
+          bio: event.bio,
+          avatarUrl: event.avatarUrl,
+        );
+
+        final updatedLeaderboard = state.leaderboard.map((entry) {
+          if (entry.firebaseUid == event.uid) {
+            return LeaderboardEntry(
+              firebaseUid: entry.firebaseUid,
+              username: event.username ?? entry.username,
+              avatarUrl: event.avatarUrl ?? entry.avatarUrl,
+              level: entry.level,
+              totalXp: entry.totalXp,
+              weeklyXp: entry.weeklyXp,
+              currentStreak: entry.currentStreak,
+              totalTrades: entry.totalTrades,
+              winRate: entry.winRate,
+              rank: entry.rank,
+            );
+          }
+          return entry;
+        }).toList();
+
+        final updatedFeed = state.feed.map((post) {
+          if (post.firebaseUid == event.uid) {
+            return TradeSharePost(
+              id: post.id,
+              firebaseUid: post.firebaseUid,
+              authorName: event.username ?? post.authorName,
+              authorAvatar: event.avatarUrl ?? post.authorAvatar,
+              authorLevel: post.authorLevel,
+              tradeId: post.tradeId,
+              symbol: post.symbol,
+              side: post.side,
+              quantity: post.quantity,
+              price: post.price,
+              pnlPercent: post.pnlPercent,
+              caption: post.caption,
+              likesCount: post.likesCount,
+              commentsCount: post.commentsCount,
+              isLikedByMe: post.isLikedByMe,
+              createdAt: post.createdAt,
+            );
+          }
+          return post;
+        }).toList();
+
+        emit(state.copyWith(
+          myProfile: localProfile,
+          leaderboard: updatedLeaderboard,
+          feed: updatedFeed,
+        ));
+      }
+    }
   }
 
   // ── Like / Unlike ────────────────────────────────────────────────────────

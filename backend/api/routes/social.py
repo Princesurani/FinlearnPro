@@ -94,14 +94,23 @@ async def update_profile(uid: str, req: UserProfileUpdateRequest, db: AsyncSessi
     profile = result.scalars().first()
     
     if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
-        
-    if req.username is not None:
-        profile.username = req.username
-    if req.avatar_url is not None:
-        profile.avatar_url = req.avatar_url
-    if req.bio is not None:
-        profile.bio = req.bio
+        profile = DbUserProfile(
+            firebase_uid=uid,
+            username=req.username if req.username is not None else f"Trader_{uid[:6]}",
+            avatar_url=req.avatar_url,
+            bio=req.bio,
+            total_xp=0,
+            weekly_xp=0,
+            level=1
+        )
+        db.add(profile)
+    else:
+        if req.username is not None:
+            profile.username = req.username
+        if req.avatar_url is not None:
+            profile.avatar_url = req.avatar_url
+        if req.bio is not None:
+            profile.bio = req.bio
         
     await db.commit()
     await db.refresh(profile)

@@ -128,7 +128,8 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
   Widget _buildHeader(BuildContext context, UserProfile profile) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Avatar (tappable → edit sheet)
           GestureDetector(
@@ -136,40 +137,70 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
             child: Stack(
               alignment: Alignment.bottomRight,
               children: [
-                _buildAvatar(profile, radius: 40),
+                _buildAvatar(profile, radius: 48),
                 Container(
-                  padding: const EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     color: AppColors.primary,
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColors.backgroundPrimary, width: 2),
                   ),
-                  child: const Icon(Icons.edit_rounded, color: AppColors.white, size: 12),
+                  child: const Icon(Icons.edit_rounded, color: AppColors.white, size: 14),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(height: 12),
           // Name + bio
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(profile.username, style: AppTypography.h4.copyWith(fontWeight: FontWeight.bold)),
-                if (profile.bio != null && profile.bio!.isNotEmpty)
-                  Text(profile.bio!, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary), maxLines: 2, overflow: TextOverflow.ellipsis),
-              ],
-            ),
+          Text(
+            profile.username,
+            style: AppTypography.h4.copyWith(fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(width: 10),
+          if (profile.bio != null && profile.bio!.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Text(
+                profile.bio!,
+                style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
+                textAlign: TextAlign.center,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
           // Level badge
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(gradient: AppColors.primaryGradient, borderRadius: BorderRadius.circular(20)),
-            child: Column(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Lv.${profile.level}', style: AppTypography.bodySmall.copyWith(color: AppColors.white, fontWeight: FontWeight.bold)),
-                Text('${profile.totalXp} XP', style: AppTypography.bodyXS.copyWith(color: AppColors.white.withValues(alpha: 0.85))),
+                Text(
+                  'Lv.${profile.level}',
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  width: 1,
+                  height: 12,
+                  color: AppColors.white.withValues(alpha: 0.4),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${profile.totalXp} XP',
+                  style: AppTypography.bodyXS.copyWith(
+                    color: AppColors.white.withValues(alpha: 0.85),
+                  ),
+                ),
               ],
             ),
           ),
