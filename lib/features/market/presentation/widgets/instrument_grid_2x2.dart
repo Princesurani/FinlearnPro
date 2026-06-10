@@ -46,7 +46,7 @@ class InstrumentGrid2x2 extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: AppSpacing.sm,
         mainAxisSpacing: AppSpacing.sm,
-        childAspectRatio: 1.25,
+        childAspectRatio: 1.45,
       ),
       itemCount: cellCount,
       itemBuilder: (context, index) {
@@ -98,7 +98,7 @@ class _StockCell extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sm),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.75),
           borderRadius: AppSpacing.borderRadiusMD,
@@ -162,7 +162,7 @@ class _StockCell extends StatelessWidget {
                   fontWeight: AppTypography.semiBold,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 1),
               _ChangeRow(
                 change: snapshot!.change,
                 changePercent: snapshot!.changePercent,
@@ -268,8 +268,8 @@ class _ChangeRow extends StatelessWidget {
         : Icons.arrow_drop_down_rounded;
 
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(arrow, size: 18, color: color),
         Flexible(
           child: Text(
             '$sign${change.toStringAsFixed(2)} '
@@ -282,6 +282,7 @@ class _ChangeRow extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
+        Icon(arrow, size: 18, color: color),
       ],
     );
   }

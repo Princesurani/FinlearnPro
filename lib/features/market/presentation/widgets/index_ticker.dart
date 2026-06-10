@@ -9,7 +9,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../bloc/market_bloc.dart';
 import '../pages/index_detail_screen.dart';
 
-class IndexTicker extends StatelessWidget {
+class IndexTicker extends StatefulWidget {
   const IndexTicker({
     super.key,
     required this.market,
@@ -20,32 +20,37 @@ class IndexTicker extends StatelessWidget {
   });
 
   final MarketRegime market;
-
   final Map<String, MarketSnapshot> snapshots;
-
   final List<Instrument> indices;
   final MarketBloc bloc;
   final EdgeInsetsGeometry padding;
+
+  @override
+  State<IndexTicker> createState() => _IndexTickerState();
+}
+
+class _IndexTickerState extends State<IndexTicker> {
+  bool _showPercentage = false;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: SizedBox(
-        height: 100,
+        height: 70,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          padding: padding,
-          itemCount: indices.length,
+          padding: widget.padding,
+          itemCount: widget.indices.length,
           separatorBuilder: (_, _) => const SizedBox(width: 12),
-          itemBuilder: (context, i) => _buildIndexCard(context, indices[i]),
+          itemBuilder: (context, i) => _buildIndexCard(context, widget.indices[i]),
         ),
       ),
     );
   }
 
   Widget _buildIndexCard(BuildContext context, Instrument index) {
-    final snap = snapshots[index.symbol];
+    final snap = widget.snapshots[index.symbol];
 
     if (snap == null) {
       return Padding(
@@ -88,14 +93,14 @@ class IndexTicker extends StatelessWidget {
             builder: (_) => IndexDetailScreen(
               instrument: index,
               snapshot: snap,
-              bloc: bloc,
+              bloc: widget.bloc,
             ),
           ),
         );
       },
       child: Container(
         width: 160,
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.75),
           borderRadius: BorderRadius.circular(12),
@@ -113,7 +118,7 @@ class IndexTicker extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               index.name,
@@ -125,33 +130,47 @@ class IndexTicker extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 8),
-            Text(
-              _formatIndexValue(snap.price),
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
             const SizedBox(height: 4),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(
-                  isUp ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                  size: 18,
-                  color: changeColor,
+                Text(
+                  _formatIndexValue(snap.price),
+                  style: AppTypography.number.copyWith(
+                    fontWeight: AppTypography.semiBold,
+                  ),
                 ),
-                Flexible(
-                  child: Text(
-                    '${isUp ? '+' : ''}${_formatIndexValue(snap.change)} (${snap.changePercent.abs().toStringAsFixed(2)}%)',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: changeColor,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                const SizedBox(width: 4),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _showPercentage = !_showPercentage;
+                    });
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isUp ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                        size: 16,
+                        color: changeColor,
+                      ),
+                      Flexible(
+                        child: Text(
+                          _showPercentage
+                              ? '${isUp ? '+' : '-'}${snap.changePercent.abs().toStringAsFixed(2)}%'
+                              : '${isUp ? '+' : ''}${_formatIndexValue(snap.change)}',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: changeColor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

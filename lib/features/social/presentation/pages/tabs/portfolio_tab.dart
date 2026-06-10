@@ -451,6 +451,8 @@ class PortfolioTab extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
+    final watchList = state.instruments.take(3).toList();
+
     return RefreshIndicator(
       onRefresh: () async {
         bloc.add(RefreshMarketData());
@@ -460,70 +462,340 @@ class PortfolioTab extends StatelessWidget {
       color: AppColors.primary,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.7,
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPaddingHorizontal, vertical: 12),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.xl),
-              decoration: BoxDecoration(
-                color: AppColors.backgroundSecondary,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.pie_chart_outline_rounded,
-                size: 48,
-                color: AppColors.textTertiary,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              'No holdings yet',
-              style: AppTypography.h3.copyWith(color: AppColors.textPrimary),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Buy your first stock to start building your portfolio.',
-              style: AppTypography.labelSmall.copyWith(
-                color: AppColors.textTertiary,
-                fontSize: 11,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              'Wallet: ${state.activeMarket.currencySymbol}${state.portfolioBalance > 0 ? state.portfolioBalance.toStringAsFixed(2) : "Loading..."}',
-              style: AppTypography.body.copyWith(
-                color: AppColors.profitGreen,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xl),
-            ElevatedButton(
-              onPressed: onExplore,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryButton,
-                foregroundColor: AppColors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl,
-                  vertical: AppSpacing.md,
+            _buildWalletCard(context),
+            const SizedBox(height: 16),
+            _buildQuickStartGuide(context),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Top Stocks to Watch',
+                  style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                GestureDetector(
+                  onTap: onExplore,
+                  child: Text(
+                    'View Markets',
+                    style: AppTypography.bodyXS.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-                elevation: 0,
-              ),
-              child: const Text('Start Investing'),
+              ],
             ),
-            const SizedBox(height: 100),
+            const SizedBox(height: 12),
+            if (watchList.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: AppSpacing.borderRadiusLG,
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Center(
+                  child: Text(
+                    'Loading market recommendations...',
+                    style: AppTypography.bodyXS,
+                  ),
+                ),
+              )
+            else
+              _buildWatchList(context, watchList),
+            const SizedBox(height: 120), // Spacer for nav bar
           ],
         ),
       ),
-    ),
+    );
+  }
+
+  Widget _buildWalletCard(BuildContext context) {
+    final balance = state.portfolioBalance;
+    final currency = state.activeMarket.currencySymbol;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          )
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'AVAILABLE FUNDS',
+            style: AppTypography.labelSmall.copyWith(
+              color: AppColors.white.withValues(alpha: 0.7),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.0,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '$currency${balance > 0 ? balance.toStringAsFixed(2) : "10,000.00"}',
+            style: AppTypography.h2.copyWith(
+              color: AppColors.white,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.add_rounded, color: AppColors.white, size: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Deposit',
+                          style: AppTypography.bodySmall.copyWith(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.arrow_upward_rounded, color: AppColors.white, size: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Withdraw',
+                          style: AppTypography.bodySmall.copyWith(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickStartGuide(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Kickstart Your Portfolio',
+            style: AppTypography.labelLarge.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+          _buildGuideItem(
+            Icons.school_outlined,
+            'Complete your first lesson',
+            'Earn XP and learn how market orders work.',
+            true,
+          ),
+          const SizedBox(height: 12),
+          _buildGuideItem(
+            Icons.explore_outlined,
+            'Explore top index tickers',
+            'Monitor Nifty 50 and other sectors.',
+            false,
+          ),
+          const SizedBox(height: 12),
+          _buildGuideItem(
+            Icons.account_balance_wallet_outlined,
+            'Place your first stock order',
+            'Select a popular stock from the list below.',
+            false,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGuideItem(IconData icon, String title, String desc, bool done) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          done ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+          color: done ? AppColors.profitGreen : AppColors.textTertiary,
+          size: 20,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: AppTypography.bodySmall.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              Text(
+                desc,
+                style: AppTypography.bodyXS,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWatchList(BuildContext context, List watchList) {
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: watchList.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final inst = watchList[index];
+        final snap = state.snapshots[inst.symbol];
+        final price = snap?.price ?? 0.0;
+        final change = snap?.change ?? 0.0;
+        final changePct = snap?.changePercent ?? 0.0;
+        final isUp = change >= 0;
+        final changeColor = isUp ? AppColors.profitGreen : AppColors.lossRed;
+
+        return InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => StockDetailScreen(
+                  instrument: inst,
+                  snapshot: snap,
+                  bloc: bloc,
+                ),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.border, width: 0.5),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      inst.symbol[0].toUpperCase(),
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        inst.symbol,
+                        style: AppTypography.bodySmall.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        inst.name,
+                        style: AppTypography.bodyXS,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${state.activeMarket.currencySymbol}${price.toStringAsFixed(2)}',
+                      style: AppTypography.bodySmall.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isUp ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                          color: changeColor,
+                          size: 16,
+                        ),
+                        Text(
+                          '${isUp ? '+' : ''}${changePct.toStringAsFixed(2)}%',
+                          style: AppTypography.bodyXS.copyWith(
+                            color: changeColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
