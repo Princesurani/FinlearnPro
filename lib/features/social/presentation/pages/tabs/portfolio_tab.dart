@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -8,6 +9,7 @@ import '../../../../../core/domain/market_data.dart';
 import '../../../../market/bloc/market_bloc.dart';
 import '../../../../market/presentation/pages/stock_detail_screen.dart';
 import '../../../../market/presentation/widgets/ai_review_sheet.dart';
+import '../../../../portfolio/presentation/pages/trading_journal_screen.dart';
 
 class PortfolioTab extends StatelessWidget {
   const PortfolioTab({
@@ -124,6 +126,11 @@ class PortfolioTab extends StatelessWidget {
           itemBuilder: (context, index) {
             return _buildHoldingItem(context, positions[index]);
           },
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: _buildJournalTile(context),
         ),
       ],
     ),
@@ -508,6 +515,8 @@ class PortfolioTab extends StatelessWidget {
               )
             else
               _buildWatchList(context, watchList),
+            const SizedBox(height: 16),
+            _buildJournalTile(context),
             const SizedBox(height: 120), // Spacer for nav bar
           ],
         ),
@@ -796,6 +805,47 @@ class PortfolioTab extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildJournalTile(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const TradingJournalScreen()));
+      },
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.menu_book_rounded, color: AppColors.primary, size: 20),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Trading Journal', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                  Text('Review trades & psychology notes', style: AppTypography.bodyXS),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary, size: 20),
+          ],
+        ),
+      ),
     );
   }
 }
