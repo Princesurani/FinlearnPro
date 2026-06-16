@@ -1,6 +1,6 @@
 import os
 import json
-import redis.asyncio as aioredis
+import redis.asyncio as redis
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -8,7 +8,8 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from db.database import get_db
-from db.models import DbOrder, DbTrade, DbPortfolioPosition, DbUser
+from db.models import DbOrder, DbTrade, DbPortfolioPosition, DbUser, DbUserBalance
+from services.user_service import get_or_create_user
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 STARTING_BALANCE = 10_000.0  # ₹10,000 paper trading balance
@@ -35,7 +36,7 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
         raise HTTPException(status_code=400, detail="Quantity must be greater than 0")
 
     # 1. Fetch live price from Redis (key written by simulation/tasks.py)
-    r = aioredis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
+    r = redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     try:
         raw_data = await r.get(f"market:quote:{order_req.symbol}")
     finally:
@@ -55,20 +56,28 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
     total_value = current_price * order_req.quantity
 
     # 2. Get or auto-create user with 10k paper trading starting balance across markets
-    result = await db.execute(select(DbUser).where(DbUser.firebase_uid == order_req.firebase_uid))
-    user = result.scalar_one_or_none()
-    if not user:
-        user = DbUser(
-            firebase_uid=order_req.firebase_uid, 
-            email=None, 
-            balance_india=STARTING_BALANCE,
-            balance_usa=STARTING_BALANCE,
-            balance_uk=STARTING_BALANCE
+    user = await get_or_create_user(db, order_req.firebase_uid, STARTING_BALANCE)
+
+    # 3. Get user balance for the specific market
+    bal_result = await db.execute(
+        select(DbUserBalance).where(
+            DbUserBalance.firebase_uid == order_req.firebase_uid,
+            DbUserBalance.market == order_req.market
         )
-        db.add(user)
+    )
+    user_balance = bal_result.scalar_one_or_none()
+    if not user_balance:
+        user_balance = DbUserBalance(
+            firebase_uid=order_req.firebase_uid,
+            market=order_req.market,
+            balance=STARTING_BALANCE
+        )
+        db.add(user_balance)
         await db.flush()
 
-    # 3. Get or create portfolio position for this symbol
+    current_balance = user_balance.balance
+
+    # 4. Get or create portfolio position for this symbol
     pos_result = await db.execute(
         select(DbPortfolioPosition).where(
             DbPortfolioPosition.firebase_uid == order_req.firebase_uid,
@@ -87,15 +96,8 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
         db.add(position)
         await db.flush()
 
-    # 4. Apply buy / sell logic against specific market balance
+    # 5. Apply buy / sell logic against specific market balance
     side = order_req.side.lower()
-    
-    market_attr = f"balance_{order_req.market}"
-    current_balance = getattr(user, market_attr, None)
-    
-    if current_balance is None: # fallback
-        market_attr = "balance_india"
-        current_balance = user.balance_india
 
     if side == "buy":
         if current_balance < total_value:
@@ -107,7 +109,7 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
         new_total_cost = (position.quantity * position.average_cost) + total_value
         position.quantity += order_req.quantity
         position.average_cost = new_total_cost / position.quantity
-        setattr(user, market_attr, current_balance - total_value)
+        user_balance.balance = current_balance - total_value
 
     elif side == "sell":
         if position.quantity < order_req.quantity:
@@ -116,14 +118,14 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
                 detail=f"Insufficient shares. Held: {position.quantity}, Requested: {order_req.quantity}"
             )
         position.quantity -= order_req.quantity
-        setattr(user, market_attr, current_balance + total_value)
+        user_balance.balance = current_balance + total_value
         if position.quantity == 0:
             position.average_cost = 0.0
 
     else:
         raise HTTPException(status_code=400, detail="side must be 'buy' or 'sell'")
 
-    # 5. Write order + trade records
+    # 6. Write order + trade records
     order = DbOrder(
         firebase_uid=order_req.firebase_uid,
         symbol=order_req.symbol,
@@ -146,40 +148,26 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
     )
     db.add(trade)
 
-    # 6. Award XP and update profile stats
-    from db.models import DbUserProfile
+    # 7. Award XP and update stats directly on user (profile columns are merged)
     from api.routes.social import calculate_level
     
-    prof_result = await db.execute(select(DbUserProfile).where(DbUserProfile.firebase_uid == order_req.firebase_uid))
-    profile = prof_result.scalar_one_or_none()
     xp_awarded = 15
-    if profile:
-        profile.total_xp += xp_awarded
-        profile.weekly_xp += xp_awarded
-        profile.level = calculate_level(profile.total_xp)
-        profile.total_trades += 1
-        
-        # Simple win_rate update if it's a sell (naive approach)
-        if side == "sell" and position.average_cost > 0:
-            is_win = current_price > position.average_cost
-            total_sells = profile.total_trades // 2 # Rough estimate
-            if total_sells == 0: total_sells = 1
-            wins = profile.win_rate * (total_sells - 1) + (1 if is_win else 0)
-            profile.win_rate = wins / total_sells
-    else:
-        new_prof = DbUserProfile(
-            firebase_uid=order_req.firebase_uid,
-            username=f"Trader_{order_req.firebase_uid[:6]}",
-            total_xp=xp_awarded,
-            weekly_xp=xp_awarded,
-            level=calculate_level(xp_awarded),
-            total_trades=1
-        )
-        db.add(new_prof)
+    user.total_xp += xp_awarded
+    user.weekly_xp += xp_awarded
+    user.level = calculate_level(user.total_xp)
+    user.total_trades += 1
+    
+    # Simple win_rate update if it's a sell (naive approach)
+    if side == "sell" and position.average_cost > 0:
+        is_win = current_price > position.average_cost
+        total_sells = user.total_trades // 2 # Rough estimate
+        if total_sells == 0: total_sells = 1
+        wins = user.win_rate * (total_sells - 1) + (1 if is_win else 0)
+        user.win_rate = wins / total_sells
 
     await db.commit()
 
-    r_cache = aioredis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
+    r_cache = redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     try:
         await r_cache.delete(f"portfolio:review:{order_req.firebase_uid}")
     finally:
@@ -190,5 +178,6 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
         "message": f"Successfully {side} {order_req.quantity} shares of {order_req.symbol}",
         "fill_price": current_price,
         "total_value": total_value,
-        "new_balance": getattr(user, market_attr),
+        "new_balance": user_balance.balance,
     }
+

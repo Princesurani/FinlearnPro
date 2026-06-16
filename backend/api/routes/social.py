@@ -3,7 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import desc, update, delete, func
 from db.database import get_db
-from db.models import DbUserProfile, DbTradeShare, DbTradeShareLike
+from db.models import DbUser, DbTradeShare, DbTradeShareLike
+from services.user_service import get_or_create_user
 from models.schemas import (
     UserProfileResponse, UserProfileUpdateRequest, LeaderboardEntry, 
     TradeShareRequest, TradeShareResponse
@@ -22,9 +23,9 @@ async def search_users(
 ):
     """Search users by username (case-insensitive partial match)"""
     stmt = (
-        select(DbUserProfile)
-        .where(DbUserProfile.username.ilike(f"%{q}%"))
-        .order_by(desc(DbUserProfile.total_xp))
+        select(DbUser)
+        .where(DbUser.username.ilike(f"%{q}%"))
+        .order_by(desc(DbUser.total_xp))
         .limit(limit)
     )
     result = await db.execute(stmt)
@@ -53,83 +54,66 @@ def calculate_level(total_xp: int) -> int:
 
 @router.get("/profile/{uid}", response_model=UserProfileResponse)
 async def get_profile(uid: str, db: AsyncSession = Depends(get_db)):
-    stmt = select(DbUserProfile).where(DbUserProfile.firebase_uid == uid)
-    result = await db.execute(stmt)
-    profile = result.scalars().first()
-    
-    if not profile:
-        # Auto-create if doesn't exist
-        profile = DbUserProfile(
-            firebase_uid=uid,
-            username=f"Trader_{uid[:6]}",
-            total_xp=0,
-            weekly_xp=0,
-            level=1
-        )
-        db.add(profile)
-        await db.commit()
-        await db.refresh(profile)
+    user = await get_or_create_user(db, uid)
+    await db.commit()
         
     return UserProfileResponse(
-        firebase_uid=profile.firebase_uid,
-        username=profile.username,
-        avatar_url=profile.avatar_url,
-        bio=profile.bio,
-        total_xp=profile.total_xp,
-        weekly_xp=profile.weekly_xp,
-        level=profile.level,
-        current_streak=profile.current_streak,
-        longest_streak=profile.longest_streak,
-        total_trades=profile.total_trades,
-        total_courses_completed=profile.total_courses_completed,
-        total_challenges_completed=profile.total_challenges_completed,
-        win_rate=profile.win_rate,
-        last_activity_date=profile.last_activity_date.isoformat() if profile.last_activity_date else None
+        firebase_uid=user.firebase_uid,
+        username=user.username,
+        avatar_url=user.avatar_url,
+        bio=user.bio,
+        total_xp=user.total_xp,
+        weekly_xp=user.weekly_xp,
+        level=user.level,
+        current_streak=user.current_streak,
+        longest_streak=user.longest_streak,
+        total_trades=user.total_trades,
+        total_courses_completed=user.total_courses_completed,
+        total_challenges_completed=user.total_challenges_completed,
+        win_rate=user.win_rate,
+        last_activity_date=user.last_activity_date.isoformat() if user.last_activity_date else None
     )
 
 @router.put("/profile/{uid}", response_model=UserProfileResponse)
 async def update_profile(uid: str, req: UserProfileUpdateRequest, db: AsyncSession = Depends(get_db)):
-    stmt = select(DbUserProfile).where(DbUserProfile.firebase_uid == uid)
+    stmt = select(DbUser).where(DbUser.firebase_uid == uid)
     result = await db.execute(stmt)
-    profile = result.scalars().first()
+    user = result.scalars().first()
     
-    if not profile:
-        profile = DbUserProfile(
-            firebase_uid=uid,
-            username=req.username if req.username is not None else f"Trader_{uid[:6]}",
-            avatar_url=req.avatar_url,
-            bio=req.bio,
-            total_xp=0,
-            weekly_xp=0,
-            level=1
-        )
-        db.add(profile)
-    else:
-        if req.username is not None:
-            profile.username = req.username
-        if req.avatar_url is not None:
-            profile.avatar_url = req.avatar_url
-        if req.bio is not None:
-            profile.bio = req.bio
+    if not user:
+        user = await get_or_create_user(db, uid, username=req.username)
+    
+    if req.username is not None and req.username != user.username:
+        # Check if username is already taken by someone else
+        taken_stmt = select(DbUser).where(DbUser.username == req.username)
+        taken_res = await db.execute(taken_stmt)
+        if taken_res.scalar_one_or_none() is not None:
+            raise HTTPException(status_code=400, detail="Username already taken")
+        user.username = req.username
+        
+    if req.avatar_url is not None:
+        user.avatar_url = req.avatar_url
+    if req.bio is not None:
+        user.bio = req.bio
         
     await db.commit()
-    await db.refresh(profile)
+    await db.refresh(user)
     
     return UserProfileResponse(
-        firebase_uid=profile.firebase_uid,
-        username=profile.username,
-        avatar_url=profile.avatar_url,
-        bio=profile.bio,
-        total_xp=profile.total_xp,
-        weekly_xp=profile.weekly_xp,
-        level=profile.level,
-        current_streak=profile.current_streak,
-        longest_streak=profile.longest_streak,
-        total_trades=profile.total_trades,
-        total_courses_completed=profile.total_courses_completed,
-        total_challenges_completed=profile.total_challenges_completed,
-        win_rate=profile.win_rate,
-        last_activity_date=profile.last_activity_date.isoformat() if profile.last_activity_date else None
+        firebase_uid=user.firebase_uid,
+        username=user.username,
+        avatar_url=user.avatar_url,
+        bio=user.bio,
+        total_xp=user.total_xp,
+        weekly_xp=user.weekly_xp,
+        level=user.level,
+        current_streak=user.current_streak,
+        longest_streak=user.longest_streak,
+        total_trades=user.total_trades,
+        total_courses_completed=user.total_courses_completed,
+        total_challenges_completed=user.total_challenges_completed,
+        win_rate=user.win_rate,
+        last_activity_date=user.last_activity_date.isoformat() if user.last_activity_date else None
     )
 
 @router.get("/leaderboard", response_model=List[LeaderboardEntry])
@@ -139,21 +123,21 @@ async def get_leaderboard(
     limit: int = Query(50, le=100),
     db: AsyncSession = Depends(get_db)
 ):
-    query = select(DbUserProfile)
+    query = select(DbUser)
     
     if type == "xp":
         if period == "weekly":
-            query = query.order_by(desc(DbUserProfile.weekly_xp))
+            query = query.order_by(desc(DbUser.weekly_xp))
         else:
-            query = query.order_by(desc(DbUserProfile.total_xp))
+            query = query.order_by(desc(DbUser.total_xp))
     elif type == "trades":
-        query = query.order_by(desc(DbUserProfile.total_trades))
+        query = query.order_by(desc(DbUser.total_trades))
     elif type == "streak":
-        query = query.order_by(desc(DbUserProfile.current_streak))
+        query = query.order_by(desc(DbUser.current_streak))
     elif type == "win_rate":
-        query = query.where(DbUserProfile.total_trades >= 5).order_by(desc(DbUserProfile.win_rate))
+        query = query.where(DbUser.total_trades >= 5).order_by(desc(DbUser.win_rate))
     else:
-        query = query.order_by(desc(DbUserProfile.total_xp))
+        query = query.order_by(desc(DbUser.total_xp))
         
     query = query.limit(limit)
     result = await db.execute(query)
@@ -176,16 +160,14 @@ async def get_leaderboard(
         
     return leaderboard
 
-
-
 @router.post("/share", response_model=TradeShareResponse)
 async def share_trade(req: TradeShareRequest, uid: str = Query(...), db: AsyncSession = Depends(get_db)):
     # 1. Fetch user profile
-    stmt = select(DbUserProfile).where(DbUserProfile.firebase_uid == uid)
+    stmt = select(DbUser).where(DbUser.firebase_uid == uid)
     res = await db.execute(stmt)
-    profile = res.scalars().first()
-    if not profile:
-        raise HTTPException(status_code=404, detail="User profile not found")
+    user = res.scalars().first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
         
     # 2. Create share
     share = DbTradeShare(
@@ -203,9 +185,9 @@ async def share_trade(req: TradeShareRequest, uid: str = Query(...), db: AsyncSe
     db.add(share)
     
     # 3. Award XP for sharing
-    profile.total_xp += 10
-    profile.weekly_xp += 10
-    profile.level = calculate_level(profile.total_xp)
+    user.total_xp += 10
+    user.weekly_xp += 10
+    user.level = calculate_level(user.total_xp)
     
     await db.commit()
     await db.refresh(share)
@@ -213,9 +195,9 @@ async def share_trade(req: TradeShareRequest, uid: str = Query(...), db: AsyncSe
     return TradeShareResponse(
         id=share.id,
         firebase_uid=uid,
-        author_name=profile.username,
-        author_avatar=profile.avatar_url,
-        author_level=profile.level,
+        author_name=user.username,
+        author_avatar=user.avatar_url,
+        author_level=user.level,
         trade_id=share.trade_id,
         symbol=share.symbol,
         side=share.side,
@@ -233,8 +215,8 @@ async def share_trade(req: TradeShareRequest, uid: str = Query(...), db: AsyncSe
 async def get_feed(uid: str, page: int = 1, limit: int = 20, db: AsyncSession = Depends(get_db)):
     # Fetch all trade shares (global feed)
     stmt_shares = (
-        select(DbTradeShare, DbUserProfile)
-        .join(DbUserProfile, DbTradeShare.firebase_uid == DbUserProfile.firebase_uid)
+        select(DbTradeShare, DbUser)
+        .join(DbUser, DbTradeShare.firebase_uid == DbUser.firebase_uid)
         .order_by(desc(DbTradeShare.created_at))
         .offset((page - 1) * limit)
         .limit(limit)
@@ -257,13 +239,13 @@ async def get_feed(uid: str, page: int = 1, limit: int = 20, db: AsyncSession = 
     liked_share_ids = set(res_likes.scalars().all())
     
     response = []
-    for share, profile in rows:
+    for share, user in rows:
         response.append(TradeShareResponse(
             id=share.id,
             firebase_uid=share.firebase_uid,
-            author_name=profile.username,
-            author_avatar=profile.avatar_url,
-            author_level=profile.level,
+            author_name=user.username,
+            author_avatar=user.avatar_url,
+            author_level=user.level,
             trade_id=share.trade_id,
             symbol=share.symbol,
             side=share.side,
@@ -330,23 +312,12 @@ async def unlike_share(share_id: int, uid: str = Query(...), db: AsyncSession = 
 @router.post("/xp/award")
 async def award_xp(uid: str = Query(...), xp: int = Query(...), db: AsyncSession = Depends(get_db)):
     """Internal endpoint or utility route to award XP"""
-    stmt = select(DbUserProfile).where(DbUserProfile.firebase_uid == uid)
-    res = await db.execute(stmt)
-    profile = res.scalars().first()
+    user = await get_or_create_user(db, uid)
     
-    if not profile:
-        profile = DbUserProfile(
-            firebase_uid=uid,
-            username=f"Trader_{uid[:6]}",
-            total_xp=xp,
-            weekly_xp=xp,
-            level=calculate_level(xp)
-        )
-        db.add(profile)
-    else:
-        profile.total_xp += xp
-        profile.weekly_xp += xp
-        profile.level = calculate_level(profile.total_xp)
+    user.total_xp += xp
+    user.weekly_xp += xp
+    user.level = calculate_level(user.total_xp)
         
     await db.commit()
-    return {"status": "ok", "total_xp": profile.total_xp, "level": profile.level}
+    return {"status": "ok", "total_xp": user.total_xp, "level": user.level}
+

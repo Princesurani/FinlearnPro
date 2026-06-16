@@ -8,25 +8,16 @@ from db.models import DbUserLearningProgress, DbUser
 
 router = APIRouter()
 
+from services.user_service import get_or_create_user
+
 @router.post("/progress/sync/{firebase_uid}")
 async def sync_progress(firebase_uid: str, progress_data: Dict[Any, Any], db: AsyncSession = Depends(get_db)):
     """
     Receives JSON progress payload from the Flutter client and saves/updates it.
     """
-    # Ensure user exists first
-    result = await db.execute(select(DbUser).where(DbUser.firebase_uid == firebase_uid))
-    user = result.scalar_one_or_none()
-    
-    if not user:
-        user = DbUser(
-            firebase_uid=firebase_uid,
-            email=None,
-            balance_india=10_000.0,
-            balance_usa=10_000.0,
-            balance_uk=10_000.0,
-        )
-        db.add(user)
-        await db.flush()
+    # Ensure user exists first using the central user service helper
+    await get_or_create_user(db, firebase_uid)
+    await db.commit()
 
     # Check if progress exists
     prog_result = await db.execute(

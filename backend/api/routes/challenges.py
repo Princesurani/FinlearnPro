@@ -138,48 +138,31 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
     )
     db.add(new_progress)
     
-    # 5. Award XP and update stats in DbUserProfile
-    from db.models import DbUserProfile
+    # 5. Award XP and update stats in DbUser
+    from db.models import DbUser
     from api.routes.social import calculate_level
+    from services.user_service import get_or_create_user
     
-    prof_stmt = select(DbUserProfile).where(DbUserProfile.firebase_uid == req.firebase_uid)
-    prof_res = await db.execute(prof_stmt)
-    profile = prof_res.scalars().first()
+    user = await get_or_create_user(db, req.firebase_uid)
     
     streak_updated = False
-    if profile:
-        profile.total_xp += xp_awarded
-        profile.weekly_xp += xp_awarded
-        profile.level = calculate_level(profile.total_xp)
-        profile.total_challenges_completed += 1
-        
-        # Simple streak logic: participation counts (correct or incorrect)
-        if not profile.last_activity_date or profile.last_activity_date != now_date:
-            if profile.last_activity_date and (now_date - profile.last_activity_date).days == 1:
-                profile.current_streak += 1
-            else:
-                profile.current_streak = 1 # Reset or start new streak
-                
-            if profile.current_streak > profile.longest_streak:
-                profile.longest_streak = profile.current_streak
-            streak_updated = True
-                
-        profile.last_activity_date = now_date
-    else:
-        # Auto-create profile if missing
-        new_prof = DbUserProfile(
-            firebase_uid=req.firebase_uid,
-            username=f"Trader_{req.firebase_uid[:6]}",
-            total_xp=xp_awarded,
-            weekly_xp=xp_awarded,
-            level=calculate_level(xp_awarded),
-            total_challenges_completed=1,
-            current_streak=1 if is_correct else 0,
-            longest_streak=1 if is_correct else 0,
-            last_activity_date=now_date
-        )
-        db.add(new_prof)
-        streak_updated = is_correct
+    user.total_xp += xp_awarded
+    user.weekly_xp += xp_awarded
+    user.level = calculate_level(user.total_xp)
+    user.total_challenges_completed += 1
+    
+    # Simple streak logic: participation counts (correct or incorrect)
+    if not user.last_activity_date or user.last_activity_date != now_date:
+        if user.last_activity_date and (now_date - user.last_activity_date).days == 1:
+            user.current_streak += 1
+        else:
+            user.current_streak = 1 # Reset or start new streak
+            
+        if user.current_streak > user.longest_streak:
+            user.longest_streak = user.current_streak
+        streak_updated = True
+            
+    user.last_activity_date = now_date
         
     await db.commit()
     
@@ -188,6 +171,6 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
         explanation=explanation,
         xp_awarded=xp_awarded,
         streak_updated=streak_updated,
-        current_streak=profile.current_streak if profile else new_prof.current_streak,
+        current_streak=user.current_streak,
         correct_choice_id=challenge.correct_choice_index
     )

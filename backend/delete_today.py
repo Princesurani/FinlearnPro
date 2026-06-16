@@ -3,7 +3,7 @@ import logging
 from datetime import datetime, timezone
 from db.database import AsyncSessionLocal
 from sqlalchemy import delete
-from db.models import DbDailyChallenge, DbUserChallengeProgress, DbUserLearningProgress
+from db.models import DbDailyChallenge, DbUserChallengeProgress, DbUser
 
 logger = logging.getLogger(__name__)
 
@@ -26,12 +26,12 @@ async def run():
                     DbUserChallengeProgress.challenge_id == challenge.id
                 )
             )
-            # update user learning progress so we can play again
-            stmt = select(DbUserLearningProgress)
+            # update users so we can play again
+            stmt = select(DbUser)
             res2 = await db.execute(stmt)
             users = res2.scalars().all()
             for user in users:
-                user.last_daily_challenge_date = None
+                user.last_activity_date = None
                 user.current_streak = 0
 
             await db.execute(

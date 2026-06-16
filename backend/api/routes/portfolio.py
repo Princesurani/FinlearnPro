@@ -3,7 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
 
 from db.database import get_db
-from db.models import DbPortfolioPosition, DbUser, DbOrder, DbTrade, DbWatchlist
+from db.models import DbPortfolioPosition, DbUser, DbOrder, DbTrade, DbWatchlist, DbUserBalance
+from services.user_service import get_or_create_user
 
 import os
 import json
@@ -18,7 +19,12 @@ router = APIRouter()
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 api_key = os.getenv("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key) if api_key else genai.Client()
+
+client = None
+try:
+    client = genai.Client(api_key=api_key) if api_key else genai.Client()
+except Exception as e:
+    logger.warning(f"Could not initialize Gemini client: {e}")
 
 generation_config = types.GenerateContentConfig(
     temperature=0.7,
@@ -53,20 +59,15 @@ async def get_portfolio_positions(firebase_uid: str, db: AsyncSession = Depends(
     Auto-creates the user record with ₹10,000 if they don't exist yet.
     """
     # Get or create user
-    result = await db.execute(select(DbUser).where(DbUser.firebase_uid == firebase_uid))
-    user = result.scalar_one_or_none()
+    user = await get_or_create_user(db, firebase_uid, STARTING_BALANCE)
+    await db.commit()
 
-    if not user:
-        user = DbUser(
-            firebase_uid=firebase_uid,
-            email=None,  # Email is optional — set by Firebase later
-            balance_india=STARTING_BALANCE,
-            balance_usa=STARTING_BALANCE,
-            balance_uk=STARTING_BALANCE,
-        )
-        db.add(user)
-        await db.commit()
-        await db.refresh(user)
+    # Load balances
+    bal_res = await db.execute(
+        select(DbUserBalance).where(DbUserBalance.firebase_uid == firebase_uid)
+    )
+    balances_list = bal_res.scalars().all()
+    balances = {b.market: b.balance for b in balances_list}
 
     # Get positions — will be empty for new users
     pos_result = await db.execute(
@@ -76,9 +77,9 @@ async def get_portfolio_positions(firebase_uid: str, db: AsyncSession = Depends(
 
     return {
         "balances": {
-            "india": user.balance_india,
-            "usa": user.balance_usa,
-            "uk": user.balance_uk,
+            "india": balances.get("india", STARTING_BALANCE),
+            "usa": balances.get("usa", STARTING_BALANCE),
+            "uk": balances.get("uk", STARTING_BALANCE),
         },
         "positions": [
             {
@@ -144,13 +145,9 @@ async def get_watchlist(firebase_uid: str, db: AsyncSession = Depends(get_db)):
 @router.post("/watchlist/{firebase_uid}/{symbol}")
 async def add_to_watchlist(firebase_uid: str, symbol: str, db: AsyncSession = Depends(get_db)):
     """Adds a symbol to the user's watchlist (idempotent — ignores duplicates)."""
-    # Auto-create user if needed
-    result = await db.execute(select(DbUser).where(DbUser.firebase_uid == firebase_uid))
-    user = result.scalar_one_or_none()
-    if not user:
-        user = DbUser(firebase_uid=firebase_uid, email=None, balance=10_000.0)
-        db.add(user)
-        await db.flush()
+    # Auto-create user if needed using our user service helper (fixes crash on balance field)
+    await get_or_create_user(db, firebase_uid, STARTING_BALANCE)
+    await db.commit()
 
     # Only insert if not already present
     existing = await db.execute(
@@ -223,11 +220,18 @@ async def get_portfolio_review(firebase_uid: str, db: AsyncSession = Depends(get
             "recommendations": ["Fund your account and make your first trade."]
         }
         
+    # Load balances from user_balances table
+    bal_res = await db.execute(
+        select(DbUserBalance).where(DbUserBalance.firebase_uid == firebase_uid)
+    )
+    balances_list = bal_res.scalars().all()
+    balances = {b.market: b.balance for b in balances_list}
+
     portfolio_data = {
         "balances": {
-            "india": user.balance_india,
-            "usa": user.balance_usa,
-            "uk": user.balance_uk,
+            "india": balances.get("india", STARTING_BALANCE),
+            "usa": balances.get("usa", STARTING_BALANCE),
+            "uk": balances.get("uk", STARTING_BALANCE),
         },
         "holdings": [
             {
@@ -239,6 +243,15 @@ async def get_portfolio_review(firebase_uid: str, db: AsyncSession = Depends(get
         ]
     }
     
+    if not client:
+        return {
+            "overall_score": 0,
+            "summary": "AI Portfolio Reviewer is currently unavailable (no Gemini API key set).",
+            "strengths": [],
+            "weaknesses": ["AI feedback service offline."],
+            "recommendations": ["Configure GEMINI_API_KEY environment variable."]
+        }
+
     prompt = f"Please review the following portfolio:\n{json.dumps(portfolio_data, indent=2)}"
     
     # 3. Call LLM
@@ -277,3 +290,4 @@ async def get_portfolio_review(firebase_uid: str, db: AsyncSession = Depends(get
             "weaknesses": [],
             "recommendations": ["Contact support if the issue persists."]
         }
+
