@@ -12,6 +12,7 @@ class SectionHeader extends StatelessWidget {
     this.actionText,
     this.onAction,
     this.trailing,
+    this.isActionSmall = false,
   });
 
   final String title;
@@ -23,6 +24,8 @@ class SectionHeader extends StatelessWidget {
   final VoidCallback? onAction;
 
   final Widget? trailing;
+
+  final bool isActionSmall;
 
   @override
   Widget build(BuildContext context) {
@@ -57,15 +60,15 @@ class SectionHeader extends StatelessWidget {
                       children: [
                         Text(
                           actionText!,
-                          style: AppTypography.bodySmall.copyWith(
+                          style: (isActionSmall ? AppTypography.bodyXS : AppTypography.bodySmall).copyWith(
                             color: AppColors.primary,
                             fontWeight: AppTypography.medium,
                           ),
                         ),
                         const SizedBox(width: 2),
-                        const Icon(
+                        Icon(
                           Icons.chevron_right_rounded,
-                          size: 18,
+                          size: isActionSmall ? 14 : 18,
                           color: AppColors.primary,
                         ),
                       ],

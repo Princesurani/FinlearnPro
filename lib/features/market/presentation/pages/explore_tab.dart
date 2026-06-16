@@ -61,6 +61,7 @@ class _ExploreTabState extends State<ExploreTab>
               SectionHeader(
                 title: 'Top Movers Today',
                 actionText: _showAllMovers ? 'Show Less' : 'See All',
+                isActionSmall: true,
                 onAction: () {
                   setState(() {
                     _showAllMovers = !_showAllMovers;
