@@ -46,7 +46,11 @@ class AuthService {
         await credential.user!.updateDisplayName(name);
         try {
           // Sync with the backend immediately
-          await SocialRepository().updateProfile(credential.user!.uid, username: name);
+          await SocialRepository().updateProfile(
+            credential.user!.uid, 
+            username: name,
+            email: email,
+          );
         } catch (_) {
           // If backend fails here, the fallback logic in SocialBloc will fix it later
         }
@@ -90,6 +94,7 @@ class AuthService {
           await SocialRepository().updateProfile(
             userCredential.user!.uid, 
             username: userCredential.user!.displayName,
+            email: userCredential.user!.email,
           );
         } catch (_) {
           // If backend fails here, the fallback logic in SocialBloc will fix it later

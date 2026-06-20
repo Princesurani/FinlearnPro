@@ -24,9 +24,10 @@ class SocialRepository {
     }
   }
 
-  Future<UserProfile> updateProfile(String uid, {String? username, String? bio, String? avatarUrl}) async {
+  Future<UserProfile> updateProfile(String uid, {String? username, String? email, String? bio, String? avatarUrl}) async {
     final body = <String, dynamic>{};
     if (username != null) body['username'] = username;
+    if (email != null) body['email'] = email;
     if (bio != null) body['bio'] = bio;
     if (avatarUrl != null) body['avatar_url'] = avatarUrl;
 

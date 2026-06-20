@@ -81,7 +81,7 @@ async def update_profile(uid: str, req: UserProfileUpdateRequest, db: AsyncSessi
     user = result.scalars().first()
     
     if not user:
-        user = await get_or_create_user(db, uid, username=req.username)
+        user = await get_or_create_user(db, uid, username=req.username, email=req.email)
     
     if req.username is not None and req.username != user.username:
         # Check if username is already taken by someone else
@@ -91,6 +91,8 @@ async def update_profile(uid: str, req: UserProfileUpdateRequest, db: AsyncSessi
             raise HTTPException(status_code=400, detail="Username already taken")
         user.username = req.username
         
+    if req.email is not None:
+        user.email = req.email
     if req.avatar_url is not None:
         user.avatar_url = req.avatar_url
     if req.bio is not None:

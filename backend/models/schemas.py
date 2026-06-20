@@ -108,6 +108,7 @@ class UserProfileUpdateRequest(BaseModel):
     username: Optional[str] = None
     avatar_url: Optional[str] = None
     bio: Optional[str] = None
+    email: Optional[str] = None
 
 class LeaderboardEntry(BaseModel):
     firebase_uid: str

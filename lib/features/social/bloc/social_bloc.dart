@@ -147,7 +147,11 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         final realName = _resolveUsername();
         if (!_isDummyName(realName)) {
           // Fire-and-forget: push to backend + update Firebase Auth
-          repository.updateProfile(event.uid, username: realName).catchError((_) => profile);
+          repository.updateProfile(
+            event.uid, 
+            username: realName,
+            email: FirebaseAuth.instance.currentUser?.email,
+          ).catchError((_) => profile);
           FirebaseAuth.instance.currentUser?.updateDisplayName(realName).catchError((_) {});
           finalProfile = profile.copyWith(username: realName);
         }

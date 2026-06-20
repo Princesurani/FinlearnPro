@@ -22,9 +22,9 @@ async def generate_unique_username(db: AsyncSession, uid: str) -> str:
         if not res.scalar_one_or_none():
             return candidate
 
-async def get_or_create_user(db: AsyncSession, firebase_uid: str, username: str = None, starting_balance: float = 10000.0) -> DbUser:
+async def get_or_create_user(db: AsyncSession, firebase_uid: str, username: str = None, email: str = None, starting_balance: float = 10000.0) -> DbUser:
     """
-    Retrieves a user by firebase_uid or creates them with the provided/generated unique username and starting balances.
+    Retrieves a user by firebase_uid or creates them with the provided/generated unique username, email, and starting balances.
     """
     stmt = select(DbUser).where(DbUser.firebase_uid == firebase_uid)
     result = await db.execute(stmt)
@@ -43,7 +43,7 @@ async def get_or_create_user(db: AsyncSession, firebase_uid: str, username: str 
                 
         user = DbUser(
             firebase_uid=firebase_uid,
-            email=None,
+            email=email,
             username=username
         )
         db.add(user)
