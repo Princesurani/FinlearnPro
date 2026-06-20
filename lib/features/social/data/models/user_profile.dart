@@ -13,6 +13,7 @@ class UserProfile {
   final int totalChallengesCompleted;
   final double winRate;
   final String? lastActivityDate;
+  final String? email;
 
   UserProfile({
     required this.firebaseUid,
@@ -29,6 +30,7 @@ class UserProfile {
     required this.totalChallengesCompleted,
     required this.winRate,
     this.lastActivityDate,
+    this.email,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -47,10 +49,11 @@ class UserProfile {
       totalChallengesCompleted: json['total_challenges_completed'] ?? 0,
       winRate: (json['win_rate'] ?? 0.0).toDouble(),
       lastActivityDate: json['last_activity_date'],
+      email: json['email'],
     );
   }
 
-  UserProfile copyWith({String? username, String? avatarUrl, String? bio}) {
+  UserProfile copyWith({String? username, String? avatarUrl, String? bio, String? email}) {
     return UserProfile(
       firebaseUid: firebaseUid,
       username: username ?? this.username,
@@ -66,6 +69,7 @@ class UserProfile {
       totalChallengesCompleted: totalChallengesCompleted,
       winRate: winRate,
       lastActivityDate: lastActivityDate,
+      email: email ?? this.email,
     );
   }
 }

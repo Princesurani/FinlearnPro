@@ -88,12 +88,12 @@ class AuthService {
       // Sign in to Firebase with the Google [UserCredential]
       final userCredential = await _auth.signInWithCredential(credential);
       
-      if (userCredential.user != null && userCredential.user!.displayName != null) {
+      if (userCredential.user != null) {
         try {
           // Sync with the backend immediately
           await SocialRepository().updateProfile(
             userCredential.user!.uid, 
-            username: userCredential.user!.displayName,
+            username: userCredential.user!.displayName ?? userCredential.user!.email?.split('@').first ?? 'Trader',
             email: userCredential.user!.email,
           );
         } catch (_) {

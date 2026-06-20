@@ -103,6 +103,7 @@ class UserProfileResponse(BaseModel):
     total_challenges_completed: int
     win_rate: float
     last_activity_date: Optional[str] = None
+    email: Optional[str] = None
 
 class UserProfileUpdateRequest(BaseModel):
     username: Optional[str] = None

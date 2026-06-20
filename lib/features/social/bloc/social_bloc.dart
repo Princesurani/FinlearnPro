@@ -141,19 +141,30 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
     try {
       final profile = await repository.getProfile(event.uid);
 
-      // If the backend has a dummy name, sync a real name from Firebase Auth.
+      // If the backend has a dummy name or is missing the email, sync them from Firebase Auth.
       UserProfile finalProfile = profile;
-      if (_isDummyName(profile.username)) {
-        final realName = _resolveUsername();
-        if (!_isDummyName(realName)) {
-          // Fire-and-forget: push to backend + update Firebase Auth
+      final firebaseUser = FirebaseAuth.instance.currentUser;
+      final hasDummyName = _isDummyName(profile.username);
+      final hasMissingEmail = profile.email == null || profile.email!.isEmpty;
+
+      if (hasDummyName || hasMissingEmail) {
+        final realName = hasDummyName ? _resolveUsername() : profile.username;
+        final realEmail = firebaseUser?.email;
+        
+        if (!hasDummyName || !_isDummyName(realName)) {
           repository.updateProfile(
             event.uid, 
             username: realName,
-            email: FirebaseAuth.instance.currentUser?.email,
+            email: realEmail,
           ).catchError((_) => profile);
-          FirebaseAuth.instance.currentUser?.updateDisplayName(realName).catchError((_) {});
-          finalProfile = profile.copyWith(username: realName);
+          
+          if (hasDummyName) {
+            firebaseUser?.updateDisplayName(realName).catchError((_) {});
+          }
+          finalProfile = profile.copyWith(
+            username: realName,
+            email: realEmail,
+          );
         }
       }
 

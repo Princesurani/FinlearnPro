@@ -71,7 +71,8 @@ async def get_profile(uid: str, db: AsyncSession = Depends(get_db)):
         total_courses_completed=user.total_courses_completed,
         total_challenges_completed=user.total_challenges_completed,
         win_rate=user.win_rate,
-        last_activity_date=user.last_activity_date.isoformat() if user.last_activity_date else None
+        last_activity_date=user.last_activity_date.isoformat() if user.last_activity_date else None,
+        email=user.email
     )
 
 @router.put("/profile/{uid}", response_model=UserProfileResponse)
@@ -115,7 +116,8 @@ async def update_profile(uid: str, req: UserProfileUpdateRequest, db: AsyncSessi
         total_courses_completed=user.total_courses_completed,
         total_challenges_completed=user.total_challenges_completed,
         win_rate=user.win_rate,
-        last_activity_date=user.last_activity_date.isoformat() if user.last_activity_date else None
+        last_activity_date=user.last_activity_date.isoformat() if user.last_activity_date else None,
+        email=user.email
     )
 
 @router.get("/leaderboard", response_model=List[LeaderboardEntry])
