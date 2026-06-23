@@ -25,7 +25,12 @@ async def get_db():
 
 
 async def init_db():
+    from sqlalchemy import text
     async with engine.begin() as conn:
+        try:
+            await conn.execute(text("CREATE EXTENSION IF NOT EXISTS timescaledb;"))
+        except Exception as e:
+            print(f"Warning: Could not enable timescaledb extension: {e}")
         await conn.run_sync(Base.metadata.create_all)
 
     # We must explicitly convert tables into TimescaleDB hyper tables where appropriate.
