@@ -92,25 +92,41 @@ async def generate_and_save_challenge(target_date: datetime.date):
 
     logger.info(f"Generating challenge for {target_date} on topic: {selected_topic}...")
 
+    attempts = 3
+    data = None
+
+    for attempt in range(attempts):
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=[SYSTEM_PROMPT, prompt],
+                config=generation_config,
+            )
+            content = response.text.strip()
+            if content.startswith("```json"):
+                content = content[7:]
+            elif content.startswith("```"):
+                content = content[3:]
+            if content.endswith("```"):
+                content = content[:-3]
+            content = content.strip()
+
+            # Parse JSON
+            logger.debug(f"DEBUG raw LLM output: {repr(content)}")
+            data = json.loads(content)
+            break
+        except Exception as e:
+            logger.warning(f"Attempt {attempt + 1} to generate challenge failed: {e}")
+            if attempt < attempts - 1:
+                await asyncio.sleep(2 ** (attempt + 1))
+
+    fallback_used = False
+    if not data:
+        logger.error("Failed to generate daily challenge via LLM. Loading fallback challenge...")
+        data = random.choice(FALLBACK_CHALLENGES)
+        fallback_used = True
+
     try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=[SYSTEM_PROMPT, prompt],
-            config=generation_config,
-        )
-        content = response.text.strip()
-        if content.startswith("```json"):
-            content = content[7:]
-        elif content.startswith("```"):
-            content = content[3:]
-        if content.endswith("```"):
-            content = content[:-3]
-        content = content.strip()
-
-        # Parse JSON
-        logger.debug(f"DEBUG raw LLM output: {repr(content)}")
-        data = json.loads(content)
-
         async with AsyncSessionLocal() as db:
             challenge = DbDailyChallenge(
                 challenge_date=target_date,
@@ -125,10 +141,43 @@ async def generate_and_save_challenge(target_date: datetime.date):
             )
             db.add(challenge)
             await db.commit()
-            logger.info(f"Successfully saved challenge for {target_date}.")
-
+            logger.info(f"Successfully saved challenge for {target_date} (fallback_used={fallback_used}).")
     except Exception as e:
-        logger.error(f"Error generating challenge: {e}")
+        logger.error(f"Error saving daily challenge to DB: {e}")
+
+
+FALLBACK_CHALLENGES = [
+    {
+        "asset_symbol": "AAPL",
+        "timeframe": "Daily",
+        "scenario_text": "AAPL's price makes higher highs, but the RSI is forming lower highs. What is the most probable next price movement?",
+        "chart_data": [100.0, 101.5, 100.8, 102.3, 101.7, 103.0, 102.5, 104.2, 103.5],
+        "choices": [
+            {"id": 0, "text": "Price will likely reverse downwards soon."},
+            {"id": 1, "text": "Price will continue its strong upward trend."},
+            {"id": 2, "text": "Price will consolidate sideways before moving higher."},
+            {"id": 3, "text": "Price movement is unpredictable; no clear signal."}
+        ],
+        "correct_choice_index": 0,
+        "explanation_correct": "This is a classic bearish divergence, signaling weakening momentum despite price gains. The market is likely to reverse downwards, making it prudent to exit long positions or initiate a short trade.",
+        "explanation_incorrect": "Buying more or holding ignores the critical warning of bearish divergence, risking significant losses if the price reverses. While a stop-loss is good risk management, it doesn't address the primary signal to actively position for a downside move."
+    },
+    {
+        "asset_symbol": "RELIANCE",
+        "timeframe": "Daily",
+        "scenario_text": "RELIANCE has formed a double bottom pattern and is currently testing the neckline resistance with strong volume. What is the most probable next move?",
+        "chart_data": [2500.0, 2400.0, 2380.0, 2450.0, 2385.0, 2400.0, 2480.0, 2520.0],
+        "choices": [
+            {"id": 0, "text": "A bullish breakout above neckline resistance."},
+            {"id": 1, "text": "A sharp drop back to the double bottom support level."},
+            {"id": 2, "text": "Sideways consolidation for several weeks."},
+            {"id": 3, "text": "A breakdown below the double bottom support level."}
+        ],
+        "correct_choice_index": 0,
+        "explanation_correct": "A double bottom is a classic bullish reversal pattern. Testing neckline resistance with high volume strongly supports a breakout and continuation of the new upward trend.",
+        "explanation_incorrect": "While resistance can reject price, the pattern formation combined with strong volume makes a bullish breakout much more probable than a breakdown or sideways movement."
+    }
+]
 
 
 if __name__ == "__main__":
