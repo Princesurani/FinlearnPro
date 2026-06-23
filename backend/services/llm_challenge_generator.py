@@ -30,15 +30,20 @@ SYSTEM_PROMPT = """
 You are an expert financial educator. Your task is to generate a dynamic, interactive "Daily Challenge" for a stock market learning app.
 The challenge should look like a realistic market scenario (e.g., technical analysis, fundamental analysis, or trading psychology).
 
-CRITICAL CONSTRAINTS:
-1. Make your choices concise but descriptive (around 15-25 words).
-2. Keep `explanation_correct` and `explanation_incorrect` informative and engaging (about 2-4 sentences each). Provide clear reasoning without overwhelming the user, but don't make it too brief either.
+CRITICAL CONSTRAINTS FOR EDUCATION & LAYOUT:
+1. SCENARIO: Keep the `scenario_text` clear and concise (under 40 words). Describe a specific setup ending with a clear question (e.g., "What is the most probable next price movement?").
+2. OPTIONS: Make the choices extremely direct and concise (8-15 words max per choice). They should represent clear actions or outcomes that fit nicely inside mobile UI elements.
+3. CORRECT INDEX: Ensure there is exactly one correct choice, and that the index corresponds to it (0 to 3).
+4. EXPLANATION CORRECT: A concise explanation (2-3 sentences max). Start with a direct statement of why the correct option is right, followed by the educational principle.
+5. EXPLANATION INCORRECT: A concise explanation (2-3 sentences max) explaining why the distractors are wrong or represent common psychological traps.
+6. CHART DATA: Include a `chart_data` array containing between 7 and 12 floating-point values representing a realistic, simulated historical price trend matching the scenario context (e.g. if the scenario is a double bottom support hold, the values should decrease, bounce, decrease to the same level, and then rise).
 
 Please output ONLY a valid JSON object matching this schema exactly:
 {
     "asset_symbol": "String (e.g., BTC/USDT, AAPL, RELIANCE)",
-    "timeframe": "String (e.g., 4H Timeframe, Daily, 15m)",
+    "timeframe": "String (e.g., 4H, Daily, 15m)",
     "scenario_text": "String describing the setup. E.g., 'The RSI is at 80 while price is making lower highs.'",
+    "chart_data": [100.0, 101.5, 99.8, 102.4, 98.5, 97.0, 95.2],
     "choices": [
         {"id": 0, "text": "Choice 1"},
         {"id": 1, "text": "Choice 2"},
@@ -47,10 +52,10 @@ Please output ONLY a valid JSON object matching this schema exactly:
     ],
     "correct_choice_index": Integer (0 to 3),
     "explanation_correct": "String explaining why the correct answer is right.",
-    "explanation_incorrect": "String explaining why the other choices might be traps."
+    "explanation_incorrect": "String explaining why the other choices are incorrect."
 }
 
-Ensure the distractors (wrong choices) are plausible but demonstrably incorrect to teach a valid financial lesson.
+Ensure the distractors (wrong choices) are plausible but demonstrably incorrect to teach a valid financial lesson. Do not include any markdown format tags like ```json or trailing commentary.
 """
 
 
@@ -112,6 +117,7 @@ async def generate_and_save_challenge(target_date: datetime.date):
                 asset_symbol=data["asset_symbol"],
                 timeframe=data["timeframe"],
                 scenario_text=data["scenario_text"],
+                chart_data=data.get("chart_data"),
                 choices=data["choices"],
                 correct_choice_index=data["correct_choice_index"],
                 explanation_correct=data["explanation_correct"],

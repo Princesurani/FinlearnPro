@@ -16,6 +16,7 @@ class DailyChallenge {
   final String timeframe;
   final String scenarioText;
   final List<ChallengeChoice> choices;
+  final List<double>? chartData;
 
   // Progress variables
   final bool isCompleted;
@@ -30,6 +31,7 @@ class DailyChallenge {
     required this.timeframe,
     required this.scenarioText,
     required this.choices,
+    this.chartData,
     required this.isCompleted,
     this.wasCorrect,
     this.explanation,
@@ -46,6 +48,11 @@ class DailyChallenge {
       choices: (json['choices'] as List)
           .map((e) => ChallengeChoice.fromJson(e as Map<String, dynamic>))
           .toList(),
+      chartData: json['chart_data'] != null
+          ? (json['chart_data'] as List)
+              .map((e) => (e as num).toDouble())
+              .toList()
+          : null,
       isCompleted: json['is_completed'] as bool? ?? false,
       wasCorrect: json['was_correct'] as bool?,
       explanation: json['explanation'] as String?,

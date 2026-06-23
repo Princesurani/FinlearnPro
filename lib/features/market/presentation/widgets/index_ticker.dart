@@ -134,10 +134,16 @@ class _IndexTickerState extends State<IndexTicker> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  _formatIndexValue(snap.price),
-                  style: AppTypography.number.copyWith(
-                    fontWeight: AppTypography.semiBold,
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      _formatIndexValue(snap.price),
+                      style: AppTypography.number.copyWith(
+                        fontWeight: AppTypography.semiBold,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 4),

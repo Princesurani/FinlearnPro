@@ -352,69 +352,83 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                       ),
                       const SizedBox(height: 20),
                       // Chart Area
-                      Container(
-                        height: 180,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: AppColors.border,
-                          ),
-                        ),
-                        padding: const EdgeInsets.only(top: 24, bottom: 8, left: 8, right: 8),
-                        child: LineChart(
-                          LineChartData(
-                            gridData: FlGridData(
-                              show: true,
-                              drawVerticalLine: false,
-                              horizontalInterval: 1,
-                              getDrawingHorizontalLine: (value) {
-                                return FlLine(
-                                  color: AppColors.border,
-                                  strokeWidth: 1,
-                                  dashArray: [5, 5],
-                                );
-                              },
-                            ),
-                            titlesData: const FlTitlesData(show: false),
-                            borderData: FlBorderData(show: false),
-                            minX: 0,
-                            maxX: 6,
-                            minY: 1,
-                            maxY: 6,
-                            lineBarsData: [
-                              LineChartBarData(
-                                spots: const [
-                                  FlSpot(0, 3),
-                                  FlSpot(1, 3.5),
-                                  FlSpot(2, 2.5),
-                                  FlSpot(3, 4.2),
-                                  FlSpot(4, 3.8),
-                                  FlSpot(5, 5.1),
-                                  FlSpot(6, 4.8),
-                                ],
-                                isCurved: true,
-                                curveSmoothness: 0.35,
-                                color: AppColors.primary,
-                                barWidth: 3,
-                                isStrokeCapRound: true,
-                                dotData: const FlDotData(show: false),
-                                belowBarData: BarAreaData(
-                                  show: true,
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      AppColors.primary.withValues(alpha: 0.2),
-                                      AppColors.primary.withValues(alpha: 0.0),
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ),
-                                ),
+                      Builder(
+                        builder: (context) {
+                          final List<double> chartData = (challenge!.chartData != null && challenge.chartData!.isNotEmpty)
+                              ? challenge.chartData!
+                              : const [3.0, 3.5, 2.5, 4.2, 3.8, 5.1, 4.8];
+
+                          final double minY = chartData.reduce((a, b) => a < b ? a : b);
+                          final double maxY = chartData.reduce((a, b) => a > b ? a : b);
+                          final double range = maxY - minY;
+                          final double padding = range == 0 ? 1.0 : range * 0.15;
+                          final double calculatedMinY = minY - padding;
+                          final double calculatedMaxY = maxY + padding;
+                          final double calculatedInterval = range == 0 ? 1.0 : (range / 4);
+
+                          final List<FlSpot> spots = chartData
+                              .asMap()
+                              .entries
+                              .map((e) => FlSpot(e.key.toDouble(), e.value))
+                              .toList();
+
+                          return Container(
+                            height: 180,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: AppColors.border,
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
+                            padding: const EdgeInsets.only(top: 24, bottom: 8, left: 8, right: 8),
+                            child: LineChart(
+                              LineChartData(
+                                gridData: FlGridData(
+                                  show: true,
+                                  drawVerticalLine: false,
+                                  horizontalInterval: calculatedInterval,
+                                  getDrawingHorizontalLine: (value) {
+                                    return FlLine(
+                                      color: AppColors.border,
+                                      strokeWidth: 1,
+                                      dashArray: const [5, 5],
+                                    );
+                                  },
+                                ),
+                                titlesData: const FlTitlesData(show: false),
+                                borderData: FlBorderData(show: false),
+                                minX: 0,
+                                maxX: (spots.length - 1).toDouble(),
+                                minY: calculatedMinY,
+                                maxY: calculatedMaxY,
+                                lineBarsData: [
+                                  LineChartBarData(
+                                    spots: spots,
+                                    isCurved: true,
+                                    curveSmoothness: 0.35,
+                                    color: AppColors.primary,
+                                    barWidth: 3,
+                                    isStrokeCapRound: true,
+                                    dotData: const FlDotData(show: false),
+                                    belowBarData: BarAreaData(
+                                      show: true,
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          AppColors.primary.withValues(alpha: 0.2),
+                                          AppColors.primary.withValues(alpha: 0.0),
+                                        ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 20),
                       const Text(

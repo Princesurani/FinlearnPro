@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
 
 from db.database import get_db
-from db.models import DbPortfolioPosition, DbUser, DbOrder, DbTrade, DbWatchlist, DbUserBalance
+from db.models import DbPortfolioPosition, DbUser, DbOrder, DbTrade, DbWatchlist, DbUserBalance, DbInstrument
 from services.user_service import get_or_create_user
 
 import os
@@ -33,8 +33,8 @@ generation_config = types.GenerateContentConfig(
 )
 
 SYSTEM_PROMPT = """
-You are an expert AI financial advisor and portfolio manager. Your job is to review the user's current portfolio holdings and provide a deep, actionable review.
-You will be given the user's balances and their current stock positions.
+You are an expert AI financial advisor and portfolio manager. Your job is to review the user's current portfolio holdings, sector allocation, and real-time performance to provide a deep, actionable review.
+You will be given the user's cash balances, sector weightings, overall statistics, and a list of holdings including their average cost, current price, and unrealized profit and loss (PnL) metrics.
 
 CRITICAL CONSTRAINTS:
 1. You MUST output ONLY valid JSON matching this schema exactly:
@@ -45,7 +45,7 @@ CRITICAL CONSTRAINTS:
     "weaknesses": ["String (risk factor 1)", "String (risk factor 2)"],
     "recommendations": ["String (actionable advice 1)", "String (actionable advice 2)"]
 }
-2. Be objective, highlighting actual risks (like lack of diversification or over-leverage) and real strengths.
+2. Be highly objective and data-driven. Highlight specific risks based on the sector weightings (e.g. lack of diversification) and discuss underperforming holdings specifically citing their PnL percentage.
 3. Limit strengths, weaknesses, and recommendations to 2-4 items each. Keep them concise (1 sentence max per item).
 """
 
@@ -192,102 +192,163 @@ async def get_portfolio_review(firebase_uid: str, db: AsyncSession = Depends(get
     redis_client = await redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     cache_key = f"portfolio:review:{firebase_uid}"
     
-    # 1. Check Cache
     try:
-        cached = await redis_client.get(cache_key)
-        if cached:
-            return json.loads(cached)
-    except Exception as e:
-        logger.error(f"Redis cache error: {e}")
-        
-    # 2. Fetch Portfolio Data
-    result = await db.execute(select(DbUser).where(DbUser.firebase_uid == firebase_uid))
-    user = result.scalar_one_or_none()
-    if not user:
-        return {"error": "User not found."}
-        
-    pos_result = await db.execute(
-        select(DbPortfolioPosition).where(DbPortfolioPosition.firebase_uid == firebase_uid)
-    )
-    positions = pos_result.scalars().all()
-    
-    if not positions:
-        return {
-            "overall_score": 0,
-            "summary": "Your portfolio is currently empty. Start investing to get a personalized review!",
-            "strengths": [],
-            "weaknesses": ["No market exposure."],
-            "recommendations": ["Fund your account and make your first trade."]
-        }
-        
-    # Load balances from user_balances table
-    bal_res = await db.execute(
-        select(DbUserBalance).where(DbUserBalance.firebase_uid == firebase_uid)
-    )
-    balances_list = bal_res.scalars().all()
-    balances = {b.market: b.balance for b in balances_list}
-
-    portfolio_data = {
-        "balances": {
-            "india": balances.get("india", STARTING_BALANCE),
-            "usa": balances.get("usa", STARTING_BALANCE),
-            "uk": balances.get("uk", STARTING_BALANCE),
-        },
-        "holdings": [
-            {
-                "symbol": p.symbol,
-                "quantity": p.quantity,
-                "average_cost": p.average_cost,
-                "invested_value": p.quantity * p.average_cost
-            } for p in positions
-        ]
-    }
-    
-    if not client:
-        return {
-            "overall_score": 0,
-            "summary": "AI Portfolio Reviewer is currently unavailable (no Gemini API key set).",
-            "strengths": [],
-            "weaknesses": ["AI feedback service offline."],
-            "recommendations": ["Configure GEMINI_API_KEY environment variable."]
-        }
-
-    prompt = f"Please review the following portfolio:\n{json.dumps(portfolio_data, indent=2)}"
-    
-    # 3. Call LLM
-    try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=[SYSTEM_PROMPT, prompt],
-            config=generation_config,
-        )
-        content = response.text.strip()
-        if content.startswith("```json"):
-            content = content[7:]
-        elif content.startswith("```"):
-            content = content[3:]
-        if content.endswith("```"):
-            content = content[:-3]
-        content = content.strip()
-        
-        parsed_data = json.loads(content)
-        
-        # 4. Save to Cache indefinitely (until invalidated by a trade)
+        # 1. Check Cache
         try:
-            await redis_client.set(cache_key, json.dumps(parsed_data))
+            cached = await redis_client.get(cache_key)
+            if cached:
+                return json.loads(cached)
         except Exception as e:
-            logger.error(f"Failed to cache review: {e}")
+            logger.error(f"Redis cache error: {e}")
             
-        return parsed_data
+        # 2. Fetch Portfolio Data
+        result = await db.execute(select(DbUser).where(DbUser.firebase_uid == firebase_uid))
+        user = result.scalar_one_or_none()
+        if not user:
+            return {"error": "User not found."}
+            
+        # Get positions joined with DbInstrument to retrieve sector and name
+        pos_result = await db.execute(
+            select(DbPortfolioPosition, DbInstrument)
+            .join(DbInstrument, DbPortfolioPosition.symbol == DbInstrument.symbol)
+            .where(DbPortfolioPosition.firebase_uid == firebase_uid)
+        )
+        positions_with_instruments = pos_result.all()
         
-    except Exception as e:
-        logger.error(f"Error generating AI review: {e}")
-        # Return fallback error format matching the schema
-        return {
-            "overall_score": 0,
-            "summary": "Failed to generate AI review at this time. Please try again later.",
-            "strengths": [],
-            "weaknesses": [],
-            "recommendations": ["Contact support if the issue persists."]
+        if not positions_with_instruments:
+            return {
+                "overall_score": 0,
+                "summary": "Your portfolio is currently empty. Start investing to get a personalized review!",
+                "strengths": [],
+                "weaknesses": ["No market exposure."],
+                "recommendations": ["Fund your account and make your first trade."]
+            }
+            
+        # Load balances from user_balances table
+        bal_res = await db.execute(
+            select(DbUserBalance).where(DbUserBalance.firebase_uid == firebase_uid)
+        )
+        balances_list = bal_res.scalars().all()
+        balances = {b.market: b.balance for b in balances_list}
+
+        holdings = []
+        total_market_value = 0.0
+        total_invested_value = 0.0
+        
+        for pos, inst in positions_with_instruments:
+            raw_quote = None
+            try:
+                raw_quote = await redis_client.get(f"market:quote:{pos.symbol}")
+            except Exception as e:
+                logger.error(f"Failed to fetch redis quote for {pos.symbol}: {e}")
+                
+            current_price = pos.average_cost  # fallback
+            if raw_quote:
+                try:
+                    quote_data = json.loads(raw_quote)
+                    if quote_data and "price" in quote_data:
+                        current_price = float(quote_data["price"])
+                except Exception as e:
+                    logger.error(f"Failed to parse quote for {pos.symbol}: {e}")
+                    
+            invested_value = pos.quantity * pos.average_cost
+            current_value = pos.quantity * current_price
+            pnl = current_value - invested_value
+            pnl_percent = (pnl / invested_value * 100.0) if invested_value > 0 else 0.0
+            
+            total_invested_value += invested_value
+            total_market_value += current_value
+            
+            holdings.append({
+                "symbol": pos.symbol,
+                "name": inst.name,
+                "type": inst.type,
+                "sector": inst.sector,
+                "quantity": pos.quantity,
+                "average_cost": pos.average_cost,
+                "invested_value": invested_value,
+                "current_price": current_price,
+                "current_value": current_value,
+                "pnl": pnl,
+                "pnl_percent": pnl_percent
+            })
+            
+        overall_pnl = total_market_value - total_invested_value
+        overall_pnl_percent = (overall_pnl / total_invested_value * 100.0) if total_invested_value > 0 else 0.0
+        
+        # Sector weighting calculation
+        sector_values = {}
+        for h in holdings:
+            sec = h["sector"] or "Other"
+            sector_values[sec] = sector_values.get(sec, 0.0) + h["current_value"]
+            
+        sector_weightings = {}
+        if total_market_value > 0:
+            for sec, val in sector_values.items():
+                sector_weightings[sec] = (val / total_market_value) * 100.0
+                
+        portfolio_data = {
+            "balances": {
+                "india": balances.get("india", STARTING_BALANCE),
+                "usa": balances.get("usa", STARTING_BALANCE),
+                "uk": balances.get("uk", STARTING_BALANCE),
+            },
+            "statistics": {
+                "total_invested_value": total_invested_value,
+                "total_market_value": total_market_value,
+                "overall_pnl": overall_pnl,
+                "overall_pnl_percent": overall_pnl_percent
+            },
+            "sector_weightings": sector_weightings,
+            "holdings": holdings
         }
+        
+        if not client:
+            return {
+                "overall_score": 0,
+                "summary": "AI Portfolio Reviewer is currently unavailable (no Gemini API key set).",
+                "strengths": [],
+                "weaknesses": ["AI feedback service offline."],
+                "recommendations": ["Configure GEMINI_API_KEY environment variable."]
+            }
+
+        prompt = f"Please review the following portfolio:\n{json.dumps(portfolio_data, indent=2)}"
+        
+        # 3. Call LLM
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=[SYSTEM_PROMPT, prompt],
+                config=generation_config,
+            )
+            content = response.text.strip()
+            if content.startswith("```json"):
+                content = content[7:]
+            elif content.startswith("```"):
+                content = content[3:]
+            if content.endswith("```"):
+                content = content[:-3]
+            content = content.strip()
+            
+            parsed_data = json.loads(content)
+            
+            # 4. Save to Cache indefinitely (until invalidated by a trade)
+            try:
+                await redis_client.set(cache_key, json.dumps(parsed_data))
+            except Exception as e:
+                logger.error(f"Failed to cache review: {e}")
+                
+            return parsed_data
+            
+        except Exception as e:
+            logger.error(f"Error generating AI review: {e}")
+            return {
+                "overall_score": 0,
+                "summary": "Failed to generate AI review at this time. Please try again later.",
+                "strengths": [],
+                "weaknesses": [],
+                "recommendations": ["Contact support if the issue persists."]
+            }
+    finally:
+        await redis_client.aclose()
 
