@@ -72,12 +72,15 @@ MOCK_INSTRUMENTS = [
 ]
 
 
-def simulate_tick_loop():
+async def simulate_tick_loop():
     """
     Background job meant to run continuously, generating new price ticks
     for all active instruments and publishing them to Redis Pub/Sub channels.
     """
     from simulation.price_engine import GBMPriceModel
+    import redis.asyncio as aioredis
+    from db.database import AsyncSessionLocal
+    from db.models import DbNewsEvent
 
     # Initialize engines
     engines = {}
@@ -88,7 +91,7 @@ def simulate_tick_loop():
             volatility=inst["volatility"],
         )
 
-    r = redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
+    r = await aioredis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
     news_engine = NewsEngine()
     context = MarketContext(sentiment="neutral")
 
@@ -103,7 +106,25 @@ def simulate_tick_loop():
 
         if news_event:
             # Publish headline to clients
-            r.publish("market:news:global", json.dumps(news_event))
+            await r.publish("market:news:global", json.dumps(news_event))
+
+            # Save news event to PostgreSQL database
+            try:
+                async with AsyncSessionLocal() as session:
+                    db_event = DbNewsEvent(
+                        headline=news_event["headline"],
+                        category=news_event["category"],
+                        subcategory=news_event["subcategory"],
+                        timestamp=datetime.now(timezone.utc),
+                        impact=news_event["impact"],
+                        duration_minutes=news_event["duration_minutes"],
+                        affected_scope=news_event["affected_scope"],
+                        affected_symbols=news_event["affected_symbols"],
+                    )
+                    session.add(db_event)
+                    await session.commit()
+            except Exception as e:
+                print(f"Error saving news event to DB: {e}")
 
             # Apply shock to math model
             impact = news_event["impact"]
@@ -142,8 +163,40 @@ def simulate_tick_loop():
             }
 
             # Publish to redis for the WebSocket server
-            r.publish(f"market:ticks:{symbol}", json.dumps(tick))
-            r.publish("market:ticks:global", json.dumps(tick))  # Global feed
+            await r.publish(f"market:ticks:{symbol}", json.dumps(tick))
+            await r.publish("market:ticks:global", json.dumps(tick))  # Global feed
+
+            # Calculate dynamic valuation stats deterministically based on symbol name
+            symbol_seed = sum(ord(c) for c in symbol)
+            
+            # 1. EPS & P/E
+            pe_baseline = 15.0 + (symbol_seed % 20)
+            eps = inst_base["price"] / pe_baseline
+            pe_ratio = new_price / eps if eps > 0 else 0.0
+            
+            # 2. Book Value & P/B
+            pb_baseline = 1.5 + (symbol_seed % 5)
+            book_value = inst_base["price"] / pb_baseline
+            pb_ratio = new_price / book_value if book_value > 0 else 0.0
+            
+            # 3. ROE (between 8% and 25%)
+            roe = 8.0 + (symbol_seed % 18)
+            
+            # 4. Dividend Yield (payout ratio between 0% and 40% of EPS)
+            payout_ratio = (symbol_seed % 5) * 0.1
+            annual_dividend = eps * payout_ratio
+            div_yield = (annual_dividend / new_price * 100.0) if new_price > 0 else 0.0
+            
+            # 5. Outstanding shares & Market Cap
+            outstanding_shares = (10 + (symbol_seed % 90)) * 1_000_000
+            market_cap = new_price * outstanding_shares
+            
+            # 6. 52-week High/Low
+            fifty_two_week_high = max(new_price, inst_base["price"] * 1.3)
+            fifty_two_week_low = min(new_price, inst_base["price"] * 0.75)
+            
+            # 7. Avg Volume
+            avg_volume = tick["volume"] * 1.15
 
             # Save latest state for REST API
             snapshot = {
@@ -159,8 +212,16 @@ def simulate_tick_loop():
                 * 100,
                 "volume": tick["volume"],
                 "timestamp": tick["timestamp"],
+                "fiftyTwoWeekHigh": fifty_two_week_high,
+                "fiftyTwoWeekLow": fifty_two_week_low,
+                "marketCap": market_cap,
+                "avgVolume": avg_volume,
+                "peRatio": pe_ratio,
+                "pbRatio": pb_ratio,
+                "roe": roe,
+                "divYield": div_yield,
             }
-            r.set(f"market:quote:{symbol}", json.dumps(snapshot))
+            await r.set(f"market:quote:{symbol}", json.dumps(snapshot))
 
         # 3. Mean Reversion of Volatility over time
         for engine in engines.values():
@@ -170,4 +231,4 @@ def simulate_tick_loop():
                 )
 
         # sleep slightly to mock real time
-        time.sleep(3)
+        await asyncio.sleep(3)

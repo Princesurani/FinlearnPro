@@ -59,6 +59,10 @@ class MarketSnapshot(BaseModel):
     fiftyTwoWeekLow: Optional[float] = None
     marketCap: Optional[float] = None
     avgVolume: Optional[float] = None
+    peRatio: Optional[float] = None
+    pbRatio: Optional[float] = None
+    roe: Optional[float] = None
+    divYield: Optional[float] = None
 
 class PriceTick(BaseModel):
     symbol: str

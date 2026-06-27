@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/learning/data/learning_models.dart';
+import '../../features/learning/data/learning_data.dart';
 
 import '../network/api_constants.dart';
 
@@ -170,7 +171,24 @@ class LearningProgressService {
       return MapEntry(key, courseProg);
     });
 
-    // We don't restore the full achievements list, we just initialize with empty here since mock data reconstructs them
+    final earnedIds = Set<String>.from(map['achievements'] as List? ?? []);
+    final achievementsList = LearningData.achievements.map((achievement) {
+      if (earnedIds.contains(achievement.id)) {
+        return Achievement(
+          id: achievement.id,
+          title: achievement.title,
+          description: achievement.description,
+          iconData: achievement.iconData,
+          color: achievement.color,
+          xpReward: achievement.xpReward,
+          rarity: achievement.rarity,
+          progress: achievement.maxProgress ?? 0,
+          maxProgress: achievement.maxProgress,
+          earnedDate: DateTime.now(),
+        );
+      }
+      return achievement;
+    }).toList();
 
     return UserLearningProgress(
       userId: map['userId'] as String? ?? userId,
@@ -183,8 +201,7 @@ class LearningProgressService {
       currentStreak: (map['currentStreak'] as int?) ?? 0,
       longestStreak: (map['longestStreak'] as int?) ?? 0,
       courseProgress: courseProgressMap,
-      achievements:
-          const [], // We'll handle this at a higher level with mock data
+      achievements: achievementsList,
       lastActivityDate:
           DateTime.tryParse(map['lastActivityDate']?.toString() ?? '') ??
           DateTime.now(),

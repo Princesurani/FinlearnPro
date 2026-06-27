@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import '../data/learning_models.dart';
-import '../data/learning_data.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/network/api_constants.dart';
 import '../../../core/services/learning_progress_service.dart';
@@ -96,9 +95,7 @@ class LearningBloc {
         currentStreak: savedProgress.currentStreak,
         longestStreak: savedProgress.longestStreak,
         courseProgress: savedProgress.courseProgress,
-        achievements: LearningData
-            .currentUserProgress
-            .achievements, // Using mock achievements for now
+        achievements: savedProgress.achievements,
         lastActivityDate: savedProgress.lastActivityDate,
         lastDailyChallengeDate: savedProgress.lastDailyChallengeDate,
       );
@@ -272,11 +269,11 @@ class LearningBloc {
       newCourseProgressMap[event.courseId] = updatedCourseProg;
     }
 
-    final nextTotalXp = prog.totalXp + earnedXp;
-    final updatedProgress = UserLearningProgress(
+    final baseTotalXp = prog.totalXp + earnedXp;
+    final draftProgress = UserLearningProgress(
       userId: prog.userId,
-      totalXp: nextTotalXp,
-      currentLevel: UserLearningProgress.calculateLevel(nextTotalXp),
+      totalXp: baseTotalXp,
+      currentLevel: UserLearningProgress.calculateLevel(baseTotalXp),
       coursesStarted: newCoursesStarted,
       coursesCompleted: newCoursesCompleted,
       lessonsCompleted: prog.lessonsCompleted + additionalCompletedLesson,
@@ -288,6 +285,30 @@ class LearningBloc {
       lastActivityDate: DateTime.now(),
     );
 
+    final evaluatedAchievements = _evaluateAchievements(draftProgress);
+    int extraXp = 0;
+    for (int i = 0; i < evaluatedAchievements.length; i++) {
+      if (evaluatedAchievements[i].isEarned && !prog.achievements[i].isEarned) {
+        extraXp += evaluatedAchievements[i].xpReward;
+      }
+    }
+
+    final nextTotalXp = baseTotalXp + extraXp;
+    final updatedProgress = UserLearningProgress(
+      userId: draftProgress.userId,
+      totalXp: nextTotalXp,
+      currentLevel: UserLearningProgress.calculateLevel(nextTotalXp),
+      coursesStarted: draftProgress.coursesStarted,
+      coursesCompleted: draftProgress.coursesCompleted,
+      lessonsCompleted: draftProgress.lessonsCompleted,
+      totalLearningMinutes: draftProgress.totalLearningMinutes,
+      currentStreak: draftProgress.currentStreak,
+      longestStreak: draftProgress.longestStreak,
+      courseProgress: draftProgress.courseProgress,
+      achievements: evaluatedAchievements,
+      lastActivityDate: draftProgress.lastActivityDate,
+    );
+
     _state = _state.copyWith(userProgress: updatedProgress);
     _stateController.add(_state);
 
@@ -295,8 +316,9 @@ class LearningBloc {
     _progressService.saveProgress(updatedProgress);
     
     // Send XP to backend Gamification Profile
-    if (earnedXp > 0) {
-      http.post(Uri.parse('${ApiConstants.baseUrl}/social/xp/award?uid=${prog.userId}&xp=$earnedXp')).catchError((_) => http.Response('', 500));
+    final totalAwardedXp = earnedXp + extraXp;
+    if (totalAwardedXp > 0) {
+      http.post(Uri.parse('${ApiConstants.baseUrl}/social/xp/award?uid=${prog.userId}&xp=$totalAwardedXp')).catchError((_) => http.Response('', 500));
     }
   }
 
@@ -311,11 +333,11 @@ class LearningBloc {
       longestStreak = newStreak;
     }
 
-    final nextTotalXp = prog.totalXp + event.xpReward;
-    final updatedProgress = UserLearningProgress(
+    final baseTotalXp = prog.totalXp + event.xpReward;
+    final draftProgress = UserLearningProgress(
       userId: prog.userId,
-      totalXp: nextTotalXp,
-      currentLevel: UserLearningProgress.calculateLevel(nextTotalXp),
+      totalXp: baseTotalXp,
+      currentLevel: UserLearningProgress.calculateLevel(baseTotalXp),
       coursesStarted: prog.coursesStarted,
       coursesCompleted: prog.coursesCompleted,
       lessonsCompleted: prog.lessonsCompleted,
@@ -328,14 +350,113 @@ class LearningBloc {
       lastDailyChallengeDate: now,
     );
 
+    final evaluatedAchievements = _evaluateAchievements(draftProgress);
+    int extraXp = 0;
+    for (int i = 0; i < evaluatedAchievements.length; i++) {
+      if (evaluatedAchievements[i].isEarned && !prog.achievements[i].isEarned) {
+        extraXp += evaluatedAchievements[i].xpReward;
+      }
+    }
+
+    final nextTotalXp = baseTotalXp + extraXp;
+    final updatedProgress = UserLearningProgress(
+      userId: draftProgress.userId,
+      totalXp: nextTotalXp,
+      currentLevel: UserLearningProgress.calculateLevel(nextTotalXp),
+      coursesStarted: draftProgress.coursesStarted,
+      coursesCompleted: draftProgress.coursesCompleted,
+      lessonsCompleted: draftProgress.lessonsCompleted,
+      totalLearningMinutes: draftProgress.totalLearningMinutes,
+      currentStreak: draftProgress.currentStreak,
+      longestStreak: draftProgress.longestStreak,
+      courseProgress: draftProgress.courseProgress,
+      achievements: evaluatedAchievements,
+      lastActivityDate: draftProgress.lastActivityDate,
+      lastDailyChallengeDate: draftProgress.lastDailyChallengeDate,
+    );
+
     _state = _state.copyWith(userProgress: updatedProgress);
     _stateController.add(_state);
     _progressService.saveProgress(updatedProgress);
 
     // Send XP to backend Gamification Profile
-    if (event.xpReward > 0) {
-      http.post(Uri.parse('${ApiConstants.baseUrl}/social/xp/award?uid=${prog.userId}&xp=${event.xpReward}')).catchError((_) => http.Response('', 500));
+    final totalAwardedXp = event.xpReward + extraXp;
+    if (totalAwardedXp > 0) {
+      http.post(Uri.parse('${ApiConstants.baseUrl}/social/xp/award?uid=${prog.userId}&xp=$totalAwardedXp')).catchError((_) => http.Response('', 500));
     }
+  }
+
+  List<Achievement> _evaluateAchievements(UserLearningProgress updatedProgress) {
+    return updatedProgress.achievements.map((achievement) {
+      if (achievement.isEarned) return achievement; // Already earned
+      
+      bool shouldUnlock = false;
+      int currentProgress = 0;
+      
+      switch (achievement.id) {
+        case 'ach-001': // First Steps (1 lesson)
+          shouldUnlock = updatedProgress.lessonsCompleted >= 1;
+          currentProgress = updatedProgress.lessonsCompleted.clamp(0, 1);
+          break;
+        case 'ach-002': // Knowledge Seeker (10 lessons)
+          shouldUnlock = updatedProgress.lessonsCompleted >= 10;
+          currentProgress = updatedProgress.lessonsCompleted.clamp(0, 10);
+          break;
+        case 'ach-003': // Week Warrior (7-day streak)
+          shouldUnlock = updatedProgress.currentStreak >= 7;
+          currentProgress = updatedProgress.currentStreak.clamp(0, 7);
+          break;
+        case 'ach-004': // Quiz Master (5 quizzes with 100%)
+          int quizCount = 0;
+          for (final cp in updatedProgress.courseProgress.values) {
+            quizCount += cp.quizScores.values.where((score) => score >= 100).length;
+          }
+          shouldUnlock = quizCount >= 5;
+          currentProgress = quizCount.clamp(0, 5);
+          break;
+        case 'ach-005': // Course Champion (1 course)
+          shouldUnlock = updatedProgress.coursesCompleted >= 1;
+          currentProgress = updatedProgress.coursesCompleted.clamp(0, 1);
+          break;
+        case 'ach-006': // Market Scholar (5 courses)
+          shouldUnlock = updatedProgress.coursesCompleted >= 5;
+          currentProgress = updatedProgress.coursesCompleted.clamp(0, 5);
+          break;
+        case 'ach-007': // Trading Legend (13 courses)
+          shouldUnlock = updatedProgress.coursesCompleted >= 13;
+          currentProgress = updatedProgress.coursesCompleted.clamp(0, 13);
+          break;
+      }
+      
+      if (shouldUnlock) {
+        return Achievement(
+          id: achievement.id,
+          title: achievement.title,
+          description: achievement.description,
+          iconData: achievement.iconData,
+          color: achievement.color,
+          xpReward: achievement.xpReward,
+          rarity: achievement.rarity,
+          progress: achievement.maxProgress ?? 0,
+          maxProgress: achievement.maxProgress,
+          earnedDate: DateTime.now(),
+        );
+      } else if (currentProgress != achievement.progress) {
+        return Achievement(
+          id: achievement.id,
+          title: achievement.title,
+          description: achievement.description,
+          iconData: achievement.iconData,
+          color: achievement.color,
+          xpReward: achievement.xpReward,
+          rarity: achievement.rarity,
+          progress: currentProgress,
+          maxProgress: achievement.maxProgress,
+          earnedDate: null,
+        );
+      }
+      return achievement;
+    }).toList();
   }
 
   void dispose() {

@@ -49,8 +49,9 @@ async def startup_event():
     logger.info("Market Service Starting Up... Triggering Simulation Engine.")
     try:
         import threading
+        import asyncio
         # Run in a background thread so we don't need a separate Celery worker!
-        t = threading.Thread(target=simulate_tick_loop, daemon=True)
+        t = threading.Thread(target=lambda: asyncio.run(simulate_tick_loop()), daemon=True)
         t.start()
         logger.info("Started simulate_tick_loop in a background thread!")
     except Exception as e:

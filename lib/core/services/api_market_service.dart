@@ -246,6 +246,22 @@ class ApiMarketService {
     } catch (_) {}
   }
 
+  Future<List<dynamic>> getNews({String? symbol}) async {
+    try {
+      final uri = Uri.parse(
+        symbol != null ? '$baseUrl/news?symbol=$symbol' : '$baseUrl/news'
+      );
+      final response = await _client.get(uri);
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as List<dynamic>;
+      } else {
+        throw Exception('Failed to load news');
+      }
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
+
   void dispose() {
     _isDisposed = true;
     _channel?.sink.close();

@@ -27,12 +27,15 @@ class OverviewTab extends StatelessWidget {
     final volume = snapshot?.volume ?? 0;
     final marketCap = snapshot?.marketCap ?? 0;
 
-    // Derived fundamentals (calculated from live price data)
+    // Derived fundamentals (calculated from live price data or backend metrics)
     final mktCapStr = formatter.formatLargeNumber(marketCap);
-    final pe = (20 + (price % 50)).toStringAsFixed(2); // Random mock
-    final pb = (1.2 + (price % 5)).toStringAsFixed(2);
-    final roe = (12.5 + (price % 10)).toStringAsFixed(2);
-    final divYield = (0.5 + (price % 2)).toStringAsFixed(2);
+    final pe = snapshot?.peRatio?.toStringAsFixed(2) ?? (20 + (price % 50)).toStringAsFixed(2);
+    final pb = snapshot?.pbRatio?.toStringAsFixed(2) ?? (1.2 + (price % 5)).toStringAsFixed(2);
+    final roe = snapshot?.roe?.toStringAsFixed(2) ?? (12.5 + (price % 10)).toStringAsFixed(2);
+    final divYield = snapshot?.divYield?.toStringAsFixed(2) ?? (0.5 + (price % 2)).toStringAsFixed(2);
+    final epsVal = (snapshot?.peRatio != null && snapshot!.peRatio! > 0)
+        ? (price / snapshot!.peRatio!).toStringAsFixed(2)
+        : '12.45';
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -147,7 +150,7 @@ class OverviewTab extends StatelessWidget {
               _StatItem(label: 'Mkt Cap', value: '$currencySymbol$mktCapStr'),
               _StatItem(label: 'ROE', value: '$roe%'),
               _StatItem(label: 'P/E Ratio(TTM)', value: pe),
-              _StatItem(label: 'EPS(TTM)', value: '12.45'),
+              _StatItem(label: 'EPS(TTM)', value: epsVal),
               _StatItem(label: 'P/B Ratio', value: pb),
               _StatItem(label: 'Div Yield', value: '$divYield%'),
               _StatItem(label: 'Industry P/E', value: '25.60'),

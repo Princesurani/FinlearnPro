@@ -81,6 +81,25 @@ DEFAULT_INSTRUMENTS = [
 ]
 
 
+DEFAULT_NEWS_EVENTS = [
+    {"headline": "Market Indices achieve record highs amid robust economic indicators.", "category": "macro_economic", "subcategory": "economic_data", "impact": 0.015, "duration_minutes": 120, "affected_scope": "global", "affected_symbols": ["NIFTY 50", "BANKNIFTY", "SENSEX", "S&P 500", "NASDAQ"]},
+    {"headline": "Tech companies lead growth sector surge as interest rate fears ease.", "category": "sector_wide", "subcategory": "regulatory", "impact": 0.02, "duration_minutes": 240, "affected_scope": "sector", "affected_symbols": ["TCS", "INFY", "AAPL", "MSFT", "NVDA", "META", "GOOGL"]},
+    {"headline": "Tesla (TSLA) secures global market leadership with record quarterly vehicle deliveries.", "category": "company_specific", "subcategory": "product", "impact": 0.045, "duration_minutes": 180, "affected_scope": "symbol", "affected_symbols": ["TSLA"]},
+    {"headline": "Apple (AAPL) unveils revolutionary AI capabilities, analysts lift targets.", "category": "company_specific", "subcategory": "product", "impact": 0.035, "duration_minutes": 120, "affected_scope": "symbol", "affected_symbols": ["AAPL"]},
+    {"headline": "Federal Reserve signals potential rate pause in upcoming meetings.", "category": "macro_economic", "subcategory": "fed", "impact": 0.01, "duration_minutes": 60, "affected_scope": "global", "affected_symbols": []},
+    {"headline": "Nvidia (NVDA) announces advanced chip supply expansion to meet global demand.", "category": "company_specific", "subcategory": "product", "impact": 0.05, "duration_minutes": 180, "affected_scope": "symbol", "affected_symbols": ["NVDA"]},
+    {"headline": "Reliance Industries (RELIANCE) unveils major renewable energy expansion plans.", "category": "company_specific", "subcategory": "product", "impact": 0.025, "duration_minutes": 240, "affected_scope": "symbol", "affected_symbols": ["RELIANCE"]},
+    {"headline": "Larsen & Toubro (L&T) wins mega infrastructure contract in the Middle East.", "category": "company_specific", "subcategory": "product", "impact": 0.03, "duration_minutes": 120, "affected_scope": "symbol", "affected_symbols": ["L&T"]},
+    {"headline": "Tata Consultancy Services (TCS) secures multi-billion dollar digital transformation deal.", "category": "company_specific", "subcategory": "product", "impact": 0.02, "duration_minutes": 90, "affected_scope": "symbol", "affected_symbols": ["TCS"]},
+    {"headline": "HDFC Bank (HDFCBANK) posts stellar credit growth and improved asset quality in Q1.", "category": "company_specific", "subcategory": "earnings", "impact": 0.028, "duration_minutes": 120, "affected_scope": "symbol", "affected_symbols": ["HDFCBANK"]},
+    {"headline": "Microsoft (MSFT) Cloud revenue surges, beating market expectations.", "category": "company_specific", "subcategory": "earnings", "impact": 0.03, "duration_minutes": 120, "affected_scope": "symbol", "affected_symbols": ["MSFT"]},
+    {"headline": "Oil majors Shell (SHEL) and BP face consolidation pressure amidst price fluctuations.", "category": "sector_wide", "subcategory": "regulatory", "impact": -0.015, "duration_minutes": 180, "affected_scope": "sector", "affected_symbols": ["SHEL", "BP"]},
+    {"headline": "AstraZeneca (AZN) gains critical approvals for advanced therapy drug trial.", "category": "company_specific", "subcategory": "product", "impact": 0.035, "duration_minutes": 240, "affected_scope": "symbol", "affected_symbols": ["AZN"]},
+    {"headline": "Ex-dividend dates approach for major UK and US banking conglomerates.", "category": "sector_wide", "subcategory": "regulatory", "impact": -0.005, "duration_minutes": 60, "affected_scope": "sector", "affected_symbols": ["HSBA", "JPM", "ICICIBANK", "SBIN"]},
+    {"headline": "Global retail sales grow faster than projected, lifting consumer sector sentiment.", "category": "macro_economic", "subcategory": "economic_data", "impact": 0.012, "duration_minutes": 120, "affected_scope": "global", "affected_symbols": ["AMZN", "ITC", "ULVR", "BATS", "DGE"]}
+]
+
+
 async def init_db():
     from sqlalchemy import text
     # Run CREATE EXTENSION on a separate connection so that its failure does not taint the engine.begin transaction block
@@ -103,6 +122,16 @@ async def init_db():
         if not res.scalars().first():
             instruments = [DbInstrument(**inst) for inst in DEFAULT_INSTRUMENTS]
             session.add_all(instruments)
+            await session.commit()
+
+    # Seed default news events if empty
+    from db.models import DbNewsEvent
+    async with AsyncSessionLocal() as session:
+        from sqlalchemy import select
+        res = await session.execute(select(DbNewsEvent.id))
+        if not res.scalars().first():
+            events = [DbNewsEvent(**ev) for ev in DEFAULT_NEWS_EVENTS]
+            session.add_all(events)
             await session.commit()
 
     # We must explicitly convert tables into TimescaleDB hyper tables where appropriate.

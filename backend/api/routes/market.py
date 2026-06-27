@@ -254,7 +254,8 @@ async def get_news(
     """
     try:
         query = select(DbNewsEvent).order_by(desc(DbNewsEvent.timestamp)).limit(limit)
-        # simplistic filter if needed: if symbol: query = query.filter(DbNewsEvent.affected_symbols.contains(symbol))
+        if symbol:
+            query = query.filter(DbNewsEvent.affected_symbols.any(symbol))
         result = await db.execute(query)
         events = result.scalars().all()
         if events:

@@ -132,6 +132,10 @@ class MarketSnapshot {
     this.fiftyTwoWeekLow,
     this.marketCap,
     this.avgVolume,
+    this.peRatio,
+    this.pbRatio,
+    this.roe,
+    this.divYield,
   });
 
   factory MarketSnapshot.fromJson(Map<String, dynamic> json) {
@@ -159,6 +163,18 @@ class MarketSnapshot {
       avgVolume: json['avgVolume'] != null
           ? (json['avgVolume'] as num).toDouble()
           : null,
+      peRatio: json['peRatio'] != null
+          ? (json['peRatio'] as num).toDouble()
+          : null,
+      pbRatio: json['pbRatio'] != null
+          ? (json['pbRatio'] as num).toDouble()
+          : null,
+      roe: json['roe'] != null
+          ? (json['roe'] as num).toDouble()
+          : null,
+      divYield: json['divYield'] != null
+          ? (json['divYield'] as num).toDouble()
+          : null,
     );
   }
 
@@ -177,6 +193,10 @@ class MarketSnapshot {
   final double? fiftyTwoWeekLow;
   final double? marketCap;
   final double? avgVolume;
+  final double? peRatio;
+  final double? pbRatio;
+  final double? roe;
+  final double? divYield;
 
   bool get isPositive => change >= 0;
 
@@ -205,6 +225,10 @@ class MarketSnapshot {
       fiftyTwoWeekLow: fiftyTwoWeekLow,
       marketCap: marketCap,
       avgVolume: avgVolume,
+      peRatio: peRatio,
+      pbRatio: pbRatio,
+      roe: roe,
+      divYield: divYield,
     );
   }
 }
