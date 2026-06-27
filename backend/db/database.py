@@ -24,14 +24,86 @@ async def get_db():
         yield session
 
 
+DEFAULT_INSTRUMENTS = [
+    # Indian Indices
+    {"symbol": "NIFTY 50", "name": "Nifty 50", "type": "marketIndex", "sector": "unknown", "market": "india", "base_price": 21495.70, "volatility": 0.15, "description": "Benchmark Indian Stock Market Index"},
+    {"symbol": "BANKNIFTY", "name": "Nifty Bank", "type": "marketIndex", "sector": "financialServices", "market": "india", "base_price": 47854.20, "volatility": 0.22, "description": "Indian Banking Sector Index"},
+    {"symbol": "SENSEX", "name": "BSE Sensex", "type": "marketIndex", "sector": "unknown", "market": "india", "base_price": 71350.50, "volatility": 0.14, "description": "BSE Benchmark Index"},
+    {"symbol": "NIFTY IT", "name": "Nifty IT", "type": "marketIndex", "sector": "technology", "market": "india", "base_price": 35240.10, "volatility": 0.20, "description": "Indian IT Sector Index"},
+    
+    # Indian Stocks
+    {"symbol": "RELIANCE", "name": "Reliance Industries", "type": "stock", "sector": "energy", "market": "india", "base_price": 2580.40, "volatility": 0.18, "description": "Reliance Industries Limited"},
+    {"symbol": "TCS", "name": "Tata Consultancy Services", "type": "stock", "sector": "technology", "market": "india", "base_price": 3820.10, "volatility": 0.15, "description": "TCS"},
+    {"symbol": "HDFCBANK", "name": "HDFC Bank", "type": "stock", "sector": "financialServices", "market": "india", "base_price": 1680.90, "volatility": 0.18, "description": "HDFC Bank Limited"},
+    {"symbol": "INFY", "name": "Infosys Limited", "type": "stock", "sector": "technology", "market": "india", "base_price": 1540.25, "volatility": 0.22, "description": "Infosys"},
+    {"symbol": "ICICIBANK", "name": "ICICI Bank", "type": "stock", "sector": "financialServices", "market": "india", "base_price": 1020.50, "volatility": 0.20, "description": "ICICI Bank Limited"},
+    {"symbol": "SBIN", "name": "State Bank of India", "type": "stock", "sector": "financialServices", "market": "india", "base_price": 635.80, "volatility": 0.25, "description": "SBI"},
+    {"symbol": "BHARTIARTL", "name": "Bharti Airtel", "type": "stock", "sector": "communicationServices", "market": "india", "base_price": 1030.40, "volatility": 0.21, "description": "Bharti Airtel Limited"},
+    {"symbol": "ITC", "name": "ITC Limited", "type": "stock", "sector": "consumerDefensive", "market": "india", "base_price": 465.20, "volatility": 0.12, "description": "ITC Limited"},
+    {"symbol": "L&T", "name": "Larsen & Toubro", "type": "stock", "sector": "industrials", "market": "india", "base_price": 3450.60, "volatility": 0.23, "description": "L&T"},
+    {"symbol": "TATASTEEL", "name": "Tata Steel", "type": "stock", "sector": "basicMaterials", "market": "india", "base_price": 132.40, "volatility": 0.28, "description": "Tata Steel Limited"},
+    
+    # USA Indices
+    {"symbol": "S&P 500", "name": "S&P 500", "type": "marketIndex", "sector": "unknown", "market": "usa", "base_price": 4780.20, "volatility": 0.12, "description": "US Top 500 index"},
+    {"symbol": "NASDAQ", "name": "NASDAQ Composite", "type": "marketIndex", "sector": "technology", "market": "usa", "base_price": 15200.50, "volatility": 0.18, "description": "US Tech index"},
+    {"symbol": "DOW JONES", "name": "Dow Jones", "type": "marketIndex", "sector": "unknown", "market": "usa", "base_price": 37600.40, "volatility": 0.10, "description": "US Dow 30 index"},
+    {"symbol": "RUSSELL 2000", "name": "Russell 2000", "type": "marketIndex", "sector": "unknown", "market": "usa", "base_price": 1980.20, "volatility": 0.16, "description": "US Small cap index"},
+    
+    # USA Stocks
+    {"symbol": "AAPL", "name": "Apple Inc.", "type": "stock", "sector": "technology", "market": "usa", "base_price": 192.50, "volatility": 0.15, "description": "Apple"},
+    {"symbol": "MSFT", "name": "Microsoft", "type": "stock", "sector": "technology", "market": "usa", "base_price": 390.20, "volatility": 0.14, "description": "Microsoft"},
+    {"symbol": "NVDA", "name": "NVIDIA", "type": "stock", "sector": "technology", "market": "usa", "base_price": 540.80, "volatility": 0.30, "description": "Nvidia"},
+    {"symbol": "TSLA", "name": "Tesla", "type": "stock", "sector": "consumerCyclical", "market": "usa", "base_price": 240.50, "volatility": 0.40, "description": "Tesla Inc"},
+    {"symbol": "AMZN", "name": "Amazon", "type": "stock", "sector": "consumerCyclical", "market": "usa", "base_price": 155.20, "volatility": 0.20, "description": "Amazon"},
+    {"symbol": "META", "name": "Meta Platforms", "type": "stock", "sector": "communicationServices", "market": "usa", "base_price": 360.40, "volatility": 0.25, "description": "Facebook"},
+    {"symbol": "GOOGL", "name": "Alphabet", "type": "stock", "sector": "communicationServices", "market": "usa", "base_price": 140.80, "volatility": 0.18, "description": "Google"},
+    {"symbol": "BRK.B", "name": "Berkshire Hathaway", "type": "stock", "sector": "financialServices", "market": "usa", "base_price": 360.20, "volatility": 0.10, "description": "Berkshire"},
+    {"symbol": "JPM", "name": "JPMorgan Chase", "type": "stock", "sector": "financialServices", "market": "usa", "base_price": 170.50, "volatility": 0.14, "description": "JPMorgan"},
+    {"symbol": "JNJ", "name": "Johnson & Johnson", "type": "stock", "sector": "healthcare", "market": "usa", "base_price": 158.40, "volatility": 0.10, "description": "J&J"},
+    
+    # UK Indices
+    {"symbol": "FTSE 100", "name": "FTSE 100", "type": "marketIndex", "sector": "unknown", "market": "uk", "base_price": 7680.50, "volatility": 0.12, "description": "UK Top 100"},
+    {"symbol": "FTSE 250", "name": "FTSE 250", "type": "marketIndex", "sector": "unknown", "market": "uk", "base_price": 19200.40, "volatility": 0.15, "description": "UK Mid cap"},
+    {"symbol": "FTSE AIM 100", "name": "FTSE AIM 100", "type": "marketIndex", "sector": "unknown", "market": "uk", "base_price": 3800.20, "volatility": 0.20, "description": "UK Small cap"},
+    {"symbol": "FTSE techMARK", "name": "techMARK", "type": "marketIndex", "sector": "technology", "market": "uk", "base_price": 4500.80, "volatility": 0.18, "description": "UK Tech focus"},
+    
+    # UK Stocks
+    {"symbol": "SHEL", "name": "Shell", "type": "stock", "sector": "energy", "market": "uk", "base_price": 2500.40, "volatility": 0.14, "description": "Shell PLC"},
+    {"symbol": "AZN", "name": "AstraZeneca", "type": "stock", "sector": "healthcare", "market": "uk", "base_price": 10800.50, "volatility": 0.16, "description": "AstraZeneca"},
+    {"symbol": "HSBA", "name": "HSBC", "type": "stock", "sector": "financialServices", "market": "uk", "base_price": 630.20, "volatility": 0.12, "description": "HSBC Holdings"},
+    {"symbol": "ULVR", "name": "Unilever", "type": "stock", "sector": "consumerDefensive", "market": "uk", "base_price": 3800.40, "volatility": 0.10, "description": "Unilever PLC"},
+    {"symbol": "BP", "name": "BP", "type": "stock", "sector": "energy", "market": "uk", "base_price": 480.50, "volatility": 0.16, "description": "BP PLC"},
+    {"symbol": "GSK", "name": "GSK", "type": "stock", "sector": "healthcare", "market": "uk", "base_price": 1500.20, "volatility": 0.14, "description": "GSK PLC"},
+    {"symbol": "BATS", "name": "Brit. Amer. Tobacco", "type": "stock", "sector": "consumerDefensive", "market": "uk", "base_price": 2300.80, "volatility": 0.12, "description": "BAT"},
+    {"symbol": "RIO", "name": "Rio Tinto", "type": "stock", "sector": "basicMaterials", "market": "uk", "base_price": 5400.40, "volatility": 0.20, "description": "Rio Tinto"},
+    {"symbol": "DGE", "name": "Diageo", "type": "stock", "sector": "consumerDefensive", "market": "uk", "base_price": 2800.50, "volatility": 0.12, "description": "Diageo PLC"},
+    {"symbol": "GLEN", "name": "Glencore", "type": "stock", "sector": "basicMaterials", "market": "uk", "base_price": 460.20, "volatility": 0.22, "description": "Glencore"},
+]
+
+
 async def init_db():
     from sqlalchemy import text
-    async with engine.begin() as conn:
-        try:
+    # Run CREATE EXTENSION on a separate connection so that its failure does not taint the engine.begin transaction block
+    try:
+        async with engine.connect() as conn:
             await conn.execute(text("CREATE EXTENSION IF NOT EXISTS timescaledb;"))
-        except Exception as e:
-            print(f"Warning: Could not enable timescaledb extension: {e}")
+            await conn.commit()
+    except Exception as e:
+        print(f"Warning: Could not enable timescaledb extension: {e}")
+
+    # Recreate all database tables cleanly in a fresh transaction block
+    async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+    # Seed default instruments if empty
+    from db.models import DbInstrument
+    async with AsyncSessionLocal() as session:
+        from sqlalchemy import select
+        res = await session.execute(select(DbInstrument.symbol))
+        if not res.scalars().first():
+            instruments = [DbInstrument(**inst) for inst in DEFAULT_INSTRUMENTS]
+            session.add_all(instruments)
+            await session.commit()
 
     # We must explicitly convert tables into TimescaleDB hyper tables where appropriate.
     # In a real production setup, we'd use Alembic migrations and raw SQL to run `SELECT create_hypertable('price_ticks', 'timestamp');`.
