@@ -64,3 +64,9 @@ async def shutdown_event():
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "service": "market_service"}
+
+@app.get("/")
+@app.head("/")
+async def root_health():
+    return {"status": "healthy"}
+
