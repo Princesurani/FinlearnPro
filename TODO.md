@@ -6,17 +6,17 @@ Use this file to track the implementation of remaining mock elements, placeholde
 
 ## 🟥 High Priority (Data Integrity & Live Core Features)
 
-- [ ] **Live Market News & Events Integration**
-  - Connect stock details view tabs ([news_tab.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/market/presentation/widgets/stock_detail_tabs/news_tab.dart) and [events_tab.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/market/presentation/widgets/stock_detail_tabs/events_tab.dart)) to the actual backend API news feed route (`GET /api/v1/market/news`).
-  - Deprecate private static arrays `_mockNews` and `_mockEvents`.
+- [x] **Live Market News & Events Integration**
+  - [x] Connect stock details view tabs ([news_tab.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/market/presentation/widgets/stock_detail_tabs/news_tab.dart) and [events_tab.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/market/presentation/widgets/stock_detail_tabs/events_tab.dart)) to the actual backend API news feed route (`GET /api/v1/market/news`).
+  - [x] Deprecate private static arrays `_mockNews` and `_mockEvents`.
 
-- [ ] **Persistent Achievements Tracker**
-  - Create database schema/models and backend API endpoints to fetch, unlock, and save user achievements.
-  - Refactor [learning_progress_service.dart](file:///Users/prince/Documents/FinlearnPro/lib/core/services/learning_progress_service.dart) to persist achievements, removing the local mock initialization.
+- [x] **Persistent Achievements Tracker**
+  - [x] Create database schema/models and backend API endpoints to fetch, unlock, and save user achievements.
+  - [x] Refactor [learning_progress_service.dart](file:///Users/prince/Documents/FinlearnPro/lib/core/services/learning_progress_service.dart) to persist achievements, removing the local mock initialization.
 
-- [ ] **Real Stock Valuation Statistics**
-  - Add API endpoints to fetch live stock financial statistics (P/E ratio, Market Cap, Average Volume, etc.) from live feeds.
-  - Update [overview_tab.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/market/presentation/widgets/stock_detail_tabs/overview_tab.dart) to display these backend metrics instead of using the local mathematical formula (`(20 + (price % 50))`).
+- [x] **Real Stock Valuation Statistics**
+  - [x] Add API endpoints to fetch live stock financial statistics (P/E ratio, Market Cap, Average Volume, etc.) from live feeds.
+  - [x] Update [overview_tab.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/market/presentation/widgets/stock_detail_tabs/overview_tab.dart) to display these backend metrics instead of using the local mathematical formula (`(20 + (price % 50))`).
 
 ---
 

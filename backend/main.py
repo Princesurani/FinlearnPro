@@ -48,14 +48,12 @@ async def startup_event():
     # Trigger background simulation loop
     logger.info("Market Service Starting Up... Triggering Simulation Engine.")
     try:
-        import threading
         import asyncio
-        # Run in a background thread so we don't need a separate Celery worker!
-        t = threading.Thread(target=lambda: asyncio.run(simulate_tick_loop()), daemon=True)
-        t.start()
-        logger.info("Started simulate_tick_loop in a background thread!")
+        # Run as a background task in the main thread's asyncio loop to share connection pool safely
+        asyncio.create_task(simulate_tick_loop())
+        logger.info("Started simulate_tick_loop as an asyncio background task!")
     except Exception as e:
-        logger.error(f"Failed to start simulation thread: {e}")
+        logger.error(f"Failed to start simulation task: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_event():
