@@ -431,21 +431,42 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      const Text(
-                        'Scenario Analysis',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2962FF),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.primarySubtle,
+                          borderRadius: BorderRadius.circular(12),
+                          border: const Border(
+                            left: BorderSide(
+                              color: AppColors.primary,
+                              width: 4,
+                            ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        challenge.scenarioText,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: AppColors.neutralGray,
-                          height: 1.5,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Scenario Analysis',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              challenge.scenarioText,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textPrimary,
+                                height: 1.5,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
