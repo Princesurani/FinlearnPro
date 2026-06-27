@@ -17,6 +17,7 @@ class DailyChallengeScreen extends StatefulWidget {
 }
 
 class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
+  bool _isProcessing = false;
   int? _selectedOptionIndex;
 
   @override
@@ -26,15 +27,30 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
   }
 
   void _handleOptionSelect(int index, bool isSubmitted) {
-    if (isSubmitted) return;
+    if (isSubmitted || _isProcessing) return;
     setState(() {
       _selectedOptionIndex = index;
     });
   }
 
   void _submitAnswer() {
-    if (_selectedOptionIndex == null) return;
-    context.read<ChallengeCubit>().submitAnswer(_selectedOptionIndex!);
+    if (_selectedOptionIndex == null || _isProcessing) return;
+    setState(() {
+      _isProcessing = true;
+    });
+    context.read<ChallengeCubit>().submitAnswer(_selectedOptionIndex!).then((_) {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
+    }).catchError((_) {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
+    });
   }
 
   void _showFeedbackBottomSheet({
@@ -565,28 +581,39 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _selectedOptionIndex != null
+                      onPressed: (_selectedOptionIndex != null && !_isProcessing)
                           ? _submitAnswer
                           : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2962FF),
-                        disabledBackgroundColor: AppColors.textDisabled,
+                        disabledBackgroundColor: _isProcessing 
+                            ? const Color(0xFF2962FF).withValues(alpha: 0.7) 
+                            : AppColors.textDisabled,
                         padding: const EdgeInsets.symmetric(vertical: 18),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
                         elevation: 0,
                       ),
-                      child: Text(
-                        'Submit Prediction',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: _selectedOptionIndex != null
-                              ? AppColors.white
-                              : AppColors.neutralGray,
-                        ),
-                      ),
+                      child: _isProcessing
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+                              ),
+                            )
+                          : Text(
+                              'Submit Prediction',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: _selectedOptionIndex != null
+                                    ? AppColors.white
+                                    : AppColors.neutralGray,
+                              ),
+                            ),
                     ),
                   ),
               ],
