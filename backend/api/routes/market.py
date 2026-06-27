@@ -27,7 +27,19 @@ async def get_all_instruments(db: AsyncSession = Depends(get_db)):
         result = await db.execute(select(DbInstrument))
         instruments = result.scalars().all()
         if instruments:
-            return instruments
+            return [
+                Instrument(
+                    symbol=inst.symbol,
+                    name=inst.name,
+                    type=inst.type,
+                    sector=inst.sector,
+                    market=inst.market,
+                    basePrice=inst.base_price,
+                    volatility=inst.volatility,
+                    description=inst.description or "",
+                )
+                for inst in instruments
+            ]
     except Exception:
         pass # Fallback to mock if db fails or hasn't initialized
     
