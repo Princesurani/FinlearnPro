@@ -103,6 +103,22 @@ class LearningProgressService {
     await prefs.remove('$_progressKeyPrefix$userId');
   }
 
+  // Fetches instructor biography details from the backend for a given course
+  Future<Instructor?> getInstructor(String courseId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConstants.baseUrl}/learning/instructor/$courseId'),
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return Instructor.fromJson(data);
+      }
+    } catch (e) {
+      debugPrint('Failed to load instructor: $e');
+    }
+    return null;
+  }
+
   // Convert objects to and from map to keep it simple and independent of modifying existing models
   Map<String, dynamic> _progressToMap(UserLearningProgress progress) {
     return {

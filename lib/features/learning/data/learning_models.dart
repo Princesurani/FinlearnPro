@@ -546,3 +546,32 @@ class LearningPath {
 
   Color get displayColor => accentColor ?? difficulty.color;
 }
+
+class Instructor {
+  final String id;
+  final String name;
+  final String bio;
+  final String? photoUrl;
+  final String specialty;
+  final String? linkedinUrl;
+
+  const Instructor({
+    required this.id,
+    required this.name,
+    required this.bio,
+    this.photoUrl,
+    required this.specialty,
+    this.linkedinUrl,
+  });
+
+  factory Instructor.fromJson(Map<String, dynamic> json) {
+    return Instructor(
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      bio: json['bio'] as String? ?? '',
+      photoUrl: json['photo_url'] as String?,
+      specialty: json['specialty'] as String? ?? '',
+      linkedinUrl: json['linkedin_url'] as String?,
+    );
+  }
+}

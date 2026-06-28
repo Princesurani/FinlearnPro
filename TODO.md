@@ -22,16 +22,16 @@ Use this file to track the implementation of remaining mock elements, placeholde
 
 ## 🟨 Medium Priority (UI Precision & Polish)
 
-- [ ] **Dynamic Technical Analysis Gauge**
-  - Refactor the Technical Analysis indicator needle inside [technicals_tab.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/market/presentation/widgets/stock_detail_tabs/technicals_tab.dart) to calculate gauge angles dynamically using actual technical indicators (RSI, MACD, Moving Averages) instead of rendering a fixed "Strong Buy" canvas offset.
+- [x] **Dynamic Technical Analysis Gauge**
+  - [x] Refactor the Technical Analysis indicator needle inside [technicals_tab.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/market/presentation/widgets/stock_detail_tabs/technicals_tab.dart) to calculate gauge angles dynamically using actual technical indicators (RSI, MACD, Moving Averages) instead of rendering a fixed "Strong Buy" canvas offset.
 
-- [ ] **Concrete Course Lesson Contents**
-  - Write and register rich markdown lesson slides for empty lessons.
-  - Reduce reliance on the boilerplate slide generator (`_generatePlaceholderContent`) in [lesson_screen.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/learning/presentation/pages/lesson_screen.dart).
+- [x] **Concrete Course Lesson Contents**
+  - [x] Write and register rich markdown lesson slides for empty lessons.
+  - [x] Reduce reliance on the boilerplate slide generator (`_generatePlaceholderContent`) in [lesson_screen.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/learning/presentation/pages/lesson_screen.dart).
 
-- [ ] **Dynamic Instructor Biographies**
-  - Add details for instructors (bios, photos, and links) to the database models.
-  - Refactor [course_details_screen.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/learning/presentation/pages/course_details_screen.dart) to fetch and bind this instructor metadata from the backend.
+- [x] **Dynamic Instructor Biographies**
+  - [x] Add details for instructors (bios, photos, and links) to the database models.
+  - [x] Refactor [course_details_screen.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/learning/presentation/pages/course_details_screen.dart) to fetch and bind this instructor metadata from the backend.
 
 ---
 

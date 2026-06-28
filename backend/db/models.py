@@ -199,3 +199,13 @@ class DbTradeShareLike(Base):
     firebase_uid = Column(String(128), ForeignKey("users.firebase_uid", ondelete="CASCADE"), primary_key=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
+class DbInstructor(Base):
+    __tablename__ = "instructors"
+    
+    id = Column(String(100), primary_key=True, index=True)
+    name = Column(String(255), nullable=False)
+    bio = Column(String(1000), nullable=False)
+    photo_url = Column(String(500), nullable=True)
+    specialty = Column(String(255), nullable=False)
+    linkedin_url = Column(String(255), nullable=True)
+

@@ -153,3 +153,11 @@ class TradeShareResponse(BaseModel):
     comments_count: int
     is_liked_by_me: bool = False
     created_at: datetime
+
+class InstructorResponse(BaseModel):
+    id: str
+    name: str
+    bio: str
+    photo_url: Optional[str] = None
+    specialty: str
+    linkedin_url: Optional[str] = None

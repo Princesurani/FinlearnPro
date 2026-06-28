@@ -99,6 +99,41 @@ DEFAULT_NEWS_EVENTS = [
     {"headline": "Global retail sales grow faster than projected, lifting consumer sector sentiment.", "category": "macro_economic", "subcategory": "economic_data", "impact": 0.012, "duration_minutes": 120, "affected_scope": "global", "affected_symbols": ["AMZN", "ITC", "ULVR", "BATS", "DGE"]}
 ]
 
+DEFAULT_INSTRUCTORS = [
+    {
+        "id": "sarah",
+        "name": "Dr. Sarah Jenkins",
+        "bio": "Dr. Sarah Jenkins is a former Wall Street quantitative researcher with a Ph.D. in Financial Mathematics from MIT. She has over 12 years of experience building algorithmic trading models and teaching risk management to institutional traders.",
+        "photo_url": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200",
+        "specialty": "Quantitative Finance, Risk Management & Technical Analysis",
+        "linkedin_url": "https://linkedin.com/in/sarah-jenkins-finlearn"
+    },
+    {
+        "id": "rajesh",
+        "name": "Rajesh Kumar, CFA",
+        "bio": "Rajesh Kumar is a Chartered Financial Analyst (CFA) and a veteran investment advisor with 15+ years of experience in Indian equity markets. He specializes in value investing, balance sheet auditing, and tax-efficient portfolio structuring.",
+        "photo_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200",
+        "specialty": "Fundamental Analysis, Corporate Finance & Indian Markets",
+        "linkedin_url": "https://linkedin.com/in/rajesh-kumar-finlearn"
+    },
+    {
+        "id": "michael",
+        "name": "Michael Vance",
+        "bio": "Michael Vance has traded global currency and commodity markets for over two decades. Formerly a senior FX strategist at a London hedge fund, he now focuses on macro economic analysis, leverage strategies, and physical commodity derivatives.",
+        "photo_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200",
+        "specialty": "Global Macro, Forex & Commodities Trading",
+        "linkedin_url": "https://linkedin.com/in/michael-vance-finlearn"
+    },
+    {
+        "id": "elena",
+        "name": "Elena Rostova",
+        "bio": "Elena Rostova is a blockchain developer and early cryptocurrency investor. She has designed smart contracts for multiple DeFi protocols and is a frequent speaker at global crypto conferences. She specializes in tokenomics and digital asset valuations.",
+        "photo_url": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200",
+        "specialty": "Blockchain Architecture, DeFi & Cryptocurrency Valuation",
+        "linkedin_url": "https://linkedin.com/in/elena-rostova-finlearn"
+    }
+]
+
 
 async def init_db():
     from sqlalchemy import text
@@ -132,6 +167,16 @@ async def init_db():
         if not res.scalars().first():
             events = [DbNewsEvent(**ev) for ev in DEFAULT_NEWS_EVENTS]
             session.add_all(events)
+            await session.commit()
+
+    # Seed default instructors if empty
+    from db.models import DbInstructor
+    async with AsyncSessionLocal() as session:
+        from sqlalchemy import select
+        res = await session.execute(select(DbInstructor.id))
+        if not res.scalars().first():
+            instructors = [DbInstructor(**inst) for inst in DEFAULT_INSTRUCTORS]
+            session.add_all(instructors)
             await session.commit()
 
     # We must explicitly convert tables into TimescaleDB hyper tables where appropriate.

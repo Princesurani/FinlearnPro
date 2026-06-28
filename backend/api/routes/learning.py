@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Dict, Any
 
 from db.database import get_db
-from db.models import DbUserLearningProgress, DbUser
+from db.models import DbUserLearningProgress, DbUser, DbInstructor
+from models.schemas import InstructorResponse
 
 router = APIRouter()
 
@@ -51,3 +52,32 @@ async def get_progress(firebase_uid: str, db: AsyncSession = Depends(get_db)):
         return {"data": None}
         
     return {"data": progress_record.progress_data}
+
+
+COURSE_INSTRUCTOR_MAP = {
+    "foundations": "sarah",
+    "stock_market": "rajesh",
+    "c3-crypto": "elena",
+    "c4-forex": "michael",
+    "c5-commodities": "michael",
+    "c6-technical": "sarah",
+    "c7-fundamental": "rajesh",
+    "c8-risk": "sarah",
+    "c9-practice": "sarah",
+    "c10-derivatives": "michael",
+    "c11-styles": "sarah",
+    "c12-setup": "rajesh",
+    "c13-consistent": "sarah"
+}
+
+@router.get("/instructor/{course_id}", response_model=InstructorResponse)
+async def get_instructor(course_id: str, db: AsyncSession = Depends(get_db)):
+    """
+    Fetches the instructor profile details for a given course ID.
+    """
+    instructor_id = COURSE_INSTRUCTOR_MAP.get(course_id, "sarah")
+    result = await db.execute(select(DbInstructor).where(DbInstructor.id == instructor_id))
+    instructor = result.scalar_one_or_none()
+    if not instructor:
+        raise HTTPException(status_code=404, detail="Instructor profile not found")
+    return instructor
