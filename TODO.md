@@ -41,9 +41,9 @@ Use this file to track the implementation of remaining mock elements, placeholde
   - Configure Apple Developer Portal credentials and certificates.
   - Implement full Apple Sign-In authentication handlers in [sign_in_screen.dart](file:///Users/prince/Documents/FinlearnPro/lib/features/auth/presentation/pages/sign_in_screen.dart), replacing the SNACKBAR placeholder.
 
-- [ ] **TimescaleDB Production Setup**
-  - Install and enable the TimescaleDB extension on the production database host.
-  - Deprecate mock candlestick aggregation query fallbacks inside [market.py](file:///Users/prince/Documents/FinlearnPro/backend/api/routes/market.py).
+- [x] **TimescaleDB Production Setup**
+  - [x] Install and enable the TimescaleDB extension on the production database host (Migrated to native PostgreSQL time-series aggregation to support free Supabase tier).
+  - [x] Deprecate mock candlestick aggregation query fallbacks inside [market.py](file:///Users/prince/Documents/FinlearnPro/backend/api/routes/market.py).
 
 - [ ] **Enforce Unique Display Names**
   - Update user registration flow to prompt for and validate custom user display names.

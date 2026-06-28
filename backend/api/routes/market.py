@@ -154,34 +154,53 @@ async def get_history(
     # In a full Timescale implementation, this would query the continuous aggregate view.
     # Alternatively, you can just query price_ticks via time_bucket directly if the view isn't there:
     
-    interval_str = "4 hours"
+    seconds = 14400
     if timeframe == Timeframe.oneMinute:
-        interval_str = "1 minute"
+        seconds = 60
     elif timeframe == Timeframe.fiveMinute:
-        interval_str = "5 minutes"
+        seconds = 300
     elif timeframe == Timeframe.fifteenMinute:
-        interval_str = "15 minutes"
+        seconds = 900
     elif timeframe == Timeframe.oneHour:
-        interval_str = "1 hour"
+        seconds = 3600
     elif timeframe == Timeframe.oneDay:
-        interval_str = "1 day"
+        seconds = 86400
     elif timeframe == Timeframe.oneWeek:
-        interval_str = "1 week"
+        seconds = 604800
     
     import random
     from sqlalchemy import text
     try:
         query = text(f"""
-            SELECT 
-                time_bucket('{interval_str}', timestamp) AS bucket,
-                first(price, timestamp) AS open, 
-                max(price) AS high, 
-                min(price) AS low, 
-                last(price, timestamp) AS close, 
-                sum(volume) AS volume
-            FROM price_ticks
-            WHERE symbol = :symbol
-            GROUP BY bucket
+            WITH bucketed_ticks AS (
+                SELECT 
+                    to_timestamp(floor(extract(epoch from timestamp) / {seconds}) * {seconds}) AT TIME ZONE 'UTC' AS bucket,
+                    price,
+                    volume,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY floor(extract(epoch from timestamp) / {seconds}) 
+                        ORDER BY timestamp ASC
+                    ) as row_asc,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY floor(extract(epoch from timestamp) / {seconds}) 
+                        ORDER BY timestamp DESC
+                    ) as row_desc
+                FROM price_ticks
+                WHERE symbol = :symbol
+            ),
+            aggregated AS (
+                SELECT 
+                    bucket,
+                    MAX(price) AS high,
+                    MIN(price) AS low,
+                    SUM(volume) AS volume,
+                    MAX(CASE WHEN row_asc = 1 THEN price END) AS open,
+                    MAX(CASE WHEN row_desc = 1 THEN price END) AS close
+                FROM bucketed_ticks
+                GROUP BY bucket
+            )
+            SELECT bucket, open, high, low, close, volume
+            FROM aggregated
             ORDER BY bucket DESC
             LIMIT 100
         """)
@@ -204,7 +223,7 @@ async def get_history(
                 })
             return list(reversed(candles)) # Return chronological
     except Exception as e:
-        logger.error(f"Error reading from TimescaleDB: {e}")
+        logger.error(f"Error reading history from database: {e}")
         pass
 
     # Quick mock instrument fetching to get the base price
