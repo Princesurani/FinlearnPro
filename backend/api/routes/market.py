@@ -210,7 +210,7 @@ async def get_history(
         result = await db.execute(query, {"symbol": symbol})
         rows = result.fetchall()
         
-        if rows:
+        if len(rows) >= 10:
             candles = []
             for row in rows:
                 if row.bucket is None:
