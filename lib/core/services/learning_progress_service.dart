@@ -10,6 +10,7 @@ import '../network/api_constants.dart';
 class LearningProgressService {
   static const String _progressKeyPrefix = 'user_learning_progress_';
   final String _baseApiUrl = '${ApiConstants.baseUrl}/learning/progress';
+  final http.Client _client = http.Client();
 
   // Saves the entire user learning progress to local storage
   Future<void> saveProgress(UserLearningProgress progress) async {
@@ -29,7 +30,7 @@ class LearningProgressService {
   // Background cloud sync
   Future<void> _syncToCloud(String userId, Map<String, dynamic> data) async {
     try {
-      await http.post(
+      await _client.post(
         Uri.parse('$_baseApiUrl/sync/$userId'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(data),
@@ -46,7 +47,7 @@ class LearningProgressService {
 
     try {
       // 1. Try to fetch the latest truth from the cloud
-      final response = await http.get(Uri.parse('$_baseApiUrl/$userId'));
+      final response = await _client.get(Uri.parse('$_baseApiUrl/$userId'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['data'] != null) {
@@ -106,7 +107,7 @@ class LearningProgressService {
   // Fetches instructor biography details from the backend for a given course
   Future<Instructor?> getInstructor(String courseId) async {
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('${ApiConstants.baseUrl}/learning/instructor/$courseId'),
       );
       if (response.statusCode == 200) {

@@ -136,15 +136,6 @@ DEFAULT_INSTRUCTORS = [
 
 
 async def init_db():
-    from sqlalchemy import text
-    # Run CREATE EXTENSION on a separate connection so that its failure does not taint the engine.begin transaction block
-    try:
-        async with engine.connect() as conn:
-            await conn.execute(text("CREATE EXTENSION IF NOT EXISTS timescaledb;"))
-            await conn.commit()
-    except Exception as e:
-        print(f"Warning: Could not enable timescaledb extension: {e}")
-
     # Recreate all database tables cleanly in a fresh transaction block
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

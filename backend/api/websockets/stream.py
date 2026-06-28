@@ -31,6 +31,8 @@ import redis.asyncio as redis
 # Using the redis interface
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
+from db.redis_client import get_redis_client
+
 @router.websocket("/stream")
 async def websocket_endpoint(websocket: WebSocket):
     """
@@ -38,7 +40,7 @@ async def websocket_endpoint(websocket: WebSocket):
     Clients connect and receive the global feed from Redis.
     """
     await manager.connect(websocket)
-    redis_client = await redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
+    redis_client = get_redis_client()
     pubsub = redis_client.pubsub()
     
     # Subscribe to the global market ticks channel
@@ -71,4 +73,4 @@ async def websocket_endpoint(websocket: WebSocket):
         manager.disconnect(websocket)
         listener_task.cancel()
         await pubsub.unsubscribe("market:ticks:global")
-        await redis_client.close()
+        await pubsub.close()

@@ -3,7 +3,7 @@ import os
 import json
 import logging
 from datetime import datetime, timezone, timedelta
-import redis.asyncio as redis
+from db.redis_client import get_redis_client
 
 logger = logging.getLogger(__name__)
 from typing import List
@@ -104,7 +104,7 @@ async def get_quote(symbol: str):
     """
     Returns the current market snapshot (quote) for a given symbol.
     """
-    redis_client = await redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
+    redis_client = get_redis_client()
     try:
         raw = await redis_client.get(f"market:quote:{symbol}")
         if raw:
@@ -112,8 +112,10 @@ async def get_quote(symbol: str):
         
         # Fallback if not populated by celery worker yet
         raise HTTPException(status_code=404, detail=f"Quote for {symbol} not found")
-    finally:
-        await redis_client.close()
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {e}")
 
 @router.get("/quotes", response_model=List[MarketSnapshot])
 async def get_all_quotes(symbols: str = Query(None)):
@@ -121,7 +123,7 @@ async def get_all_quotes(symbols: str = Query(None)):
     Returns bulk quotes. If symbols is provided (comma-separated), returns only those.
     Otherwise returns all available quotes.
     """
-    redis_client = await redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
+    redis_client = get_redis_client()
     try:
         keys = []
         if symbols:
@@ -133,14 +135,14 @@ async def get_all_quotes(symbols: str = Query(None)):
         if not keys:
             return []
             
-        raw_values = await redis_client.mget(keys)
+        raw_quotes = await redis_client.mget(*keys)
         quotes = []
-        for raw in raw_values:
+        for raw in raw_quotes:
             if raw:
                 quotes.append(json.loads(raw))
         return quotes
-    finally:
-        await redis_client.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {e}")
 
 @router.get("/history/{symbol}", response_model=List[Candle])
 async def get_history(
@@ -237,13 +239,12 @@ async def get_history(
             
     # Try to grab the latest actual price from redis if available
     try:
-        redis_client = await redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
+        redis_client = get_redis_client()
         raw = await redis_client.get(f"market:quote:{symbol}")
         if raw:
             snap = json.loads(raw)
             if "price" in snap:
                 base_price = snap["price"]
-        await redis_client.close()
     except Exception:
         pass
 

@@ -9,7 +9,7 @@ from services.user_service import get_or_create_user
 import os
 import json
 import logging
-import redis.asyncio as redis
+from db.redis_client import get_redis_client
 from google import genai
 from google.genai import types
 
@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+
 api_key = os.getenv("GEMINI_API_KEY")
 
 client = None
@@ -189,7 +190,7 @@ async def get_portfolio_review(firebase_uid: str, db: AsyncSession = Depends(get
     Generates an AI review of the user's portfolio using Gemini.
     Caches the result in Redis for 24 hours.
     """
-    redis_client = await redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
+    redis_client = get_redis_client()
     cache_key = f"portfolio:review:{firebase_uid}"
     
     try:
@@ -350,5 +351,5 @@ async def get_portfolio_review(firebase_uid: str, db: AsyncSession = Depends(get
                 "recommendations": ["Contact support if the issue persists."]
             }
     finally:
-        await redis_client.aclose()
+        pass
 

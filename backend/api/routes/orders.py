@@ -1,6 +1,6 @@
 import os
 import json
-import redis.asyncio as redis
+from db.redis_client import get_redis_client
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -36,11 +36,8 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
         raise HTTPException(status_code=400, detail="Quantity must be greater than 0")
 
     # 1. Fetch live price from Redis (key written by simulation/tasks.py)
-    r = redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
-    try:
-        raw_data = await r.get(f"market:quote:{order_req.symbol}")
-    finally:
-        await r.aclose()
+    r = get_redis_client()
+    raw_data = await r.get(f"market:quote:{order_req.symbol}")
 
     if not raw_data:
         raise HTTPException(
@@ -167,11 +164,11 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
 
     await db.commit()
 
-    r_cache = redis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
+    r_cache = get_redis_client()
     try:
         await r_cache.delete(f"portfolio:review:{order_req.firebase_uid}")
-    finally:
-        await r_cache.aclose()
+    except Exception:
+        pass
 
     return {
         "status": "success",

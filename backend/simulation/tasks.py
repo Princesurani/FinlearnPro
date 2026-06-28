@@ -78,9 +78,9 @@ async def simulate_tick_loop():
     for all active instruments and publishing them to Redis Pub/Sub channels.
     """
     from simulation.price_engine import GBMPriceModel
-    import redis.asyncio as aioredis
+    from db.redis_client import get_redis_client
     from db.database import AsyncSessionLocal
-    from db.models import DbNewsEvent
+    from db.models import DbNewsEvent, DbPriceTick
 
     # Initialize engines
     engines = {}
@@ -91,144 +91,184 @@ async def simulate_tick_loop():
             volatility=inst["volatility"],
         )
 
-    r = await aioredis.from_url(REDIS_URL.replace("CERT_NONE", "none"))
+    r = get_redis_client()
     news_engine = NewsEngine()
     context = MarketContext(sentiment="neutral")
+    
+    last_pruning = time.time()
 
     # In a real daemon, this would be an infinite loop `while True:`
     while True:
-        # 1. Possibly Generate News
-        news_event = news_engine.generate_news_event(
-            context=context,
-            active_symbols=[inst["symbol"] for inst in MOCK_INSTRUMENTS],
-            active_sectors=["technology"],
-        )
+        try:
+            # 1. Possibly Generate News
+            news_event = news_engine.generate_news_event(
+                context=context,
+                active_symbols=[inst["symbol"] for inst in MOCK_INSTRUMENTS],
+                active_sectors=["technology"],
+            )
 
-        if news_event:
-            # Publish headline to clients
-            await r.publish("market:news:global", json.dumps(news_event))
+            if news_event:
+                # Publish headline to clients
+                await r.publish("market:news:global", json.dumps(news_event))
 
-            # Save news event to PostgreSQL database
+                # Save news event to PostgreSQL database
+                try:
+                    async with AsyncSessionLocal() as session:
+                        db_event = DbNewsEvent(
+                            headline=news_event["headline"],
+                            category=news_event["category"],
+                            subcategory=news_event["subcategory"],
+                            timestamp=datetime.now(timezone.utc),
+                            impact=news_event["impact"],
+                            duration_minutes=news_event["duration_minutes"],
+                            affected_scope=news_event["affected_scope"],
+                            affected_symbols=news_event["affected_symbols"],
+                        )
+                        session.add(db_event)
+                        await session.commit()
+                except Exception as e:
+                    print(f"Error saving news event to DB: {e}")
+
+                # Apply shock to math model
+                impact = news_event["impact"]
+                if news_event["affected_scope"] == "global":
+                    for eng in engines.values():
+                        eng.drift += impact / 10  # Temporary drift baseline shift
+                        eng.volatility *= 1.5  # Spike volatility on global news
+                elif (
+                    news_event["affected_scope"] == "symbol"
+                    and news_event["affected_symbols"]
+                ):
+                    for sym in news_event["affected_symbols"]:
+                        if sym in engines:
+                            engines[sym].price *= 1 + impact  # Immediate jump
+                            engines[sym].volatility *= 2.0  # Elevated volatility post-event
+
+            # 2. Tick Generation
+            current_ticks = []
+            for symbol, engine in engines.items():
+                inst_base = next(i for i in MOCK_INSTRUMENTS if i["symbol"] == symbol)
+                new_price = engine.generate_next_price()
+
+                # Create the Tick structure
+                bid = new_price * 0.9995
+                ask = new_price * 1.0005
+
+                tick = {
+                    "symbol": symbol,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "price": new_price,
+                    "bid": bid,
+                    "ask": ask,
+                    "volume": random.uniform(10, 1000),
+                    "change": new_price - inst_base["price"],  # mock relative to base
+                    "changePercent": ((new_price - inst_base["price"]) / inst_base["price"])
+                    * 100,
+                }
+                current_ticks.append(tick)
+
+                # Publish to redis for the WebSocket server
+                await r.publish(f"market:ticks:{symbol}", json.dumps(tick))
+                await r.publish("market:ticks:global", json.dumps(tick))  # Global feed
+
+                # Calculate dynamic valuation stats deterministically based on symbol name
+                symbol_seed = sum(ord(c) for c in symbol)
+                
+                # 1. EPS & P/E
+                pe_baseline = 15.0 + (symbol_seed % 20)
+                eps = inst_base["price"] / pe_baseline
+                pe_ratio = new_price / eps if eps > 0 else 0.0
+                
+                # 2. Book Value & P/B
+                pb_baseline = 1.5 + (symbol_seed % 5)
+                book_value = inst_base["price"] / pb_baseline
+                pb_ratio = new_price / book_value if book_value > 0 else 0.0
+                
+                # 3. ROE (between 8% and 25%)
+                roe = 8.0 + (symbol_seed % 18)
+                
+                # 4. Dividend Yield (payout ratio between 0% and 40% of EPS)
+                payout_ratio = (symbol_seed % 5) * 0.1
+                annual_dividend = eps * payout_ratio
+                div_yield = (annual_dividend / new_price * 100.0) if new_price > 0 else 0.0
+                
+                # 5. Outstanding shares & Market Cap
+                outstanding_shares = (10 + (symbol_seed % 90)) * 1_000_000
+                market_cap = new_price * outstanding_shares
+                
+                # 6. 52-week High/Low
+                fifty_two_week_high = max(new_price, inst_base["price"] * 1.3)
+                fifty_two_week_low = min(new_price, inst_base["price"] * 0.75)
+                
+                # 7. Avg Volume
+                avg_volume = tick["volume"] * 1.15
+
+                # Save latest state for REST API
+                snapshot = {
+                    "symbol": symbol,
+                    "name": symbol,
+                    "price": new_price,
+                    "open": inst_base["price"],
+                    "high": new_price * 1.05,
+                    "low": new_price * 0.95,
+                    "previousClose": inst_base["price"],
+                    "change": new_price - inst_base["price"],
+                    "changePercent": ((new_price - inst_base["price"]) / inst_base["price"])
+                    * 100,
+                    "volume": tick["volume"],
+                    "timestamp": tick["timestamp"],
+                    "fiftyTwoWeekHigh": fifty_two_week_high,
+                    "fiftyTwoWeekLow": fifty_two_week_low,
+                    "marketCap": market_cap,
+                    "avgVolume": avg_volume,
+                    "peRatio": pe_ratio,
+                    "pbRatio": pb_ratio,
+                    "roe": roe,
+                    "divYield": div_yield,
+                }
+                await r.set(f"market:quote:{symbol}", json.dumps(snapshot))
+
+            # Bulk save ticks to PostgreSQL database for historical charts
             try:
                 async with AsyncSessionLocal() as session:
-                    db_event = DbNewsEvent(
-                        headline=news_event["headline"],
-                        category=news_event["category"],
-                        subcategory=news_event["subcategory"],
-                        timestamp=datetime.now(timezone.utc),
-                        impact=news_event["impact"],
-                        duration_minutes=news_event["duration_minutes"],
-                        affected_scope=news_event["affected_scope"],
-                        affected_symbols=news_event["affected_symbols"],
-                    )
-                    session.add(db_event)
+                    ticks_to_save = [
+                        DbPriceTick(
+                            symbol=t["symbol"],
+                            timestamp=datetime.fromisoformat(t["timestamp"]),
+                            price=t["price"],
+                            bid=t["bid"],
+                            ask=t["ask"],
+                            volume=t["volume"],
+                        )
+                        for t in current_ticks
+                    ]
+                    session.add_all(ticks_to_save)
                     await session.commit()
             except Exception as e:
-                print(f"Error saving news event to DB: {e}")
+                print(f"Error saving ticks to DB: {e}")
 
-            # Apply shock to math model
-            impact = news_event["impact"]
-            if news_event["affected_scope"] == "global":
-                for eng in engines.values():
-                    eng.drift += impact / 10  # Temporary drift baseline shift
-                    eng.volatility *= 1.5  # Spike volatility on global news
-            elif (
-                news_event["affected_scope"] == "symbol"
-                and news_event["affected_symbols"]
-            ):
-                for sym in news_event["affected_symbols"]:
-                    if sym in engines:
-                        engines[sym].price *= 1 + impact  # Immediate jump
-                        engines[sym].volatility *= 2.0  # Elevated volatility post-event
+            # 3. Mean Reversion of Volatility over time
+            for engine in engines.values():
+                if engine.volatility > 0.30:
+                    engine.volatility *= (
+                        0.98  # Slowly decay spiked volatility back to normal
+                    )
 
-        # 2. Tick Generation
-        for symbol, engine in engines.items():
-            inst_base = next(i for i in MOCK_INSTRUMENTS if i["symbol"] == symbol)
-            new_price = engine.generate_next_price()
+            # 4. Prune old price ticks every 1 hour (3600 seconds) to avoid database bloat
+            if time.time() - last_pruning > 3600:
+                try:
+                    async with AsyncSessionLocal() as session:
+                        from sqlalchemy import text
+                        await session.execute(
+                            text("DELETE FROM price_ticks WHERE timestamp < NOW() - INTERVAL '24 hours'")
+                        )
+                        await session.commit()
+                    last_pruning = time.time()
+                except Exception as prune_err:
+                    print(f"Error pruning old price ticks: {prune_err}")
 
-            # Create the Tick structure
-            bid = new_price * 0.9995
-            ask = new_price * 1.0005
-
-            tick = {
-                "symbol": symbol,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "price": new_price,
-                "bid": bid,
-                "ask": ask,
-                "volume": random.uniform(10, 1000),
-                "change": new_price - inst_base["price"],  # mock relative to base
-                "changePercent": ((new_price - inst_base["price"]) / inst_base["price"])
-                * 100,
-            }
-
-            # Publish to redis for the WebSocket server
-            await r.publish(f"market:ticks:{symbol}", json.dumps(tick))
-            await r.publish("market:ticks:global", json.dumps(tick))  # Global feed
-
-            # Calculate dynamic valuation stats deterministically based on symbol name
-            symbol_seed = sum(ord(c) for c in symbol)
-            
-            # 1. EPS & P/E
-            pe_baseline = 15.0 + (symbol_seed % 20)
-            eps = inst_base["price"] / pe_baseline
-            pe_ratio = new_price / eps if eps > 0 else 0.0
-            
-            # 2. Book Value & P/B
-            pb_baseline = 1.5 + (symbol_seed % 5)
-            book_value = inst_base["price"] / pb_baseline
-            pb_ratio = new_price / book_value if book_value > 0 else 0.0
-            
-            # 3. ROE (between 8% and 25%)
-            roe = 8.0 + (symbol_seed % 18)
-            
-            # 4. Dividend Yield (payout ratio between 0% and 40% of EPS)
-            payout_ratio = (symbol_seed % 5) * 0.1
-            annual_dividend = eps * payout_ratio
-            div_yield = (annual_dividend / new_price * 100.0) if new_price > 0 else 0.0
-            
-            # 5. Outstanding shares & Market Cap
-            outstanding_shares = (10 + (symbol_seed % 90)) * 1_000_000
-            market_cap = new_price * outstanding_shares
-            
-            # 6. 52-week High/Low
-            fifty_two_week_high = max(new_price, inst_base["price"] * 1.3)
-            fifty_two_week_low = min(new_price, inst_base["price"] * 0.75)
-            
-            # 7. Avg Volume
-            avg_volume = tick["volume"] * 1.15
-
-            # Save latest state for REST API
-            snapshot = {
-                "symbol": symbol,
-                "name": symbol,
-                "price": new_price,
-                "open": inst_base["price"],
-                "high": new_price * 1.05,
-                "low": new_price * 0.95,
-                "previousClose": inst_base["price"],
-                "change": new_price - inst_base["price"],
-                "changePercent": ((new_price - inst_base["price"]) / inst_base["price"])
-                * 100,
-                "volume": tick["volume"],
-                "timestamp": tick["timestamp"],
-                "fiftyTwoWeekHigh": fifty_two_week_high,
-                "fiftyTwoWeekLow": fifty_two_week_low,
-                "marketCap": market_cap,
-                "avgVolume": avg_volume,
-                "peRatio": pe_ratio,
-                "pbRatio": pb_ratio,
-                "roe": roe,
-                "divYield": div_yield,
-            }
-            await r.set(f"market:quote:{symbol}", json.dumps(snapshot))
-
-        # 3. Mean Reversion of Volatility over time
-        for engine in engines.values():
-            if engine.volatility > 0.30:
-                engine.volatility *= (
-                    0.98  # Slowly decay spiked volatility back to normal
-                )
+        except Exception as loop_err:
+            print(f"Error in simulator loop iteration: {loop_err}")
 
         # sleep slightly to mock real time
         await asyncio.sleep(3)
