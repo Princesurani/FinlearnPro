@@ -232,16 +232,35 @@ async def get_history(
     current_price = base_price
     now = datetime.now(timezone.utc)
     
+    import hashlib
     # Generate backwards in time, reverse the random walk
     # So the most recent candle ends exactly at 'current_price'
-    for i in range(50):
+    for i in range(100):
         t = now - timedelta(hours=i*4 if timeframe == Timeframe.fourHour else i)
         
-        variation = random.uniform(-0.002, 0.002)
+        # Round t to the timeframe bucket
+        if timeframe == Timeframe.oneMinute:
+            bucket_t = t.replace(second=0, microsecond=0)
+        elif timeframe == Timeframe.fiveMinute:
+            bucket_t = t.replace(minute=t.minute - (t.minute % 5), second=0, microsecond=0)
+        elif timeframe == Timeframe.fifteenMinute:
+            bucket_t = t.replace(minute=t.minute - (t.minute % 15), second=0, microsecond=0)
+        elif timeframe == Timeframe.oneHour or timeframe == Timeframe.fourHour:
+            bucket_t = t.replace(minute=0, second=0, microsecond=0)
+        elif timeframe == Timeframe.oneDay or timeframe == Timeframe.oneWeek:
+            bucket_t = t.replace(hour=0, minute=0, second=0, microsecond=0)
+        else:
+            bucket_t = t
+            
+        seed_str = f"{symbol}_{timeframe.value}_{bucket_t.isoformat()}"
+        seed_hash = int(hashlib.md5(seed_str.encode()).hexdigest(), 16)
+        rng = random.Random(seed_hash)
+        
+        variation = rng.uniform(-0.002, 0.002)
         old_price = current_price / (1 + variation)
         
-        high = max(old_price, current_price) * (1 + random.uniform(0, 0.01))
-        low = min(old_price, current_price) * (1 - random.uniform(0, 0.01))
+        high = max(old_price, current_price) * (1 + rng.uniform(0, 0.01))
+        low = min(old_price, current_price) * (1 - rng.uniform(0, 0.01))
         
         candles.append({
             "timestamp": t.isoformat(),
@@ -249,7 +268,7 @@ async def get_history(
             "high": high,
             "low": low,
             "close": current_price,
-            "volume": random.randint(1000, 50000)
+            "volume": rng.randint(1000, 50000)
         })
         current_price = old_price
         
