@@ -322,6 +322,26 @@ class LearningBloc {
     _state = _state.copyWith(userProgress: updatedProgress);
     _stateController.add(_state);
 
+    // Detect Level Up and trigger DB notification
+    if (updatedProgress.currentLevel > prog.currentLevel) {
+      ApiNotificationService.instance.createNotification(
+        userId: prog.userId,
+        title: 'Level Up!',
+        description: 'Congratulations! You reached Level ${updatedProgress.currentLevel}!',
+        category: 'social',
+      );
+    }
+
+    // Detect Course Completed and trigger DB notification
+    if (updatedProgress.coursesCompleted > prog.coursesCompleted) {
+      ApiNotificationService.instance.createNotification(
+        userId: prog.userId,
+        title: 'Course Completed!',
+        description: 'Superb! You completed a course milestone!',
+        category: 'achievement',
+      );
+    }
+
     // Save to local storage asynchronously
     _progressService.saveProgress(updatedProgress);
     

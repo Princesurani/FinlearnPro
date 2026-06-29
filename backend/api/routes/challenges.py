@@ -150,19 +150,6 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
     user.weekly_xp += xp_awarded
     user.level = calculate_level(user.total_xp)
     user.total_challenges_completed += 1
-
-    # Save database notification for in-app logs
-    try:
-        from services.notification_service import create_db_notification
-        await create_db_notification(
-            db=db,
-            firebase_uid=req.firebase_uid,
-            title="Daily Challenge Completed",
-            description=f"Earned {xp_awarded} XP with a {'correct' if is_correct else 'completed'} response!",
-            category="challenge"
-        )
-    except Exception as e:
-        print(f"Failed to create challenge database notification: {e}")
     
     # Simple streak logic: participation counts (correct or incorrect)
     if not user.last_activity_date or user.last_activity_date != now_date:

@@ -69,6 +69,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   StreamSubscription<LearningState>? _learningSub;
   int? _lastLocalXp;
   Set<String>? _unlockedAchievementIds;
+  int? _lastLocalLevel;
+  int? _lastCompletedCoursesCount;
 
   @override
   void initState() {
@@ -112,6 +114,34 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         }
       }
       _unlockedAchievementIds = currentEarned;
+
+      // Track Level Up and show banner
+      final currentLevel = state.userProgress.currentLevel;
+      if (_lastLocalLevel != null && currentLevel > _lastLocalLevel!) {
+        if (context.mounted) {
+          NotificationBanner.show(
+            context,
+            title: 'Level Up!',
+            description: 'Congratulations! You reached Level $currentLevel!',
+            category: 'social',
+          );
+        }
+      }
+      _lastLocalLevel = currentLevel;
+
+      // Track Course Completed and show banner
+      final completedCoursesCount = state.userProgress.coursesCompleted;
+      if (_lastCompletedCoursesCount != null && completedCoursesCount > _lastCompletedCoursesCount!) {
+        if (context.mounted) {
+          NotificationBanner.show(
+            context,
+            title: 'Course Completed!',
+            description: 'Superb! You completed a course milestone!',
+            category: 'achievement',
+          );
+        }
+      }
+      _lastCompletedCoursesCount = completedCoursesCount;
 
       if (_lastLocalXp != null && currentXp > _lastLocalXp!) {
         // Add a delay to allow the backend HTTP request to complete saving the XP 
