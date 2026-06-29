@@ -262,6 +262,9 @@ async def simulate_tick_loop():
                         await session.execute(
                             text("DELETE FROM price_ticks WHERE timestamp < NOW() - INTERVAL '24 hours'")
                         )
+                        await session.execute(
+                            text("DELETE FROM notifications WHERE timestamp < NOW() - INTERVAL '30 days'")
+                        )
                         await session.commit()
                     last_pruning = time.time()
                 except Exception as prune_err:
