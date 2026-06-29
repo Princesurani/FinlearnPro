@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:finnn/shared/widgets/notification_banner.dart';
 import '../../../../core/domain/instrument.dart';
 import '../../../../core/domain/market_data.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -292,8 +293,10 @@ class _BottomActionButtons extends StatelessWidget {
     final isBuy = side == 'buy';
     final price = bloc.state.snapshots[instrument.symbol]?.price ?? 0.0;
 
-    showDialog(
+    showModalBottomSheet(
       context: rootContext,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (dialogContext) {
         return StatefulBuilder(
           builder: (stateContext, setState) {
@@ -317,74 +320,212 @@ class _BottomActionButtons extends StatelessWidget {
                     'Insufficient holdings (Available: $currentHoldings)';
               }
             }
-            return AlertDialog(
-              backgroundColor: AppColors.backgroundPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+            return Container(
+              decoration: const BoxDecoration(
+                color: AppColors.backgroundSecondary,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
-              title: Text(
-                '${isBuy ? "Buy" : "Sell"} ${instrument.symbol}',
-                style: AppTypography.h3.copyWith(fontWeight: FontWeight.bold),
+              padding: EdgeInsets.only(
+                left: 24,
+                right: 24,
+                top: 16,
+                bottom: MediaQuery.of(stateContext).padding.bottom + 24,
               ),
-              content: Column(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: AppSpacing.sm),
+                  Center(
+                    child: Container(
+                      width: 38,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Quantity', style: AppTypography.body),
-                      Row(
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              if (quantity > 1) setState(() => quantity--);
-                            },
-                            icon: const Icon(Icons.remove_circle_outline),
-                            color: AppColors.textPrimary,
-                          ),
                           Text(
-                            '$quantity',
-                            style: AppTypography.h3.copyWith(
+                            '${isBuy ? "Buy" : "Sell"} ${instrument.name}',
+                            style: const TextStyle(
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
                             ),
                           ),
-                          IconButton(
-                            onPressed: () => setState(() => quantity++),
-                            icon: const Icon(Icons.add_circle_outline),
-                            color: AppColors.textPrimary,
+                          const SizedBox(height: 2),
+                          Text(
+                            instrument.symbol,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: AppColors.textTertiary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            '${instrument.currencySymbol}${price.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          const Text(
+                            'Market Price',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: AppColors.emerald,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.sm),
+                  const SizedBox(height: 20),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundPrimary,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.border, width: 1),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          isBuy ? 'Available Cash' : 'Current Holdings',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          isBuy
+                              ? '${instrument.currencySymbol}${availableBalance.toStringAsFixed(2)}'
+                              : '$currentHoldings shares',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Est. Total', style: AppTypography.bodySmall),
+                      const Text(
+                        'Number of Shares',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.backgroundTertiary,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (quantity > 1) setState(() => quantity--);
+                              },
+                              icon: const Icon(Icons.remove_rounded),
+                              color: AppColors.textPrimary,
+                              iconSize: 20,
+                              constraints: const BoxConstraints(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Text(
+                                '$quantity',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () => setState(() => quantity++),
+                              icon: const Icon(Icons.add_rounded),
+                              color: AppColors.textPrimary,
+                              iconSize: 20,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  const Divider(color: AppColors.border),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Estimated Cost',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
                       Text(
                         '${instrument.currencySymbol}${totalCost.toStringAsFixed(2)}',
-                        style: AppTypography.body.copyWith(
+                        style: const TextStyle(
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ],
                   ),
                   if (errorMsg != null) ...[
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      errorMsg,
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.lossRed,
+                    const SizedBox(height: 16),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.errorLight,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        errorMsg,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.error,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.xl),
+                  const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
-                    height: 50,
+                    height: 52,
                     child: ElevatedButton(
                       onPressed: canAfford
                           ? () {
@@ -395,48 +536,34 @@ class _BottomActionButtons extends StatelessWidget {
                                   quantity: quantity,
                                 ),
                               );
-                              Navigator.pop(stateContext); // Close dialog
+                              Navigator.pop(stateContext); // Close sheet
 
-                              showDialog(
-                                context: rootContext,
-                                builder: (innerContext) => AlertDialog(
-                                  backgroundColor: AppColors.surface,
-                                  title: const Text('Order Placed'),
-                                  content: Text(
-                                    '$side order placed for $quantity shares of ${instrument.symbol}!',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(innerContext),
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
-                                ),
+                              NotificationBanner.show(
+                                rootContext,
+                                title: 'Trade Executed: ${side.toUpperCase()} ${instrument.symbol}',
+                                description: 'Successfully filled $quantity shares of ${instrument.symbol}!',
+                                category: 'trade',
                               );
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: canAfford
-                            ? (isBuy
-                                  ? AppColors.profitGreen
-                                  : AppColors.lossRed)
-                            : AppColors.neutralGray,
+                        backgroundColor: isBuy ? AppColors.emerald : AppColors.error,
+                        foregroundColor: AppColors.white,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                       ),
                       child: Text(
                         isBuy ? 'CONFIRM BUY' : 'CONFIRM SELL',
-                        style: AppTypography.button.copyWith(
-                          color: canAfford
-                              ? AppColors.surface
-                              : AppColors.textTertiary,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.xs),
                 ],
               ),
             );

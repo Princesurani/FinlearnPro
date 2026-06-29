@@ -145,10 +145,23 @@ async def place_order(order_req: OrderRequest, db: AsyncSession = Depends(get_db
     )
     db.add(trade)
 
+    # 6.5 Save database notification for in-app logs
+    try:
+        from services.notification_service import create_db_notification
+        await create_db_notification(
+            db=db,
+            firebase_uid=order_req.firebase_uid,
+            title=f"Trade Executed: {side.upper()} {order_req.symbol}",
+            description=f"Successfully filled {order_req.quantity} shares of {order_req.symbol} at ₹{current_price:.2f}",
+            category="trade"
+        )
+    except Exception as e:
+        print(f"Failed to create trade database notification: {e}")
+
     # 7. Award XP and update stats directly on user (profile columns are merged)
     from api.routes.social import calculate_level
     
-    xp_awarded = 15
+    xp_awarded = 10
     user.total_xp += xp_awarded
     user.weekly_xp += xp_awarded
     user.level = calculate_level(user.total_xp)

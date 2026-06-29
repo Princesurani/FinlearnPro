@@ -1,127 +1,219 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:finnn/core/theme/app_colors.dart';
+import 'package:finnn/core/theme/app_spacing.dart';
+import 'package:finnn/core/theme/app_typography.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../../../../core/services/api_notification_service.dart';
+import '../../data/notification_model.dart';
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  List<NotificationModel> _notifications = [];
+  bool _isLoading = true;
+  String? _userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _userId = FirebaseAuth.instance.currentUser?.uid;
+    _fetchNotifications();
+  }
+
+  Future<void> _fetchNotifications() async {
+    if (_userId == null) return;
+    setState(() => _isLoading = true);
+    final list = await ApiNotificationService.instance.getNotifications(_userId!);
+    if (mounted) {
+      setState(() {
+        _notifications = list;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _markAllRead() async {
+    if (_userId == null) return;
+    final success = await ApiNotificationService.instance.markAllAsRead(_userId!);
+    if (success && mounted) {
+      setState(() {
+        _notifications = _notifications.map((n) => n.copyWith(isRead: true)).toList();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('All notifications marked as read'),
+          backgroundColor: AppColors.primary,
+        ),
+      );
+    }
+  }
+
+  Future<void> _markSingleRead(NotificationModel notification) async {
+    if (notification.isRead) return;
+    final success = await ApiNotificationService.instance.markAsRead(notification.id);
+    if (success && mounted) {
+      setState(() {
+        _notifications = _notifications.map((n) {
+          return n.id == notification.id ? n.copyWith(isRead: true) : n;
+        }).toList();
+      });
+    }
+  }
+
+  String _formatTimeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.isNegative) return 'Just now';
+    if (diff.inSeconds < 60) return 'Just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays == 1) return 'Yesterday';
+    return DateFormat('MMM d, h:mm a').format(dt);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final unreadCount = _notifications.where((n) => !n.isRead).length;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
+      backgroundColor: AppColors.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.backgroundSecondary,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.black87),
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.textPrimary, size: 20),
         ),
-        title: const Text(
-          'Notifications',
-          style: TextStyle(
-            color: AppColors.black87,
+        title: Text(
+          unreadCount > 0 ? 'Notifications ($unreadCount)' : 'Notifications',
+          style: const TextStyle(
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
         ),
         actions: [
-          TextButton(onPressed: () {}, child: const Text('Mark all read')),
+          if (_notifications.any((n) => !n.isRead))
+            TextButton(
+              onPressed: _markAllRead,
+              child: const Text(
+                'Mark all read',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _notifications.isEmpty
+              ? _buildEmptyState()
+              : RefreshIndicator(
+                  onRefresh: _fetchNotifications,
+                  color: AppColors.primary,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    itemCount: _notifications.length,
+                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final item = _notifications[index];
+                      return GestureDetector(
+                        onTap: () => _markSingleRead(item),
+                        child: _buildNotificationCard(item),
+                      );
+                    },
+                  ),
+                ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildSectionHeader('Today'),
-          const SizedBox(height: 10),
-          _NotificationItem(
-            title: 'Market Alert: BTC Drop',
-            description:
-                'Bitcoin has dropped below \$29,000 key support level. Heavy volume detected.',
-            time: '2 min ago',
-            icon: Icons.trending_down,
-            iconColor: AppColors.error,
-            isUnread: true,
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.backgroundSecondary,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.black.withValues(alpha: 0.04),
+                  blurRadius: 20,
+                )
+              ],
+            ),
+            child: const Icon(
+              Icons.notifications_off_outlined,
+              size: 48,
+              color: AppColors.textTertiary,
+            ),
           ),
-          const SizedBox(height: 12),
-          _NotificationItem(
-            title: 'Streak Saver Used',
-            description:
-                'You missed yesterday\'s challenge but your streak was saved!',
-            time: '2h ago',
-            icon: Icons.shield_outlined,
-            iconColor: AppColors.sunsetOrange,
-            isUnread: true,
+          const SizedBox(height: AppSpacing.lg),
+          Text(
+            'All caught up!',
+            style: AppTypography.h5.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          const SizedBox(height: 24),
-          _buildSectionHeader('Yesterday'),
-          const SizedBox(height: 10),
-          _NotificationItem(
-            title: 'New Badge Earned',
-            description:
-                'Congratulations! You\'ve earned the "Chart Master" badge for 7 correct predictions.',
-            time: '1d ago',
-            icon: Icons.emoji_events_outlined,
-            iconColor: AppColors.primary,
-            isUnread: false,
-          ),
-          const SizedBox(height: 12),
-          _NotificationItem(
-            title: 'Alex Morgan posted',
-            description:
-                'Check out the latest analysis on AAPL earnings report provided by Alex.',
-            time: '1d ago',
-            icon: Icons.person_outline,
-            iconColor: AppColors.electricBlue,
-            isUnread: false,
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'No notifications to show right now.',
+            style: AppTypography.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textSecondary,
-      ),
-    );
-  }
-}
+  Widget _buildNotificationCard(NotificationModel item) {
+    IconData icon;
+    Color iconColor;
+    switch (item.category.toLowerCase()) {
+      case 'trade':
+        icon = Icons.trending_up_rounded;
+        iconColor = AppColors.emerald;
+        break;
+      case 'challenge':
+        icon = Icons.shield_outlined;
+        iconColor = AppColors.sunsetOrange;
+        break;
+      case 'achievement':
+        icon = Icons.emoji_events_outlined;
+        iconColor = AppColors.goldenYellow;
+        break;
+      default:
+        icon = Icons.notifications_none_rounded;
+        iconColor = AppColors.electricBlue;
+    }
 
-class _NotificationItem extends StatelessWidget {
-  final String title;
-  final String description;
-  final String time;
-  final IconData icon;
-  final Color iconColor;
-  final bool isUnread;
-
-  const _NotificationItem({
-    required this.title,
-    required this.description,
-    required this.time,
-    required this.icon,
-    required this.iconColor,
-    required this.isUnread,
-  });
-
-  @override
-  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isUnread ? AppColors.white : const Color(0xFFF8F9FE),
+        color: item.isRead ? AppColors.backgroundSecondary.withValues(alpha: 0.7) : AppColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(16),
-        border: isUnread
-            ? Border.all(color: AppColors.electricBlue.withValues(alpha: 0.1))
-            : null,
+        border: Border.all(
+          color: item.isRead
+              ? AppColors.border.withValues(alpha: 0.5)
+              : AppColors.primary.withValues(alpha: 0.15),
+          width: 1,
+        ),
         boxShadow: [
-          if (isUnread)
+          if (!item.isRead)
             BoxShadow(
-              color: AppColors.black.withValues(alpha: 0.05),
+              color: AppColors.black.withValues(alpha: 0.04),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -147,39 +239,40 @@ class _NotificationItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      title,
+                      item.title,
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: isUnread
-                            ? FontWeight.bold
-                            : FontWeight.w600,
-                        color: AppColors.black87,
+                        fontSize: 15,
+                        fontWeight: item.isRead ? FontWeight.w600 : FontWeight.bold,
+                        color: item.isRead ? AppColors.textSecondary : AppColors.textPrimary,
                       ),
                     ),
-                    if (isUnread)
+                    if (!item.isRead)
                       Container(
                         width: 8,
                         height: 8,
                         decoration: const BoxDecoration(
-                          color: AppColors.error,
+                          color: AppColors.primary,
                           shape: BoxShape.circle,
                         ),
                       ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
-                  description,
+                  item.description,
                   style: TextStyle(
                     fontSize: 13,
-                    color: AppColors.textSecondary,
+                    color: item.isRead ? AppColors.textTertiary : AppColors.textSecondary,
                     height: 1.4,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  time,
-                  style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
+                  _formatTimeAgo(item.timestamp),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textTertiary,
+                  ),
                 ),
               ],
             ),

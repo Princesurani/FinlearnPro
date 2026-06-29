@@ -50,6 +50,20 @@ class DbNewsEvent(Base):
     affected_scope = Column(String(50), nullable=False)
     affected_symbols = Column(ARRAY(String(50)), nullable=True) 
 
+class DbNotification(Base):
+    """
+    Stores user notification records for the in-app notification center.
+    """
+    __tablename__ = "notifications"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    firebase_uid = Column(String(255), ForeignKey("users.firebase_uid", ondelete="CASCADE"), nullable=False)
+    title = Column(String(200), nullable=False)
+    description = Column(String(500), nullable=False)
+    category = Column(String(50), nullable=False)  # 'trade', 'achievement', 'challenge', 'social'
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False, index=True)
+    is_read = Column(Boolean, default=False, nullable=False)
+
 class DbUser(Base):
     """
     Consolidated user record combining profile fields (social & gamification)

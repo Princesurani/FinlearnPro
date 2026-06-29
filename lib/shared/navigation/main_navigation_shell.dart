@@ -1,8 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
 import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:finnn/shared/widgets/notification_banner.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../features/auth/presentation/widgets/home_top_bar.dart';
@@ -40,7 +42,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   static const List<_NavScreen> _screens = [
     _NavScreen(
-      icon: Icons.home_rounded,
+      icon: Icons.home_outlined,
       activeIcon: Icons.home_rounded,
       label: 'Home',
     ),
@@ -66,6 +68,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   late SocialBloc _socialBloc;
   StreamSubscription<LearningState>? _learningSub;
   int? _lastLocalXp;
+  Set<String>? _unlockedAchievementIds;
 
   @override
   void initState() {
@@ -85,6 +88,31 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     // Listen to local XP changes and sync Social profile automatically
     _learningSub = _learningBloc.stream.listen((state) {
       final currentXp = state.userProgress.totalXp;
+      
+      // Track newly unlocked achievements and show banner
+      final currentEarned = state.userProgress.achievements
+          .where((a) => a.isEarned)
+          .map((a) => a.id)
+          .toSet();
+
+      if (_unlockedAchievementIds != null) {
+        final newlyEarned = currentEarned.difference(_unlockedAchievementIds!);
+        if (newlyEarned.isNotEmpty) {
+          for (final id in newlyEarned) {
+            final achievement = state.userProgress.achievements.firstWhere((a) => a.id == id);
+            if (context.mounted) {
+              NotificationBanner.show(
+                context,
+                title: "Achievement Unlocked!",
+                description: "${achievement.title} - ${achievement.description}",
+                category: "achievement",
+              );
+            }
+          }
+        }
+      }
+      _unlockedAchievementIds = currentEarned;
+
       if (_lastLocalXp != null && currentXp > _lastLocalXp!) {
         // Add a delay to allow the backend HTTP request to complete saving the XP 
         // before we fetch the updated profile back from Postgres.

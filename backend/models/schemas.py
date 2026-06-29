@@ -161,3 +161,21 @@ class InstructorResponse(BaseModel):
     photo_url: Optional[str] = None
     specialty: str
     linkedin_url: Optional[str] = None
+
+class NotificationResponse(BaseModel):
+    id: int
+    firebase_uid: str
+    title: str
+    description: str
+    category: str
+    timestamp: datetime
+    is_read: bool
+
+    class Config:
+        from_attributes = True
+
+class NotificationCreateRequest(BaseModel):
+    firebase_uid: str
+    title: str
+    description: str
+    category: str

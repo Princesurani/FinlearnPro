@@ -4,6 +4,7 @@ import '../data/learning_models.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/network/api_constants.dart';
 import '../../../core/services/learning_progress_service.dart';
+import 'package:finnn/core/services/api_notification_service.dart';
 
 abstract class LearningEvent {}
 
@@ -289,7 +290,16 @@ class LearningBloc {
     int extraXp = 0;
     for (int i = 0; i < evaluatedAchievements.length; i++) {
       if (evaluatedAchievements[i].isEarned && !prog.achievements[i].isEarned) {
-        extraXp += evaluatedAchievements[i].xpReward;
+        final achievement = evaluatedAchievements[i];
+        extraXp += achievement.xpReward;
+        
+        // Log database notification for the achievement unlock
+        ApiNotificationService.instance.createNotification(
+          userId: prog.userId,
+          title: 'Achievement Unlocked!',
+          description: '${achievement.title} - ${achievement.description}',
+          category: 'achievement',
+        );
       }
     }
 
