@@ -209,19 +209,19 @@ class _CategoryPillItemState extends State<_CategoryPillItem>
           width: 85,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? category.color : AppColors.surface,
+            color: isSelected ? category.color : AppColors.white.withValues(alpha: 0.75),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isSelected
                   ? category.color
-                  : category.color.withValues(alpha: 0.2),
-              width: isSelected ? 2 : 1.5,
+                  : AppColors.white.withValues(alpha: 0.4),
+              width: isSelected ? 2 : 1.0,
             ),
             boxShadow: [
               BoxShadow(
                 color: isSelected
                     ? category.color.withValues(alpha: 0.35)
-                    : AppColors.black.withValues(alpha: 0.06),
+                    : AppColors.black.withValues(alpha: 0.04),
                 blurRadius: isSelected ? 16 : 10,
                 offset: const Offset(0, 4),
                 spreadRadius: isSelected ? 2 : 0,
