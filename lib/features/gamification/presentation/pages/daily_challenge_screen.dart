@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:finnn/core/theme/app_colors.dart';
-import 'package:finnn/shared/widgets/notification_banner.dart';
 
 import '../../../learning/bloc/learning_bloc.dart';
 import '../../../learning/bloc/learning_bloc_provider.dart';
@@ -248,12 +247,6 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
 
             // Only show bottom sheet and banner if we JUST submitted it actively now
             if (!state.challenge.isCompleted) {
-              NotificationBanner.show(
-                context,
-                title: "Daily Challenge Completed",
-                description: "Earned ${state.result.xpAwarded} XP with a ${state.result.isCorrect ? 'correct' : 'completed'} response!",
-                category: "challenge",
-              );
               _showFeedbackBottomSheet(
                 context: context,
                 isCorrect: state.result.isCorrect,
