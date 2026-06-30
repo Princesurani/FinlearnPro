@@ -134,28 +134,28 @@ class _NotificationBannerState extends State<NotificationBanner>
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Container(
             width: double.infinity,
-            constraints: const BoxConstraints(maxWidth: 400),
-            padding: const EdgeInsets.all(16),
+            constraints: const BoxConstraints(maxWidth: 360),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
               color: AppColors.backgroundSecondary,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: AppColors.border,
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.black.withValues(alpha: 0.08),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
+                  color: AppColors.black.withValues(alpha: 0.06),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: iconColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
@@ -163,10 +163,10 @@ class _NotificationBannerState extends State<NotificationBanner>
                   child: Icon(
                     icon,
                     color: iconColor,
-                    size: 24,
+                    size: 18,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -175,32 +175,35 @@ class _NotificationBannerState extends State<NotificationBanner>
                       Text(
                         widget.title,
                         style: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 13.5,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         widget.description,
                         style: const TextStyle(
-                          fontSize: 12.5,
+                          fontSize: 11.5,
                           color: AppColors.textSecondary,
-                          height: 1.4,
+                          height: 1.3,
                         ),
                       ),
                     ],
                   ),
                 ),
-                IconButton(
-                  onPressed: _dismiss,
-                  icon: const Icon(
-                    Icons.close_rounded,
-                    color: AppColors.textTertiary,
-                    size: 18,
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: _dismiss,
+                  behavior: HitTestBehavior.opaque,
+                  child: const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Icon(
+                      Icons.close_rounded,
+                      color: AppColors.textTertiary,
+                      size: 16,
+                    ),
                   ),
-                  constraints: const BoxConstraints(),
-                  padding: EdgeInsets.zero,
                 ),
               ],
             ),
