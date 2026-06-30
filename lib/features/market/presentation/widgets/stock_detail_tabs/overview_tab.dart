@@ -268,36 +268,34 @@ class _RangeSlider extends StatelessWidget {
                 clipBehavior: Clip.none,
                 children: [
                   FractionallySizedBox(
-                    widthFactor: 1.0,
+                    widthFactor: clampedPos,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: AppColors.textPrimary, // Simple black bar
+                        gradient: const LinearGradient(
+                          colors: [AppColors.oceanTeal, AppColors.electricBlue],
+                        ),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
                   ),
                   if (showCurrent)
                     Positioned(
-                      left: (width * clampedPos) - 6,
-                      top: -4,
+                      left: (width * clampedPos) - 5,
+                      top: -3,
                       child: Container(
-                        width: 0,
-                        height: 0,
+                        width: 10,
+                        height: 10,
                         decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: AppColors.textPrimary,
-                              width: 6,
-                            ), // Triangle up
-                            left: BorderSide(
-                              color: AppColors.transparent,
-                              width: 6,
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.white, width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.black.withValues(alpha: 0.2),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
                             ),
-                            right: BorderSide(
-                              color: AppColors.transparent,
-                              width: 6,
-                            ),
-                          ),
+                          ],
                         ),
                       ),
                     ),

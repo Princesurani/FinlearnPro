@@ -14,7 +14,6 @@ import '../widgets/stock_detail_tabs/overview_tab.dart';
 import '../widgets/stock_detail_tabs/technicals_tab.dart';
 import '../widgets/stock_detail_tabs/fno_tab.dart';
 import '../widgets/stock_detail_tabs/news_tab.dart';
-import '../widgets/stock_detail_tabs/events_tab.dart';
 
 class IndexDetailScreen extends StatelessWidget {
   const IndexDetailScreen({
@@ -36,7 +35,7 @@ class IndexDetailScreen extends StatelessWidget {
     final formatter = MarketFormatterFactory.forMarket(instrument.market);
 
     return DefaultTabController(
-      length: 5,
+      length: 4,
       child: Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         appBar: AppBar(
@@ -149,7 +148,7 @@ class IndexDetailScreen extends StatelessWidget {
                                       formatter
                                           .formatPrice(price)
                                           .replaceAll(RegExp(r'[\$₹£]'), ''),
-                                      style: AppTypography.h2.copyWith(
+                                      style: AppTypography.h3.copyWith(
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: -0.5,
                                       ),
@@ -206,7 +205,6 @@ class IndexDetailScreen extends StatelessWidget {
                                 Tab(text: 'Technicals'),
                                 Tab(text: 'F&O'),
                                 Tab(text: 'News'),
-                                Tab(text: 'Events'),
                               ],
                             ),
                           ),
@@ -224,7 +222,6 @@ class IndexDetailScreen extends StatelessWidget {
                         TechnicalsTab(instrument: instrument),
                         FnoTab(instrument: instrument),
                         NewsTab(instrument: instrument),
-                        EventsTab(instrument: instrument),
                       ],
                     ),
                   ),
