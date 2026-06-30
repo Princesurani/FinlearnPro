@@ -238,14 +238,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      item.title,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: item.isRead ? FontWeight.w600 : FontWeight.bold,
-                        color: item.isRead ? AppColors.textSecondary : AppColors.textPrimary,
+                    Expanded(
+                      child: Text(
+                        item.title,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: item.isRead ? FontWeight.w600 : FontWeight.bold,
+                          color: item.isRead ? AppColors.textSecondary : AppColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                    const SizedBox(width: 8),
                     if (!item.isRead)
                       Container(
                         width: 8,

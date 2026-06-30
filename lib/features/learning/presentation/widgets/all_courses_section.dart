@@ -154,10 +154,14 @@ class _CourseCard extends StatelessWidget {
                             color: AppColors.textTertiary,
                           ),
                           const SizedBox(width: 4),
-                          Text(
-                            course.formattedDuration,
-                            style: AppTypography.labelSmall.copyWith(
-                              color: AppColors.textTertiary,
+                          Flexible(
+                            child: Text(
+                              course.formattedDuration,
+                              style: AppTypography.labelSmall.copyWith(
+                                color: AppColors.textTertiary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           const Spacer(),

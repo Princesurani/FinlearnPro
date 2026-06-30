@@ -287,55 +287,64 @@ class HoldingsTab extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Hero(
-                tag: 'holdings_box_${pos.symbol}',
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      pos.symbol[0],
-                      style: const TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+          Expanded(
+            child: Row(
+              children: [
+                Hero(
+                  tag: 'holdings_box_${pos.symbol}',
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Hero(
-                    tag: 'holdings_symbol_${pos.symbol}',
-                    child: Material(
-                      color: AppColors.transparent,
+                    child: Center(
                       child: Text(
-                        pos.symbol,
-                        style: AppTypography.body.copyWith(
+                        pos.symbol[0],
+                        style: const TextStyle(
+                          color: AppColors.primary,
                           fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                     ),
                   ),
-                  Text(
-                    'Qty: ${pos.quantity} · Avg ${state.activeMarket.currencySymbol}${pos.averageCost.toStringAsFixed(2)}',
-                    style: AppTypography.labelSmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Hero(
+                        tag: 'holdings_symbol_${pos.symbol}',
+                        child: Material(
+                          color: AppColors.transparent,
+                          child: Text(
+                            pos.symbol,
+                            style: AppTypography.body.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Qty: ${pos.quantity} · Avg ${state.activeMarket.currencySymbol}${pos.averageCost.toStringAsFixed(2)}',
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
+          const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [

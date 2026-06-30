@@ -68,39 +68,46 @@ class OrdersTab extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isBuy
-                          ? AppColors.profitGreen.withValues(alpha: 0.1)
-                          : AppColors.lossRed.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      isBuy ? 'BUY' : 'SELL',
-                      style: AppTypography.label.copyWith(
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
                         color: isBuy
-                            ? AppColors.profitGreen
-                            : AppColors.lossRed,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 10,
+                            ? AppColors.profitGreen.withValues(alpha: 0.1)
+                            : AppColors.lossRed.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        isBuy ? 'BUY' : 'SELL',
+                        style: AppTypography.label.copyWith(
+                          color: isBuy
+                              ? AppColors.profitGreen
+                              : AppColors.lossRed,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    order.symbol,
-                    style: AppTypography.body.copyWith(
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        order.symbol,
+                        style: AppTypography.body.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
@@ -117,7 +124,8 @@ class OrdersTab extends StatelessWidget {
                 ),
               ),
               // Share Button
-              if (order.status.toLowerCase() == 'filled')
+              if (order.status.toLowerCase() == 'filled') ...[
+                const SizedBox(width: 8),
                 IconButton(
                   icon: const Icon(Icons.share, size: 18, color: AppColors.primary),
                   padding: EdgeInsets.zero,
@@ -153,6 +161,7 @@ class OrdersTab extends StatelessWidget {
                     }
                   },
                 ),
+              ],
             ],
           ),
           const SizedBox(height: AppSpacing.sm),

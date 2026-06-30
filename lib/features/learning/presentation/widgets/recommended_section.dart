@@ -163,9 +163,9 @@ class RecommendedCard extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              _buildBadge(Icons.schedule_rounded, duration),
+              Flexible(child: _buildBadge(Icons.schedule_rounded, duration)),
               const Spacer(),
-              _buildBadge(Icons.article_rounded, '$chapterCount Ch'),
+              Flexible(child: _buildBadge(Icons.article_rounded, '$chapterCount Ch')),
             ],
           ),
         ],
@@ -175,15 +175,20 @@ class RecommendedCard extends StatelessWidget {
 
   Widget _buildBadge(IconData icon, String text) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 14, color: AppColors.textTertiary),
         const SizedBox(width: 4),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textSecondary,
+        Flexible(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textSecondary,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
