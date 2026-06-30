@@ -651,9 +651,9 @@ class _MenuOptionCardState extends State<_MenuOptionCard> with SingleTickerProvi
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: AppColors.white.withValues(alpha: 0.75),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.border.withValues(alpha: 0.4)),
+            border: Border.all(color: AppColors.white.withValues(alpha: 0.4)),
             boxShadow: [
               BoxShadow(
                 color: AppColors.black.withValues(alpha: 0.02),

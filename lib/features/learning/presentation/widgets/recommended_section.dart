@@ -114,8 +114,12 @@ class RecommendedCard extends StatelessWidget {
       width: 200,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.white.withValues(alpha: 0.75),
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: AppColors.white.withValues(alpha: 0.4),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF1E1E2C).withValues(alpha: 0.08),

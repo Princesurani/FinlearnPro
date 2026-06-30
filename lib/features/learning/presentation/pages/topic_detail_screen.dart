@@ -192,9 +192,9 @@ class TopicDetailScreen extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.surface,
+                          color: AppColors.white.withValues(alpha: 0.75),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: AppColors.border, width: 0.5),
+                          border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
                           boxShadow: const [
                             BoxShadow(
                               color: Color(0x05000000),

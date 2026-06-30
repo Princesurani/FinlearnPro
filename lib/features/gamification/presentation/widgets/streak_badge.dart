@@ -45,7 +45,7 @@ class StreakBadge extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: AppColors.white.withValues(alpha: 0.75),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: AppColors.sunsetOrange.withValues(alpha: 0.3),
@@ -73,7 +73,7 @@ class StreakBadge extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
-                    color: AppColors.black87,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],

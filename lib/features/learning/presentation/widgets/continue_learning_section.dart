@@ -181,10 +181,10 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
           width: 300,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: AppColors.white.withValues(alpha: 0.75),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: course.displayColor.withValues(alpha: 0.15),
+              color: AppColors.white.withValues(alpha: 0.4),
               width: 1.5,
             ),
             boxShadow: [

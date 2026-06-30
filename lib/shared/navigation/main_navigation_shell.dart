@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:finnn/shared/widgets/notification_banner.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../features/auth/presentation/widgets/home_top_bar.dart';
 
 import '../../features/market/bloc/market_bloc.dart';
@@ -437,10 +438,10 @@ class _HomeScreenWrapper extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const HomeTopBar(),
-              const SizedBox(height: 30),
+              const SizedBox(height: AppSpacing.md),
               HomeOverviewCard(marketBloc: bloc),
               if (continueCourse != null) ...[
-                const SizedBox(height: 30),
+                const SizedBox(height: AppSpacing.md),
                 ContinueLearningCard(
                   course: continueCourse,
                   onTap: () {
@@ -457,7 +458,7 @@ class _HomeScreenWrapper extends StatelessWidget {
                   },
                 ),
               ],
-              const SizedBox(height: 30),
+              const SizedBox(height: AppSpacing.md),
               MarketNewsSentimentCard(onTradeTap: onNavigateToMarket),
             ],
           ),

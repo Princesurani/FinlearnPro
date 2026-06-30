@@ -88,29 +88,29 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             slivers: [
-              _gap(16),
+              _gap(AppSpacing.md),
               SliverToBoxAdapter(child: _anim(0, _buildHeader(context, profile))),
-              _gap(14),
+              _gap(AppSpacing.md),
               SliverToBoxAdapter(
                 child: Padding(padding: AppSpacing.screenPaddingH,
                   child: _anim(1, _buildLevelSection(profile, xpProgress, nextLevelXp))),
               ),
-              _gap(10),
+              _gap(AppSpacing.md),
               SliverToBoxAdapter(
                 child: Padding(padding: AppSpacing.screenPaddingH,
                   child: _anim(2, _buildStreakSection(profile))),
               ),
-              _gap(10),
+              _gap(AppSpacing.md),
               SliverToBoxAdapter(
                 child: Padding(padding: AppSpacing.screenPaddingH,
                   child: _anim(3, _buildPerformanceSection(profile, wins, losses))),
               ),
-              _gap(10),
+              _gap(AppSpacing.md),
               SliverToBoxAdapter(
                 child: Padding(padding: AppSpacing.screenPaddingH,
                   child: _anim(4, _buildAchievementsSection(profile))),
               ),
-              _gap(10),
+              _gap(AppSpacing.md),
               SliverToBoxAdapter(
                 child: Padding(padding: AppSpacing.screenPaddingH,
                   child: _anim(5, _buildCoursesSection(profile))),
@@ -744,9 +744,9 @@ class _Card extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: AppColors.surface,
+      color: AppColors.white.withValues(alpha: 0.75),
       borderRadius: AppSpacing.borderRadiusMD,
-      border: Border.all(color: AppColors.border),
+      border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
     ),
     child: child,
   );

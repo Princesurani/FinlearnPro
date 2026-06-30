@@ -37,7 +37,7 @@ class _FinLearnAppState extends State<FinLearnApp> {
       const SystemUiOverlayStyle(
         statusBarColor: AppColors.transparent,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: AppColors.white,
+        systemNavigationBarColor: AppColors.backgroundSecondary,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -122,7 +122,7 @@ class _FinLearnAppState extends State<FinLearnApp> {
         ),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.backgroundSecondary,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textTertiary,
         type: BottomNavigationBarType.fixed,
@@ -168,7 +168,7 @@ class _FinLearnAppState extends State<FinLearnApp> {
       ),
       cardTheme: const CardThemeData(
         elevation: 0,
-        color: AppColors.white,
+        color: AppColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
           side: BorderSide(color: AppColors.border),

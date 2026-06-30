@@ -77,14 +77,14 @@ abstract final class AppColors {
 
   static const Color backgroundPrimary = Color(0xFFF8F9FE);
 
-  static const Color backgroundSecondary = Color(0xFFFFFFFF);
+  static const Color backgroundSecondary = Color(0xFFFBFBFE);
 
   static const Color backgroundTertiary = Color(0xFFF1F5F9);
 
-  static const Color surface = Color(0xFFFFFFFF);
+  static const Color surface = Color(0xFFFBFBFE);
 
   static const Color surfaceVariant = Color(0xFFF8FAFC);
-  static const Color surfaceLayer1 = Color(0xFFFFFFFF); // Alias for cards
+  static const Color surfaceLayer1 = Color(0xFFFBFBFE); // Alias for cards
 
   static const Color border = Color(0xFFE2E8F0);
   static const Color borderHint = Color(0xFFE2E8F0); // Alias for subtle borders

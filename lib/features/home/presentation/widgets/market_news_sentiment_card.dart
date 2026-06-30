@@ -12,9 +12,9 @@ class MarketNewsSentimentCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.surfaceLayer1,
+        color: AppColors.white.withValues(alpha: 0.75),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.borderHint.withValues(alpha: 0.1)),
+        border: Border.all(color: AppColors.white.withValues(alpha: 0.4)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),

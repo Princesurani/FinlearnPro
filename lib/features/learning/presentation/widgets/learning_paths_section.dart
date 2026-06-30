@@ -191,10 +191,10 @@ class _LearningPathCardState extends State<_LearningPathCard>
           width: 280,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: AppColors.white.withValues(alpha: 0.75),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: path.displayColor.withValues(alpha: 0.15),
+              color: AppColors.white.withValues(alpha: 0.4),
               width: 1.5,
             ),
             boxShadow: [

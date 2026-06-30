@@ -68,9 +68,12 @@ class _CourseCard extends StatelessWidget {
     return Container(
       width: 200,
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.white.withValues(alpha: 0.75),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: AppColors.white.withValues(alpha: 0.4),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: AppColors.black.withValues(alpha: 0.05),

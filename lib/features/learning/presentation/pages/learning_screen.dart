@@ -195,7 +195,7 @@ class _LearningScreenState extends State<LearningScreen>
               ),
             ),
     
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
     
             if (continueLearningCourses.isNotEmpty)
               SliverToBoxAdapter(
@@ -209,7 +209,7 @@ class _LearningScreenState extends State<LearningScreen>
               ),
     
             if (continueLearningCourses.isNotEmpty)
-              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
     
             SliverToBoxAdapter(
               child: _buildAnimatedSection(
@@ -222,7 +222,7 @@ class _LearningScreenState extends State<LearningScreen>
               ),
             ),
     
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
     
             SliverToBoxAdapter(
               child: _buildAnimatedSection(
@@ -234,7 +234,7 @@ class _LearningScreenState extends State<LearningScreen>
               ),
             ),
     
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
     
             SliverToBoxAdapter(
               child: _buildAnimatedSection(

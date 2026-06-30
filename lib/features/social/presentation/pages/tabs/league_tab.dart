@@ -150,9 +150,9 @@ class LeagueTab extends StatelessWidget {
                           margin: const EdgeInsets.only(bottom: 16),
                           padding: const EdgeInsets.all(AppSpacing.cardPaddingCompact),
                           decoration: BoxDecoration(
-                            color: AppColors.surface,
+                            color: AppColors.white.withValues(alpha: 0.75),
                             borderRadius: AppSpacing.borderRadiusLG,
-                            border: Border.all(color: AppColors.border),
+                            border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,9 +335,9 @@ class LeagueTab extends StatelessWidget {
                             margin: const EdgeInsets.only(bottom: 12),
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: AppColors.surface,
+                              color: AppColors.white.withValues(alpha: 0.75),
                               borderRadius: AppSpacing.borderRadiusLG,
-                              border: Border.all(color: AppColors.border),
+                              border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
                             ),
                             child: Row(
                               children: [
@@ -472,11 +472,10 @@ class LeagueTab extends StatelessWidget {
       height: height,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: AppColors.surface,
         gradient: LinearGradient(
           colors: [
             medalColor.withValues(alpha: 0.1),
-            AppColors.surface,
+            AppColors.white.withValues(alpha: 0.75),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,

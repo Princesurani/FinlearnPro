@@ -59,9 +59,9 @@ class OrdersTab extends StatelessWidget {
     Widget content = Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.white.withValues(alpha: 0.75),
         borderRadius: AppSpacing.borderRadiusMD,
-        border: Border.all(color: AppColors.border, width: 0.5),
+        border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
       ),
       child: Column(
         children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../features/auth/presentation/pages/settings_screen.dart';
 
 class TopNavigationShell extends StatelessWidget {
@@ -120,7 +121,7 @@ class TopNavigationShell extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: AppSpacing.md),
           ],
 
           // Title / Content Area
@@ -132,7 +133,7 @@ class TopNavigationShell extends StatelessWidget {
             children: [
               ...actions,
               if (showSettings) ...[
-                const SizedBox(width: 12),
+                const SizedBox(width: AppSpacing.sm),
                 TopBarButton(
                   icon: Icons.tune_rounded,
                   onTap: () {
@@ -189,9 +190,9 @@ class _TopBarButtonState extends State<TopBarButton> {
           height: 40, // Reduced from 44 for better mobile fit
           width: 40, // Reduced from 44 for better mobile fit
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: AppColors.white.withValues(alpha: 0.75),
             borderRadius: BorderRadius.circular(12), // Slightly smaller radius
-            border: Border.all(color: AppColors.borderLight, width: 1),
+            border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
             boxShadow: [
               BoxShadow(
                 color: AppColors.black.withValues(alpha: 0.03),

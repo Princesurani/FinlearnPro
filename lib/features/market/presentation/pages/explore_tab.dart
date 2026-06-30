@@ -52,7 +52,7 @@ class _ExploreTabState extends State<ExploreTab>
     _ensureCache();
 
     return ListView(
-      padding: const EdgeInsets.only(top: AppSpacing.xl, bottom: 100),
+      padding: const EdgeInsets.only(top: AppSpacing.md, bottom: 100),
       children: [
         _section(
           child: Column(
@@ -69,7 +69,7 @@ class _ExploreTabState extends State<ExploreTab>
                 },
               ),
               _buildMoverFilters(),
-              const SizedBox(height: AppSpacing.sm),
+              const SizedBox(height: AppSpacing.md),
               InstrumentGrid2x2(
                 instruments: _topMovers(),
                 market: _market,
@@ -92,9 +92,7 @@ class _ExploreTabState extends State<ExploreTab>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(
-                title: 'Products & Tools',
-              ),
+              const SectionHeader(title: 'Products & Tools'),
               const ProductsToolsRow(),
             ],
           ),
@@ -152,7 +150,7 @@ class _ExploreTabState extends State<ExploreTab>
     );
   }
 
-  Widget _sectionGap() => const SizedBox(height: 40);
+  Widget _sectionGap() => const SizedBox(height: AppSpacing.md);
 
   Widget _buildMoverFilters() {
     return Row(
@@ -200,12 +198,9 @@ class _ExploreTabState extends State<ExploreTab>
               _buildPopupItem('small', 'Small Cap'),
             ],
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 6,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: _capFilter == 'all' 
+                color: _capFilter == 'all'
                     ? AppColors.textSecondary.withValues(alpha: 0.02)
                     : AppColors.primary.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
@@ -221,20 +216,26 @@ class _ExploreTabState extends State<ExploreTab>
                   Icon(
                     Icons.filter_list_rounded,
                     size: 14,
-                    color: _capFilter == 'all' ? AppColors.textSecondary : AppColors.primary,
+                    color: _capFilter == 'all'
+                        ? AppColors.textSecondary
+                        : AppColors.primary,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     _capFilter == 'all'
                         ? 'Filter'
                         : _capFilter == 'large'
-                            ? 'Large Cap'
-                            : _capFilter == 'mid'
-                                ? 'Mid Cap'
-                                : 'Small Cap',
+                        ? 'Large Cap'
+                        : _capFilter == 'mid'
+                        ? 'Mid Cap'
+                        : 'Small Cap',
                     style: AppTypography.label.copyWith(
-                      color: _capFilter == 'all' ? AppColors.textPrimary : AppColors.primary,
-                      fontWeight: _capFilter == 'all' ? AppTypography.medium : AppTypography.semiBold,
+                      color: _capFilter == 'all'
+                          ? AppColors.textPrimary
+                          : AppColors.primary,
+                      fontWeight: _capFilter == 'all'
+                          ? AppTypography.medium
+                          : AppTypography.semiBold,
                       fontSize: 13,
                     ),
                   ),
@@ -242,7 +243,9 @@ class _ExploreTabState extends State<ExploreTab>
                   Icon(
                     Icons.keyboard_arrow_down_rounded,
                     size: 16,
-                    color: _capFilter == 'all' ? AppColors.textSecondary : AppColors.primary,
+                    color: _capFilter == 'all'
+                        ? AppColors.textSecondary
+                        : AppColors.primary,
                   ),
                 ],
               ),
@@ -263,15 +266,16 @@ class _ExploreTabState extends State<ExploreTab>
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 6,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isActive ? activeColor.withAlpha(20) : AppColors.textSecondary.withValues(alpha: 0.02),
+          color: isActive
+              ? activeColor.withAlpha(20)
+              : AppColors.textSecondary.withValues(alpha: 0.02),
           borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
           border: Border.all(
-            color: isActive ? activeColor.withValues(alpha: 0.15) : AppColors.textSecondary.withValues(alpha: 0.08),
+            color: isActive
+                ? activeColor.withValues(alpha: 0.15)
+                : AppColors.textSecondary.withValues(alpha: 0.08),
             width: 1.0,
           ),
         ),
@@ -295,7 +299,7 @@ class _ExploreTabState extends State<ExploreTab>
     if (_capFilter != 'all') {
       stocks = stocks.where((i) {
         double cap = _snaps[i.symbol]?.marketCap ?? 0;
-        
+
         // If market cap is not provided by the API, distribute deterministically for the UI
         if (cap == 0) {
           final hash = i.symbol.hashCode.abs();
@@ -308,7 +312,7 @@ class _ExploreTabState extends State<ExploreTab>
             cap = 1e9; // Small Cap
           }
         }
-        
+
         switch (_capFilter) {
           case 'large':
             return cap > 10e9;
@@ -357,7 +361,9 @@ class _ExploreTabState extends State<ExploreTab>
             label,
             style: AppTypography.label.copyWith(
               color: isSelected ? AppColors.primary : AppColors.textPrimary,
-              fontWeight: isSelected ? AppTypography.semiBold : AppTypography.medium,
+              fontWeight: isSelected
+                  ? AppTypography.semiBold
+                  : AppTypography.medium,
             ),
           ),
           if (isSelected)
