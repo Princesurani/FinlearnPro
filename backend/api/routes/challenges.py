@@ -106,7 +106,7 @@ async def submit_daily_challenge(req: SubmitChallengeRequest, db: AsyncSession =
     """
     # 1. Fetch latest daily challenge
     now_date = datetime.now(timezone.utc).date()
-    stmt = select(DbDailyChallenge).order_by(desc(DbDailyChallenge.challenge_date)).limit(1)
+    stmt = select(DbDailyChallenge).where(DbDailyChallenge.challenge_date == now_date)
     result = await db.execute(stmt)
     challenge = result.scalars().first()
     
