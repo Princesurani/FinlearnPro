@@ -11,6 +11,7 @@ import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/glass_container.dart';
 import '../../../../shared/widgets/gradient_button.dart';
 import '../../data/auth_service.dart';
+import '../../../../features/social/data/repositories/social_repository.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({
@@ -167,8 +168,19 @@ class _SignUpScreenState extends State<SignUpScreen>
     HapticFeedback.lightImpact();
 
     try {
+      final username = _nameCtrl.text.trim();
+      final isAvailable = await SocialRepository().checkUsernameAvailable(username);
+      if (!isAvailable) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'Username is already taken. Please choose another.';
+        });
+        _triggerShake();
+        return;
+      }
+
       await _authService.signUpWithEmailAndPassword(
-        name: _nameCtrl.text.trim(),
+        name: username,
         email: _emailCtrl.text.trim(),
         password: _passwordCtrl.text,
       );

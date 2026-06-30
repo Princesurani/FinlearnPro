@@ -100,8 +100,6 @@ class SocialState {
   }
 }
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
 /// Returns the best available username for the current Firebase user.
 /// Falls back in order: Firebase displayName → email prefix → 'Trader'.
 String _resolveUsername() {
@@ -109,17 +107,13 @@ String _resolveUsername() {
   if (user == null) return 'Trader';
 
   final dn = user.displayName;
-  if (dn != null && dn.isNotEmpty && !_isDummyName(dn)) return dn;
+  if (dn != null && dn.isNotEmpty) return dn;
 
   final email = user.email;
   if (email != null && email.contains('@')) return email.split('@').first;
 
   return 'Trader';
 }
-
-/// Whether the name is an auto-generated placeholder.
-bool _isDummyName(String name) =>
-    name == 'Trader' || name.startsWith('Trader_');
 
 // ─── Bloc ───────────────────────────────────────────────────────────────────
 
@@ -141,37 +135,10 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
     try {
       final profile = await repository.getProfile(event.uid);
 
-      // If the backend has a dummy name or is missing the email, sync them from Firebase Auth.
-      UserProfile finalProfile = profile;
-      final firebaseUser = FirebaseAuth.instance.currentUser;
-      final hasDummyName = _isDummyName(profile.username);
-      final hasMissingEmail = profile.email == null || profile.email!.isEmpty;
-
-      if (hasDummyName || hasMissingEmail) {
-        final realName = hasDummyName ? _resolveUsername() : profile.username;
-        final realEmail = firebaseUser?.email;
-        
-        if (!hasDummyName || !_isDummyName(realName)) {
-          repository.updateProfile(
-            event.uid, 
-            username: realName,
-            email: realEmail,
-          ).catchError((_) => profile);
-          
-          if (hasDummyName) {
-            firebaseUser?.updateDisplayName(realName).catchError((_) {});
-          }
-          finalProfile = profile.copyWith(
-            username: realName,
-            email: realEmail,
-          );
-        }
-      }
-
       emit(state.copyWith(
         status: SocialStatus.loaded,
         isProfileLoading: false,
-        myProfile: finalProfile,
+        myProfile: profile,
       ));
     } catch (_) {
       // Backend unreachable — keep existing profile if we have one, otherwise build a local fallback profile
@@ -219,21 +186,12 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
         period: event.period,
       );
 
-      // Fix current user's name in the leaderboard, resolving dummy names dynamically.
       final myUid = FirebaseAuth.instance.currentUser?.uid;
-      final myProfileName = state.myProfile?.username;
-      final correctedName = (myProfileName != null && !_isDummyName(myProfileName))
-          ? myProfileName
-          : _resolveUsername();
 
       final correctedLeaderboard = leaderboard.map((entry) {
-        final dbName = (entry.firebaseUid == myUid && correctedName.isNotEmpty && !_isDummyName(correctedName))
-            ? correctedName
-            : entry.username;
-
         return LeaderboardEntry(
           firebaseUid: entry.firebaseUid,
-          username: dbName,
+          username: entry.username,
           avatarUrl: entry.firebaseUid == myUid ? (state.myProfile?.avatarUrl ?? entry.avatarUrl) : entry.avatarUrl,
           level: entry.level,
           totalXp: entry.totalXp,
@@ -267,21 +225,13 @@ class SocialBloc extends Bloc<SocialEvent, SocialState> {
       final feed = await repository.getFeed(event.uid);
 
       final myUid = FirebaseAuth.instance.currentUser?.uid;
-      final myProfileName = state.myProfile?.username;
-      final correctedName = (myProfileName != null && !_isDummyName(myProfileName))
-          ? myProfileName
-          : _resolveUsername();
       final correctedAvatar = state.myProfile?.avatarUrl ?? FirebaseAuth.instance.currentUser?.photoURL;
 
       final correctedFeed = feed.map((post) {
-        final dbName = (post.firebaseUid == myUid && correctedName.isNotEmpty && !_isDummyName(correctedName))
-            ? correctedName
-            : post.authorName;
-
         return TradeSharePost(
           id: post.id,
           firebaseUid: post.firebaseUid,
-          authorName: dbName,
+          authorName: post.authorName,
           authorAvatar: post.firebaseUid == myUid ? (correctedAvatar ?? post.authorAvatar) : post.authorAvatar,
           authorLevel: post.authorLevel,
           tradeId: post.tradeId,

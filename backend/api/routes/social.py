@@ -120,6 +120,16 @@ async def update_profile(uid: str, req: UserProfileUpdateRequest, db: AsyncSessi
         email=user.email
     )
 
+@router.get("/username/check")
+async def check_username_available(username: str = Query(...), db: AsyncSession = Depends(get_db)):
+    """
+    Returns whether a username is available (not taken).
+    """
+    stmt = select(DbUser).where(DbUser.username == username)
+    result = await db.execute(stmt)
+    user = result.scalar_one_or_none()
+    return {"available": user is None}
+
 @router.get("/leaderboard", response_model=List[LeaderboardEntry])
 async def get_leaderboard(
     type: str = Query("xp", description="xp, trades, streak, win_rate"),

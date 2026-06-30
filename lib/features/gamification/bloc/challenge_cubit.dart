@@ -39,6 +39,8 @@ class ChallengeCubit extends Cubit<ChallengeState> {
       emit(ChallengeLoading());
       final challenge = await _repository.getDailyChallenge();
 
+      if (isClosed) return;
+
       if (challenge != null) {
         if (challenge.isCompleted) {
           // Challenge already completed — reconstruct result from existing data
@@ -62,6 +64,7 @@ class ChallengeCubit extends Cubit<ChallengeState> {
         );
       }
     } catch (e) {
+      if (isClosed) return;
       emit(ChallengeError("Failed to load daily challenge. Please try again."));
     }
   }
@@ -73,10 +76,12 @@ class ChallengeCubit extends Cubit<ChallengeState> {
         final result = await _repository.submitChallengeAnswer(
           choiceId: choiceId,
         );
+        if (isClosed) return;
         emit(
           ChallengeSubmitted(challenge: currentState.challenge, result: result),
         );
       } catch (e) {
+        if (isClosed) return;
         emit(ChallengeError("Failed to submit answer. Please try again."));
       }
     }

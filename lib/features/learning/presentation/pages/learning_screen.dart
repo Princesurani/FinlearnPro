@@ -261,14 +261,9 @@ class _LearningScreenState extends State<LearningScreen>
       end: 1.0,
     ).animate(CurvedAnimation(parent: _staggerController, curve: interval));
 
-    final slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _staggerController, curve: interval));
-
     return FadeTransition(
       opacity: fadeAnimation,
-      child: SlideTransition(position: slideAnimation, child: child),
+      child: child,
     );
   }
 }

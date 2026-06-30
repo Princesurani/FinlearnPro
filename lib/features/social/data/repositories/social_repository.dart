@@ -126,4 +126,17 @@ class SocialRepository {
       throw Exception('Failed to unlike post');
     }
   }
+
+  Future<bool> checkUsernameAvailable(String username) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('${ApiConstants.baseUrl}/social/username/check?username=${Uri.encodeComponent(username)}'),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['available'] as bool? ?? false;
+      }
+    } catch (_) {}
+    return false;
+  }
 }

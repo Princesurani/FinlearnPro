@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'dart:math' as math;
 
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_spacing.dart';
@@ -9,9 +10,8 @@ import '../../../../../core/domain/market_data.dart';
 import '../../../../market/bloc/market_bloc.dart';
 import '../../../../market/presentation/pages/stock_detail_screen.dart';
 import '../../../../market/presentation/widgets/ai_review_sheet.dart';
-import '../../../../portfolio/presentation/pages/trading_journal_screen.dart';
 
-class PortfolioTab extends StatelessWidget {
+class PortfolioTab extends StatefulWidget {
   const PortfolioTab({
     super.key,
     required this.onExplore,
@@ -22,6 +22,18 @@ class PortfolioTab extends StatelessWidget {
   final VoidCallback onExplore;
   final MarketState state;
   final MarketBloc bloc;
+
+  @override
+  State<PortfolioTab> createState() => _PortfolioTabState();
+}
+
+class _PortfolioTabState extends State<PortfolioTab> {
+  bool _isObscured = false;
+  bool _showHistoryChart = false;
+
+  MarketState get state => widget.state;
+  MarketBloc get bloc => widget.bloc;
+  VoidCallback get onExplore => widget.onExplore;
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +83,13 @@ class PortfolioTab extends StatelessWidget {
             context,
           ),
         ),
+        if (_showHistoryChart) ...[
+          _PortfolioPerformanceChart(
+            currentBalance: totalCurrentValue + state.portfolioBalance,
+            firebaseUid: bloc.firebaseUid,
+          ),
+          const SizedBox(height: 16),
+        ],
         _SectorAllocationChart(positions: positions, state: state),
         Padding(
           padding: const EdgeInsets.symmetric(
@@ -128,10 +147,6 @@ class PortfolioTab extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          child: _buildJournalTile(context),
-        ),
       ],
     ),
     );
@@ -177,22 +192,60 @@ class PortfolioTab extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Icon(
-                    Icons.visibility_outlined,
-                    size: 20,
-                    color: AppColors.primary,
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      setState(() {
+                        _isObscured = !_isObscured;
+                      });
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      child: Icon(
+                        _isObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                        size: 20,
+                        color: _isObscured ? AppColors.primary : AppColors.textTertiary,
+                      ),
+                    ),
                   ),
-                  const SizedBox(width: 16),
-                  Icon(
-                    Icons.analytics_outlined,
-                    size: 20,
-                    color: AppColors.primary,
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      setState(() {
+                        _showHistoryChart = !_showHistoryChart;
+                      });
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: _showHistoryChart ? AppColors.primary.withValues(alpha: 0.1) : AppColors.transparent,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: _showHistoryChart ? AppColors.primary : AppColors.transparent,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.analytics_outlined,
+                          size: 16,
+                          color: _showHistoryChart ? AppColors.primary : AppColors.textTertiary,
+                        ),
+                      ),
+                    ),
                   ),
-                  const SizedBox(width: 16),
-                  Icon(
-                    Icons.more_vert_rounded,
-                    size: 20,
-                    color: AppColors.textSecondary,
+                  const SizedBox(width: 8),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    child: Icon(
+                      Icons.more_vert_rounded,
+                      size: 20,
+                      color: AppColors.textTertiary,
+                    ),
                   ),
                 ],
               ),
@@ -202,7 +255,9 @@ class PortfolioTab extends StatelessWidget {
           Row(
             children: [
               Text(
-                '${state.activeMarket.currencySymbol}${currentValue.toStringAsFixed(2)}',
+                _isObscured
+                    ? '${state.activeMarket.currencySymbol}••••••••'
+                    : '${state.activeMarket.currencySymbol}${currentValue.toStringAsFixed(2)}',
                 style: AppTypography.h3.copyWith(
                   fontWeight: FontWeight.bold,
                   letterSpacing: -0.5,
@@ -216,21 +271,27 @@ class PortfolioTab extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           _buildSummaryRow(
             'Total returns',
-            '${isProfit ? '+' : ''}${state.activeMarket.currencySymbol}${pnl.toStringAsFixed(2)}',
-            '(${pnlPercent.toStringAsFixed(2)}%)',
+            _isObscured
+                ? '${state.activeMarket.currencySymbol}••••••••'
+                : '${isProfit ? '+' : ''}${state.activeMarket.currencySymbol}${pnl.toStringAsFixed(2)}',
+            _isObscured ? '' : '(${pnlPercent.toStringAsFixed(2)}%)',
             pnlColor,
           ),
           const SizedBox(height: AppSpacing.sm),
           _buildSummaryRow(
             'Invested',
-            '${state.activeMarket.currencySymbol}${invested.toStringAsFixed(2)}',
+            _isObscured
+                ? '${state.activeMarket.currencySymbol}••••••••'
+                : '${state.activeMarket.currencySymbol}${invested.toStringAsFixed(2)}',
             '',
             AppColors.textPrimary,
           ),
           const SizedBox(height: AppSpacing.sm),
           _buildSummaryRow(
             'Available Balance',
-            '${state.activeMarket.currencySymbol}${state.portfolioBalance.toStringAsFixed(2)}',
+            _isObscured
+                ? '${state.activeMarket.currencySymbol}••••••••'
+                : '${state.activeMarket.currencySymbol}${state.portfolioBalance.toStringAsFixed(2)}',
             '',
             AppColors.textSecondary,
           ),
@@ -388,7 +449,9 @@ class PortfolioTab extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Qty: ${pos.quantity} · Avg ${state.activeMarket.currencySymbol}${pos.averageCost.toStringAsFixed(2)}',
+                    _isObscured
+                        ? 'Qty: •••• · Avg ${state.activeMarket.currencySymbol}••••'
+                        : 'Qty: ${pos.quantity} · Avg ${state.activeMarket.currencySymbol}${pos.averageCost.toStringAsFixed(2)}',
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -401,7 +464,9 @@ class PortfolioTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '${state.activeMarket.currencySymbol}${currentValue.toStringAsFixed(2)}',
+                _isObscured
+                    ? '${state.activeMarket.currencySymbol}••••'
+                    : '${state.activeMarket.currencySymbol}${currentValue.toStringAsFixed(2)}',
                 style: AppTypography.body.copyWith(fontWeight: FontWeight.bold),
               ),
               Row(
@@ -415,7 +480,9 @@ class PortfolioTab extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '${state.activeMarket.currencySymbol}${livePrice.toStringAsFixed(2)}',
+                    _isObscured
+                        ? '${state.activeMarket.currencySymbol}••••'
+                        : '${state.activeMarket.currencySymbol}${livePrice.toStringAsFixed(2)}',
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -424,7 +491,9 @@ class PortfolioTab extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                '${isProfit ? '+' : ''}${state.activeMarket.currencySymbol}${pnl.toStringAsFixed(2)} (${pnlPercent.toStringAsFixed(2)}%)',
+                _isObscured
+                    ? '••••'
+                    : '${isProfit ? '+' : ''}${state.activeMarket.currencySymbol}${pnl.toStringAsFixed(2)} (${pnlPercent.toStringAsFixed(2)}%)',
                 style: AppTypography.labelSmall.copyWith(
                   color: isProfit ? AppColors.profitGreen : AppColors.lossRed,
                   fontWeight: AppTypography.semiBold,
@@ -473,6 +542,13 @@ class PortfolioTab extends StatelessWidget {
           children: [
             _buildWalletCard(context),
             const SizedBox(height: 16),
+            if (_showHistoryChart) ...[
+              _PortfolioPerformanceChart(
+                currentBalance: state.portfolioBalance,
+                firebaseUid: bloc.firebaseUid,
+              ),
+              const SizedBox(height: 16),
+            ],
             _buildQuickStartGuide(context),
             const SizedBox(height: 20),
             Row(
@@ -512,9 +588,8 @@ class PortfolioTab extends StatelessWidget {
                 ),
               )
             else
-              _buildWatchList(context, watchList),
+              _buildSuggestedCarousel(context, watchList),
             const SizedBox(height: 16),
-            _buildJournalTile(context),
             const SizedBox(height: 120), // Spacer for nav bar
           ],
         ),
@@ -543,17 +618,74 @@ class PortfolioTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'AVAILABLE FUNDS',
-            style: AppTypography.labelMedium.copyWith(
-              color: AppColors.white.withValues(alpha: 0.8),
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.0,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'AVAILABLE FUNDS',
+                style: AppTypography.labelMedium.copyWith(
+                  color: AppColors.white.withValues(alpha: 0.8),
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      setState(() {
+                        _isObscured = !_isObscured;
+                      });
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      child: Icon(
+                        _isObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                        size: 20,
+                        color: _isObscured ? AppColors.white : AppColors.white.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      setState(() {
+                        _showHistoryChart = !_showHistoryChart;
+                      });
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: _showHistoryChart ? AppColors.white.withValues(alpha: 0.2) : AppColors.transparent,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: _showHistoryChart ? AppColors.white : AppColors.transparent,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.analytics_outlined,
+                          size: 16,
+                          color: _showHistoryChart ? AppColors.white : AppColors.white.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           const SizedBox(height: 6),
           Text(
-            '$currency${balance > 0 ? balance.toStringAsFixed(2) : "10,000.00"}',
+            _isObscured
+                ? '$currency••••••••'
+                : '$currency${balance > 0 ? balance.toStringAsFixed(2) : "10,000.00"}',
             style: AppTypography.h2.copyWith(
               color: AppColors.white,
               fontWeight: FontWeight.w900,
@@ -696,86 +828,67 @@ class PortfolioTab extends StatelessWidget {
     );
   }
 
-  Widget _buildWatchList(BuildContext context, List watchList) {
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.zero,
-      itemCount: watchList.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final inst = watchList[index];
-        final snap = state.snapshots[inst.symbol];
-        final price = snap?.price ?? 0.0;
-        final change = snap?.change ?? 0.0;
-        final changePct = snap?.changePercent ?? 0.0;
-        final isUp = change >= 0;
-        final changeColor = isUp ? AppColors.profitGreen : AppColors.lossRed;
+  Widget _buildSuggestedCarousel(BuildContext context, List watchList) {
+    return SizedBox(
+      height: 155,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: watchList.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 14),
+        itemBuilder: (context, index) {
+          final inst = watchList[index];
+          final snap = state.snapshots[inst.symbol];
+          final price = snap?.price ?? 0.0;
+          final changePct = snap?.changePercent ?? 0.0;
+          final isUp = changePct >= 0;
+          final changeColor = isUp ? AppColors.profitGreen : AppColors.lossRed;
 
-        return InkWell(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => StockDetailScreen(
-                  instrument: inst,
-                  snapshot: snap,
-                  bloc: bloc,
-                ),
-              ),
-            );
-          },
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.all(12),
+          return Container(
+            width: 160,
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(color: AppColors.border, width: 0.5),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.black.withValues(alpha: 0.02),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      inst.symbol[0].toUpperCase(),
-                      style: const TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        inst.symbol,
+                        style: AppTypography.bodyXS.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        inst.symbol,
-                        style: AppTypography.bodySmall.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      Text(
-                        inst.name,
-                        style: AppTypography.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+                    Icon(
+                      isUp ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+                      color: changeColor,
+                      size: 20,
+                    ),
+                  ],
                 ),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '${state.activeMarket.currencySymbol}${price.toStringAsFixed(2)}',
@@ -784,70 +897,354 @@ class PortfolioTab extends StatelessWidget {
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isUp ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                          color: changeColor,
-                          size: 20,
-                        ),
-                        Text(
-                          '${isUp ? '+' : ''}${changePct.toStringAsFixed(2)}%',
-                          style: AppTypography.bodySmall.copyWith(
-                            color: changeColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 2),
+                    Text(
+                      '${isUp ? '+' : ''}${changePct.toStringAsFixed(2)}%',
+                      style: AppTypography.bodyXS.copyWith(
+                        color: changeColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.mediumImpact();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => StockDetailScreen(
+                          instrument: inst,
+                          snapshot: snap,
+                          bloc: bloc,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    height: 28,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Quick Trade',
+                        style: AppTypography.bodyXS.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildJournalTile(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const TradingJournalScreen()));
-      },
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.border),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(9),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
+
+}
+
+class _PortfolioPerformanceChart extends StatefulWidget {
+  final double currentBalance;
+  final String firebaseUid;
+
+  const _PortfolioPerformanceChart({
+    required this.currentBalance,
+    required this.firebaseUid,
+  });
+
+  @override
+  State<_PortfolioPerformanceChart> createState() => _PortfolioPerformanceChartState();
+}
+
+class _PortfolioPerformanceChartState extends State<_PortfolioPerformanceChart> {
+  String _selectedInterval = '1W';
+  int? _touchedIndex;
+
+  List<double> _generateDataPoints() {
+    final seed = widget.firebaseUid.hashCode ^ widget.currentBalance.hashCode;
+    final random = math.Random(seed);
+    
+    int numPoints = 7;
+    double volatility = 0.02;
+    if (_selectedInterval == '1D') {
+      numPoints = 7;
+      volatility = 0.005;
+    } else if (_selectedInterval == '1W') {
+      numPoints = 7;
+      volatility = 0.02;
+    } else if (_selectedInterval == '1M') {
+      numPoints = 12;
+      volatility = 0.05;
+    } else if (_selectedInterval == '1Y') {
+      numPoints = 12;
+      volatility = 0.15;
+    }
+
+    final points = <double>[];
+    double currentVal = 10000.0;
+    final target = widget.currentBalance;
+    
+    points.add(currentVal);
+    for (int i = 1; i < numPoints - 1; i++) {
+      double fraction = i / (numPoints - 1);
+      double expected = currentVal + (target - currentVal) * fraction;
+      double noise = (random.nextDouble() - 0.45) * volatility * expected;
+      points.add(expected + noise);
+    }
+    points.add(target);
+    return points;
+  }
+
+  List<String> _generateLabels() {
+    if (_selectedInterval == '1D') {
+      return ['9:30', '10:30', '11:30', '12:30', '1:30', '2:30', '3:30'];
+    } else if (_selectedInterval == '1W') {
+      return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    } else if (_selectedInterval == '1M') {
+      return ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'W10', 'W11', 'W12'];
+    } else {
+      return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final points = _generateDataPoints();
+    final labels = _generateLabels();
+    final double minVal = points.reduce(math.min) * 0.98;
+    final double maxVal = points.reduce(math.max) * 1.02;
+    final double currentPortValue = _touchedIndex != null && _touchedIndex! < points.length
+        ? points[_touchedIndex!]
+        : widget.currentBalance;
+
+    final isProfit = widget.currentBalance >= 10000.0;
+    final themeColor = isProfit ? AppColors.profitGreen : AppColors.primary;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: AppSpacing.borderRadiusLG,
+        border: Border.all(color: AppColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x04000000),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _touchedIndex != null ? 'SELECTED VALUATION' : 'PORTFOLIO VALUE',
+                      style: AppTypography.bodyXS.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '₹${currentPortValue.toStringAsFixed(2)}',
+                      style: AppTypography.h3.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
-              child: const Icon(Icons.menu_book_rounded, color: AppColors.primary, size: 22),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Trading Journal', style: AppTypography.bodySmall.copyWith(fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-                  Text('Review trades & psychology notes', style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
+              const SizedBox(width: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundPrimary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(4),
+                child: Row(
+                  children: ['1D', '1W', '1M', '1Y'].map((interval) {
+                    final isSelected = _selectedInterval == interval;
+                    return GestureDetector(
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        setState(() {
+                          _selectedInterval = interval;
+                          _touchedIndex = null;
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isSelected ? AppColors.white : AppColors.transparent,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: AppColors.black.withValues(alpha: 0.05),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  )
+                                ]
+                              : null,
+                        ),
+                        child: Text(
+                          interval,
+                          style: AppTypography.bodyXS.copyWith(
+                            color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            height: 180,
+            child: LineChart(
+              LineChartData(
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  getDrawingHorizontalLine: (value) => FlLine(
+                    color: AppColors.border.withValues(alpha: 0.5),
+                    strokeWidth: 1,
+                  ),
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 22,
+                      interval: 1,
+                      getTitlesWidget: (value, meta) {
+                        final idx = value.toInt();
+                        if (idx >= 0 && idx < labels.length && idx % (labels.length > 7 ? 3 : 1) == 0) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 6.0),
+                            child: Text(
+                              labels[idx],
+                              style: AppTypography.bodyXS.copyWith(
+                                color: AppColors.textTertiary,
+                                fontSize: 9,
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                minX: 0,
+                maxX: (points.length - 1).toDouble(),
+                minY: minVal,
+                maxY: maxVal,
+                lineTouchData: LineTouchData(
+                  touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
+                    if (!event.isInterestedForInteractions ||
+                        touchResponse == null ||
+                        touchResponse.lineBarSpots == null) {
+                      setState(() {
+                        _touchedIndex = null;
+                      });
+                      return;
+                    }
+                    setState(() {
+                      _touchedIndex = touchResponse.lineBarSpots!.first.spotIndex;
+                    });
+                  },
+                  handleBuiltInTouches: true,
+                  getTouchedSpotIndicator: (LineChartBarData barData, List<int> spotIndexes) {
+                    return spotIndexes.map((index) {
+                      return TouchedSpotIndicatorData(
+                        FlLine(
+                          color: themeColor.withValues(alpha: 0.3),
+                          strokeWidth: 2,
+                          dashArray: [5, 5],
+                        ),
+                        FlDotData(
+                          show: true,
+                          getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+                            radius: 6,
+                            color: themeColor,
+                            strokeWidth: 2,
+                            strokeColor: AppColors.white,
+                          ),
+                        ),
+                      );
+                    }).toList();
+                  },
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipColor: (spot) => AppColors.surface,
+                    getTooltipItems: (touchedSpots) {
+                      return touchedSpots.map((touchedSpot) {
+                        return LineTooltipItem(
+                          '₹${touchedSpot.y.toStringAsFixed(2)}',
+                          AppTypography.bodyXS.copyWith(
+                            color: themeColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }).toList();
+                    },
+                  ),
+                ),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: points.asMap().entries.map((e) {
+                      return FlSpot(e.key.toDouble(), e.value);
+                    }).toList(),
+                    isCurved: true,
+                    color: themeColor,
+                    barWidth: 3,
+                    isStrokeCapRound: true,
+                    dotData: const FlDotData(show: false),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      gradient: LinearGradient(
+                        colors: [
+                          themeColor.withValues(alpha: 0.25),
+                          themeColor.withValues(alpha: 0.0),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary, size: 22),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

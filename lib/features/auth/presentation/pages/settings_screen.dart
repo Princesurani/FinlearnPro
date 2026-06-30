@@ -111,13 +111,13 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  _buildMenuOption(
+                  _MenuOptionCard(
                     title: 'Edit Username',
                     icon: Icons.person_outline_rounded,
                     color: AppColors.primary,
                     onTap: () => _showEditProfileDialog(context, user),
                   ),
-                  _buildMenuOption(
+                  _MenuOptionCard(
                     title: 'Security & Password',
                     icon: Icons.security_rounded,
                     color: AppColors.oceanTeal,
@@ -135,13 +135,13 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  _buildMenuOption(
+                  _MenuOptionCard(
                     title: 'Notifications',
                     icon: Icons.notifications_none_rounded,
                     color: AppColors.sunsetOrange,
                     onTap: () => _showNotificationsSheet(context),
                   ),
-                  _buildMenuOption(
+                  _MenuOptionCard(
                     title: 'App Theme',
                     icon: Icons.dark_mode_outlined,
                     color: AppColors.electricBlue,
@@ -159,32 +159,25 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  _buildMenuOption(
+                  _MenuOptionCard(
                     title: 'Help Center',
                     icon: Icons.help_outline_rounded,
                     color: AppColors.neutralGray,
                     onTap: () => _showHelpCenter(context),
                   ),
-                  _buildMenuOption(
+                  _MenuOptionCard(
                     title: 'About FinLearn Pro',
                     icon: Icons.info_outline_rounded,
                     color: AppColors.neutralGray,
                     onTap: () => _showAbout(context),
                   ),
                   const SizedBox(height: 32),
-                  _buildMenuOption(
+                  _MenuOptionCard(
                     title: 'Log Out',
                     icon: Icons.logout_rounded,
                     color: AppColors.error,
                     isDestructive: true,
-                    onTap: () async {
-                      await AuthService().signOut();
-                      if (context.mounted) {
-                        Navigator.of(
-                          context,
-                        ).popUntil((route) => route.isFirst);
-                      }
-                    },
+                    onTap: () => _showLogoutConfirmation(context),
                   ),
                 ],
               ),
@@ -196,123 +189,288 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuOption({
-    required String title,
-    required IconData icon,
-    required Color color,
-    bool isDestructive = false,
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.black.withValues(alpha: 0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 22),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: isDestructive ? AppColors.error : AppColors.black87,
-                ),
-              ),
-            ),
-            Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textDisabled),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   void _showEditProfileDialog(BuildContext context, User? user) {
     final controller = TextEditingController(text: user?.displayName ?? '');
+    bool isLoading = false;
+
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Edit Username'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Username',
-            border: OutlineInputBorder(),
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.person_outline_rounded, color: AppColors.primary, size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Edit Username',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
           ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Choose a unique username to represent yourself on FinLearn Pro social leaderboards.',
+                style: TextStyle(color: AppColors.textSecondary, height: 1.4, fontSize: 13),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                enabled: !isLoading,
+                decoration: InputDecoration(
+                  labelText: 'Username',
+                  hintText: 'Enter new username',
+                  prefixIcon: const Icon(Icons.alternate_email_rounded, size: 18),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                  ),
+                ),
+              ),
+              if (isLoading) ...[
+                const SizedBox(height: 12),
+                const Row(
+                  children: [
+                    SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                    SizedBox(width: 10),
+                    Text('Checking availability...', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                  ],
+                ),
+              ]
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isLoading ? null : () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      final newName = controller.text.trim();
+                      if (newName.isEmpty || user == null) return;
+
+                      if (newName == user.displayName) {
+                        Navigator.pop(ctx);
+                        return;
+                      }
+
+                      setDialogState(() => isLoading = true);
+
+                      // Check username availability
+                      final isAvailable = await SocialRepository().checkUsernameAvailable(newName);
+                      if (!isAvailable) {
+                        setDialogState(() => isLoading = false);
+                        if (ctx.mounted) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(
+                            const SnackBar(
+                              content: Text('Username is already taken. Please choose another.'),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
+                        return;
+                      }
+
+                      try {
+                        await user.updateDisplayName(newName);
+                        await SocialRepository().updateProfile(user.uid, username: newName);
+                        if (ctx.mounted) {
+                          Navigator.pop(ctx);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Profile updated successfully!'),
+                              backgroundColor: AppColors.primary,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        setDialogState(() => isLoading = false);
+                        if (ctx.mounted) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(
+                            SnackBar(
+                              content: Text('Failed to update profile: $e'),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
+                      }
+                    },
+              child: const Text('Save', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            onPressed: () async {
-              if (controller.text.trim().isNotEmpty && user != null) {
-                await user.updateDisplayName(controller.text.trim());
-                try {
-                  await SocialRepository().updateProfile(user.uid, username: controller.text.trim());
-                } catch (_) {}
-                if (ctx.mounted) {
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Profile updated. Please restart app to see changes.')),
-                  );
-                }
-              }
-            },
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
-          ),
-        ],
       ),
     );
   }
 
   void _showSecurityDialog(BuildContext context, User? user) {
+    bool isSending = false;
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.oceanTeal.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.security_rounded, color: AppColors.oceanTeal, size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Security & Password',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Account Security',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'A secure reset link will be sent to your registered email address:\n${user?.email ?? 'your email'}.',
+                style: const TextStyle(color: AppColors.textSecondary, height: 1.4, fontSize: 13),
+              ),
+              if (isSending) ...[
+                const SizedBox(height: 16),
+                const Row(
+                  children: [
+                    SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.oceanTeal)),
+                    SizedBox(width: 10),
+                    Text('Sending password reset link...', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                  ],
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSending ? null : () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.oceanTeal,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
+              onPressed: isSending
+                  ? null
+                  : () async {
+                      if (user?.email != null) {
+                        setDialogState(() => isSending = true);
+                        try {
+                          await FirebaseAuth.instance.sendPasswordResetEmail(email: user!.email!);
+                          if (ctx.mounted) {
+                            Navigator.pop(ctx);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Password reset email sent!'),
+                                backgroundColor: AppColors.oceanTeal,
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          setDialogState(() => isSending = false);
+                          if (ctx.mounted) {
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed to send reset email: $e'),
+                                backgroundColor: AppColors.error,
+                              ),
+                            );
+                          }
+                        }
+                      }
+                    },
+              child: const Text('Send Reset Link', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLogoutConfirmation(BuildContext context) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Security & Password'),
-        content: Text('Send a password reset link to ${user?.email ?? 'your email'}?'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.error.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.logout_rounded, color: AppColors.error, size: 24),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Log Out',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Are you sure you want to log out of FinLearn Pro? You will need to sign back in to access your virtual trading account.',
+          style: TextStyle(height: 1.4),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.oceanTeal),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            ),
             onPressed: () async {
-              if (user?.email != null) {
-                await FirebaseAuth.instance.sendPasswordResetEmail(email: user!.email!);
-                if (ctx.mounted) {
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Password reset email sent!')),
-                  );
-                }
+              Navigator.pop(ctx);
+              await AuthService().signOut();
+              if (context.mounted) {
+                Navigator.of(context).popUntil((route) => route.isFirst);
               }
             },
-            child: const Text('Send Reset Link', style: TextStyle(color: Colors.white)),
+            child: const Text('Log Out', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -433,6 +591,104 @@ class SettingsScreen extends StatelessWidget {
         const SizedBox(height: 16),
         const Text('The ultimate financial learning and trading simulation platform.'),
       ],
+    );
+  }
+}
+
+class _MenuOptionCard extends StatefulWidget {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final bool isDestructive;
+  final VoidCallback? onTap;
+
+  const _MenuOptionCard({
+    required this.title,
+    required this.icon,
+    required this.color,
+    this.isDestructive = false,
+    this.onTap,
+  });
+
+  @override
+  State<_MenuOptionCard> createState() => _MenuOptionCardState();
+}
+
+class _MenuOptionCardState extends State<_MenuOptionCard> with SingleTickerProviderStateMixin {
+  late AnimationController _animController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _animController.forward(),
+      onTapUp: (_) {
+        _animController.reverse();
+        widget.onTap?.call();
+      },
+      onTapCancel: () => _animController.reverse(),
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border.withValues(alpha: 0.4)),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.black.withValues(alpha: 0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: widget.color.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: widget.color.withValues(alpha: 0.15)),
+                ),
+                child: Icon(widget.icon, color: widget.color, size: 22),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: widget.isDestructive ? AppColors.error : AppColors.textPrimary,
+                  ),
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppColors.textTertiary),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
