@@ -376,7 +376,6 @@ class _UnifiedOverviewCard extends StatelessWidget {
                     icon: Icons.local_fire_department_rounded,
                     label: 'Streak',
                     value: '${displayStreak}d',
-                    valueColor: AppColors.goldenYellow,
                     iconColor: const Color(0xFFFF8A50), // Sunset Orange
                   ),
                 ],

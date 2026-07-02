@@ -564,13 +564,13 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                                 challenge.explanation ??
                                 "No explanation provided.",
                             styleSheet: MarkdownStyleSheet(
-                              p: const TextStyle(
+                              p: TextStyle(
                                 fontSize: 15,
-                                color: AppColors.black87,
+                                color: AppColors.textSecondary,
                                 height: 1.5,
                               ),
-                              listBullet: const TextStyle(
-                                color: AppColors.black87,
+                              listBullet: TextStyle(
+                                color: AppColors.textSecondary,
                                 fontSize: 15,
                               ),
                             ),

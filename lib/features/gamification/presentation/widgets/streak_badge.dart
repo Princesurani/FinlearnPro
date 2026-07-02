@@ -70,10 +70,10 @@ class StreakBadge extends StatelessWidget {
                 const SizedBox(width: 3),
                 Text(
                   '$streak',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
-                    color: AppColors.textPrimary,
+                    color: AppColors.deepOrange,
                   ),
                 ),
               ],
