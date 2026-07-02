@@ -51,93 +51,103 @@ class _ExploreTabState extends State<ExploreTab>
     super.build(context);
     _ensureCache();
 
-    return ListView(
-      padding: const EdgeInsets.only(top: AppSpacing.md, bottom: 100),
-      children: [
-        _section(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SectionHeader(
-                title: 'Top Movers Today',
-                actionText: _showAllMovers ? 'Show Less' : 'See All',
-                isActionSmall: true,
-                onAction: () {
-                  setState(() {
-                    _showAllMovers = !_showAllMovers;
-                  });
-                },
-              ),
-              _buildMoverFilters(),
-              const SizedBox(height: AppSpacing.md),
-              InstrumentGrid2x2(
-                instruments: _topMovers(),
-                market: _market,
-                snapshots: _snaps,
-                bloc: widget.bloc,
-                showSeeMore: !_showAllMovers,
-                onSeeMore: () {
-                  setState(() {
-                    _showAllMovers = true;
-                  });
-                },
-              ),
-            ],
-          ),
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async {
+        widget.bloc.add(RefreshMarketData());
+        await Future.delayed(const Duration(milliseconds: 500));
+      },
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
         ),
-
-        _sectionGap(),
-
-        _section(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionHeader(title: 'Products & Tools'),
-              const ProductsToolsRow(),
-            ],
+        padding: const EdgeInsets.only(top: AppSpacing.md, bottom: 100),
+        children: [
+          _section(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SectionHeader(
+                  title: 'Top Movers Today',
+                  actionText: _showAllMovers ? 'Show Less' : 'See All',
+                  isActionSmall: true,
+                  onAction: () {
+                    setState(() {
+                      _showAllMovers = !_showAllMovers;
+                    });
+                  },
+                ),
+                _buildMoverFilters(),
+                const SizedBox(height: AppSpacing.md),
+                InstrumentGrid2x2(
+                  instruments: _topMovers(),
+                  market: _market,
+                  snapshots: _snaps,
+                  bloc: widget.bloc,
+                  showSeeMore: !_showAllMovers,
+                  onSeeMore: () {
+                    setState(() {
+                      _showAllMovers = true;
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
 
-        _sectionGap(),
+          _sectionGap(),
 
-        _section(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionHeader(
-                title: 'Sectors Trending Today',
-                subtitle: 'Sectors with the highest price change',
-              ),
-              SectorTrendingCard(
-                market: _market,
-                snapshots: _snaps,
-                instruments: _tradable,
-              ),
-            ],
+          _section(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SectionHeader(title: 'Products & Tools'),
+                const ProductsToolsRow(),
+              ],
+            ),
           ),
-        ),
 
-        _sectionGap(),
+          _sectionGap(),
 
-        _section(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionHeader(
-                title: 'Stocks in News',
-                actionText: 'Market news',
-              ),
-              InstrumentGrid2x2(
-                instruments: _stocksInNews(),
-                market: _market,
-                snapshots: _snaps,
-                bloc: widget.bloc,
-                showSeeMore: false,
-              ),
-            ],
+          _section(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SectionHeader(
+                  title: 'Sectors Trending Today',
+                  subtitle: 'Sectors with the highest price change',
+                ),
+                SectorTrendingCard(
+                  market: _market,
+                  snapshots: _snaps,
+                  instruments: _tradable,
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+
+          _sectionGap(),
+
+          _section(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SectionHeader(
+                  title: 'Stocks in News',
+                  actionText: 'Market news',
+                ),
+                InstrumentGrid2x2(
+                  instruments: _stocksInNews(),
+                  market: _market,
+                  snapshots: _snaps,
+                  bloc: widget.bloc,
+                  showSeeMore: false,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -79,6 +79,10 @@ class LearningBloc {
   Stream<LearningState> get stream => _stateController.stream;
   LearningState get state => _state;
 
+  Future<void> refresh() async {
+    await _loadProgress();
+  }
+
   Future<void> _loadProgress() async {
     final savedProgress = await _progressService.loadProgress(userId);
 

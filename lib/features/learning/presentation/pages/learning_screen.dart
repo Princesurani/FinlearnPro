@@ -175,12 +175,19 @@ class _LearningScreenState extends State<LearningScreen>
           });
         }
 
-        return CustomScrollView(
-          controller: _scrollController,
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-          slivers: [
+        final learningBloc = LearningBlocProvider.of(context);
+
+        return RefreshIndicator(
+          color: AppColors.primary,
+          onRefresh: () async {
+            await learningBloc.refresh();
+          },
+          child: CustomScrollView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            slivers: [
             SliverToBoxAdapter(
               child: SizedBox(height: MediaQuery.of(context).padding.top + 12),
             ),
@@ -248,8 +255,9 @@ class _LearningScreenState extends State<LearningScreen>
     
             const SliverToBoxAdapter(child: SizedBox(height: 120)),
           ],
-        );
-      }
+        ),
+      );
+    }
     );
   }
 

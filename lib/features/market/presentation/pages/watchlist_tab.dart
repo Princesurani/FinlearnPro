@@ -26,28 +26,46 @@ class WatchlistTab extends StatelessWidget {
         .where((i) => state.watchlist.contains(i.symbol))
         .toList();
 
-    if (watchlistInstruments.isEmpty) {
-      return _buildEmptyState(context);
-    }
-
-    return ListView.separated(
-      padding: const EdgeInsets.only(
-        left: AppSpacing.screenPaddingHorizontal,
-        right: AppSpacing.screenPaddingHorizontal,
-        top: AppSpacing.lg,
-        bottom: 120, // Padding for floating navbar
-      ),
-      itemCount: watchlistInstruments.length,
-      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
-      itemBuilder: (context, index) {
-        final instrument = watchlistInstruments[index];
-        final snapshot = state.snapshots[instrument.symbol];
-        return _WatchlistTile(
-          instrument: instrument,
-          snapshot: snapshot,
-          bloc: bloc,
-        );
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async {
+        bloc.add(RefreshMarketData());
+        await Future.delayed(const Duration(milliseconds: 500));
       },
+      child: watchlistInstruments.isEmpty
+          ? SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height - 250,
+                ),
+                child: _buildEmptyState(context),
+              ),
+            )
+          : ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              padding: const EdgeInsets.only(
+                left: AppSpacing.screenPaddingHorizontal,
+                right: AppSpacing.screenPaddingHorizontal,
+                top: AppSpacing.lg,
+                bottom: 120, // Padding for floating navbar
+              ),
+              itemCount: watchlistInstruments.length,
+              separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
+              itemBuilder: (context, index) {
+                final instrument = watchlistInstruments[index];
+                final snapshot = state.snapshots[instrument.symbol];
+                return _WatchlistTile(
+                  instrument: instrument,
+                  snapshot: snapshot,
+                  bloc: bloc,
+                );
+              },
+            ),
     );
   }
 

@@ -426,41 +426,53 @@ class _HomeScreenWrapper extends StatelessWidget {
           }
         }
 
-        return SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.fromLTRB(
-            20,
-            MediaQuery.of(context).padding.top + 12,
-            20,
-            100,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const HomeTopBar(),
-              const SizedBox(height: AppSpacing.md),
-              HomeOverviewCard(marketBloc: bloc),
-              if (continueCourse != null) ...[
+        return RefreshIndicator(
+          color: AppColors.primary,
+          onRefresh: () async {
+            bloc.add(RefreshMarketData());
+            await learningBloc.refresh();
+            if (context.mounted) {
+              context.read<SocialBloc>().add(LoadProfile(bloc.firebaseUid));
+            }
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            padding: EdgeInsets.fromLTRB(
+              20,
+              MediaQuery.of(context).padding.top + 12,
+              20,
+              100,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const HomeTopBar(),
                 const SizedBox(height: AppSpacing.md),
-                ContinueLearningCard(
-                  course: continueCourse,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => LearningBlocProvider(
-                          bloc: learningBloc,
-                          child: CourseDetailsScreen(
-                            course: continueCourse!,
+                HomeOverviewCard(marketBloc: bloc),
+                if (continueCourse != null) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  ContinueLearningCard(
+                    course: continueCourse,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => LearningBlocProvider(
+                            bloc: learningBloc,
+                            child: CourseDetailsScreen(
+                              course: continueCourse!,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    },
+                  ),
+                ],
+                const SizedBox(height: AppSpacing.md),
+                MarketNewsSentimentCard(onTradeTap: onNavigateToMarket),
               ],
-              const SizedBox(height: AppSpacing.md),
-              MarketNewsSentimentCard(onTradeTap: onNavigateToMarket),
-            ],
+            ),
           ),
         );
       },

@@ -28,20 +28,39 @@ class OrdersTab extends StatelessWidget {
       return state.tradableInstruments.any((i) => i.symbol == order.symbol);
     }).toList();
 
-    if (orders.isEmpty) {
-      return _buildEmptyState(context);
-    }
-
-    return ListView.separated(
-      padding: const EdgeInsets.only(
-        left: AppSpacing.screenPaddingHorizontal,
-        right: AppSpacing.screenPaddingHorizontal,
-        top: AppSpacing.lg,
-        bottom: 120,
-      ),
-      itemCount: orders.length,
-      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
-      itemBuilder: (context, index) => _buildOrderItem(context, orders[index]),
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async {
+        bloc.add(RefreshMarketData());
+        bloc.add(LoadOrders());
+        await Future.delayed(const Duration(milliseconds: 500));
+      },
+      child: orders.isEmpty
+          ? SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height - 250,
+                ),
+                child: _buildEmptyState(context),
+              ),
+            )
+          : ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              padding: const EdgeInsets.only(
+                left: AppSpacing.screenPaddingHorizontal,
+                right: AppSpacing.screenPaddingHorizontal,
+                top: AppSpacing.lg,
+                bottom: 120,
+              ),
+              itemCount: orders.length,
+              separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
+              itemBuilder: (context, index) => _buildOrderItem(context, orders[index]),
+            ),
     );
   }
 
