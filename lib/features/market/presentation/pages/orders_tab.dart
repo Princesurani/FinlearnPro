@@ -78,9 +78,9 @@ class OrdersTab extends StatelessWidget {
     Widget content = Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.white.withValues(alpha: 0.75),
+        color: AppColors.cardBackground,
         borderRadius: AppSpacing.borderRadiusMD,
-        border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
+        border: Border.all(color: AppColors.cardBorder, width: 1),
       ),
       child: Column(
         children: [

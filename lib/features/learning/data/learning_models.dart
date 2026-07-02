@@ -72,18 +72,29 @@ enum ContentType {
 }
 
 enum ProgressStatus {
-  notStarted(label: 'Not Started', color: AppColors.textTertiary),
+  notStarted(label: 'Not Started'),
 
-  inProgress(label: 'In Progress', color: AppColors.electricBlue),
+  inProgress(label: 'In Progress'),
 
-  completed(label: 'Completed', color: AppColors.success),
+  completed(label: 'Completed'),
 
-  needsReview(label: 'Needs Review', color: AppColors.warning);
+  needsReview(label: 'Needs Review');
 
-  const ProgressStatus({required this.label, required this.color});
+  const ProgressStatus({required this.label});
 
   final String label;
-  final Color color;
+  Color get color {
+    switch (this) {
+      case ProgressStatus.notStarted:
+        return AppColors.textTertiary;
+      case ProgressStatus.inProgress:
+        return AppColors.electricBlue;
+      case ProgressStatus.completed:
+        return AppColors.success;
+      case ProgressStatus.needsReview:
+        return AppColors.warning;
+    }
+  }
 }
 
 class LearningCategory {
@@ -504,15 +515,26 @@ class Achievement {
 }
 
 enum AchievementRarity {
-  common(label: 'Common', color: AppColors.textSecondary),
-  rare(label: 'Rare', color: AppColors.electricBlue),
-  epic(label: 'Epic', color: AppColors.auroraPurple),
-  legendary(label: 'Legendary', color: AppColors.goldenYellow);
+  common(label: 'Common'),
+  rare(label: 'Rare'),
+  epic(label: 'Epic'),
+  legendary(label: 'Legendary');
 
-  const AchievementRarity({required this.label, required this.color});
+  const AchievementRarity({required this.label});
 
   final String label;
-  final Color color;
+  Color get color {
+    switch (this) {
+      case AchievementRarity.common:
+        return AppColors.textSecondary;
+      case AchievementRarity.rare:
+        return AppColors.electricBlue;
+      case AchievementRarity.epic:
+        return AppColors.auroraPurple;
+      case AchievementRarity.legendary:
+        return AppColors.goldenYellow;
+    }
+  }
 }
 
 class LearningPath {

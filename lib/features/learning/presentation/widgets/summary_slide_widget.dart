@@ -83,7 +83,7 @@ class SummarySlideWidget extends StatelessWidget {
                     Expanded(
                       child: Text(
                         entry.value,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           height: 1.5,
                           color: AppColors.textPrimary,

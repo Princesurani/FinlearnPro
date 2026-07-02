@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/theme/app_colors.dart';
+import 'core/theme/app_theme.dart';
+import 'core/theme/theme_cubit.dart';
 import 'features/splash/splash.dart';
 import 'features/auth/auth.dart';
 import 'features/auth/data/auth_service.dart';
@@ -20,7 +23,7 @@ class _FinLearnAppState extends State<FinLearnApp> {
   @override
   void initState() {
     super.initState();
-    _configureSystemUI();
+    _configureOrientations();
 
     AuthService().authStateChanges.listen((user) {
       if (mounted) {
@@ -32,20 +35,22 @@ class _FinLearnAppState extends State<FinLearnApp> {
     });
   }
 
-  void _configureSystemUI() {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: AppColors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: AppColors.backgroundSecondary,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ),
-    );
-
+  void _configureOrientations() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+  }
+
+  void _updateSystemUI(bool isDark) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: AppColors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarColor: isDark ? AppColors.darkBackground : AppColors.backgroundSecondary,
+        systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      ),
+    );
   }
 
   void _handleSplashComplete() {
@@ -62,13 +67,30 @@ class _FinLearnAppState extends State<FinLearnApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FinLearn Pro',
-      debugShowCheckedModeBanner: false,
-      theme: _buildLightTheme(),
-      home: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 400),
-        child: _buildCurrentScreen(),
+    return BlocProvider<ThemeCubit>(
+      create: (_) => ThemeCubit(),
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, mode) {
+          final platformBrightness = MediaQuery.platformBrightnessOf(context);
+          final isSystemDark = platformBrightness == Brightness.dark;
+          
+          context.read<ThemeCubit>().updateSystemTheme(isSystemDark);
+          
+          final isDark = mode == ThemeMode.dark || (mode == ThemeMode.system && isSystemDark);
+          _updateSystemUI(isDark);
+
+          return MaterialApp(
+            title: 'FinLearn Pro',
+            debugShowCheckedModeBanner: false,
+            themeMode: mode,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            home: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              child: _buildCurrentScreen(),
+            ),
+          );
+        },
       ),
     );
   }
@@ -92,102 +114,6 @@ class _FinLearnAppState extends State<FinLearnApp> {
           firebaseUid: _uid,
         );
     }
-  }
-
-  ThemeData _buildLightTheme() {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.light,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        brightness: Brightness.light,
-        primary: AppColors.primary,
-        onPrimary: AppColors.white,
-        secondary: AppColors.oceanTeal,
-        onSecondary: AppColors.white,
-        error: AppColors.error,
-        surface: AppColors.surface,
-        onSurface: AppColors.textPrimary,
-      ),
-      scaffoldBackgroundColor: AppColors.backgroundPrimary,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        iconTheme: IconThemeData(color: AppColors.textPrimary),
-        titleTextStyle: TextStyle(
-          color: AppColors.textPrimary,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.backgroundSecondary,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textTertiary,
-        type: BottomNavigationBarType.fixed,
-        elevation: 0,
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.white,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.backgroundTertiary,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppColors.primary,
-            width: 2,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.error),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
-        ),
-      ),
-      cardTheme: const CardThemeData(
-        elevation: 0,
-        color: AppColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-          side: BorderSide(color: AppColors.border),
-        ),
-      ),
-      dividerTheme: const DividerThemeData(
-        color: AppColors.divider,
-        thickness: 1,
-        space: 1,
-      ),
-      fontFamily: 'Inter',
-      pageTransitionsTheme: const PageTransitionsTheme(
-        builders: {
-          TargetPlatform.android: ZoomPageTransitionsBuilder(),
-          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-        },
-      ),
-    );
   }
 }
 

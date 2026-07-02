@@ -192,7 +192,7 @@ class _AuroraPainter extends CustomPainter {
     final paint = Paint()
       ..shader = ui.Gradient.linear(Offset.zero, Offset(0, size.height), [
         AppColors.backgroundPrimary,
-        const Color(0xFFF1F5F9),
+        AppColors.isDark ? AppColors.backgroundPrimary : const Color(0xFFF1F5F9),
       ]);
 
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
@@ -283,7 +283,8 @@ class _AuroraPainter extends CustomPainter {
         size.width * 0.8,
         [
           AppColors.transparent,
-          AppColors.white.withValues(alpha: 0.05 * intensity),
+          (AppColors.isDark ? AppColors.black : AppColors.white)
+              .withValues(alpha: 0.05 * intensity),
         ],
         [0.5, 1.0],
       );

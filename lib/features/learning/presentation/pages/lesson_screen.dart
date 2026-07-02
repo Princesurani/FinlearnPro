@@ -1232,7 +1232,7 @@ class _LessonScreenState extends State<LessonScreen>
               children: [
                 Text(
                   widget.course.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
@@ -1240,7 +1240,7 @@ class _LessonScreenState extends State<LessonScreen>
                 const SizedBox(height: 2),
                 Text(
                   widget.lesson.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
@@ -1311,7 +1311,7 @@ class _LessonScreenState extends State<LessonScreen>
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -1383,7 +1383,7 @@ class _LessonScreenState extends State<LessonScreen>
           Expanded(
             child: Text(
               _quizFeedbackMessage,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -1418,7 +1418,7 @@ class _LessonScreenState extends State<LessonScreen>
             children: [
               Text(
                 '${_currentPage + 1} of ${_content.length}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   color: AppColors.textSecondary,
                   fontWeight: FontWeight.w500,
@@ -1477,7 +1477,7 @@ class _LessonScreenState extends State<LessonScreen>
                     curve: Curves.easeInOut,
                   );
                 },
-                icon: const Icon(
+                icon: Icon(
                   Icons.arrow_back_rounded,
                   color: AppColors.textPrimary,
                   size: 20,
@@ -1599,7 +1599,7 @@ class IntroContent extends LessonContent {
           const SizedBox(height: 32),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
@@ -1609,7 +1609,7 @@ class IntroContent extends LessonContent {
           const SizedBox(height: 12),
           Text(
             subtitle,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               color: AppColors.textSecondary,
             ),
@@ -1625,7 +1625,7 @@ class IntroContent extends LessonContent {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.timer_outlined,
                   size: 16,
                   color: AppColors.textSecondary,
@@ -1633,7 +1633,7 @@ class IntroContent extends LessonContent {
                 const SizedBox(width: 6),
                 Text(
                   estimatedTime,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
                     fontWeight: FontWeight.w500,
@@ -1752,7 +1752,7 @@ class _CompletionDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               '🎉 Lesson Complete!',
               style: TextStyle(
                 fontSize: 20,
@@ -1764,7 +1764,7 @@ class _CompletionDialog extends StatelessWidget {
             Text(
               'Great job completing "$lessonTitle"',
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 color: AppColors.textSecondary,
               ),

@@ -25,10 +25,10 @@ class MarketSelector extends StatelessWidget {
           vertical: 6, // Reduced from 8 (AppSpacing.xs)
         ),
         decoration: BoxDecoration(
-          color: AppColors.white, // Changed from gray for better visibility
+          color: AppColors.cardBackground, // Dynamic card background
           borderRadius: AppSpacing.borderRadiusSM,
           border: Border.all(
-            color: AppColors.border.withValues(alpha: 0.8), // Darker border
+            color: AppColors.cardBorder, // Dynamic card border
             width: 1.5, // Increased from 0.5 for better visibility
           ),
           boxShadow: [
@@ -47,7 +47,7 @@ class MarketSelector extends StatelessWidget {
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(width: 2),
-            const Icon(
+            Icon(
               Icons.keyboard_arrow_down_rounded,
               size: 18,
               color: AppColors.textPrimary,
@@ -88,7 +88,7 @@ class _MarketSelectorSheet extends StatelessWidget {
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: AppSpacing.borderRadiusTopXL,
       ),
@@ -123,7 +123,7 @@ class _MarketSelectorSheet extends StatelessWidget {
             ),
           ),
 
-          const Divider(height: 1, color: AppColors.borderLight),
+          Divider(height: 1, color: AppColors.borderLight),
 
           ...MarketRegime.values.map(_buildOption),
 

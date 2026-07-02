@@ -9,6 +9,7 @@ import '../../../learning/bloc/learning_bloc_provider.dart';
 import '../../bloc/challenge_cubit.dart';
 import '../../data/models/daily_challenge.dart';
 
+
 class DailyChallengeScreen extends StatefulWidget {
   const DailyChallengeScreen({super.key});
 
@@ -72,9 +73,9 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
             maxHeight: MediaQuery.of(context).size.height * 0.85,
           ),
           padding: const EdgeInsets.all(24),
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: AppColors.cardBackground,
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(30),
               topRight: Radius.circular(30),
             ),
@@ -100,22 +101,22 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                 const SizedBox(height: 16),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.black87,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 8),
                 MarkdownBody(
                   data: description,
                   styleSheet: MarkdownStyleSheet(
-                    p: const TextStyle(
+                    p: TextStyle(
                       fontSize: 16,
                       color: AppColors.textSecondary,
                       height: 1.5,
                     ),
-                    listBullet: const TextStyle(
+                    listBullet: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 16,
                     ),
@@ -189,27 +190,27 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
+      backgroundColor: AppColors.backgroundPrimary,
       appBar: AppBar(
         backgroundColor: AppColors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.close, color: AppColors.black87),
+          icon: Icon(Icons.close, color: AppColors.textPrimary),
         ),
-        title: const Row(
+        title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            const Icon(
               Icons.local_fire_department_rounded,
               color: AppColors.sunsetOrange,
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Text(
               'Daily Shield',
               style: TextStyle(
-                color: AppColors.black87,
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
@@ -274,7 +275,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
             return Center(
               child: Text(
                 state.message,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 16,
                 ),
@@ -315,15 +316,20 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: AppColors.cardBackground,
                     borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.black.withValues(alpha: 0.05),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
+                    border: AppColors.isDark
+                        ? Border.all(color: AppColors.cardBorder, width: 1.5)
+                        : null,
+                    boxShadow: AppColors.isDark
+                        ? null
+                        : [
+                            BoxShadow(
+                              color: AppColors.black.withValues(alpha: 0.05),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,10 +355,10 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                             children: [
                               Text(
                                 challenge.assetSymbol,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.black87,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                               Text(
@@ -475,7 +481,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                             const SizedBox(height: 6),
                             Text(
                               challenge.scenarioText,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.textPrimary,
@@ -490,12 +496,12 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
                 ),
                 const SizedBox(height: 30),
 
-                const Text(
+                Text(
                   'What is the most probable next move?',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.black87,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -636,7 +642,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
     final bool isSelected = _selectedOptionIndex == index;
 
     Color borderColor = AppColors.transparent;
-    Color backgroundColor = AppColors.white;
+    Color backgroundColor = AppColors.cardBackground;
 
     if (isSubmitted && correctOptionIndex != null) {
       if (index == correctOptionIndex) {
@@ -652,7 +658,9 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
     } else if (!isSubmitted) {
       if (isSelected) {
         borderColor = const Color(0xFF2962FF);
-        backgroundColor = const Color(0xFFF0EDFF);
+        backgroundColor = AppColors.isDark
+            ? const Color(0xFF2962FF).withValues(alpha: 0.15)
+            : const Color(0xFFF0EDFF);
       }
     }
 
@@ -664,7 +672,12 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor, width: 2),
+          border: Border.all(
+            color: borderColor == AppColors.transparent
+                ? AppColors.cardBorder
+                : borderColor,
+            width: 2,
+          ),
           boxShadow: [
             if (!isSelected && !isSubmitted)
               BoxShadow(
@@ -688,7 +701,7 @@ class _DailyChallengeScreenState extends State<DailyChallengeScreen> {
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                   color: AppColors.textPrimary,

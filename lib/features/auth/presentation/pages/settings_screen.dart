@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/theme_cubit.dart';
 import '../../data/auth_service.dart';
 import '../../../social/data/repositories/social_repository.dart';
 
@@ -12,20 +14,26 @@ class SettingsScreen extends StatelessWidget {
     final user = AuthService().currentUser;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE),
+      backgroundColor: AppColors.backgroundPrimary,
       body: SingleChildScrollView(
         child: Column(
           children: [
             // Header Section with Gradient
             Container(
               padding: const EdgeInsets.fromLTRB(20, 60, 20, 40),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF2962FF), Color(0xFF00B4D8)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                gradient: AppColors.isDark
+                    ? const LinearGradient(
+                        colors: [Color(0xFF1A1F2C), Color(0xFF0F121C)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : const LinearGradient(
+                        colors: [Color(0xFF2962FF), Color(0xFF00B4D8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
                 ),
@@ -55,24 +63,36 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
                   Container(
-                    width: 100,
-                    height: 100,
+                    padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
-                      color: AppColors.white,
+                      gradient: AppColors.isDark
+                          ? const LinearGradient(
+                              colors: [Color(0xFF60A5FA), Color(0xFF1A1F2C), Color(0xFF0F121C)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                          : AppColors.auroraGradient,
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.white, width: 4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.black.withValues(alpha: 0.1),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
                     ),
-                    child: const Icon(
-                      Icons.person,
-                      size: 60,
-                      color: Color(0xFF2962FF),
+                    child: Container(
+                      width: 94,
+                      height: 94,
+                      decoration: BoxDecoration(
+                        color: AppColors.isDark ? AppColors.darkSurface : AppColors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.black.withValues(alpha: 0.1),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.person,
+                        size: 60,
+                        color: AppColors.isDark ? AppColors.textPrimary : const Color(0xFF2962FF),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -100,7 +120,7 @@ class SettingsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(left: 8, bottom: 12),
                     child: Text(
                       'Account',
@@ -124,7 +144,7 @@ class SettingsScreen extends StatelessWidget {
                     onTap: () => _showSecurityDialog(context, user),
                   ),
                   const SizedBox(height: 24),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(left: 8, bottom: 12),
                     child: Text(
                       'Preferences',
@@ -148,7 +168,7 @@ class SettingsScreen extends StatelessWidget {
                     onTap: () => _showThemeSheet(context),
                   ),
                   const SizedBox(height: 24),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(left: 8, bottom: 12),
                     child: Text(
                       'Support',
@@ -223,7 +243,7 @@ class SettingsScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Choose a unique username to represent yourself on FinLearn Pro social leaderboards.',
                 style: TextStyle(color: AppColors.textSecondary, height: 1.4, fontSize: 13),
               ),
@@ -244,7 +264,7 @@ class SettingsScreen extends StatelessWidget {
               ),
               if (isLoading) ...[
                 const SizedBox(height: 12),
-                const Row(
+                Row(
                   children: [
                     SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
                     SizedBox(width: 10),
@@ -257,7 +277,7 @@ class SettingsScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: isLoading ? null : () => Navigator.pop(ctx),
-              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+              child: Text('Cancel', style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -362,11 +382,11 @@ class SettingsScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'A secure reset link will be sent to your registered email address:\n${user?.email ?? 'your email'}.',
-                style: const TextStyle(color: AppColors.textSecondary, height: 1.4, fontSize: 13),
+                style: TextStyle(color: AppColors.textSecondary, height: 1.4, fontSize: 13),
               ),
               if (isSending) ...[
                 const SizedBox(height: 16),
-                const Row(
+                Row(
                   children: [
                     SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.oceanTeal)),
                     SizedBox(width: 10),
@@ -379,7 +399,7 @@ class SettingsScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: isSending ? null : () => Navigator.pop(ctx),
-              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+              child: Text('Cancel', style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -455,7 +475,7 @@ class SettingsScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+            child: Text('Cancel', style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -517,39 +537,52 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showThemeSheet(BuildContext context) {
-    int selectedTheme = 0; // 0 = System, 1 = Light, 2 = Dark
+    final themeCubit = context.read<ThemeCubit>();
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) => StatefulBuilder(
-        builder: (context, setState) => Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('App Theme', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 20),
-              ListTile(
-                title: const Text('System Default', style: TextStyle(fontWeight: FontWeight.w600)),
-                trailing: selectedTheme == 0 ? const Icon(Icons.check_circle_rounded, color: AppColors.electricBlue) : const Icon(Icons.circle_outlined, color: AppColors.neutralGray),
-                onTap: () => setState(() => selectedTheme = 0),
-              ),
-              ListTile(
-                title: const Text('Light Mode', style: TextStyle(fontWeight: FontWeight.w600)),
-                trailing: selectedTheme == 1 ? const Icon(Icons.check_circle_rounded, color: AppColors.electricBlue) : const Icon(Icons.circle_outlined, color: AppColors.neutralGray),
-                onTap: () => setState(() => selectedTheme = 1),
-              ),
-              ListTile(
-                title: const Text('Dark Mode (Beta)', style: TextStyle(fontWeight: FontWeight.w600)),
-                trailing: selectedTheme == 2 ? const Icon(Icons.check_circle_rounded, color: AppColors.electricBlue) : const Icon(Icons.circle_outlined, color: AppColors.neutralGray),
-                onTap: () => setState(() => selectedTheme = 2),
-              ),
-              const SizedBox(height: 20),
-            ],
+      builder: (ctx) {
+        return BlocProvider.value(
+          value: themeCubit,
+          child: BlocBuilder<ThemeCubit, ThemeMode>(
+            builder: (context, currentMode) {
+              return Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('App Theme', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 20),
+                    ListTile(
+                      title: const Text('System Default', style: TextStyle(fontWeight: FontWeight.w600)),
+                      trailing: currentMode == ThemeMode.system
+                          ? const Icon(Icons.check_circle_rounded, color: AppColors.electricBlue)
+                          : const Icon(Icons.circle_outlined, color: AppColors.neutralGray),
+                      onTap: () => themeCubit.setThemeMode(ThemeMode.system),
+                    ),
+                    ListTile(
+                      title: const Text('Light Mode', style: TextStyle(fontWeight: FontWeight.w600)),
+                      trailing: currentMode == ThemeMode.light
+                          ? const Icon(Icons.check_circle_rounded, color: AppColors.electricBlue)
+                          : const Icon(Icons.circle_outlined, color: AppColors.neutralGray),
+                      onTap: () => themeCubit.setThemeMode(ThemeMode.light),
+                    ),
+                    ListTile(
+                      title: const Text('Dark Mode', style: TextStyle(fontWeight: FontWeight.w600)),
+                      trailing: currentMode == ThemeMode.dark
+                          ? const Icon(Icons.check_circle_rounded, color: AppColors.electricBlue)
+                          : const Icon(Icons.circle_outlined, color: AppColors.neutralGray),
+                      onTap: () => themeCubit.setThemeMode(ThemeMode.dark),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              );
+            },
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -651,9 +684,9 @@ class _MenuOptionCardState extends State<_MenuOptionCard> with SingleTickerProvi
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.white.withValues(alpha: 0.75),
+            color: AppColors.cardBackground,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.white.withValues(alpha: 0.4)),
+            border: Border.all(color: AppColors.cardBorder),
             boxShadow: [
               BoxShadow(
                 color: AppColors.black.withValues(alpha: 0.02),
@@ -684,7 +717,7 @@ class _MenuOptionCardState extends State<_MenuOptionCard> with SingleTickerProvi
                   ),
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppColors.textTertiary),
+              Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppColors.textTertiary),
             ],
           ),
         ),

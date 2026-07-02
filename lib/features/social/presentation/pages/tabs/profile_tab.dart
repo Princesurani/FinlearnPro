@@ -154,7 +154,10 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
           // Name + bio
           Text(
             profile.username,
-            style: AppTypography.h4.copyWith(fontWeight: FontWeight.bold),
+            style: AppTypography.h4.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
             textAlign: TextAlign.center,
           ),
           if (profile.bio != null && profile.bio!.isNotEmpty) ...[
@@ -595,7 +598,7 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
           padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
           child: Container(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.backgroundPrimary,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
@@ -730,8 +733,8 @@ class _ProfileTabState extends State<ProfileTab> with SingleTickerProviderStateM
   InputDecoration _inputDeco(String hint) => InputDecoration(
     hintText: hint, filled: true, fillColor: AppColors.surface, isDense: true,
     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.border)),
-    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.border)),
+    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: AppColors.border)),
+    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: AppColors.border)),
   );
 }
 
@@ -743,10 +746,10 @@ class _Card extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: AppColors.white.withValues(alpha: 0.75),
-      borderRadius: AppSpacing.borderRadiusMD,
-      border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: AppSpacing.borderRadiusLG,
+        border: Border.all(color: AppColors.cardBorder, width: 1),
     ),
     child: child,
   );

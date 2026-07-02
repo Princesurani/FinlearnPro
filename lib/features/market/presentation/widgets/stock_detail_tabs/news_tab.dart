@@ -105,7 +105,7 @@ class _NewsTabState extends State<NewsTab> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.newspaper_rounded, size: 48, color: AppColors.textDisabled),
+              Icon(Icons.newspaper_rounded, size: 48, color: AppColors.textDisabled),
               const SizedBox(height: 12),
               Text(
                 'No recent news for ${widget.instrument.symbol}',
@@ -121,7 +121,7 @@ class _NewsTabState extends State<NewsTab> {
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.lg),
       itemCount: _newsEvents.length + 1,
-      separatorBuilder: (context, index) => const Divider(color: AppColors.border, height: 32),
+      separatorBuilder: (context, index) => Divider(color: AppColors.border, height: 32),
       itemBuilder: (context, index) {
         if (index == _newsEvents.length) {
           return const SizedBox(height: 100); // Bottom padding
@@ -178,7 +178,7 @@ class _NewsTabState extends State<NewsTab> {
           children: [
             Row(
               children: [
-                const Icon(Icons.article_outlined, size: 16, color: AppColors.textTertiary),
+                Icon(Icons.article_outlined, size: 16, color: AppColors.textTertiary),
                 const SizedBox(width: 4),
                 Text(
                   source,

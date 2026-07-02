@@ -72,7 +72,7 @@ class _ScenarioSlideWidgetState extends State<ScenarioSlideWidget> {
             ),
             child: Text(
               widget.scenario.situation,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -123,7 +123,7 @@ class _ScenarioSlideWidgetState extends State<ScenarioSlideWidget> {
                     children: [
                       Text(
                         choice.text,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: AppColors.textPrimary,

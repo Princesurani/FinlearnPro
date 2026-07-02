@@ -74,7 +74,7 @@ class TopicDetailScreen extends StatelessWidget {
                   color: AppColors.backgroundPrimary,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.arrow_back_ios_new_rounded,
                   color: AppColors.textPrimary,
                   size: 18,
@@ -192,9 +192,9 @@ class TopicDetailScreen extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.white.withValues(alpha: 0.75),
+                          color: AppColors.cardBackground,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
+                          border: Border.all(color: AppColors.cardBorder, width: 1),
                           boxShadow: const [
                             BoxShadow(
                               color: Color(0x05000000),

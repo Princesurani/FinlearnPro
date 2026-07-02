@@ -62,7 +62,7 @@ class _QuizSlideWidgetState extends State<QuizSlideWidget> {
           const SizedBox(height: 24),
           Text(
             widget.question.question,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -150,7 +150,7 @@ class _QuizSlideWidgetState extends State<QuizSlideWidget> {
                       Expanded(
                         child: Text(
                           option,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             color: AppColors.textPrimary,
                           ),
@@ -180,7 +180,7 @@ class _QuizSlideWidgetState extends State<QuizSlideWidget> {
                   Expanded(
                     child: Text(
                       widget.question.explanation,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: AppColors.textPrimary,
                       ),

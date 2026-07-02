@@ -70,7 +70,7 @@ class _IndexTickerState extends State<IndexTicker> {
               ),
             ),
             AppSpacing.gapXXS,
-            const SizedBox(
+            SizedBox(
               width: 14,
               height: 14,
               child: CircularProgressIndicator(
@@ -102,10 +102,10 @@ class _IndexTickerState extends State<IndexTicker> {
         width: 160,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.75),
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.cardBackground,
+          borderRadius: AppSpacing.borderRadiusMD,
           border: Border.all(
-            color: AppColors.white.withValues(alpha: 0.4),
+            color: AppColors.cardBorder,
             width: 1,
           ),
           boxShadow: const [
@@ -122,7 +122,7 @@ class _IndexTickerState extends State<IndexTicker> {
           children: [
             Text(
               index.name,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
@@ -142,6 +142,7 @@ class _IndexTickerState extends State<IndexTicker> {
                       _formatIndexValue(snap.price),
                       style: AppTypography.number.copyWith(
                         fontWeight: AppTypography.semiBold,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                   ),

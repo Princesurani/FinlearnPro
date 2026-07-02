@@ -225,7 +225,7 @@ class LearningPathDetailsScreen extends StatelessWidget {
                     child: isCompleted
                         ? const Icon(Icons.check_rounded, color: AppColors.white, size: 18)
                         : (isLocked
-                            ? const Icon(Icons.lock_outline_rounded, color: AppColors.textTertiary, size: 16)
+                            ? Icon(Icons.lock_outline_rounded, color: AppColors.textTertiary, size: 16)
                             : Text(
                                 '${index + 1}',
                                 style: TextStyle(
@@ -303,7 +303,7 @@ class LearningPathDetailsScreen extends StatelessWidget {
                           const Spacer(),
                           Text(
                             course.formattedDuration,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.textTertiary,
                               fontSize: 12,
                             ),
@@ -322,7 +322,7 @@ class LearningPathDetailsScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         course.description,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           color: AppColors.textTertiary,
                         ),

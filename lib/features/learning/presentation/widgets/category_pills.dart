@@ -209,12 +209,12 @@ class _CategoryPillItemState extends State<_CategoryPillItem>
           width: 85,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? category.color : AppColors.white.withValues(alpha: 0.75),
+            color: isSelected ? category.color : AppColors.cardBackground,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isSelected
                   ? category.color
-                  : AppColors.white.withValues(alpha: 0.4),
+                  : AppColors.cardBorder,
               width: isSelected ? 2 : 1.0,
             ),
             boxShadow: [

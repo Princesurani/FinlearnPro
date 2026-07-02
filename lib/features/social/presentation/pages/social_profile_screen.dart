@@ -115,7 +115,7 @@ class _SocialProfileViewState extends State<_SocialProfileView>
             ),
           ),
           const SizedBox(height: 1),
-          const Text(
+          Text(
             'Profile & Social',
             style: TextStyle(
               fontSize: 16,

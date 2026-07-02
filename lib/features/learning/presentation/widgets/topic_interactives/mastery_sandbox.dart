@@ -137,7 +137,7 @@ class _MasterySandboxState extends State<MasterySandbox> {
             children: [
               TextButton.icon(
                 onPressed: _reset,
-                icon: const Icon(Icons.refresh_rounded, color: AppColors.textSecondary),
+                icon: Icon(Icons.refresh_rounded, color: AppColors.textSecondary),
                 label: Text('Reset', style: AppTypography.label.copyWith(color: AppColors.textSecondary)),
               ),
               ElevatedButton.icon(

@@ -191,10 +191,10 @@ class _LearningPathCardState extends State<_LearningPathCard>
           width: 280,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.white.withValues(alpha: 0.75),
+            color: AppColors.cardBackground,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: AppColors.white.withValues(alpha: 0.4),
+              color: AppColors.cardBorder,
               width: 1.5,
             ),
             boxShadow: [
@@ -241,7 +241,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                       children: [
                         Text(
                           path.title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
@@ -260,7 +260,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                             const SizedBox(width: 4),
                             Text(
                               '${path.estimatedWeeks} weeks',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
                                 color: AppColors.textTertiary,
                               ),
@@ -277,7 +277,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                             const SizedBox(width: 8),
                             Text(
                               '$totalCourses courses',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
                                 color: AppColors.textTertiary,
                               ),
@@ -370,7 +370,7 @@ class _LearningPathCardState extends State<_LearningPathCard>
                       children: [
                         Text(
                           '$completedCourses of $totalCourses completed',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: AppColors.textSecondary,

@@ -174,7 +174,7 @@ class _NotificationBannerState extends State<NotificationBanner>
                     children: [
                       Text(
                         widget.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
@@ -183,7 +183,7 @@ class _NotificationBannerState extends State<NotificationBanner>
                       const SizedBox(height: 2),
                       Text(
                         widget.description,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11.5,
                           color: AppColors.textSecondary,
                           height: 1.3,
@@ -196,7 +196,7 @@ class _NotificationBannerState extends State<NotificationBanner>
                 GestureDetector(
                   onTap: _dismiss,
                   behavior: HitTestBehavior.opaque,
-                  child: const Padding(
+                  child: Padding(
                     padding: EdgeInsets.all(4),
                     child: Icon(
                       Icons.close_rounded,

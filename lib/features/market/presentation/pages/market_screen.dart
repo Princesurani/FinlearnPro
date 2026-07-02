@@ -86,7 +86,7 @@ class _MarketScreenState extends State<MarketScreen>
                 ),
               ),
               const SizedBox(height: 1),
-              const Text(
+              Text(
                 'Global Markets',
                 style: TextStyle(
                   fontSize: 16,
@@ -309,7 +309,7 @@ class _ExploreStreamWrapper extends StatelessWidget {
         final state = snap.data!;
 
         if (state.status == MarketStatus.loading) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -335,7 +335,7 @@ class _ExploreStreamWrapper extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.cloud_off_rounded,
                     size: 56,
                     color: AppColors.textTertiary,

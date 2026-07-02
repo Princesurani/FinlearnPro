@@ -100,10 +100,10 @@ class _StockCell extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.75),
+          color: AppColors.cardBackground,
           borderRadius: AppSpacing.borderRadiusMD,
           border: Border.all(
-            color: AppColors.white.withValues(alpha: 0.4),
+            color: AppColors.cardBorder,
             width: 1,
           ),
           boxShadow: const [
@@ -160,6 +160,7 @@ class _StockCell extends StatelessWidget {
                 formatter.formatPrice(snapshot!.price),
                 style: AppTypography.number.copyWith(
                   fontWeight: AppTypography.semiBold,
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 1),
@@ -298,10 +299,10 @@ class _SeeMoreCell extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.75),
+          color: AppColors.cardBackground,
           borderRadius: AppSpacing.borderRadiusMD,
           border: Border.all(
-            color: AppColors.white.withValues(alpha: 0.4),
+            color: AppColors.cardBorder,
             width: 1,
           ),
           boxShadow: const [
@@ -350,7 +351,7 @@ class _LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return SizedBox(
       height: 16,
       width: 16,
       child: CircularProgressIndicator(

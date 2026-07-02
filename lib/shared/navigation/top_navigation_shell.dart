@@ -190,9 +190,9 @@ class _TopBarButtonState extends State<TopBarButton> {
           height: 40, // Reduced from 44 for better mobile fit
           width: 40, // Reduced from 44 for better mobile fit
           decoration: BoxDecoration(
-            color: AppColors.white.withValues(alpha: 0.75),
+            color: AppColors.cardBackground,
             borderRadius: BorderRadius.circular(12), // Slightly smaller radius
-            border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
+            border: Border.all(color: AppColors.cardBorder, width: 1),
             boxShadow: [
               BoxShadow(
                 color: AppColors.black.withValues(alpha: 0.03),

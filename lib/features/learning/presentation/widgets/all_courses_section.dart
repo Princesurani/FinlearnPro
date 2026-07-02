@@ -68,10 +68,10 @@ class _CourseCard extends StatelessWidget {
     return Container(
       width: 200,
       decoration: BoxDecoration(
-        color: AppColors.white.withValues(alpha: 0.75),
+        color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
         border: Border.all(
-          color: AppColors.white.withValues(alpha: 0.4),
+          color: AppColors.cardBorder,
           width: 1,
         ),
         boxShadow: [
@@ -151,7 +151,7 @@ class _CourseCard extends StatelessWidget {
                       const Spacer(),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.access_time_rounded,
                             size: 14,
                             color: AppColors.textTertiary,

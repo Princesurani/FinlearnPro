@@ -173,7 +173,7 @@ class _StorySlideWidgetState extends State<StorySlideWidget>
             ),
             child: Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -209,7 +209,7 @@ class _StorySlideWidgetState extends State<StorySlideWidget>
               Expanded(
                 child: _buildFormattedText(
                   text,
-                  const TextStyle(
+                  TextStyle(
                     fontSize: 15,
                     height: 1.6,
                     color: AppColors.textPrimary,
@@ -226,7 +226,7 @@ class _StorySlideWidgetState extends State<StorySlideWidget>
           padding: const EdgeInsets.only(bottom: 14),
           child: _buildFormattedText(
             text,
-            const TextStyle(
+            TextStyle(
               fontSize: 15.5,
               height: 1.7,
               color: AppColors.textPrimary,

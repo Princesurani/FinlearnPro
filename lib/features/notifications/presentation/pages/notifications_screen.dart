@@ -88,11 +88,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.textPrimary, size: 20),
+          icon: Icon(Icons.arrow_back_ios, color: AppColors.textPrimary, size: 20),
         ),
         title: Text(
           unreadCount > 0 ? 'Notifications ($unreadCount)' : 'Notifications',
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -152,7 +152,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 )
               ],
             ),
-            child: const Icon(
+            child: Icon(
               Icons.notifications_off_outlined,
               size: 48,
               color: AppColors.textTertiary,
@@ -274,7 +274,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _formatTimeAgo(item.timestamp),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     color: AppColors.textTertiary,
                   ),

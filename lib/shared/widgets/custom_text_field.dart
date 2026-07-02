@@ -474,7 +474,7 @@ class _AppTextFieldState extends State<AppTextField>
                 color: AppColors.textTertiary.withAlpha((0.2 * 255).round()),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.close_rounded,
                 size: 14,
                 color: AppColors.textTertiary,

@@ -56,7 +56,7 @@ class TipDialog extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Title
-                const Text(
+                Text(
                   'Tip of the Day',
                   style: TextStyle(
                     fontSize: 20,
@@ -150,7 +150,7 @@ class TipDialog extends StatelessWidget {
                     color: AppColors.backgroundPrimary,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.close,
                     size: 16,
                     color: AppColors.textSecondary,

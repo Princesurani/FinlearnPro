@@ -181,7 +181,7 @@ class _AiReviewSheetState extends State<AiReviewSheet> with SingleTickerProvider
       maxChildSize: 0.95,
       builder: (_, controller) {
         return Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
@@ -247,7 +247,7 @@ class _AiReviewSheetState extends State<AiReviewSheet> with SingleTickerProvider
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
-              const Divider(height: 1, color: AppColors.border),
+              Divider(height: 1, color: AppColors.border),
               
               // Content
               Expanded(
@@ -280,7 +280,7 @@ class _AiReviewSheetState extends State<AiReviewSheet> with SingleTickerProvider
                                 ),
                                 child: Column(
                                   children: [
-                                    const Icon(Icons.format_quote_rounded, color: AppColors.textTertiary, size: 24),
+                                    Icon(Icons.format_quote_rounded, color: AppColors.textTertiary, size: 24),
                                     const SizedBox(height: AppSpacing.sm),
                                     Text(
                                       _reviewData!['summary'] ?? '',

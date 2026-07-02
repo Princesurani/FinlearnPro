@@ -75,7 +75,7 @@ class HoldingsTab extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.sort_rounded,
                       size: 16,
                       color: AppColors.textSecondary,
@@ -91,7 +91,7 @@ class HoldingsTab extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.code_rounded,
                       size: 16,
                       color: AppColors.textSecondary,
@@ -139,9 +139,9 @@ class HoldingsTab extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.white.withValues(alpha: 0.75),
+        color: AppColors.cardBackground,
         borderRadius: AppSpacing.borderRadiusLG,
-        border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
+        border: Border.all(color: AppColors.cardBorder, width: 1),
         boxShadow: const [
           BoxShadow(
             color: Color(0x08000000),
@@ -280,9 +280,9 @@ class HoldingsTab extends StatelessWidget {
     Widget content = Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.white.withValues(alpha: 0.75),
+        color: AppColors.cardBackground,
         borderRadius: AppSpacing.borderRadiusMD,
-        border: Border.all(color: AppColors.white.withValues(alpha: 0.4), width: 1),
+        border: Border.all(color: AppColors.cardBorder, width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -424,11 +424,11 @@ class HoldingsTab extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(AppSpacing.xl),
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.backgroundSecondary,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.bar_chart_rounded,
                   size: 48,
                   color: AppColors.textTertiary,

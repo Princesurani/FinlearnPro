@@ -14,7 +14,7 @@ class EventsTab extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.lg),
       itemCount: _mockEvents.length + 1,
-      separatorBuilder: (context, index) => const Padding(
+      separatorBuilder: (context, index) => Padding(
         padding: EdgeInsets.only(left: 20),
         child: Divider(color: AppColors.border, height: 32),
       ),

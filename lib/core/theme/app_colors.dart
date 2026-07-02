@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
+  static bool isDark = false;
+  static void updateTheme(bool dark) => isDark = dark;
+
+  static Color get cardBackground => isDark ? darkSurface : white.withValues(alpha: 0.75);
+  static Color get cardBorder => isDark ? white.withValues(alpha: 0.1) : white.withValues(alpha: 0.4);
+
   // Primary Theme Colors (Medium Light Blue)
   static const Color primary = Color(0xFF2962FF);
   static const Color primaryButton = Color.fromARGB(255, 20, 119, 255);
@@ -9,7 +15,7 @@ abstract final class AppColors {
 
   static const Color primaryDark = Color(0xFF023E8A);
 
-  static const Color primarySubtle = Color(0xFFF0F4F8);
+  static Color get primarySubtle => isDark ? const Color(0xFF161922) : const Color(0xFFF0F4F8);
 
   static const Color electricBlue = Color(0xFF4E8BF5);
   static const Color primaryBlue = Color(0xFF4E8BF5); // Alias for consistency
@@ -75,41 +81,41 @@ abstract final class AppColors {
 
   static const Color neutralGray = Color(0xFF9CA3AF);
 
-  static const Color backgroundPrimary = Color(0xFFF8F9FE);
+  static Color get backgroundPrimary => isDark ? darkBackground : const Color(0xFFF8F9FE);
 
-  static const Color backgroundSecondary = Color(0xFFFBFBFE);
+  static Color get backgroundSecondary => isDark ? darkSurface : const Color(0xFFFBFBFE);
 
-  static const Color backgroundTertiary = Color(0xFFF1F5F9);
+  static Color get backgroundTertiary => isDark ? darkSurfaceVariant : const Color(0xFFF1F5F9);
 
-  static const Color surface = Color(0xFFFBFBFE);
+  static Color get surface => isDark ? darkSurface : const Color(0xFFFBFBFE);
 
-  static const Color surfaceVariant = Color(0xFFF8FAFC);
-  static const Color surfaceLayer1 = Color(0xFFFBFBFE); // Alias for cards
+  static Color get surfaceVariant => isDark ? darkSurfaceVariant : const Color(0xFFF8FAFC);
+  static Color get surfaceLayer1 => isDark ? darkSurface : const Color(0xFFFBFBFE); // Alias for cards
 
-  static const Color border = Color(0xFFE2E8F0);
-  static const Color borderHint = Color(0xFFE2E8F0); // Alias for subtle borders
+  static Color get border => isDark ? darkSurfaceVariant : const Color(0xFFE2E8F0);
+  static Color get borderHint => isDark ? darkSurfaceVariant : const Color(0xFFE2E8F0); // Alias for subtle borders
 
-  static const Color borderLight = Color(0xFFF1F5F9);
+  static Color get borderLight => isDark ? darkSurfaceVariant.withValues(alpha: 0.5) : const Color(0xFFF1F5F9);
 
-  static const Color divider = Color(0xFFE5E7EB);
+  static Color get divider => isDark ? darkSurfaceVariant : const Color(0xFFE5E7EB);
 
-  static const Color textPrimary = Color(0xFF1E293B);
+  static Color get textPrimary => isDark ? const Color(0xFFF8FAFC) : const Color(0xFF1E293B);
 
-  static const Color textSecondary = Color(0xFF64748B);
+  static Color get textSecondary => isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
 
-  static const Color textTertiary = Color(0xFF94A3B8);
+  static Color get textTertiary => isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8);
 
-  static const Color textDisabled = Color(0xFFCBD5E1);
+  static Color get textDisabled => isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1);
 
   static const Color textOnPrimary = Color(0xFFFFFFFF);
 
   static const Color textOnDark = Color(0xFFFFFFFF);
 
-  static const Color darkBackground = Color(0xFF0F172A);
+  static const Color darkBackground = Color(0xFF0F121C);
 
-  static const Color darkSurface = Color(0xFF1E293B);
+  static const Color darkSurface = Color(0xFF1A1F2C);
 
-  static const Color darkSurfaceVariant = Color(0xFF334155);
+  static const Color darkSurfaceVariant = Color(0xFF242A3A);
 
   static const Color white = Color(0xFFFFFFFF);
   static const Color white70 = Color(0xB3FFFFFF);

@@ -22,10 +22,10 @@ class ContinueLearningCard extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.75),
+          color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: AppColors.white.withValues(alpha: 0.4),
+            color: AppColors.cardBorder,
           ),
           boxShadow: [
             BoxShadow(

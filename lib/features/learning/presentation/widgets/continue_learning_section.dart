@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_animations.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../data/learning_models.dart';
@@ -179,13 +180,13 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
         },
         child: Container(
           width: 300,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            color: AppColors.white.withValues(alpha: 0.75),
-            borderRadius: BorderRadius.circular(24),
+            color: AppColors.cardBackground,
+            borderRadius: AppSpacing.borderRadiusLG,
             border: Border.all(
-              color: AppColors.white.withValues(alpha: 0.4),
-              width: 1.5,
+              color: AppColors.cardBorder,
+              width: 1,
             ),
             boxShadow: [
               BoxShadow(
@@ -220,7 +221,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                       children: [
                         Text(
                           course.title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
@@ -231,7 +232,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
                         const SizedBox(height: 2),
                         Text(
                           _formatTimeLeft(widget.minutesLeft),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: AppColors.textTertiary,
@@ -276,7 +277,7 @@ class _ContinueLearningCardState extends State<_ContinueLearningCard>
               const SizedBox(height: 4),
               Text(
                 widget.nextLesson,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: AppColors.textPrimary,

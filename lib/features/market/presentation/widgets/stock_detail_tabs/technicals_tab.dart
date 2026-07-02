@@ -503,7 +503,7 @@ class _TechnicalsTabState extends State<TechnicalsTab> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        border: isLast ? null : const Border(bottom: BorderSide(color: AppColors.border)),
+        border: isLast ? null : Border(bottom: BorderSide(color: AppColors.border)),
         color: isHeader ? AppColors.backgroundPrimary.withValues(alpha: 0.5) : null,
       ),
       child: Row(

@@ -71,7 +71,7 @@ class HomeTopBar extends StatelessWidget {
           const SizedBox(height: 1),
           Text(
             firstName.toUpperCase(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,

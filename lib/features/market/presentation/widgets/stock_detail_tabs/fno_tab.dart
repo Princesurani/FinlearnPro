@@ -61,7 +61,7 @@ class FnoTab extends StatelessWidget {
                   ),
                 ],
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                 child: Divider(color: AppColors.border),
               ),
@@ -126,7 +126,7 @@ class FnoTab extends StatelessWidget {
           // Header
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               border: Border(bottom: BorderSide(color: AppColors.border)),
             ),
             child: Row(
@@ -140,7 +140,7 @@ class FnoTab extends StatelessWidget {
           // Subheader
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               border: Border(bottom: BorderSide(color: AppColors.border)),
             ),
             child: Row(
@@ -180,7 +180,7 @@ class FnoTab extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
-        border: isLast ? null : const Border(bottom: BorderSide(color: AppColors.border)),
+        border: isLast ? null : Border(bottom: BorderSide(color: AppColors.border)),
       ),
       child: Row(
         children: [

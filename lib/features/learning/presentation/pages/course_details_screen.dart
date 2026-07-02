@@ -213,7 +213,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
         title: _isScrolled
             ? Text(
                 widget.course.title,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -404,7 +404,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
           const SizedBox(height: 12),
           Text(
             widget.course.description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               height: 1.6,
               color: AppColors.textSecondary,
@@ -454,7 +454,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
+              Text(
                 'What you\'ll learn',
                 style: TextStyle(
                   fontSize: 18,
@@ -480,7 +480,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                   Expanded(
                     child: Text(
                       outcome,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         height: 1.4,
                         color: AppColors.textPrimary,
@@ -559,7 +559,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                           children: [
                             Text(
                               instructor.name,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textPrimary,
@@ -582,7 +582,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                   const SizedBox(height: 16),
                   Text(
                     instructor.bio,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       height: 1.6,
                       color: AppColors.textSecondary,
@@ -590,7 +590,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                   ),
                   if (instructor.linkedinUrl != null) ...[
                     const SizedBox(height: 16),
-                    const Divider(color: AppColors.border),
+                    Divider(color: AppColors.border),
                     const SizedBox(height: 8),
                     InkWell(
                       onTap: () {
@@ -649,7 +649,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.border),
           ),
-          child: const Row(
+          child: Row(
             children: [
               CircleAvatar(
                 radius: 28,
@@ -748,7 +748,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
           ),
           child: Text(
             '$index',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               color: AppColors.textSecondary,
@@ -757,7 +757,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
         ),
         title: Text(
           module.title,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
             color: AppColors.textPrimary,
@@ -765,7 +765,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
         ),
         subtitle: Text(
           '${module.lessons.length} Lessons',
-          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
         ),
         children: module.lessons.asMap().entries.map((entry) {
           final lessonIndex = entry.key;
@@ -846,7 +846,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                 children: [
                   Text(
                     lesson.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
@@ -855,7 +855,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.access_time,
                         size: 12,
                         color: AppColors.textSecondary,
@@ -863,7 +863,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                       const SizedBox(width: 4),
                       Text(
                         lesson.formattedDuration,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
                         ),
@@ -889,7 +889,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
         color: AppColors.textPrimary,

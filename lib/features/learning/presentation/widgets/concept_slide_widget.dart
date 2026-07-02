@@ -193,7 +193,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              const Text(
+                              Text(
                                 'Key Takeaways',
                                 style: TextStyle(
                                   fontSize: 18,
@@ -268,7 +268,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                                         padding: const EdgeInsets.only(top: 3),
                                         child: Text(
                                           point,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 15,
                                             height: 1.6,
                                             color: AppColors.textPrimary,
@@ -441,7 +441,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
                     const SizedBox(height: 6),
                     Text(
                       text,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15.5,
                         height: 1.6,
                         color: AppColors.textPrimary,
@@ -603,7 +603,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
         spans.add(
           TextSpan(
             text: text.substring(lastIndex, match.start),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15.5,
               height: 1.7,
               color: AppColors.textPrimary,
@@ -635,7 +635,7 @@ class _ConceptSlideWidgetState extends State<ConceptSlideWidget>
       spans.add(
         TextSpan(
           text: text.substring(lastIndex),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 15.5,
             height: 1.7,
             color: AppColors.textPrimary,

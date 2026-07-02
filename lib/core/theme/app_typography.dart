@@ -38,7 +38,7 @@ abstract final class AppTypography {
 
   static const double letterSpacingExtraWide = 1.6;
 
-  static const TextStyle display1 = TextStyle(
+  static TextStyle display1 = TextStyle(
     fontFamily: fontFamilyDisplay,
     fontSize: 56.0,
     fontWeight: bold,
@@ -47,7 +47,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle display2 = TextStyle(
+  static TextStyle display2 = TextStyle(
     fontFamily: fontFamilyDisplay,
     fontSize: 48.0,
     fontWeight: bold,
@@ -56,7 +56,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle display3 = TextStyle(
+  static TextStyle display3 = TextStyle(
     fontFamily: fontFamilyDisplay,
     fontSize: 40.0,
     fontWeight: semiBold,
@@ -65,7 +65,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle h1 = TextStyle(
+  static TextStyle h1 = TextStyle(
     fontFamily: fontFamilyDisplay,
     fontSize: 32.0,
     fontWeight: bold,
@@ -74,7 +74,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle h2 = TextStyle(
+  static TextStyle h2 = TextStyle(
     fontFamily: fontFamilyDisplay,
     fontSize: 28.0,
     fontWeight: semiBold,
@@ -83,7 +83,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle h3 = TextStyle(
+  static TextStyle h3 = TextStyle(
     fontFamily: fontFamilyDisplay,
     fontSize: 24.0,
     fontWeight: semiBold,
@@ -92,7 +92,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle h4 = TextStyle(
+  static TextStyle h4 = TextStyle(
     fontFamily: fontFamilyDisplay,
     fontSize: 20.0,
     fontWeight: semiBold,
@@ -101,7 +101,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle h5 = TextStyle(
+  static TextStyle h5 = TextStyle(
     fontFamily: fontFamilyDisplay,
     fontSize: 18.0,
     fontWeight: semiBold,
@@ -110,7 +110,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle h6 = TextStyle(
+  static TextStyle h6 = TextStyle(
     fontFamily: fontFamilyDisplay,
     fontSize: 16.0,
     fontWeight: semiBold,
@@ -119,7 +119,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle bodyLarge = TextStyle(
+  static TextStyle bodyLarge = TextStyle(
     fontFamily: fontFamilyBody,
     fontSize: 18.0,
     fontWeight: regular,
@@ -128,7 +128,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle body = TextStyle(
+  static TextStyle body = TextStyle(
     fontFamily: fontFamilyBody,
     fontSize: 16.0,
     fontWeight: regular,
@@ -137,7 +137,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle bodyMedium = TextStyle(
+  static TextStyle bodyMedium = TextStyle(
     fontFamily: fontFamilyBody,
     fontSize: 16.0,
     fontWeight: medium,
@@ -146,7 +146,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle bodySmall = TextStyle(
+  static TextStyle bodySmall = TextStyle(
     fontFamily: fontFamilyBody,
     fontSize: 14.0,
     fontWeight: regular,
@@ -155,7 +155,7 @@ abstract final class AppTypography {
     color: AppColors.textSecondary,
   );
 
-  static const TextStyle bodyXS = TextStyle(
+  static TextStyle bodyXS = TextStyle(
     fontFamily: fontFamilyBody,
     fontSize: 12.0,
     fontWeight: regular,
@@ -191,7 +191,7 @@ abstract final class AppTypography {
     color: AppColors.textOnPrimary,
   );
 
-  static const TextStyle labelLarge = TextStyle(
+  static TextStyle labelLarge = TextStyle(
     fontFamily: fontFamilyBody,
     fontSize: 16.0,
     fontWeight: medium,
@@ -200,7 +200,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle labelMedium = TextStyle(
+  static TextStyle labelMedium = TextStyle(
     fontFamily: fontFamilyBody,
     fontSize: 14.0,
     fontWeight: medium,
@@ -209,9 +209,9 @@ abstract final class AppTypography {
     color: AppColors.textSecondary,
   );
 
-  static const TextStyle label = labelMedium; // Alias for bw compatibility
+  static TextStyle label = labelMedium; // Alias for bw compatibility
 
-  static const TextStyle labelSmall = TextStyle(
+  static TextStyle labelSmall = TextStyle(
     fontFamily: fontFamilyBody,
     fontSize: 12.0,
     fontWeight: medium,
@@ -220,7 +220,7 @@ abstract final class AppTypography {
     color: AppColors.textTertiary,
   );
 
-  static const TextStyle overline = TextStyle(
+  static TextStyle overline = TextStyle(
     fontFamily: fontFamilyBody,
     fontSize: 11.0,
     fontWeight: semiBold,
@@ -229,7 +229,7 @@ abstract final class AppTypography {
     color: AppColors.textTertiary,
   );
 
-  static const TextStyle numberDisplay = TextStyle(
+  static TextStyle numberDisplay = TextStyle(
     fontFamily: fontFamilyMono,
     fontSize: 40.0,
     fontWeight: bold,
@@ -239,7 +239,7 @@ abstract final class AppTypography {
     fontFeatures: [FontFeature.tabularFigures()],
   );
 
-  static const TextStyle numberLarge = TextStyle(
+  static TextStyle numberLarge = TextStyle(
     fontFamily: fontFamilyMono,
     fontSize: 28.0,
     fontWeight: semiBold,
@@ -249,7 +249,7 @@ abstract final class AppTypography {
     fontFeatures: [FontFeature.tabularFigures()],
   );
 
-  static const TextStyle numberMedium = TextStyle(
+  static TextStyle numberMedium = TextStyle(
     fontFamily: fontFamilyMono,
     fontSize: 20.0,
     fontWeight: semiBold,
@@ -259,7 +259,7 @@ abstract final class AppTypography {
     fontFeatures: [FontFeature.tabularFigures()],
   );
 
-  static const TextStyle number = TextStyle(
+  static TextStyle number = TextStyle(
     fontFamily: fontFamilyMono,
     fontSize: 16.0,
     fontWeight: medium,
@@ -269,7 +269,7 @@ abstract final class AppTypography {
     fontFeatures: [FontFeature.tabularFigures()],
   );
 
-  static const TextStyle numberSmall = TextStyle(
+  static TextStyle numberSmall = TextStyle(
     fontFamily: fontFamilyMono,
     fontSize: 14.0,
     fontWeight: medium,
@@ -310,7 +310,7 @@ abstract final class AppTypography {
     decorationColor: AppColors.primary,
   );
 
-  static const TextStyle code = TextStyle(
+  static TextStyle code = TextStyle(
     fontFamily: fontFamilyMono,
     fontSize: 14.0,
     fontWeight: regular,
@@ -319,7 +319,7 @@ abstract final class AppTypography {
     color: AppColors.textPrimary,
   );
 
-  static const TextStyle quote = TextStyle(
+  static TextStyle quote = TextStyle(
     fontFamily: fontFamilyBody,
     fontSize: 18.0,
     fontWeight: regular,
@@ -329,7 +329,7 @@ abstract final class AppTypography {
     color: AppColors.textSecondary,
   );
 
-  static const TextTheme textTheme = TextTheme(
+  static TextTheme textTheme = TextTheme(
     displayLarge: display1,
     displayMedium: display2,
     displaySmall: display3,

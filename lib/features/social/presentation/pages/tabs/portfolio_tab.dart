@@ -101,7 +101,7 @@ class _PortfolioTabState extends State<PortfolioTab> {
             children: [
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.sort_rounded,
                     size: 16,
                     color: AppColors.textSecondary,
@@ -117,7 +117,7 @@ class _PortfolioTabState extends State<PortfolioTab> {
               ),
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.code_rounded,
                     size: 16,
                     color: AppColors.textSecondary,
@@ -239,7 +239,7 @@ class _PortfolioTabState extends State<PortfolioTab> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                     child: Icon(
                       Icons.more_vert_rounded,
@@ -339,7 +339,7 @@ class _PortfolioTabState extends State<PortfolioTab> {
                       ],
                     ),
                   ),
-                  const Icon(Icons.chevron_right_rounded, color: AppColors.textTertiary),
+                  Icon(Icons.chevron_right_rounded, color: AppColors.textTertiary),
                 ],
               ),
             ),

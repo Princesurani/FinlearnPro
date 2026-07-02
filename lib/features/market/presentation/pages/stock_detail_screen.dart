@@ -318,7 +318,7 @@ class _BottomActionButtons extends StatelessWidget {
               }
             }
             return Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColors.backgroundSecondary,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
@@ -352,7 +352,7 @@ class _BottomActionButtons extends StatelessWidget {
                           children: [
                             Text(
                               '${isBuy ? "Buy" : "Sell"} ${instrument.name}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textPrimary,
@@ -363,7 +363,7 @@ class _BottomActionButtons extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               instrument.symbol,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 color: AppColors.textTertiary,
                                 fontWeight: FontWeight.w600,
@@ -378,7 +378,7 @@ class _BottomActionButtons extends StatelessWidget {
                         children: [
                           Text(
                             '${instrument.currencySymbol}${price.toStringAsFixed(2)}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary,
@@ -411,7 +411,7 @@ class _BottomActionButtons extends StatelessWidget {
                       children: [
                         Text(
                           isBuy ? 'Available Cash' : 'Current Holdings',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
@@ -421,7 +421,7 @@ class _BottomActionButtons extends StatelessWidget {
                           isBuy
                               ? '${instrument.currencySymbol}${availableBalance.toStringAsFixed(2)}'
                               : '$currentHoldings shares',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
@@ -434,7 +434,7 @@ class _BottomActionButtons extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Number of Shares',
                         style: TextStyle(
                           fontSize: 15,
@@ -463,7 +463,7 @@ class _BottomActionButtons extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 12),
                               child: Text(
                                 '$quantity',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.textPrimary,
@@ -483,12 +483,12 @@ class _BottomActionButtons extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const Divider(color: AppColors.border),
+                  Divider(color: AppColors.border),
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Estimated Cost',
                         style: TextStyle(
                           fontSize: 14,
@@ -497,7 +497,7 @@ class _BottomActionButtons extends StatelessWidget {
                       ),
                       Text(
                         '${instrument.currencySymbol}${totalCost.toStringAsFixed(2)}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,

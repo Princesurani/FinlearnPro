@@ -27,7 +27,7 @@ class LearningHeader extends StatelessWidget {
           const SizedBox(height: 1),
           Text(
             'Learning', // Shortened from 'Learning Hub'
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16, // Standardized across all pages
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
@@ -45,9 +45,9 @@ class LearningHeader extends StatelessWidget {
           height: 40,
           width: 40,
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: AppColors.cardBackground,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.borderLight, width: 1),
+            border: Border.all(color: AppColors.cardBorder, width: 1),
             boxShadow: [
               BoxShadow(
                 color: AppColors.black.withValues(alpha: 0.03),

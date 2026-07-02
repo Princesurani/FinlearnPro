@@ -91,7 +91,9 @@ class _UnifiedOverviewCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.4),
+            color: AppColors.isDark
+                ? const Color(0xFF94A3B8).withValues(alpha: 0.22)
+                : AppColors.primary.withValues(alpha: 0.4),
             blurRadius: 24,
             offset: const Offset(0, 12),
             spreadRadius: 0,
@@ -100,10 +102,9 @@ class _UnifiedOverviewCard extends StatelessWidget {
       ),
       child: BlocBuilder<SocialBloc, SocialState>(
         builder: (context, socialState) {
-          final profile = socialState.myProfile;
-          final displayXp = profile?.totalXp ?? progress.totalXp;
-          final displayLevel = profile?.level ?? progress.currentLevel;
-          final displayStreak = profile?.currentStreak ?? progress.currentStreak;
+          final displayXp = progress.totalXp;
+          final displayLevel = progress.currentLevel;
+          final displayStreak = progress.currentStreak;
           
           final nextLevelXp = displayLevel * displayLevel * 100;
           final currentLevelBaseXp = (displayLevel - 1) * (displayLevel - 1) * 100;
@@ -115,12 +116,21 @@ class _UnifiedOverviewCard extends StatelessWidget {
           return Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF2962FF), Color(0xFF2962FF), Color(0xFF023E8A)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              gradient: AppColors.isDark
+                  ? const LinearGradient(
+                      colors: [Color(0xFF1E2130), Color(0xFF13151E)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : const LinearGradient(
+                      colors: [Color(0xFF2962FF), Color(0xFF2962FF), Color(0xFF023E8A)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
               borderRadius: BorderRadius.circular(24),
+              border: AppColors.isDark
+                  ? Border.all(color: AppColors.cardBorder, width: 1.5)
+                  : null,
             ),
             child: Column(
               children: [
@@ -272,7 +282,7 @@ class _UnifiedOverviewCard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.account_balance_wallet_outlined,
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: const Color(0xFF60A5FA), // Vibrant Blue-Sky
                         size: 18,
                       ),
                       const SizedBox(width: 8),
@@ -352,12 +362,14 @@ class _UnifiedOverviewCard extends StatelessWidget {
                     icon: Icons.auto_stories_outlined,
                     label: 'Lessons',
                     value: '${progress.lessonsCompleted}',
+                    iconColor: const Color(0xFF22D3EE), // Vibrant Cyan/Teal
                   ),
                   _buildDivider(),
                   _buildStatItem(
                     icon: Icons.school_outlined,
                     label: 'Courses',
                     value: '${progress.coursesCompleted}',
+                    iconColor: const Color(0xFFA78BFA), // Lavender/Purple
                   ),
                   _buildDivider(),
                   _buildStatItem(
@@ -365,6 +377,7 @@ class _UnifiedOverviewCard extends StatelessWidget {
                     label: 'Streak',
                     value: '${displayStreak}d',
                     valueColor: AppColors.goldenYellow,
+                    iconColor: const Color(0xFFFF8A50), // Sunset Orange
                   ),
                 ],
               ),
@@ -382,11 +395,12 @@ class _UnifiedOverviewCard extends StatelessWidget {
     required String label,
     required String value,
     Color? valueColor,
+    Color? iconColor,
   }) {
     return Expanded(
       child: Column(
         children: [
-          Icon(icon, size: 18, color: Colors.white.withValues(alpha: 0.7)),
+          Icon(icon, size: 18, color: iconColor ?? Colors.white.withValues(alpha: 0.7)),
           const SizedBox(height: 2),
           Text(
             value,
